@@ -21,7 +21,7 @@
 
         <!-- Logo de la empresa Ajal-LoL -->
         <div class="logo">
-            <img src="{{ asset('img/logo.png') }}" alt="Logo">
+            <img src="{{ asset('') }}" alt="Logo">
         </div>
 
         <!-- Formulario para iniciar sesión -->

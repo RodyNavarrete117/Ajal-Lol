@@ -1,0 +1,4 @@
+--Cosas para usar el proyecto--
+-Servidor de prueba Netlify
+-Base de datos Always data
+-https://tablericons.com/

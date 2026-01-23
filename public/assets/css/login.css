@@ -57,7 +57,7 @@ body {
 /* Inputs */
 .input-group {
     position: relative;
-    margin-bottom: 18px;
+    margin-bottom: 15px;
 }
 
 .input-group i {
@@ -87,7 +87,7 @@ body {
 
 /* Botón */
 .btn-login {
-    width: 100%;
+    width: 60%;
     padding: 13px;
     margin-top: 10px;
     border-radius: 30px;

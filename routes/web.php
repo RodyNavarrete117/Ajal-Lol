@@ -13,7 +13,10 @@ Route::get('/login', function () {
 })->name('login');
 
 Route::get('/admin', function () {
-    return view('admin.dashboard');
+    return view('admin.admin');
 });
 
+Route::get('/admin/users', function () {
+    return view('admin.users');
+});
 

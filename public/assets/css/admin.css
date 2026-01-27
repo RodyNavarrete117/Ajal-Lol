@@ -1,16 +1,21 @@
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-        }
-
-        .container {
-            padding: 40px;
-        }
-
-        .box {
-            background: #ffffff;
+/*Contenido de la página que se verá reglejado de la base de datos*/
+        .main { /*Cuerpo principal*/
+            margin-left: 200px;
             padding: 30px;
+        }
+
+        .topbar {
+            background: #fff;
+            padding: 15px 25px;
             border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,.1);
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.08);
+        }
+
+        .content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            min-height: 400px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.08);
         }

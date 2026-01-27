@@ -10,10 +10,10 @@
             background: #f2f2f2;
         }
 
-        /* ===== SIDEBAR ===== */
+        /* Elementos del dashboard ya se le hizo algunos ajustes */
         .sidebar {
             position: fixed;
-            width: 250px;
+            width: 200px;
             height: 100vh;
             background: linear-gradient(180deg, #8d3a6d, #4a1f3d);
             color: #fff;
@@ -38,10 +38,10 @@
         .menu a:hover {
             background: rgba(230, 10, 216, 0.15);
         }
-
-        /*Contenido de la página */
-        .main {
-            margin-left: 250px;
+        
+        /*Contenido de la página que se verá reglejado de la base de datos*/
+        .main { /*Cuerpo principal*/
+            margin-left: 200px;
             padding: 30px;
         }
 

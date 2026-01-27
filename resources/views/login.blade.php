@@ -21,19 +21,19 @@
 
         <!-- Logo de la empresa Ajal-LoL -->
         <div class="logo">
-            <img src="{{ asset('') }}" alt="Logo">
+            <img src="{{ asset('assets/img/ajallol/ImagenPrincipal.jpg') }}" alt="Logo">
         </div>
 
         <!-- Formulario para iniciar sesión -->
         <form>
             <div class="input-group">
                 <i class="fa-solid fa-envelope"></i>
-                <input type="email" placeholder="Correo">
+                <input type="email" placeholder="Escriba su correo eléctronico">
             </div>
 
             <div class="input-group">
                 <i class="fa-solid fa-lock"></i>
-                <input type="password" placeholder="Contraseña">
+                <input type="password" placeholder="Escriba su contraseña">
             </div>
 
             <button type="button" class="btn-login">

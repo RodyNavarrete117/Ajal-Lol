@@ -19,13 +19,42 @@
         <h2>ADMIN</h2>
 
         <nav class="menu">
-            <a href="#"><i class="fa fa-house"></i> Inicio</a>
-            <a href="#"><i class="fa fa-globe"></i> Página</a>
-            <a href="#"><i class="fa fa-chart-line"></i> Informe</a>
-            <a href="#"><i class="fa fa-book"></i> Manual</a>
-            <a href="#"><i class="fa fa-users"></i> Usuarios</a>
-            <a href="#"><i class="fa fa-file-lines"></i> Formularios</a>
-            <a href="#"><i class="fa fa-gear"></i> Ajustes</a>
+            <a href="{{ url('/admin/admin') }}">
+                <i class="fa fa-house"></i>
+                <span>Inicio</span>
+            </a>
+
+            <a href="{{ url('/admin/page') }}">
+                <i class="fa fa-globe"></i>
+                <span>Página</span>
+            </a>
+
+            <a href="{{ url('/admin/report') }}">
+                <i class="fa fa-chart-line"></i>
+                <span>Informe</span>
+            </a>
+
+            <a href="{{ url('/admin/manual') }}">
+                <i class="fa fa-book"></i>
+                <span>Manual</span>
+            </a>
+
+            <a href="{{ url('/admin/users') }}">
+                <i class="fa fa-users"></i>
+                <span>Usuarios</span>
+            </a>
+
+            <a href="{{ url('/admin/forms') }}">
+                <i class="fa fa-file-lines"></i>
+                <span>Formularios</span>
+            </a>
+
+            <a href="{{ url('/admin/settings') }}">
+                <i class="fa fa-gear"></i>
+                <span>Ajustes</span>
+            </a>
+        </nav>
+
         </nav>
     </aside>
 

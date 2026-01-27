@@ -1,6 +1,6 @@
 @extends('admin.dashboard')
 
-@section('title', 'Administrador')
+@section('title', 'Inicio')
 
 @section('content')
     <h2>Panel de Administración</h2>

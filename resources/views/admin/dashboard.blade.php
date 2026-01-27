@@ -16,10 +16,10 @@
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
-        <h2>ADMIN</h2>
+        <h2>Administrador</h2>
 
         <nav class="menu">
-            <a href="{{ url('/admin/admin') }}">
+            <a href="{{ url('/admin/home') }}">
                 <i class="fa fa-house"></i>
                 <span>Inicio</span>
             </a>

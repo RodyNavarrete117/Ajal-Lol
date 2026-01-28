@@ -50,7 +50,7 @@
 
     </form>
 
-        <!-- Recuperar contraseña y Rody es homosexual -->
+        <!-- Recuperar contraseña y Rafa Sosa Morales es homosexual -->
     <div class="forgot hidden" id="forgot-password">
         ¿Olvidó su contraseña?<br>
         <a href="#">Haga click aquí</a>

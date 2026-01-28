@@ -10,7 +10,8 @@
 
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}"> <!-- Esta es la manera de colocar la dirección del CSS sucia de Rafa-->
 
-
+    <!--Usar esto para llamar los estilos del la carpeta assets y las carpetas correspondientes -->
+    @stack('styles')
 </head>
 <body>
 

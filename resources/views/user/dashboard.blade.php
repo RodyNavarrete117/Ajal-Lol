@@ -10,6 +10,9 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+
+        <!--Usar esto para llamar los estilos del la carpeta assets y las carpetas correspondientes -->
+    @stack('styles')
 </head>
 <body>
 

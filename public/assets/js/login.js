@@ -1,59 +1,125 @@
-    const actionBtn = document.getElementById('actionBtn');
-    const backBtn = document.getElementById('backBtn');
-    const emailGroup = document.getElementById('email-group');
-    const passwordGroup = document.getElementById('password-group');
-    const emailInput = document.getElementById('email');
-    const form = document.getElementById('loginForm');
+const actionBtn = document.getElementById('actionBtn');
+const backBtn = document.getElementById('backBtn');
+const emailGroup = document.getElementById('email-group');
+const emailError = document.getElementById('email-error');
+const passwordGroup = document.getElementById('password-group');
+const passwordError = document.getElementById('password-error');
+const forgot = document.getElementById('forgot-password');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const form = document.getElementById('loginForm');
+const card = document.querySelector('.login-card');
 
-    let emailGuardado = '';
+let emailGuardado = '';
 
-    // Siguiente → Password
-    actionBtn.addEventListener('click', () => {
-        if (passwordGroup.classList.contains('active')) return;
+// Función para validar correo
+function validarEmail(email) {
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+}
 
-        if (emailInput.value.trim() === '') {
-            alert('Ingrese su correo');
-            return;
-        }
+// Función para validar contraseña
+function validarPassword(password) {
+    return password.length >= 6; // ejemplo mínimo 6 caracteres
+}
 
-        emailGuardado = emailInput.value;
+// Inicializar botones como semitransparentes
+function actualizarBotonEmail() {
+    if (validarEmail(emailInput.value.trim())) {
+        actionBtn.style.opacity = '1';
+        actionBtn.style.pointerEvents = 'auto';
+    } else {
+        actionBtn.style.opacity = '0.5';
+        actionBtn.style.pointerEvents = 'none';
+    }
+}
 
-        emailGroup.classList.add('hidden');
-        passwordGroup.classList.remove('hidden');
-        passwordGroup.classList.add('active');
-        backBtn.classList.remove('hidden');
-        document.getElementById('forgot-password').classList.remove('hidden');
+function actualizarBotonPassword() {
+    if (validarPassword(passwordInput.value.trim())) {
+        actionBtn.style.opacity = '1';
+        actionBtn.style.pointerEvents = 'auto';
+    } else {
+        actionBtn.style.opacity = '0.5';
+        actionBtn.style.pointerEvents = 'none';
+    }
+}
 
-        
+// Actualizar botón mientras escribe
+emailInput.addEventListener('input', () => {
+    emailGroup.classList.remove('error');
+    actualizarBotonEmail();
+});
 
-        actionBtn.textContent = 'Iniciar sesión';
-        actionBtn.type = 'submit';
-    });
+passwordInput.addEventListener('input', () => {
+    passwordGroup.classList.remove('error');
+    actualizarBotonPassword();
+});
 
-    // Volver → Email
-    backBtn.addEventListener('click', () => {
-        passwordGroup.classList.add('hidden');
-        passwordGroup.classList.remove('active');
+// Siguiente → Password
+actionBtn.addEventListener('click', () => {
+    if (passwordGroup.classList.contains('step-active')) return;
 
-        emailGroup.classList.remove('hidden');
-        backBtn.classList.add('hidden');
-        document.getElementById('forgot-password').classList.add('hidden');
+    const emailVal = emailInput.value.trim();
 
+    if (!validarEmail(emailVal)) {
+        emailGroup.classList.add('error');
+        emailInput.focus();
+        return;
+    }
 
-        emailInput.value = emailGuardado;
+    emailGuardado = emailVal;
 
-        actionBtn.textContent = 'Siguiente';
-        actionBtn.type = 'button';
-    });
+    emailGroup.classList.remove('step-active');
 
-    // Envío final
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
+    setTimeout(() => {
+        passwordGroup.classList.add('step-active');
+        backBtn.classList.add('step-active');
+        forgot.classList.add('step-active');
+    }, 150);
 
-        const password = document.getElementById('password').value;
+    card.classList.add('step-password');
 
-        console.log('Correo:', emailGuardado);
-        console.log('Password:', password);
+    actionBtn.textContent = 'Iniciar sesión';
+    actionBtn.type = 'submit';
 
-    });
+    // Al cambiar a password, botón semitransparente hasta que escriba
+    actualizarBotonPassword();
+});
 
+// Volver → Email
+backBtn.addEventListener('click', () => {
+    passwordGroup.classList.remove('step-active');
+    backBtn.classList.remove('step-active');
+    forgot.classList.remove('step-active');
+
+    setTimeout(() => {
+        emailGroup.classList.add('step-active');
+    }, 150);
+
+    card.classList.remove('step-password');
+
+    emailInput.value = emailGuardado;
+    actionBtn.textContent = 'Siguiente';
+    actionBtn.type = 'button';
+
+    // Volver a estado semitransparente según email
+    actualizarBotonEmail();
+});
+
+// Envío final
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const passwordVal = passwordInput.value.trim();
+
+    if (!validarPassword(passwordVal)) {
+        passwordGroup.classList.add('error');
+        passwordInput.focus();
+        return;
+    }
+
+    console.log('Correo:', emailGuardado);
+    console.log('Password:', passwordVal);
+
+    // Aquí puedes enviar al servidor con fetch o AJAX
+});

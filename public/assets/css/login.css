@@ -27,32 +27,84 @@ body {
 /* Tarjeta */
 .login-card {
     width: 360px;
-    padding: 35px 30px;
+    padding: 25px 20px;
     border-radius: 15px;
     background: linear-gradient(180deg, #8d3a6d, #4a1f3d);
     box-shadow:
         0 20px 40px rgba(0, 0, 0, 0.35),
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
     text-align: center;
+
+    max-height: 160px;
+    overflow: hidden;
+    transition: max-height 0.6s ease;
 }
 
+.login-card.step-password {
+    max-height: 260px; /* o 280px si quieres más aire */
+}
+
+.actions {
+    position: relative;
+    margin-top: 25px;
+    height: 44px; /* fija el alto */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* APARTADO PARA EL BOTON DE ATRAS */
+
 .btn-back {
+    position: absolute;
+    pointer-events: none;
+    left: 0;
+    top: 4.5px;
     background: none;
     border: none;
-    color: #555;
     cursor: pointer;
-    margin-bottom: 10px;
-    font-size: 14px;
+    font-size: 18px;
+    color: #ffffff;
+    margin-bottom: 12px;
+    padding: 6px;
+}
+
+.btn-back:hover {
+    color: #c3c3c3;
+}
+
+.btn-back.step-active {
+    pointer-events: auto;
+}
+
+.btn-back i {
+    pointer-events: none;
 }
 
 .btn-back:hover {
     text-decoration: underline;
 }
 
+/* FUNCIONA PARA DESAPARECER LOS OBJETOS UNA VEZ SE DA CLICK AL BTN */
 
-.hidden {
-    display: none;
+.step {
+    opacity: 0;
+    transform: translateY(16px);
+    max-height: 0;
+    overflow: hidden;
+    transition:
+        opacity 0.5s ease,
+        transform 0.5s ease,
+        max-height 0.6s ease;
 }
+
+
+.step-active {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 120px;
+}
+
 
 /* Animación suave */
 @keyframes fadeIn {
@@ -73,11 +125,6 @@ body {
 }
 
 /* Inputs */
-.input-group {
-    position: relative;
-    margin-bottom: 15px;
-}
-
 .input-group i {
     position: absolute;
     left: 18px;
@@ -85,6 +132,10 @@ body {
     transform: translateY(-50%);
     color: #6f6f6f;
     font-size: 15px;
+}
+
+.input-group {
+    position: relative;
 }
 
 .input-group input {
@@ -98,16 +149,49 @@ body {
     transition: all 0.3s ease;
 }
 
-/* Focus */
-.input-group input:focus {
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+/* ES PARA EL SCRIPT PEDORRO DEL SUPERESTAMOS NAVARRETE */
+.input-error {
+    position: absolute;
+    left: 30%;
+    top: -6px; /* clave */
+    
+    font-size: 12.5px;
+    color: #ffffff;
+
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+
+    pointer-events: none;
+    white-space: nowrap;
 }
+
+.input-group.error .input-error {
+    opacity: 1;
+    transform: translateY(-14px);
+}
+
+.input-group.step {
+    overflow: visible;
+}
+
+
+
+
+/* Focus */
+.input-group:focus-within i {
+    color: #8d3a6d;
+    transition: color 0.3s ease;
+}
+
 
 /* Botón */
 .btn-login {
+    opacity: 0.45;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
     width: 60%;
     padding: 13px;
-    margin-top: 10px;
     border-radius: 20px;
     border: none;
     background: linear-gradient(135deg, #ffffff, #f2f2f2);
@@ -116,6 +200,11 @@ body {
     color: #4a1f3d;
     cursor: pointer;
     transition: all 0.3s ease;
+}
+
+.btn-login.enabled {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 /* Hover botón */
@@ -142,26 +231,44 @@ body {
 }
 
 
-/*  Para responsive para una WEB A.P.P como dice el jefe de Rafa        */
+/*  Para responsive para una WEB A.P.P como dice el jefe de Rodolfo Addam Sosa Ek        */
 @media (max-width: 480px) {
+
 
     .login-card {
         width: 100%;
-        max-width: 460px;   
-        padding: 66px 26px;
+        max-width: 360px;
+        max-height: 200px;
+        padding: 32px 20px; /* ↓ más compacto */
+        border-radius: 14px;
+    }
+
+    .btn-back {
+        top: 8px;
     }
 
     .logo img {
-        width: 170px;
+        width: 200px;
+        margin-bottom: 18px;
+    }
+
+    .input-group {
+        margin-bottom: 12px;
     }
 
     .input-group input {
-        font-size: 17px;
-        padding: 15px 16px 15px 48px;
+        font-size: 16px;
+        padding: 14px 16px 14px 46px;
     }
 
     .btn-login {
-        padding: 15px;
+        padding: 14px;
         font-size: 15px;
+        margin-top: 8px;
+    }
+
+    .forgot {
+        margin-top: 16px;
+        font-size: 13px;
     }
 }

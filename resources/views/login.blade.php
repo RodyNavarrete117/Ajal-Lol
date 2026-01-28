@@ -28,30 +28,32 @@
     <form id="loginForm">
 
         <!-- PASO 1: EMAIL -->
-        <div class="input-group" id="email-group">
+        <div class="input-group step step-active" id="email-group">
             <i class="fa-solid fa-envelope"></i>
             <input type="email" id="email" placeholder="Escriba su correo electrónico">
+            <small class="input-error" id="email-error">Ingrese un correo válido</small>
         </div>
 
         <!-- PASO 2: PASSWORD -->
-        <div class="input-group hidden" id="password-group">
+        <div class="input-group step" id="password-group">
             <i class="fa-solid fa-lock"></i>
             <input type="password" id="password" placeholder="Escriba su contraseña">
         </div>
+        
+    <div class="actions">
+        <button type="button" class="btn-back step" id="backBtn" aria-label="Volver">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
 
         <button type="button" class="btn-login" id="actionBtn">
             Siguiente
         </button>
-
-        <!-- BOTÓN VOLVER -->
-        <button type="button" class="btn-back hidden" id="backBtn">
-            ← Volver
-        </button>
+    </div>
 
     </form>
 
-        <!-- Recuperar contraseña y Rafa Sosa Morales es homosexual -->
-    <div class="forgot hidden" id="forgot-password">
+        <!-- Recuperar contraseña y Rodolfo Morales es homosexual -->
+    <div class="forgot step" id="forgot-password">
         ¿Olvidó su contraseña?<br>
         <a href="#">Haga click aquí</a>
     </div>
@@ -59,7 +61,6 @@
     </div>
 </div>
 
-<script src="assets/js/login.js"></script>
-
+<script src="{{ asset('assets/js/login.js') }}"></script>
 </body>
 </html>

@@ -233,8 +233,6 @@ body {
 
 /*  Para responsive para una WEB A.P.P como dice el jefe de Rodolfo Addam Sosa Ek        */
 @media (max-width: 480px) {
-
-
     .login-card {
         width: 100%;
         max-width: 360px;

@@ -1,37 +1,35 @@
 @extends('admin.dashboard')
 
-@section('title', 'Formularios')
+@section('title', 'Formulario')
 <!-- //link para agregar estilos de esta área// -->
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/admincss/forms.css') }}">
 @endpush
 
 @section('content')
-    <h2>Formularios</h2>
-    <p>Gestión básica de formularios.</p>
+    <h2>Apoyo</h2>
+    <p>Interesados en realizar donaciones o colaboraciones</p>
 
     <div class="table-container">
         <table class="admin-table">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Formulario</th>
-                    <th>Estado</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Asunto</th>
+                    <th>Teléfono</th>
                     <th>Fecha</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>1</td>
-                    <td>Registro</td>
-                    <td><span class="badge active">Activo</span></td>
-                    <td>2026-01-28</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Contacto</td>
-                    <td><span class="badge inactive">Inactivo</span></td>
-                    <td>2026-01-27</td>
+                    <td>Salomón Alcocer</td>
+                    <td>soysalo123@gmail.com</td>
+                    <td>Me interesa colaborar</td>
+                    <td>999-273-4936</td>
+                    <td>15/01/2026</td>
                 </tr>
             </tbody>
         </table>

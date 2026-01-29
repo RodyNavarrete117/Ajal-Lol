@@ -1,7 +1,7 @@
 @extends('admin.dashboard')
 
 @section('title', 'Formularios')
-//link para agregar estilos de esta área
+<!-- //link para agregar estilos de esta área// -->
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/admincss/forms.css') }}">
 @endpush

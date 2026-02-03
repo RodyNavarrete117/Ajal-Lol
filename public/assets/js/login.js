@@ -106,20 +106,15 @@ backBtn.addEventListener('click', () => {
     actualizarBotonEmail();
 });
 
-// Envío final
 form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
     const passwordVal = passwordInput.value.trim();
 
     if (!validarPassword(passwordVal)) {
+        e.preventDefault();
         passwordGroup.classList.add('error');
         passwordInput.focus();
         return;
     }
 
-    console.log('Correo:', emailGuardado);
-    console.log('Password:', passwordVal);
-
-    // Aquí puedes enviar al servidor con fetch o AJAX
 });
+

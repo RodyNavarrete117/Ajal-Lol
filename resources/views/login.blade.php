@@ -25,19 +25,20 @@
     <div class="login-card">
 
 
-    <form id="loginForm">
+    <form id="loginForm" method="POST" action="{{ route('login.post') }}">
+    @csrf
 
         <!-- PASO 1: EMAIL -->
         <div class="input-group step step-active" id="email-group">
             <i class="fa-solid fa-envelope"></i>
-            <input type="email" id="email" placeholder="Escriba su correo electrónico">
+            <input type="email" id="email" name="email" placeholder="Escriba su correo electrónico">
             <small class="input-error" id="email-error">Ingrese un correo válido</small>
         </div>
 
         <!-- PASO 2: PASSWORD -->
         <div class="input-group step" id="password-group">
             <i class="fa-solid fa-lock"></i>
-            <input type="password" id="password" placeholder="Escriba su contraseña">
+            <input type="password" id="password" name="password" placeholder="Escriba su contraseña">
         </div>
         
     <div class="actions">

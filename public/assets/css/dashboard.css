@@ -1,62 +1,297 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-        }
+body {
+    background: #f2f2f2;
+}
 
-        body {
-            background: #f2f2f2;
-        }
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    width: 200px;
+    height: 100vh;
+    background: linear-gradient(180deg, #8d3a6d, #4a1f3d);
+    color: #fff;
+    transition: width 0.3s ease;
+    z-index: 1000;
+}
 
-        /* Elementos del dashboard ya se le hizo algunos ajustes */
-        .sidebar {
-            position: fixed;
-            width: 200px;
-            height: 100vh;
-            background: linear-gradient(180deg, #8d3a6d, #4a1f3d);
-            color: #fff;
-        }
+.sidebar.collapsed {
+    width: 70px;
+}
 
-        .sidebar h2 {
-            text-align: center;
-            padding: 25px 0;
-            border-bottom: 1px solid rgba(255,255,255,.2);
-        }
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 15px;
+    border-bottom: 1px solid rgba(255,255,255,.2);
+    position: relative;
+    overflow: visible; /* Añadido */
+}
 
-        .menu a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 25px;
-            color: #fff;
-            text-decoration: none;
-            transition: background .3s;
-        }
+.sidebar.collapsed .sidebar-header {
+    justify-content: center;
+    padding: 20px 10px;
+}
 
-        .menu a:hover {
-            background: rgba(230, 10, 216, 0.15);
-        }
-        
-        /*Contenido de la página que se verá reglejado de la base de datos*/
-        .main { /*Cuerpo principal*/
-            margin-left: 200px;
-            padding: 30px;
-        }
+.sidebar h2 {
+    white-space: nowrap;
+    font-size: 1.2rem;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    flex: 1;
+    overflow: hidden; /* Movido aquí */
+}
 
-        .topbar {
-            background: #fff;
-            padding: 15px 25px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,.08);
-        }
+.sidebar.collapsed h2 {
+    opacity: 0;
+    visibility: hidden;
+}
 
-        .content {
-            background: #fff;
-            padding: 30px;
-            border-radius: 16px;
-            min-height: 400px;
-            box-shadow: 0 4px 12px rgba(0,0,0,.08);
-        }
+.toggle-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: 6px;
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    flex-shrink: 0;
+    z-index: 10; /* Añadido para asegurar visibilidad */
+}
+
+.toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.menu {
+    overflow: hidden;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 25px;
+    color: #fff;
+    text-decoration: none;
+    transition: background 0.3s ease, padding 0.3s ease;
+    white-space: nowrap;
+    position: relative;
+}
+
+.menu a:hover {
+    background: rgba(230, 10, 216, 0.15);
+}
+
+.menu a i {
+    min-width: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    transition: margin 0.3s ease;
+}
+
+.menu a span {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    display: inline-block;
+    overflow: hidden; /* Añadido */
+}
+
+.sidebar.collapsed .menu a {
+    padding: 16px 0;
+    justify-content: center;
+}
+
+.sidebar.collapsed .menu a span {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+}
+
+.sidebar.collapsed .menu a i {
+    margin: 0;
+}
+
+/* Contenido principal */
+.main {
+    margin-left: 200px;
+    padding: 30px;
+    transition: margin-left 0.3s ease;
+}
+
+.main.expanded {
+    margin-left: 70px;
+}
+
+.topbar {
+    background: #fff;
+    padding: 15px 25px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+
+.content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    min-height: 400px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+
+/* Responsive - Menú superior en móvil */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        transition: none;
+        overflow: visible; /* Cambiado */
+    }
+    
+    .sidebar-header {
+        padding: 20px 25px;
+        justify-content: center;
+        position: relative;
+        min-height: 70px;
+        overflow: visible; /* Asegurado */
+    }
+    
+    .sidebar h2 {
+        opacity: 1;
+        visibility: visible;
+        position: relative;
+        font-size: 1.4rem;
+        text-align: center;
+        flex: none;
+        font-weight: 600;
+    }
+    
+    .toggle-btn {
+        position: absolute;
+        left: 25px;
+        font-size: 1.5rem;
+        padding: 10px 12px;
+        min-width: 45px;
+        z-index: 100; /* Aumentado */
+    }
+    
+    .sidebar.collapsed h2 {
+        opacity: 1;
+        visibility: visible;
+        position: relative;
+    }
+    
+    .sidebar.collapsed .sidebar-header {
+        justify-content: center;
+    }
+    
+    .menu {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+        padding: 0 10px;
+        max-height: 0;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: max-height 0.4s ease, opacity 0.3s ease, transform 0.3s ease, padding 0.4s ease;
+        overflow: hidden;
+    }
+    
+    /* Cuando está abierto en móvil (clase .mobile-open) */
+    .sidebar.mobile-open .menu {
+        max-height: 600px;
+        opacity: 1;
+        transform: translateY(0);
+        padding: 15px 10px;
+    }
+    
+    /* Los enlaces SIEMPRE mantienen su estructura de columna en móvil */
+    .menu a {
+        padding: 20px 10px;
+        justify-content: center;
+        flex-direction: column !important;
+        gap: 10px;
+        font-size: 0.95rem;
+        text-align: center;
+        border-radius: 12px;
+        margin: 5px;
+        transition: background 0.3s ease, transform 0.2s ease;
+        display: flex;
+    }
+    
+    /* Colores intercalados siempre aplicados */
+    .menu a:nth-child(odd) {
+        background: rgba(230, 10, 216, 0.15);
+    }
+    
+    .menu a:nth-child(even) {
+        background: rgba(230, 10, 216, 0.08);
+    }
+    
+    /* Hover más destacado */
+    .menu a:hover {
+        background: rgba(230, 10, 216, 0.25);
+        transform: scale(1.05);
+    }
+    
+    .menu a i {
+        font-size: 1.8rem;
+        min-width: auto;
+        margin: 0;
+    }
+    
+    .menu a span {
+        opacity: 1;
+        visibility: visible;
+        position: relative;
+        font-size: 0.85rem;
+        font-weight: 500;
+        width: auto;
+    }
+    
+    .main {
+        margin-left: 0;
+        margin-top: 70px;
+        padding: 20px;
+    }
+    
+    .main.expanded {
+        margin-left: 0;
+        margin-top: 70px;
+    }
+}
+
+/* Para pantallas muy pequeñas, usar 2 columnas con color uniforme */
+@media (max-width: 480px) {
+    .menu {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    .sidebar.mobile-open .menu {
+        max-height: 700px;
+    }
+    
+    /* Color uniforme en 2 columnas */
+    .menu a:nth-child(odd),
+    .menu a:nth-child(even) {
+        background: rgba(230, 10, 216, 0.15);
+    }
+    
+    .menu a:hover {
+        background: rgba(230, 10, 216, 0.25);
+    }
+}

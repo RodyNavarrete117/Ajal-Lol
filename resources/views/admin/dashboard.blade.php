@@ -8,16 +8,20 @@
     <!-- Iconos -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}"> <!-- Esta es la manera de colocar la dirección del CSS sucia de Rafa-->
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
 
-    <!--Usar esto para llamar los estilos del la carpeta assets y las carpetas correspondientes -->
     @stack('styles')
 </head>
 <body>
 
     <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <h2>Administrador</h2>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <button class="toggle-btn" id="toggleBtn">
+                <i class="fa fa-bars"></i>
+            </button>
+            <h2>Administrador</h2>
+        </div>
 
         <nav class="menu">
             <a href="{{ url('/admin/home') }}">
@@ -55,12 +59,10 @@
                 <span>Ajustes</span>
             </a>
         </nav>
-
-        </nav>
     </aside>
 
     <!-- CONTENIDO -->
-    <main class="main">
+    <main class="main" id="main">
 
         <div class="topbar">
             <h3>@yield('title')</h3>
@@ -72,5 +74,6 @@
 
     </main>
 
+    <script src="{{ asset('assets/js/dashboard.js') }}"></script>
 </body>
 </html>

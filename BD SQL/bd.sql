@@ -1,184 +1,195 @@
--- Crear base de datos
-CREATE DATABASE IF NOT EXISTS fundacion_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE fundacion_db;
+CREATE DATABASE IF NOT EXISTS prueba1
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 
--- Tabla: seccion
+USE prueba1;
+
+-- =========================
+-- USUARIOS
+-- =========================
+CREATE TABLE usuario (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    correo_usuario VARCHAR(100) NOT NULL UNIQUE,
+    contrasena_usuario VARCHAR(255) NOT NULL
+) ENGINE=InnoDB;
+
+-- =========================
+-- ROLES DE USUARIO
+-- =========================
+CREATE TABLE rol_usuario (
+    id_rol_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    cargo_usuario ENUM('administrador','editor') NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
+) ENGINE=InnoDB;
+
+-- =========================
+-- SECCIONES (DEPENDEN DEL ROL)
+-- =========================
 CREATE TABLE seccion (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    titulo VARCHAR(255) NOT NULL,
-    orden INT NOT NULL,
-    activo BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+    id_seccion INT AUTO_INCREMENT PRIMARY KEY,
+    id_rol_usuario INT NOT NULL,
+    titulo_seccion VARCHAR(100) NOT NULL,
+    estado_seccion TINYINT(1) DEFAULT 1,
+    FOREIGN KEY (id_rol_usuario) REFERENCES rol_usuario(id_rol_usuario)
+) ENGINE=InnoDB;
 
--- Tabla: inicio
+-- =========================
+-- INICIO
+-- =========================
 CREATE TABLE inicio (
-    id_seccion INT PRIMARY KEY,
-    titulo_inicio VARCHAR(255) NOT NULL,
+    id_inicio INT AUTO_INCREMENT PRIMARY KEY,
+    id_seccion INT NOT NULL,
+    titulo_inicio VARCHAR(150),
     texto_inicio TEXT,
     img_inicio VARCHAR(255),
-    url VARCHAR(255),
-    FOREIGN KEY (id_seccion) REFERENCES seccion(id) ON DELETE CASCADE
-);
+    url_inicio VARCHAR(255),
+    FOREIGN KEY (id_seccion) REFERENCES seccion(id_seccion)
+) ENGINE=InnoDB;
 
--- Tabla: widgets_nosotros
-CREATE TABLE widgets_nosotros (
-    id_widget INT AUTO_INCREMENT PRIMARY KEY,
-    dato_widget VARCHAR(100) NOT NULL,
-    subtitulo_widgets_nosotros VARCHAR(255)
-);
-
--- Tabla: nosotros
+-- =========================
+-- NOSOTROS
+-- =========================
 CREATE TABLE nosotros (
-    id_seccion INT PRIMARY KEY,
-    titulo_nosotros VARCHAR(255) NOT NULL,
-    imagen_seccion VARCHAR(255),
-    subtitulo_nosotros VARCHAR(255),
-    texto_seccion TEXT,
-    FOREIGN KEY (id_seccion) REFERENCES seccion(id) ON DELETE CASCADE
-);
+    id_nosotros INT AUTO_INCREMENT PRIMARY KEY,
+    id_seccion INT NOT NULL,
+    titulo_nosotros VARCHAR(150),
+    imagen_nosotros VARCHAR(255),
+    subtitulo_nosotros VARCHAR(150),
+    texto_nosotros TEXT,
+    FOREIGN KEY (id_seccion) REFERENCES seccion(id_seccion)
+) ENGINE=InnoDB;
 
--- Tabla: aliados
+-- =========================
+-- ALIADOS
+-- =========================
 CREATE TABLE aliados (
-    id_seccion  INT PRIMARY KEY,
-    id INT AUTO_INCREMENT UNIQUE,
+    id_aliados INT AUTO_INCREMENT PRIMARY KEY,
+    id_seccion INT NOT NULL,
     img_aliados VARCHAR(255),
-    FOREIGN KEY (id_seccion) REFERENCES seccion(id) ON DELETE CASCADE
-);
+    FOREIGN KEY (id_seccion) REFERENCES seccion(id_seccion)
+) ENGINE=InnoDB;
 
--- Tabla: widgets_actividades
-CREATE TABLE widgets_actividades (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    id_activades INT,
-    icono VARCHAR(255),
-    titulo VARCHAR(255),
-    texto TEXT
-);
-
--- Tabla: actividades
+-- =========================
+-- ACTIVIDADES
+-- =========================
 CREATE TABLE actividades (
-    id_seccion INT PRIMARY KEY,
-    id INT AUTO_INCREMENT UNIQUE,
-    titulo VARCHAR(255) NOT NULL,
-    año YEAR,
-    FOREIGN KEY (id_seccion) REFERENCES seccion(id) ON DELETE CASCADE
-);
+    id_actividad INT AUTO_INCREMENT PRIMARY KEY,
+    id_seccion INT NOT NULL,
+    anio_actividad INT,
+    titulo_actividad VARCHAR(150),
+    texto_actividad TEXT,
+    FOREIGN KEY (id_seccion) REFERENCES seccion(id_seccion)
+) ENGINE=InnoDB;
 
--- Tabla: categoria_proyectos
+-- =========================
+-- WIDGETS ACTIVIDADES
+-- =========================
+CREATE TABLE widgets_actividades (
+    id_widgetactividad INT AUTO_INCREMENT PRIMARY KEY,
+    actividad_id INT NOT NULL,
+    titulo VARCHAR(100),
+    texto TEXT,
+    FOREIGN KEY (actividad_id) REFERENCES actividades(id_actividad)
+) ENGINE=InnoDB;
+
+-- =========================
+-- CATEGORÍAS PROYECTOS
+-- =========================
 CREATE TABLE categoria_proyectos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(255) NOT NULL UNIQUE
-);
-
--- Tabla: proyectos
-CREATE TABLE proyectos (
-    id_seccion INT,
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    titulo VARCHAR(255) NOT NULL,
-    categoria_id INT,
-    año YEAR,
-    FOREIGN KEY (id_seccion) REFERENCES seccion(id) ON DELETE CASCADE,
-    FOREIGN KEY (categoria_id) REFERENCES categoria_proyectos(id) ON DELETE SET NULL
-);
-
--- Tabla: imagenes_proyectos
-CREATE TABLE imagenes_proyectos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    proyecto_id INT NOT NULL,
-    ruta VARCHAR(255) NOT NULL,
-    orden INT,
+    id_categoria INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
     descripcion TEXT,
-    creado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (proyecto_id) REFERENCES proyectos(id) ON DELETE CASCADE
-);
+    orden INT
+) ENGINE=InnoDB;
 
--- Tabla: directiva
+-- =========================
+-- PROYECTOS
+-- =========================
+CREATE TABLE proyectos (
+    id_proyecto INT AUTO_INCREMENT PRIMARY KEY,
+    id_seccion INT NOT NULL,
+    categoria INT NOT NULL,
+    titulo_proyecto VARCHAR(150),
+    descripcion_proyecto TEXT,
+    anio_proyecto INT,
+    FOREIGN KEY (id_seccion) REFERENCES seccion(id_seccion),
+    FOREIGN KEY (categoria) REFERENCES categoria_proyectos(id_categoria)
+) ENGINE=InnoDB;
+
+-- =========================
+-- IMÁGENES PROYECTOS
+-- =========================
+CREATE TABLE imagenes_proyectos (
+    id_imagen INT AUTO_INCREMENT PRIMARY KEY,
+    proyecto INT NOT NULL,
+    ruta VARCHAR(255),
+    descripcion TEXT,
+    fecha_creacion DATE,
+    FOREIGN KEY (proyecto) REFERENCES proyectos(id_proyecto)
+) ENGINE=InnoDB;
+
+-- =========================
+-- DIRECTIVA
+-- =========================
 CREATE TABLE directiva (
-    id_seccion INT,
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(255) NOT NULL,
-    img VARCHAR(255),
-    orden INT,
-    FOREIGN KEY (id_seccion) REFERENCES seccion(id) ON DELETE CASCADE
-);
+    id_directiva INT AUTO_INCREMENT PRIMARY KEY,
+    id_seccion INT NOT NULL,
+    nombre_directiva VARCHAR(150),
+    foto_directiva VARCHAR(255),
+    orden_directiva INT,
+    FOREIGN KEY (id_seccion) REFERENCES seccion(id_seccion)
+) ENGINE=InnoDB;
 
--- Tabla: preguntas_frecuentes
+-- =========================
+-- PREGUNTAS FRECUENTES
+-- =========================
 CREATE TABLE preguntas_frecuentes (
-    id_seccion INT,
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    pregunta TEXT NOT NULL,
-    respuesta TEXT NOT NULL,
-    FOREIGN KEY (id_seccion) REFERENCES seccion(id) ON DELETE CASCADE
-);
+    id_preguntasfrecuentes INT AUTO_INCREMENT PRIMARY KEY,
+    id_seccion INT NOT NULL,
+    titulo_pregunta VARCHAR(150),
+    texto_respuesta TEXT,
+    FOREIGN KEY (id_seccion) REFERENCES seccion(id_seccion)
+) ENGINE=InnoDB;
 
--- Tabla: contacto
+-- =========================
+-- CONTACTO
+-- =========================
 CREATE TABLE contacto (
-    id_seccion INT PRIMARY KEY,
-    direccion VARCHAR(255),
-    telefono VARCHAR(50),
-    email VARCHAR(100),
-    FOREIGN KEY (id_seccion) REFERENCES seccion(id) ON DELETE CASCADE
-);
+    id_contacto INT AUTO_INCREMENT PRIMARY KEY,
+    id_seccion INT NOT NULL,
+    direccion_contacto VARCHAR(255),
+    telefono_contacto VARCHAR(50),
+    email_contacto VARCHAR(100),
+    FOREIGN KEY (id_seccion) REFERENCES seccion(id_seccion)
+) ENGINE=InnoDB;
 
--- Tabla: formulario_contacto
+-- =========================
+-- TABLAS INDEPENDIENTES
+-- =========================
 CREATE TABLE formulario_contacto (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_completo VARCHAR(255) NOT NULL,
-    correo VARCHAR(100) NOT NULL,
-    asunto VARCHAR(255),
-    mensaje TEXT NOT NULL,
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+    id_formcontacto INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_completo VARCHAR(150),
+    correo VARCHAR(100),
+    numero_telefonico VARCHAR(50),
+    asunto VARCHAR(150),
+    mensaje TEXT,
+    fecha_envio DATE
+) ENGINE=InnoDB;
 
--- Tabla: redes_sociales
 CREATE TABLE redes_sociales (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    url VARCHAR(255) NOT NULL
-);
+    id_redes_sociales INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_redsocial VARCHAR(50),
+    url_redsocial VARCHAR(255)
+) ENGINE=InnoDB;
 
--- Tabla: rol_usuario
-CREATE TABLE rol_usuario (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    rol VARCHAR(50) NOT NULL UNIQUE
-);
-
--- Tabla: usuario
-CREATE TABLE usuario (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    correo VARCHAR(100) NOT NULL UNIQUE,
-    contraseña VARCHAR(255) NOT NULL,
-    rol_usuario_id INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (rol_usuario_id) REFERENCES rol_usuario(id) ON DELETE SET NULL
-);
-
--- Tabla: informe
 CREATE TABLE informe (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_organizacion VARCHAR(255) NOT NULL,
-    evento VARCHAR(255),
-    lugar VARCHAR(255),
+    id_informe INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_organizacion VARCHAR(150),
+    evento VARCHAR(150),
+    lugar VARCHAR(150),
     fecha DATE,
-    numero INT,
+    numero_telefonico VARCHAR(50),
     personas_beneficiarias INT,
-    curp VARCHAR(18)
-);
-
--- Insertar roles por defecto
-INSERT INTO rol_usuario (rol) VALUES 
-('administrador'), 
-('editor'), 
-('usuario');
-
--- Insertar secciones principales
-INSERT INTO seccion (titulo, orden, activo) VALUES 
-('Inicio', 1, TRUE),
-('Nosotros', 2, TRUE),
-('Aliados', 3, TRUE),
-('Actividades', 4, TRUE),
-('Proyectos', 5, TRUE),
-('Directiva', 6, TRUE),
-('Preguntas Frecuentes', 7, TRUE),
-('Contacto', 8, TRUE);
+    curp VARCHAR(30)
+) ENGINE=InnoDB;

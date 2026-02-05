@@ -16,16 +16,16 @@ CREATE TABLE seccion (
 CREATE TABLE inicio (
     id_seccion INT PRIMARY KEY,
     titulo_inicio VARCHAR(255) NOT NULL,
-    texto TEXT,
-    img VARCHAR(255),
+    texto_inicio TEXT,
+    img_inicio VARCHAR(255),
     url VARCHAR(255),
     FOREIGN KEY (id_seccion) REFERENCES seccion(id) ON DELETE CASCADE
 );
 
 -- Tabla: widgets_nosotros
 CREATE TABLE widgets_nosotros (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    dato VARCHAR(100) NOT NULL,
+    id_widget INT AUTO_INCREMENT PRIMARY KEY,
+    dato_widget VARCHAR(100) NOT NULL,
     subtitulo_widgets_nosotros VARCHAR(255)
 );
 
@@ -33,15 +33,15 @@ CREATE TABLE widgets_nosotros (
 CREATE TABLE nosotros (
     id_seccion INT PRIMARY KEY,
     titulo_nosotros VARCHAR(255) NOT NULL,
-    imagen VARCHAR(255),
+    imagen_seccion VARCHAR(255),
     subtitulo_nosotros VARCHAR(255),
-    texto TEXT,
+    texto_seccion TEXT,
     FOREIGN KEY (id_seccion) REFERENCES seccion(id) ON DELETE CASCADE
 );
 
 -- Tabla: aliados
 CREATE TABLE aliados (
-    id_seccion INT PRIMARY KEY,
+    id_seccion  INT PRIMARY KEY,
     id INT AUTO_INCREMENT UNIQUE,
     img_aliados VARCHAR(255),
     FOREIGN KEY (id_seccion) REFERENCES seccion(id) ON DELETE CASCADE

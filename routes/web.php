@@ -24,12 +24,3 @@ Route::get('/admin/manual', fn () => view('admin.manual'));
 Route::get('/admin/users', fn () => view('admin.users'));
 Route::get('/admin/forms', fn () => view('admin.forms'));
 Route::get('/admin/settings', fn () => view('admin.settings'));
-
-/* User */
-Route::get('/user/home', fn () => view('user.home'))->name('user.home');
-
-Route::get('/user/page', fn () => view('user.page'));
-Route::get('/user/report', fn () => view('user.reports'));
-Route::get('/user/manual', fn () => view('user.manual'));
-Route::get('/user/forms', fn () => view('user.forms'));
-Route::get('/user/settings', fn () => view('user.settings'));

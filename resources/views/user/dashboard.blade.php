@@ -8,17 +8,22 @@
     <!-- Iconos -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
-    <!-- CSS -->
+    <!-- CSS base del dashboard -->
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
 
-        <!--Usar esto para llamar los estilos del la carpeta assets y las carpetas correspondientes -->
+    <!-- CSS específico por vista -->
     @stack('styles')
 </head>
 <body>
 
     <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <h2>Panel de Usuario</h2>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <button class="toggle-btn" id="toggleBtn">
+                <i class="fa fa-bars"></i>
+            </button>
+            <h2>Usuario</h2>
+        </div>
 
         <nav class="menu">
             <a href="{{ url('/user/home') }}">
@@ -50,16 +55,11 @@
                 <i class="fa fa-gear"></i>
                 <span>Ajustes</span>
             </a>
-
-            <a href="{{ url('/logout') }}">
-                <i class="fa fa-right-from-bracket"></i>
-                <span>Cerrar sesión</span>
-            </a>
         </nav>
     </aside>
 
     <!-- CONTENIDO -->
-    <main class="main">
+    <main class="main" id="main">
 
         <div class="topbar">
             <h3>@yield('title')</h3>
@@ -71,5 +71,7 @@
 
     </main>
 
+    <!-- JS del dashboard -->
+    <script src="{{ asset('assets/js/dashboard.js') }}"></script>
 </body>
 </html>

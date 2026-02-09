@@ -133,14 +133,6 @@ body {
     margin-left: 70px;
 }
 
-.topbar {
-    background: #fff;
-    padding: 15px 25px;
-    border-radius: 12px;
-    margin-bottom: 25px;
-    box-shadow: 0 4px 12px rgba(0,0,0,.08);
-}
-
 .content {
     background: #fff;
     padding: 30px;

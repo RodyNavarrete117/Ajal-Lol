@@ -11,7 +11,7 @@
     <!-- Hero Section -->
     <div class="hero-section">
         <div class="hero-content">
-            <<h1 class="hero-title">
+            <h1 class="hero-title">
     Bienvenido {{ session('email') ?? 'Usuario' }}
 </h1>
 

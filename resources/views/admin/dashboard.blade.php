@@ -64,10 +64,6 @@
     <!-- CONTENIDO -->
     <main class="main" id="main">
 
-        <div class="topbar">
-            <h3>@yield('title')</h3>
-        </div>
-
         <div class="content">
             @yield('content')
         </div>

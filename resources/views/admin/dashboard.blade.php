@@ -20,7 +20,9 @@
             <button class="toggle-btn" id="toggleBtn">
                 <i class="fa fa-bars"></i>
             </button>
-            <h2>Administrador</h2>
+            <h2 style="text-transform: capitalize;">
+                {{ session('rol') ?? 'Panel' }}
+            </h2>
         </div>
 
         <nav class="menu">

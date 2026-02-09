@@ -11,7 +11,7 @@ class AuthController extends Controller
     {
         // Validación mínima
         $request->validate([
-            'email' => 'required|email',
+            'email'    => 'required|email',
             'password' => 'required'
         ]);
 
@@ -28,19 +28,17 @@ class AuthController extends Controller
             ->first();
 
         if (!$usuario) {
-            return back()->withErrors([
-                'email' => 'Credenciales incorrectas'
-            ]);
+            return back()->withErrors(['email' => 'Credenciales incorrectas']);
         }
 
-        // Guardar sesión (solo para usar datos)
+        // Guardar sesión (opcional, pero sin seguridad)
         session([
             'user_id' => $usuario->id_usuario,
             'email'   => $usuario->correo_usuario,
             'rol'     => $usuario->cargo_usuario
         ]);
 
-        // Entrar directo al panel
-        return redirect()->route('admin.home');
+        // Redirige al loader
+        return redirect()->route('loading');
     }
 }

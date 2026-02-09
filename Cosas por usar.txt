@@ -2,3 +2,10 @@
 -Servidor de prueba Netlify
 -Base de datos Always data
 -https://tablericons.com/
+
+Usuarios y contraseñas de prueba
+Contraseña
+| ----------------------------------------------- | ------------- | -------- |
+| admin@ajallol.com| administrador | 12345678 |
+| editor@ajallol.com | editor        | 12345678 |
+

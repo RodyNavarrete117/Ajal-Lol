@@ -11,8 +11,16 @@
     <!-- Hero Section -->
     <div class="hero-section">
         <div class="hero-content">
-            <h1 class="hero-title">Bienvenido al Panel de Administración</h1>
-            <p class="hero-subtitle">Gestiona todo tu sistema desde un solo lugar</p>
+            <<h1 class="hero-title">
+    Bienvenido {{ session('email') ?? 'Usuario' }}
+</h1>
+
+            <p class="hero-subtitle">
+                Rol actual:
+                <strong style="text-transform: capitalize;">
+                    {{ session('rol') ?? 'sin rol' }}
+                </strong>
+            </p>
             <div class="hero-stats">
                 <div class="stat-item">
                     <span class="stat-number">{{ $totalUsers ?? '0' }}</span>

@@ -10,7 +10,7 @@ USE prueba1;
 CREATE TABLE usuario (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
     correo_usuario VARCHAR(100) NOT NULL UNIQUE,
-    contrasena_usuario VARCHAR(255) NOT NULL
+    contraseña_usuario VARCHAR(255) NOT NULL
 ) ENGINE=InnoDB;
 
 -- =========================
@@ -24,7 +24,7 @@ CREATE TABLE rol_usuario (
 ) ENGINE=InnoDB;
 
 -- =========================
--- SECCIONES (DEPENDEN DEL ROL)
+-- SECCIONES
 -- =========================
 CREATE TABLE seccion (
     id_seccion INT AUTO_INCREMENT PRIMARY KEY,
@@ -193,3 +193,19 @@ CREATE TABLE informe (
     personas_beneficiarias INT,
     curp VARCHAR(30)
 ) ENGINE=InnoDB;
+
+-- =========================
+-- INSERTS ADMIN Y EDITOR (CON CIFRADO)
+-- =========================
+
+INSERT INTO usuario (correo_usuario, contraseña_usuario) VALUES
+('admin@ajallol.com', SHA2('12345678', 256)),   -- administrador | contraseña: 12345678
+('editor@ajallol.com', SHA2('12345678', 256));  -- editor        | contraseña: 12345678
+
+INSERT INTO rol_usuario (id_usuario, cargo_usuario) VALUES
+(1, 'administrador'),
+(2, 'editor');
+
+INSERT INTO seccion (id_rol_usuario, titulo_seccion, estado_seccion) VALUES
+(1, 'Panel Administrador', 1),
+(2, 'Panel Editor', 1);

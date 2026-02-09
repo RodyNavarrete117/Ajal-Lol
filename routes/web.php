@@ -15,9 +15,8 @@ Route::get('/login', function () {
 
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
-/* Admin */
+/* Admin (SIN SEGURIDAD POR AHORA) */
 Route::get('/admin/home', fn () => view('admin.home'))->name('admin.home');
-
 Route::get('/admin/page', fn () => view('admin.page'));
 Route::get('/admin/report', fn () => view('admin.reports'));
 Route::get('/admin/manual', fn () => view('admin.manual'));

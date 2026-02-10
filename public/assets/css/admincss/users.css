@@ -251,30 +251,15 @@
 .header-left {
     display: flex;
     align-items: center;
-}
-
-.btn-back {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-secondary);
-    transition: all 0.2s ease;
-    border-radius: 8px;
-}
-
-.btn-back:hover {
-    background: var(--bg-gray);
-    color: var(--text-primary);
-    transform: translateX(-3px);
+    gap: 15px;
+    flex: 1;
+    min-width: 0;
 }
 
 .header-right {
     display: flex;
     gap: 10px;
+    flex-shrink: 0;
 }
 
 .btn-add-user {
@@ -341,8 +326,9 @@
 
 .search-box {
     position: relative;
-    max-width: 400px;
+    max-width: 350px;
     width: 100%;
+    flex: 1;
 }
 
 .search-icon {
@@ -940,10 +926,17 @@ select.form-control {
     .users-header {
         flex-direction: column;
         align-items: stretch;
+        gap: 12px;
     }
 
     .header-left {
-        justify-content: flex-start;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    
+    .btn-back {
+        align-self: flex-start;
     }
 
     .header-right {
@@ -978,10 +971,12 @@ select.form-control {
 
     .admin-table tbody tr {
         display: block;
-        margin-bottom: 16px;
+        margin-bottom: 20px;
         border: 1px solid var(--border-color);
-        border-radius: 8px;
+        border-radius: 12px;
         overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        background: var(--bg-white);
     }
 
     .admin-table tbody tr:nth-child(even) {
@@ -992,13 +987,18 @@ select.form-control {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 12px 16px;
+        padding: 14px 18px;
         border-bottom: 1px solid var(--border-color);
         text-align: right;
     }
 
+    .admin-table td:first-child {
+        padding-top: 16px;
+    }
+
     .admin-table td:last-child {
         border-bottom: none;
+        padding-bottom: 16px;
     }
 
     .admin-table td::before {
@@ -1011,21 +1011,25 @@ select.form-control {
 
     .admin-table td[data-label="Acciones"] {
         display: block;
+        padding-top: 12px;
+        background: var(--bg-gray);
     }
 
     .admin-table td[data-label="Acciones"]::before {
         display: block;
-        margin-bottom: 8px;
+        margin-bottom: 12px;
     }
 
     .action-buttons {
         width: 100%;
         flex-direction: column;
+        gap: 10px;
     }
 
     .btn-action {
         width: 100%;
         justify-content: center;
+        padding: 10px 16px;
     }
 
     /* Modal responsive */

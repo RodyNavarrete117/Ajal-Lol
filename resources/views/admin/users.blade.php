@@ -62,11 +62,12 @@
 
     <div class="users-header">
         <div class="header-left">
-            <button class="btn-back" onclick="history.back()">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <div class="search-box">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-            </button>
+                <input type="text" placeholder="Buscar por nombre o correo..." class="search-input" id="searchInput">
+            </div>
         </div>
         <div class="header-right">
             <button class="btn-add-user" onclick="openAddUserModal()">
@@ -75,15 +76,6 @@
                 </svg>
                 Agregar nuevo usuario
             </button>
-        </div>
-    </div>
-
-    <div class="search-container">
-        <div class="search-box">
-            <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <input type="text" placeholder="Buscar por nombre o correo..." class="search-input" id="searchInput">
         </div>
     </div>
 

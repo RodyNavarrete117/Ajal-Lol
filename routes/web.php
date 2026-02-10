@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 
 /* Página principal */
 Route::get('/', fn() => view('index'));
@@ -18,6 +19,6 @@ Route::get('/admin/home', fn() => view('admin.home'))->name('admin.home');
 Route::get('/admin/page', fn() => view('admin.page'));
 Route::get('/admin/report', fn() => view('admin.reports'));
 Route::get('/admin/manual', fn() => view('admin.manual'));
-Route::get('/admin/users', fn() => view('admin.users'));
+Route::get('/admin/users', [UserController::class, 'index']);
 Route::get('/admin/forms', fn() => view('admin.forms'));
 Route::get('/admin/settings', fn() => view('admin.settings'));

@@ -8,12 +8,13 @@
 
 @section('content')
 <div class="admin-home">
+
     <!-- Hero Section -->
     <div class="hero-section">
         <div class="hero-content">
             <h1 class="hero-title">
-    Bienvenido {{ session('email') ?? 'Usuario' }}
-</h1>
+                Bienvenido {{ session('nombre') ?? 'Usuario' }}
+            </h1>
 
             <p class="hero-subtitle">
                 Rol actual:
@@ -21,6 +22,7 @@
                     {{ session('rol') ?? 'sin rol' }}
                 </strong>
             </p>
+
             <div class="hero-stats">
                 <div class="stat-item">
                     <span class="stat-number">{{ $totalUsers ?? '0' }}</span>
@@ -36,6 +38,7 @@
                 </div>
             </div>
         </div>
+
         <div class="hero-decoration">
             <div class="decoration-circle circle-1"></div>
             <div class="decoration-circle circle-2"></div>
@@ -50,6 +53,7 @@
     </div>
 
     <div class="widgets-grid">
+
         <a href="{{ url('/admin/home') }}" class="widget-card card-home">
             <div class="widget-icon">
                 <i class="fa fa-house"></i>
@@ -140,6 +144,7 @@
                 <i class="fa fa-arrow-right"></i>
             </div>
         </a>
+
     </div>
 </div>
 @endsection

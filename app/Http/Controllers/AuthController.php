@@ -18,22 +18,29 @@ class AuthController extends Controller
         // Buscar usuario + rol
         $usuario = DB::table('usuario')
             ->join('rol_usuario', 'usuario.id_usuario', '=', 'rol_usuario.id_usuario')
-            ->where('correo_usuario', $request->email)
-            ->where('contraseña_usuario', hash('sha256', $request->password))
+            ->where('usuario.correo_usuario', $request->email)
+            ->where(
+                'usuario.contraseña_usuario',
+                hash('sha256', $request->password)
+            )
             ->select(
                 'usuario.id_usuario',
+                'usuario.nombre_usuario',
                 'usuario.correo_usuario',
                 'rol_usuario.cargo_usuario'
             )
             ->first();
 
         if (!$usuario) {
-            return back()->withErrors(['email' => 'Credenciales incorrectas']);
+            return back()->withErrors([
+                'email' => 'Credenciales incorrectas'
+            ]);
         }
 
-        // Guardar sesión (opcional, pero sin seguridad)
-        session([
+        // Guardar sesión
+        session()->put([
             'user_id' => $usuario->id_usuario,
+            'nombre'  => $usuario->nombre_usuario,
             'email'   => $usuario->correo_usuario,
             'rol'     => $usuario->cargo_usuario
         ]);

@@ -9,6 +9,7 @@ USE prueba1;
 -- =========================
 CREATE TABLE usuario (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_usuario VARCHAR(150) NOT NULL,
     correo_usuario VARCHAR(100) NOT NULL UNIQUE,
     contraseña_usuario VARCHAR(255) NOT NULL
 ) ENGINE=InnoDB;
@@ -195,17 +196,20 @@ CREATE TABLE informe (
 ) ENGINE=InnoDB;
 
 -- =========================
--- INSERTS ADMIN Y EDITOR (CON CIFRADO)
+-- INSERTS INICIALES
 -- =========================
 
-INSERT INTO usuario (correo_usuario, contraseña_usuario) VALUES
-('admin@ajallol.com', SHA2('12345678', 256)),   -- administrador | contraseña: 12345678
-('editor@ajallol.com', SHA2('12345678', 256));  -- editor        | contraseña: 12345678
+-- Usuarios
+INSERT INTO usuario (nombre_usuario, correo_usuario, contraseña_usuario) VALUES
+('Leonel Sánchez Martín', 'admin@ajallol.com', SHA2('12345678', 256)),
+('Editor General', 'editor@ajallol.com', SHA2('12345678', 256));
 
+-- Roles de usuario
 INSERT INTO rol_usuario (id_usuario, cargo_usuario) VALUES
 (1, 'administrador'),
 (2, 'editor');
 
+-- Secciones iniciales
 INSERT INTO seccion (id_rol_usuario, titulo_seccion, estado_seccion) VALUES
 (1, 'Panel Administrador', 1),
 (2, 'Panel Editor', 1);

@@ -73,5 +73,8 @@
     </main>
 
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
+
+    @stack('scripts')
+
 </body>
 </html>

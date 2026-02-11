@@ -32,7 +32,7 @@
                     </svg>
                 </div>
                 <div class="stat-content">
-                    <span class="stat-value" id="totalUsers">{{ $usuarios->count() }}</span>
+                    <span class="stat-value" id="totalUsers">{{ $totalUsuarios }}</span>
                     <span class="stat-label">Total Usuarios</span>
                 </div>
             </div>
@@ -44,7 +44,7 @@
                     </svg>
                 </div>
                 <div class="stat-content">
-                    <span class="stat-value" id="adminUsers">{{ $usuarios->where('cargo_usuario', 'administrador')->count() }}</span>
+                    <span class="stat-value" id="adminUsers">{{ $totalAdmins }}</span>
                     <span class="stat-label">Administradores</span>
                 </div>
             </div>
@@ -55,7 +55,7 @@
                     </svg>
                 </div>
                 <div class="stat-content">
-                    <span class="stat-value" id="regularUsers">{{ $usuarios->where('cargo_usuario', 'editor')->count() }}</span>
+                    <span class="stat-value" id="regularUsers">{{ $totalEditores }}</span>
                     <span class="stat-label">Editores</span>
                 </div>
             </div>
@@ -101,9 +101,13 @@
                         <td data-label="Nombre" class="user-name">{{ $usuario->nombre_usuario }}</td>
                         <td data-label="Correo" class="user-email">{{ $usuario->correo_usuario }}</td>
                         <td data-label="Asignación">
-                            <span class="badge {{ $usuario->cargo_usuario == 'administrador' ? 'badge-admin' : 'badge-user' }} user-role">
-                                {{ ucfirst($usuario->cargo_usuario) }}
-                            </span>
+                            @if($usuario->cargo_usuario)
+                                <span class="badge {{ strtolower($usuario->cargo_usuario) == 'administrador' ? 'badge-admin' : 'badge-user' }} user-role">
+                                    {{ ucfirst(strtolower($usuario->cargo_usuario)) }}
+                                </span>
+                            @else
+                                <span class="badge badge-user user-role">Sin rol</span>
+                            @endif
                         </td>
                         <td data-label="Contraseña"><span class="password-text">******</span></td>
                         <td data-label="Acciones">

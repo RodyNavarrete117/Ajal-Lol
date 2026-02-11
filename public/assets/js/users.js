@@ -13,18 +13,32 @@ function updateStats() {
     let regularCount = 0;
     
     rows.forEach(row => {
-        const role = row.querySelector('.user-role').textContent;
-        if (role === 'Administrador') {
-            adminCount++;
-        } else if (role === 'Editor') {
-            regularCount++;
+        const roleElement = row.querySelector('.user-role');
+        if (roleElement) {
+            const role = roleElement.textContent.trim().toLowerCase();
+            
+            if (role === 'administrador') {
+                adminCount++;
+            } else if (role === 'editor') {
+                regularCount++;
+            }
         }
     });
     
     // Animar los números con efecto de conteo
-    animateValue('totalUsers', parseInt(document.getElementById('totalUsers').textContent), totalUsers, 500);
-    animateValue('adminUsers', parseInt(document.getElementById('adminUsers').textContent), adminCount, 500);
-    animateValue('regularUsers', parseInt(document.getElementById('regularUsers').textContent), regularCount, 500);
+    const totalElement = document.getElementById('totalUsers');
+    const adminElement = document.getElementById('adminUsers');
+    const regularElement = document.getElementById('regularUsers');
+    
+    if (totalElement) {
+        animateValue('totalUsers', parseInt(totalElement.textContent) || 0, totalUsers, 500);
+    }
+    if (adminElement) {
+        animateValue('adminUsers', parseInt(adminElement.textContent) || 0, adminCount, 500);
+    }
+    if (regularElement) {
+        animateValue('regularUsers', parseInt(regularElement.textContent) || 0, regularCount, 500);
+    }
 }
 
 // ========================================
@@ -49,37 +63,47 @@ function animateValue(id, start, end, duration) {
 // ========================================
 // BÚSQUEDA EN TIEMPO REAL
 // ========================================
-document.getElementById('searchInput')?.addEventListener('input', function() {
-    const searchTerm = this.value.toLowerCase().trim();
-    const rows = document.querySelectorAll('.user-row');
-    let visibleCount = 0;
-    
-    rows.forEach(row => {
-        const name = row.querySelector('.user-name').textContent.toLowerCase();
-        const email = row.querySelector('.user-email').textContent.toLowerCase();
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+        const rows = document.querySelectorAll('.user-row');
+        let visibleCount = 0;
         
-        if (name.includes(searchTerm) || email.includes(searchTerm)) {
-            row.style.display = '';
-            visibleCount++;
-            // Agregar animación de fade in
-            row.style.animation = 'fadeInUp 0.3s ease-out';
-        } else {
-            row.style.display = 'none';
+        rows.forEach(row => {
+            const nameElement = row.querySelector('.user-name');
+            const emailElement = row.querySelector('.user-email');
+            
+            if (nameElement && emailElement) {
+                const name = nameElement.textContent.toLowerCase();
+                const email = emailElement.textContent.toLowerCase();
+                
+                if (name.includes(searchTerm) || email.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleCount++;
+                    // Agregar animación de fade in
+                    row.style.animation = 'fadeInUp 0.3s ease-out';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        });
+        
+        // Mostrar mensaje si no hay resultados
+        const noResults = document.getElementById('noResults');
+        const tableWrapper = document.querySelector('.table-wrapper');
+        
+        if (noResults && tableWrapper) {
+            if (visibleCount === 0 && searchTerm !== '') {
+                noResults.style.display = 'flex';
+                tableWrapper.style.display = 'none';
+            } else {
+                noResults.style.display = 'none';
+                tableWrapper.style.display = 'block';
+            }
         }
     });
-    
-    // Mostrar mensaje si no hay resultados
-    const noResults = document.getElementById('noResults');
-    const tableWrapper = document.querySelector('.table-wrapper');
-    
-    if (visibleCount === 0) {
-        noResults.style.display = 'flex';
-        tableWrapper.style.display = 'none';
-    } else {
-        noResults.style.display = 'none';
-        tableWrapper.style.display = 'block';
-    }
-});
+}
 
 // ========================================
 // FUNCIÓN PARA ABRIR MODAL DE AGREGAR
@@ -300,7 +324,19 @@ async function saveUser(event) {
 // ========================================
 async function deleteUser(id) {
     const row = document.querySelector(`tr[data-user-id="${id}"]`);
-    const name = row.querySelector('.user-name').textContent;
+    
+    if (!row) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo encontrar el usuario',
+            confirmButtonColor: '#7d3f6a'
+        });
+        return;
+    }
+    
+    const nameElement = row.querySelector('.user-name');
+    const name = nameElement ? nameElement.textContent : 'este usuario';
     
     const result = await Swal.fire({
         title: '¿Estás seguro?',

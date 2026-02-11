@@ -6,6 +6,8 @@
 <link rel="stylesheet" href="{{ asset('assets/css/admincss/users.css') }}">
 <!-- Sweet Alert 2 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<!-- CSRF Token para peticiones AJAX -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @endpush
 
 @section('content')
@@ -30,7 +32,7 @@
                     </svg>
                 </div>
                 <div class="stat-content">
-                    <span class="stat-value" id="totalUsers">4</span>
+                    <span class="stat-value" id="totalUsers">{{ $usuarios->count() }}</span>
                     <span class="stat-label">Total Usuarios</span>
                 </div>
             </div>
@@ -42,7 +44,7 @@
                     </svg>
                 </div>
                 <div class="stat-content">
-                    <span class="stat-value" id="adminUsers">1</span>
+                    <span class="stat-value" id="adminUsers">{{ $usuarios->where('cargo_usuario', 'administrador')->count() }}</span>
                     <span class="stat-label">Administradores</span>
                 </div>
             </div>
@@ -53,8 +55,8 @@
                     </svg>
                 </div>
                 <div class="stat-content">
-                    <span class="stat-value" id="regularUsers">3</span>
-                    <span class="stat-label">Usuarios Regular</span>
+                    <span class="stat-value" id="regularUsers">{{ $usuarios->where('cargo_usuario', 'editor')->count() }}</span>
+                    <span class="stat-label">Editores</span>
                 </div>
             </div>
         </div>
@@ -93,21 +95,26 @@
                     </tr>
                 </thead>
                 <tbody id="usersTableBody">
-                    <tr data-user-id="1" class="user-row">
-                        <td data-label="Número" class="user-number">1</td>
-                        <td data-label="Nombre" class="user-name">Leonel Sanchéz Martín</td>
-                        <td data-label="Correo" class="user-email">aboutme@gmail.com</td>
-                        <td data-label="Asignación"><span class="badge badge-admin user-role">Administrador</span></td>
+                    @forelse($usuarios as $index => $usuario)
+                    <tr data-user-id="{{ $usuario->id_usuario }}" class="user-row">
+                        <td data-label="Número" class="user-number">{{ $index + 1 }}</td>
+                        <td data-label="Nombre" class="user-name">{{ $usuario->nombre_usuario }}</td>
+                        <td data-label="Correo" class="user-email">{{ $usuario->correo_usuario }}</td>
+                        <td data-label="Asignación">
+                            <span class="badge {{ $usuario->cargo_usuario == 'administrador' ? 'badge-admin' : 'badge-user' }} user-role">
+                                {{ ucfirst($usuario->cargo_usuario) }}
+                            </span>
+                        </td>
                         <td data-label="Contraseña"><span class="password-text">******</span></td>
                         <td data-label="Acciones">
                             <div class="action-buttons">
-                                <button class="btn-action btn-edit" onclick='editUser(1)'>
+                                <button class="btn-action btn-edit" onclick='editUser({{ $usuario->id_usuario }})'>
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                         <path d="M11.3333 2.00004C11.5084 1.82494 11.716 1.68605 11.9438 1.59129C12.1716 1.49653 12.4151 1.44775 12.6609 1.44775C12.9068 1.44775 13.1502 1.49653 13.3781 1.59129C13.6059 1.68605 13.8135 1.82494 13.9886 2.00004C14.1637 2.17513 14.3026 2.38274 14.3973 2.61057C14.4921 2.83839 14.5409 3.08185 14.5409 3.32771C14.5409 3.57357 14.4921 3.81703 14.3973 4.04485C14.3026 4.27268 14.1637 4.48029 13.9886 4.65538L5.16663 13.4774L1.33329 14.6667L2.52263 10.8334L11.3333 2.00004Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                     <span>Editar</span>
                                 </button>
-                                <button class="btn-action btn-delete" onclick="deleteUser(1)">
+                                <button class="btn-action btn-delete" onclick="deleteUser({{ $usuario->id_usuario }})">
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                         <path d="M2 4H3.33333H14M5.33333 4V2.66667C5.33333 2.31304 5.47381 1.97391 5.72386 1.72386C5.97391 1.47381 6.31304 1.33333 6.66667 1.33333H9.33333C9.68696 1.33333 10.0261 1.47381 10.2761 1.72386C10.5262 1.97391 10.6667 2.31304 10.6667 2.66667V4M12.6667 4V13.3333C12.6667 13.687 12.5262 14.0261 12.2761 14.2761C12.0261 14.5262 11.687 14.6667 11.3333 14.6667H4.66667C4.31304 14.6667 3.97391 14.5262 3.72386 14.2761C3.47381 14.0261 3.33333 13.687 3.33333 13.3333V4H12.6667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
@@ -116,80 +123,21 @@
                             </div>
                         </td>
                     </tr>
-                    <tr data-user-id="2" class="user-row">
-                        <td data-label="Número" class="user-number">2</td>
-                        <td data-label="Nombre" class="user-name">Yazmín Carrillo Ek</td>
-                        <td data-label="Correo" class="user-email">yazmin.carrillo@gmail.com</td>
-                        <td data-label="Asignación"><span class="badge badge-user user-role">Usuario</span></td>
-                        <td data-label="Contraseña"><span class="password-text">******</span></td>
-                        <td data-label="Acciones">
-                            <div class="action-buttons">
-                                <button class="btn-action btn-edit" onclick='editUser(2)'>
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                        <path d="M11.3333 2.00004C11.5084 1.82494 11.716 1.68605 11.9438 1.59129C12.1716 1.49653 12.4151 1.44775 12.6609 1.44775C12.9068 1.44775 13.1502 1.49653 13.3781 1.59129C13.6059 1.68605 13.8135 1.82494 13.9886 2.00004C14.1637 2.17513 14.3026 2.38274 14.3973 2.61057C14.4921 2.83839 14.5409 3.08185 14.5409 3.32771C14.5409 3.57357 14.4921 3.81703 14.3973 4.04485C14.3026 4.27268 14.1637 4.48029 13.9886 4.65538L5.16663 13.4774L1.33329 14.6667L2.52263 10.8334L11.3333 2.00004Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <span>Editar</span>
-                                </button>
-                                <button class="btn-action btn-delete" onclick="deleteUser(2)">
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                        <path d="M2 4H3.33333H14M5.33333 4V2.66667C5.33333 2.31304 5.47381 1.97391 5.72386 1.72386C5.97391 1.47381 6.31304 1.33333 6.66667 1.33333H9.33333C9.68696 1.33333 10.0261 1.47381 10.2761 1.72386C10.5262 1.97391 10.6667 2.31304 10.6667 2.66667V4M12.6667 4V13.3333C12.6667 13.687 12.5262 14.0261 12.2761 14.2761C12.0261 14.5262 11.687 14.6667 11.3333 14.6667H4.66667C4.31304 14.6667 3.97391 14.5262 3.72386 14.2761C3.47381 14.0261 3.33333 13.687 3.33333 13.3333V4H12.6667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <span>Borrar</span>
-                                </button>
-                            </div>
+                    @empty
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px;">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" style="margin: 0 auto 16px;">
+                                <path d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <p style="color: #6b7280; font-size: 16px;">No hay usuarios registrados en el sistema</p>
                         </td>
                     </tr>
-                    <tr data-user-id="3" class="user-row">
-                        <td data-label="Número" class="user-number">3</td>
-                        <td data-label="Nombre" class="user-name">Amalio Can Goméz</td>
-                        <td data-label="Correo" class="user-email">amalio.can@gmail.com</td>
-                        <td data-label="Asignación"><span class="badge badge-user user-role">Usuario</span></td>
-                        <td data-label="Contraseña"><span class="password-text">******</span></td>
-                        <td data-label="Acciones">
-                            <div class="action-buttons">
-                                <button class="btn-action btn-edit" onclick='editUser(3)'>
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                        <path d="M11.3333 2.00004C11.5084 1.82494 11.716 1.68605 11.9438 1.59129C12.1716 1.49653 12.4151 1.44775 12.6609 1.44775C12.9068 1.44775 13.1502 1.49653 13.3781 1.59129C13.6059 1.68605 13.8135 1.82494 13.9886 2.00004C14.1637 2.17513 14.3026 2.38274 14.3973 2.61057C14.4921 2.83839 14.5409 3.08185 14.5409 3.32771C14.5409 3.57357 14.4921 3.81703 14.3973 4.04485C14.3026 4.27268 14.1637 4.48029 13.9886 4.65538L5.16663 13.4774L1.33329 14.6667L2.52263 10.8334L11.3333 2.00004Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <span>Editar</span>
-                                </button>
-                                <button class="btn-action btn-delete" onclick="deleteUser(3)">
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                        <path d="M2 4H3.33333H14M5.33333 4V2.66667C5.33333 2.31304 5.47381 1.97391 5.72386 1.72386C5.97391 1.47381 6.31304 1.33333 6.66667 1.33333H9.33333C9.68696 1.33333 10.0261 1.47381 10.2761 1.72386C10.5262 1.97391 10.6667 2.31304 10.6667 2.66667V4M12.6667 4V13.3333C12.6667 13.687 12.5262 14.0261 12.2761 14.2761C12.0261 14.5262 11.687 14.6667 11.3333 14.6667H4.66667C4.31304 14.6667 3.97391 14.5262 3.72386 14.2761C3.47381 14.0261 3.33333 13.687 3.33333 13.3333V4H12.6667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <span>Borrar</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr data-user-id="4" class="user-row">
-                        <td data-label="Número" class="user-number">4</td>
-                        <td data-label="Nombre" class="user-name">Yonatan Dzib Noroña</td>
-                        <td data-label="Correo" class="user-email">yonatan.dzib@gmail.com</td>
-                        <td data-label="Asignación"><span class="badge badge-user user-role">Usuario</span></td>
-                        <td data-label="Contraseña"><span class="password-text">******</span></td>
-                        <td data-label="Acciones">
-                            <div class="action-buttons">
-                                <button class="btn-action btn-edit" onclick='editUser(4)'>
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                        <path d="M11.3333 2.00004C11.5084 1.82494 11.716 1.68605 11.9438 1.59129C12.1716 1.49653 12.4151 1.44775 12.6609 1.44775C12.9068 1.44775 13.1502 1.49653 13.3781 1.59129C13.6059 1.68605 13.8135 1.82494 13.9886 2.00004C14.1637 2.17513 14.3026 2.38274 14.3973 2.61057C14.4921 2.83839 14.5409 3.08185 14.5409 3.32771C14.5409 3.57357 14.4921 3.81703 14.3973 4.04485C14.3026 4.27268 14.1637 4.48029 13.9886 4.65538L5.16663 13.4774L1.33329 14.6667L2.52263 10.8334L11.3333 2.00004Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <span>Editar</span>
-                                </button>
-                                <button class="btn-action btn-delete" onclick="deleteUser(4)">
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                        <path d="M2 4H3.33333H14M5.33333 4V2.66667C5.33333 2.31304 5.47381 1.97391 5.72386 1.72386C5.97391 1.47381 6.31304 1.33333 6.66667 1.33333H9.33333C9.68696 1.33333 10.0261 1.47381 10.2761 1.72386C10.5262 1.97391 10.6667 2.31304 10.6667 2.66667V4M12.6667 4V13.3333C12.6667 13.687 12.5262 14.0261 12.2761 14.2761C12.0261 14.5262 11.687 14.6667 11.3333 14.6667H4.66667C4.31304 14.6667 3.97391 14.5262 3.72386 14.2761C3.47381 14.0261 3.33333 13.687 3.33333 13.3333V4H12.6667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <span>Borrar</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
         
-        <!-- Mensaje cuando no hay resultados -->
+        <!-- Mensaje cuando no hay resultados de búsqueda -->
         <div id="noResults" class="no-results" style="display: none;">
             <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
                 <path d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -233,8 +181,8 @@
                     <label for="userRole">Asignación *</label>
                     <select id="userRole" class="form-control" required>
                         <option value="">Seleccione un rol</option>
-                        <option value="Administrador">Administrador</option>
-                        <option value="Usuario">Usuario</option>
+                        <option value="administrador">Administrador</option>
+                        <option value="editor">Editor</option>
                     </select>
                 </div>
 

@@ -1,5 +1,7 @@
-// Variable global para llevar el conteo de IDs
-let nextUserId = 5;
+// ============================================
+// VARIABLES GLOBALES
+// ============================================
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
 // ========================================
 // ACTUALIZAR ESTADÍSTICAS
@@ -14,7 +16,7 @@ function updateStats() {
         const role = row.querySelector('.user-role').textContent;
         if (role === 'Administrador') {
             adminCount++;
-        } else {
+        } else if (role === 'Editor') {
             regularCount++;
         }
     });
@@ -47,7 +49,7 @@ function animateValue(id, start, end, duration) {
 // ========================================
 // BÚSQUEDA EN TIEMPO REAL
 // ========================================
-document.getElementById('searchInput').addEventListener('input', function() {
+document.getElementById('searchInput')?.addEventListener('input', function() {
     const searchTerm = this.value.toLowerCase().trim();
     const rows = document.querySelectorAll('.user-row');
     let visibleCount = 0;
@@ -68,10 +70,14 @@ document.getElementById('searchInput').addEventListener('input', function() {
     
     // Mostrar mensaje si no hay resultados
     const noResults = document.getElementById('noResults');
+    const tableWrapper = document.querySelector('.table-wrapper');
+    
     if (visibleCount === 0) {
         noResults.style.display = 'flex';
+        tableWrapper.style.display = 'none';
     } else {
         noResults.style.display = 'none';
+        tableWrapper.style.display = 'block';
     }
 });
 
@@ -98,27 +104,54 @@ function openAddUserModal() {
 // ========================================
 // FUNCIÓN PARA EDITAR USUARIO
 // ========================================
-function editUser(id) {
-    const row = document.querySelector(`tr[data-user-id="${id}"]`);
-    const name = row.querySelector('.user-name').textContent;
-    const email = row.querySelector('.user-email').textContent;
-    const roleSpan = row.querySelector('.user-role');
-    const role = roleSpan.textContent;
-    
-    document.getElementById('modalTitle').textContent = 'Editar Usuario';
-    document.getElementById('userId').value = id;
-    document.getElementById('isEditing').value = 'true';
-    document.getElementById('userName').value = name;
-    document.getElementById('userEmail').value = email;
-    document.getElementById('userRole').value = role;
-    document.getElementById('userPassword').value = '';
-    document.getElementById('userPassword').required = false;
-    document.getElementById('userPassword').placeholder = 'Dejar en blanco para mantener actual';
-    document.getElementById('passwordRequired').style.display = 'none';
-    document.getElementById('passwordHint').textContent = 'Dejar en blanco para mantener la contraseña actual';
-    document.getElementById('submitBtn').textContent = 'Guardar cambios';
-    document.getElementById('userModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
+async function editUser(id) {
+    try {
+        // Obtener datos del usuario desde el backend
+        const response = await fetch(`/admin/users/${id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            const usuario = data.data;
+            
+            document.getElementById('modalTitle').textContent = 'Editar Usuario';
+            document.getElementById('userId').value = usuario.id_usuario;
+            document.getElementById('isEditing').value = 'true';
+            document.getElementById('userName').value = usuario.nombre_usuario;
+            document.getElementById('userEmail').value = usuario.correo_usuario;
+            document.getElementById('userRole').value = usuario.cargo_usuario;
+            document.getElementById('userPassword').value = '';
+            document.getElementById('userPassword').required = false;
+            document.getElementById('userPassword').placeholder = 'Dejar en blanco para mantener actual';
+            document.getElementById('passwordRequired').style.display = 'none';
+            document.getElementById('passwordHint').textContent = 'Dejar en blanco para mantener la contraseña actual';
+            document.getElementById('submitBtn').textContent = 'Guardar cambios';
+            document.getElementById('userModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message || 'No se pudo cargar la información del usuario',
+                confirmButtonColor: '#7d3f6a'
+            });
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo cargar la información del usuario',
+            confirmButtonColor: '#7d3f6a'
+        });
+    }
 }
 
 // ========================================
@@ -134,14 +167,28 @@ function closeModal() {
 // ========================================
 function togglePassword() {
     const passwordInput = document.getElementById('userPassword');
-    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordInput.setAttribute('type', type);
+    const eyeIcon = document.getElementById('eyeIcon');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.innerHTML = `
+            <path d="M2.5 10C2.5 10 5 4.16667 10 4.16667C15 4.16667 17.5 10 17.5 10C17.5 10 15 15.8333 10 15.8333C5 15.8333 2.5 10 2.5 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 12.5C11.3807 12.5 12.5 11.3807 12.5 10C12.5 8.61929 11.3807 7.5 10 7.5C8.61929 7.5 7.5 8.61929 7.5 10C7.5 11.3807 8.61929 12.5 10 12.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="2" y1="2" x2="18" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        `;
+    } else {
+        passwordInput.type = 'password';
+        eyeIcon.innerHTML = `
+            <path d="M2.5 10C2.5 10 5 4.16667 10 4.16667C15 4.16667 17.5 10 17.5 10C17.5 10 15 15.8333 10 15.8333C5 15.8333 2.5 10 2.5 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 12.5C11.3807 12.5 12.5 11.3807 12.5 10C12.5 8.61929 11.3807 7.5 10 7.5C8.61929 7.5 7.5 8.61929 7.5 10C7.5 11.3807 8.61929 12.5 10 12.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        `;
+    }
 }
 
 // ========================================
 // FUNCIÓN PARA GUARDAR USUARIO
 // ========================================
-function saveUser(event) {
+async function saveUser(event) {
     event.preventDefault();
     
     const userId = document.getElementById('userId').value;
@@ -182,114 +229,80 @@ function saveUser(event) {
         return;
     }
 
-    if (isEditing) {
-        // EDITAR USUARIO EXISTENTE
-        updateUserInTable(userId, userName, userEmail, userRole);
+    // Preparar datos
+    const formData = {
+        nombre_usuario: userName,
+        correo_usuario: userEmail,
+        cargo_usuario: userRole,
+        contraseña_usuario: userPassword
+    };
+
+    try {
+        let url, method;
         
-        Swal.fire({
-            icon: 'success',
-            title: 'Usuario actualizado',
-            text: `Los datos de ${userName} han sido actualizados correctamente`,
-            confirmButtonColor: '#7d3f6a',
-            confirmButtonText: 'Aceptar'
-        }).then(() => {
-            closeModal();
-            updateStats();
+        if (isEditing) {
+            url = `/admin/users/${userId}`;
+            method = 'PUT';
+        } else {
+            url = '/admin/users';
+            method = 'POST';
+        }
+        
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(formData)
         });
-    } else {
-        // AGREGAR NUEVO USUARIO
-        addUserToTable(nextUserId, userName, userEmail, userRole);
-        nextUserId++;
         
+        const data = await response.json();
+        
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: isEditing ? 'Usuario actualizado' : 'Usuario creado',
+                text: data.message,
+                confirmButtonColor: '#7d3f6a',
+                confirmButtonText: 'Aceptar',
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown'
+                }
+            }).then(() => {
+                closeModal();
+                // Recargar la página para mostrar los cambios
+                window.location.reload();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message || 'Ocurrió un error al procesar la solicitud',
+                confirmButtonColor: '#7d3f6a'
+            });
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
         Swal.fire({
-            icon: 'success',
-            title: 'Usuario creado',
-            text: `El usuario ${userName} ha sido creado correctamente`,
-            confirmButtonColor: '#7d3f6a',
-            confirmButtonText: 'Aceptar',
-            showClass: {
-                popup: 'animate__animated animate__fadeInDown'
-            }
-        }).then(() => {
-            closeModal();
-            updateStats();
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al procesar la solicitud',
+            confirmButtonColor: '#7d3f6a'
         });
     }
-}
-
-// ========================================
-// FUNCIÓN PARA ACTUALIZAR USUARIO EN LA TABLA
-// ========================================
-function updateUserInTable(id, name, email, role) {
-    const row = document.querySelector(`tr[data-user-id="${id}"]`);
-    
-    row.querySelector('.user-name').textContent = name;
-    row.querySelector('.user-email').textContent = email;
-    
-    const roleSpan = row.querySelector('.user-role');
-    roleSpan.textContent = role;
-    
-    // Cambiar clase del badge con animación
-    if (role === 'Administrador') {
-        roleSpan.className = 'badge badge-admin user-role';
-    } else {
-        roleSpan.className = 'badge badge-user user-role';
-    }
-    
-    // Agregar efecto de highlight
-    row.style.animation = 'none';
-    setTimeout(() => {
-        row.style.animation = 'pulse 0.5s ease-out';
-    }, 10);
-}
-
-// ========================================
-// FUNCIÓN PARA AGREGAR USUARIO A LA TABLA
-// ========================================
-function addUserToTable(id, name, email, role) {
-    const tbody = document.getElementById('usersTableBody');
-    
-    const badgeClass = role === 'Administrador' ? 'badge-admin' : 'badge-user';
-    
-    const newRow = document.createElement('tr');
-    newRow.setAttribute('data-user-id', id);
-    newRow.className = 'user-row';
-    newRow.style.animation = 'fadeInUp 0.5s ease-out';
-    newRow.innerHTML = `
-        <td data-label="Número" class="user-number">${id}</td>
-        <td data-label="Nombre" class="user-name">${name}</td>
-        <td data-label="Correo" class="user-email">${email}</td>
-        <td data-label="Asignación"><span class="badge ${badgeClass} user-role">${role}</span></td>
-        <td data-label="Contraseña"><span class="password-text">******</span></td>
-        <td data-label="Acciones">
-            <div class="action-buttons">
-                <button class="btn-action btn-edit" onclick='editUser(${id})'>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M11.3333 2.00004C11.5084 1.82494 11.716 1.68605 11.9438 1.59129C12.1716 1.49653 12.4151 1.44775 12.6609 1.44775C12.9068 1.44775 13.1502 1.49653 13.3781 1.59129C13.6059 1.68605 13.8135 1.82494 13.9886 2.00004C14.1637 2.17513 14.3026 2.38274 14.3973 2.61057C14.4921 2.83839 14.5409 3.08185 14.5409 3.32771C14.5409 3.57357 14.4921 3.81703 14.3973 4.04485C14.3026 4.27268 14.1637 4.48029 13.9886 4.65538L5.16663 13.4774L1.33329 14.6667L2.52263 10.8334L11.3333 2.00004Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <span>Editar</span>
-                </button>
-                <button class="btn-action btn-delete" onclick="deleteUser(${id})">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M2 4H3.33333H14M5.33333 4V2.66667C5.33333 2.31304 5.47381 1.97391 5.72386 1.72386C5.97391 1.47381 6.31304 1.33333 6.66667 1.33333H9.33333C9.68696 1.33333 10.0261 1.47381 10.2761 1.72386C10.5262 1.97391 10.6667 2.31304 10.6667 2.66667V4M12.6667 4V13.3333C12.6667 13.687 12.5262 14.0261 12.2761 14.2761C12.0261 14.5262 11.687 14.6667 11.3333 14.6667H4.66667C4.31304 14.6667 3.97391 14.5262 3.72386 14.2761C3.47381 14.0261 3.33333 13.687 3.33333 13.3333V4H12.6667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <span>Borrar</span>
-                </button>
-            </div>
-        </td>
-    `;
-    
-    tbody.appendChild(newRow);
 }
 
 // ========================================
 // FUNCIÓN PARA ELIMINAR USUARIO
 // ========================================
-function deleteUser(id) {
+async function deleteUser(id) {
     const row = document.querySelector(`tr[data-user-id="${id}"]`);
     const name = row.querySelector('.user-name').textContent;
     
-    Swal.fire({
+    const result = await Swal.fire({
         title: '¿Estás seguro?',
         text: `¿Deseas eliminar al usuario "${name}"? Esta acción no se puede deshacer.`,
         icon: 'warning',
@@ -304,31 +317,60 @@ function deleteUser(id) {
         hideClass: {
             popup: 'animate__animated animate__fadeOutUp'
         }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Animación de salida antes de eliminar
-            row.style.animation = 'fadeInUp 0.3s ease-out reverse';
-            
-            setTimeout(() => {
-                // Eliminar la fila de la tabla
-                row.remove();
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Usuario eliminado',
-                    text: `El usuario "${name}" ha sido eliminado correctamente`,
-                    confirmButtonColor: '#7d3f6a',
-                    confirmButtonText: 'Aceptar',
-                    timer: 2000,
-                    showClass: {
-                        popup: 'animate__animated animate__fadeInDown'
-                    }
-                }).then(() => {
-                    updateStats();
-                });
-            }, 300);
-        }
     });
+    
+    if (result.isConfirmed) {
+        try {
+            const response = await fetch(`/admin/users/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Animación de salida antes de eliminar
+                row.style.animation = 'fadeInUp 0.3s ease-out reverse';
+                
+                setTimeout(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Usuario eliminado',
+                        text: data.message,
+                        confirmButtonColor: '#7d3f6a',
+                        confirmButtonText: 'Aceptar',
+                        timer: 2000,
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        }
+                    }).then(() => {
+                        // Recargar la página para actualizar la lista
+                        window.location.reload();
+                    });
+                }, 300);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message || 'No se pudo eliminar el usuario',
+                    confirmButtonColor: '#7d3f6a'
+                });
+            }
+            
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo eliminar el usuario',
+                confirmButtonColor: '#7d3f6a'
+            });
+        }
+    }
 }
 
 // ========================================
@@ -340,6 +382,15 @@ window.onclick = function(event) {
         closeModal();
     }
 }
+
+// ========================================
+// CERRAR MODAL CON TECLA ESC
+// ========================================
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeModal();
+    }
+});
 
 // ========================================
 // INICIALIZAR ESTADÍSTICAS AL CARGAR

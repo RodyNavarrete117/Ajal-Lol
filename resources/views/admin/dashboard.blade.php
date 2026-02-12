@@ -46,10 +46,12 @@
                 <span>Manual</span>
             </a>
 
+            @if(session('rol') === 'administrador')
             <a href="{{ url('/admin/users') }}">
                 <i class="fa fa-users"></i>
                 <span>Usuarios</span>
             </a>
+            @endif
 
             <a href="{{ url('/admin/forms') }}">
                 <i class="fa fa-file-lines"></i>

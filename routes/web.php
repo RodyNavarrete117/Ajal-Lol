@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FormController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\ReportsController;
 
 /* ================================
  | Página principal

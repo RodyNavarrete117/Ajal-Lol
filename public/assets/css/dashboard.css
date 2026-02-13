@@ -275,6 +275,22 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,.06);
 }
 
+/* === FIX DEFINITIVO: centrar hamburguesa === */
+.sidebar.collapsed .sidebar-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sidebar.collapsed .sidebar-header h2 {
+    display: none !important;
+}
+
+.sidebar.collapsed .toggle-btn {
+    margin: 0 !important;
+}
+
+
 /* ==================== RESPONSIVE - MÓVIL ==================== */
 @media (max-width: 768px) {
     .sidebar {

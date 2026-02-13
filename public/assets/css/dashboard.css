@@ -58,6 +58,10 @@ body {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+
+    /* 🔥 NUEVO */
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar.collapsed {
@@ -126,7 +130,33 @@ body {
 .menu {
     overflow: hidden;
     padding: 12px 0;
+
+    /* 🔥 NUEVO */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
+
+.menu-top {
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-bottom {
+    margin-top: auto;
+    padding-bottom: 20px;
+}
+
+.menu-bottom::before {
+    content: '';
+    display: block;
+    height: 1px;
+    margin: 12px 20px;
+    background: rgba(255,255,255,.2);
+}
+
+
+
 
 .menu a {
     display: flex;
@@ -290,9 +320,29 @@ body {
     margin: 0 !important;
 }
 
-
 /* ==================== RESPONSIVE - MÓVIL ==================== */
 @media (max-width: 768px) {
+      /* 🔥 FIX: anular layout desktop */
+    .sidebar {
+        display: block;
+    }
+
+    .menu {
+        display: grid;
+        flex: none;
+    }
+
+    /* 🔥 CLAVE DEL ARREGLO */
+    .menu-top,
+    .menu-bottom {
+        display: contents;
+    }
+
+    /* Quitar separador en móvil */
+    .menu-bottom::before {
+        display: none;
+    }
+    
     .sidebar {
         width: 100%;
         height: auto;

@@ -10,6 +10,45 @@ body {
 }
 
 /* ==================== SIDEBAR DESKTOP ==================== */
+
+/* ESTO ES PARA QUE NO SALGA LA ANIMACION FEA SI ESTA COLAPSADO */
+
+/* Estado inicial SIN animación */
+.sidebar-start-collapsed .sidebar {
+    width: 70px !important;
+}
+
+.sidebar-start-collapsed .main {
+    margin-left: 70px !important;
+}
+
+/* Evita cualquier transición en el primer frame */
+.sidebar-start-collapsed .sidebar,
+.sidebar-start-collapsed .main {
+    transition: none !important;
+}
+
+/* Evitar flash de texto e iconos en el primer frame */
+.sidebar-start-collapsed .sidebar h2,
+.sidebar-start-collapsed .menu a span {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+.sidebar.collapsed .menu a,
+.sidebar-start-collapsed .menu a {
+    gap: 0;
+    justify-content: center;
+}
+
+/* Evitar flash del botón hamburguesa (SIN FADE) */
+.sidebar-start-collapsed .toggle-btn {
+    visibility: hidden !important;
+    transition: none !important;
+}
+
+/* AQUI TERMINA LA CONFIGURACION INICIAL PARA QUE NO APAREZCA ESA ANIMACION FEA */
+
 .sidebar {
     position: fixed;
     width: 190px;

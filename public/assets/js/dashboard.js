@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    document.documentElement.classList.remove('sidebar-start-collapsed');
     const sidebar = document.getElementById('sidebar');
     const main = document.getElementById('main');
     const toggleBtn = document.getElementById('toggleBtn');
@@ -138,4 +139,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Guardar texto original del título
     sidebarTitle.setAttribute('data-original-text', sidebarTitle.textContent);
+
+        // 🔹 QUITAR BLOQUEO DE TRANSICIONES DESPUÉS DEL RENDER
+    requestAnimationFrame(() => {
+        document.documentElement.classList.remove('no-transition');
+    });
+    
 });

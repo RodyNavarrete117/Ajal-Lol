@@ -8,8 +8,16 @@
     <!-- Iconos -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+    <script>
+        (function () {
+            const state = localStorage.getItem('sidebarState');
+            if (state === 'collapsed' && window.innerWidth > 768) {
+                document.documentElement.classList.add('sidebar-start-collapsed');
+            }
+        })();
+    </script>
 
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
     @stack('styles')
 </head>
 <body>

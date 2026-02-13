@@ -5,10 +5,13 @@
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/admincss/settings.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Sweet Alert 2 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<!-- CSRF Token -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @endpush
 
 @section('content')
-<body>
     <div class="settings-container">
         <!-- Tabs horizontales -->
         <div class="tabs-header">
@@ -37,9 +40,9 @@
                 <form id="passwordForm" class="settings-form">
                     <div class="form-grid">
                         <div class="form-group full">
-                            <label for="current">Contraseña actual</label>
+                            <label for="current">Contraseña actual *</label>
                             <div class="input-wrapper">
-                                <input type="password" id="current" class="form-input" placeholder="Ingresa tu contraseña actual">
+                                <input type="password" id="current" class="form-input" placeholder="Ingresa tu contraseña actual" required>
                                 <button type="button" class="toggle-password" data-target="current">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -47,9 +50,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="new">Nueva contraseña</label>
+                            <label for="new">Nueva contraseña *</label>
                             <div class="input-wrapper">
-                                <input type="password" id="new" class="form-input" placeholder="Mínimo 8 caracteres">
+                                <input type="password" id="new" class="form-input" placeholder="Mínimo 6 caracteres" required>
                                 <button type="button" class="toggle-password" data-target="new">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -63,9 +66,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="confirm">Confirmar contraseña</label>
+                            <label for="confirm">Confirmar contraseña *</label>
                             <div class="input-wrapper">
-                                <input type="password" id="confirm" class="form-input" placeholder="Repite la contraseña">
+                                <input type="password" id="confirm" class="form-input" placeholder="Repite la contraseña" required>
                                 <button type="button" class="toggle-password" data-target="confirm">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -90,7 +93,7 @@
                         <div class="setting-desc">Permanece conectado en este dispositivo</div>
                     </div>
                     <label class="toggle-switch">
-                        <input type="checkbox" id="keep_session" name="keep_session">
+                        <input type="checkbox" id="keep_session" name="keep_session" checked>
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
@@ -105,18 +108,18 @@
                 <form class="settings-form">
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="name">Nombre completo</label>
-                            <input type="text" id="name" class="form-input" placeholder="Tu nombre">
+                            <label for="name">Nombre completo *</label>
+                            <input type="text" id="name" class="form-input" placeholder="Tu nombre" value="{{ $usuario->nombre_usuario }}" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="email">Correo electrónico</label>
-                            <input type="email" id="email" class="form-input" placeholder="correo@ejemplo.com">
+                            <label for="email">Correo electrónico *</label>
+                            <input type="email" id="email" class="form-input" placeholder="correo@ejemplo.com" value="{{ $usuario->correo_usuario }}" required>
                         </div>
 
                         <div class="form-group full">
                             <label for="role">Rol</label>
-                            <input type="text" id="role" class="form-input" value="Administrador" disabled>
+                            <input type="text" id="role" class="form-input" value="{{ ucfirst($usuario->cargo_usuario ?? 'Sin rol') }}" disabled>
                         </div>
                     </div>
 
@@ -138,18 +141,18 @@
                         <div class="setting-desc">Recibe actualizaciones importantes por correo</div>
                     </div>
                     <label class="toggle-switch">
-                        <input type="checkbox" checked>
+                        <input type="checkbox" id="notif_email" checked>
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
 
                 <div class="setting-item">
                     <div class="setting-info">
-                        <div class="setting-label">Alerta de posibles contribuyentes</div>
+                        <div class="setting-label">Alerta de posibles colaboradores</div>
                         <div class="setting-desc">Notifica cuando haya una solicitud o interés en contribuir</div>
                     </div>
                     <label class="toggle-switch">
-                        <input type="checkbox" checked>
+                        <input type="checkbox" id="notif_colaboradores" checked>
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
@@ -160,21 +163,23 @@
                         <div class="setting-desc">Recibe alertas cuando se realicen modificaciones en la plataforma</div>
                     </div>
                     <label class="toggle-switch">
-                        <input type="checkbox">
+                        <input type="checkbox" id="notif_cambios">
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
 
-                <button type="submit" class="btn-primary">
+                <button type="button" class="btn-primary" id="saveNotifications">
                     <i class="fas fa-save"></i> Guardar preferencias
                 </button>
             </div>
 
         </div>
     </div>
-</body>
+@endsection
 
 @push('scripts')
+<!-- Sweet Alert 2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script src="{{ asset('assets/js/settings.js') }}"></script>
 @endpush
-@endsection

@@ -7,46 +7,41 @@ use App\Http\Controllers\FormController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ReportsController;
 
-/* ================================
- | Página principal
- ================================= */
+/* Página principal */
 Route::get('/', fn() => view('index'));
 
-/* ================================
- | Login
- ================================= */
+/* Login */
 Route::get('/login', fn() => view('login'))->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
-/* ================================
- | Loader
- ================================= */
+/* Loader */
 Route::get('/loading', fn() => view('loading'))->name('loading');
 
-/* ================================
- | Admin (sin seguridad por ahora)
- ================================= */
+/* Admin (sin seguridad por ahora)*/
 Route::get('/admin/home', fn() => view('admin.home'))->name('admin.home');
 Route::get('/admin/page', fn() => view('admin.page'));
 Route::get('/admin/report', fn() => view('admin.reports'));
 Route::get('/admin/manual', fn() => view('admin.manual'));
 
-/* ================================
- | Formularios de contacto
- | (se usa controller para pasar $forms)
- ================================= */
+/* Formularios de contacto (se usa controller para pasar $forms) */
 Route::get('/admin/forms', [FormController::class, 'index'])
     ->name('admin.forms');
 
-/* ================================
- | Configuración
- ================================= */
-Route::get('/admin/settings', fn() => view('admin.settings'));
+/* Configuración: acá se hacen los cambios de datos del usuario */
+Route::prefix('admin')->group(function () {
 
-/* ================================
- | Sección usuarios
- | Actividades de agregar, editar y eliminar
- ================================= */
+    Route::get('/settings', [SettingsController::class, 'index'])
+        ->name('admin.settings');
+
+    Route::post('/settings/change-password', [SettingsController::class, 'changePassword'])
+        ->name('admin.settings.change-password');
+
+    Route::post('/settings/update-profile', [SettingsController::class, 'updateProfile'])
+        ->name('admin.settings.update-profile');
+
+});
+
+/* Sección usuarios: Actividades de agregar, editar y eliminar*/
 
 /* Listado de usuarios */
 Route::get('/admin/users', [UserController::class, 'index'])

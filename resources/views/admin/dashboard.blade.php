@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>@yield('title', 'Admin')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Iconos -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
@@ -31,52 +32,69 @@
             <h2 style="text-transform: capitalize;">
                 {{ session('rol') ?? 'Panel' }}
             </h2>
+
+            <!-- Botón de notificaciones en móvil -->
+            <button class="mobile-notification-btn notification-trigger" style="position: relative;">
+                <i class="fa fa-bell"></i>
+                <span class="notification-badge" style="display: none;">0</span>
+            </button>
         </div>
 
         <nav class="menu">
-    <div class="menu-top">
+            <div class="menu-top">
 
-        <a href="{{ url('/admin/home') }}">
-            <i class="fa fa-house"></i>
-            <span>Inicio</span>
-        </a>
+                <a href="{{ url('/admin/home') }}">
+                    <i class="fa fa-house"></i>
+                    <span>Inicio</span>
+                </a>
 
-        <a href="{{ url('/admin/page') }}">
-            <i class="fa fa-globe"></i>
-            <span>Página</span>
-        </a>
+                <a href="{{ url('/admin/page') }}">
+                    <i class="fa fa-globe"></i>
+                    <span>Página</span>
+                </a>
 
-        <a href="{{ url('/admin/report') }}">
-            <i class="fa fa-chart-line"></i>
-            <span>Informe</span>
-        </a>
+                <a href="{{ url('/admin/report') }}">
+                    <i class="fa fa-chart-line"></i>
+                    <span>Informe</span>
+                </a>
 
-        <a href="{{ url('/admin/manual') }}">
-            <i class="fa fa-book"></i>
-            <span>Manual</span>
-        </a>
+                <a href="{{ url('/admin/manual') }}">
+                    <i class="fa fa-book"></i>
+                    <span>Manual</span>
+                </a>
 
-        @if(session('rol') === 'administrador')
-        <a href="{{ url('/admin/users') }}">
-            <i class="fa fa-users"></i>
-            <span>Usuarios</span>
-        </a>
-        @endif
+                @if(session('rol') === 'administrador')
+                <a href="{{ url('/admin/users') }}">
+                    <i class="fa fa-users"></i>
+                    <span>Usuarios</span>
+                </a>
+                @endif
 
-        <a href="{{ url('/admin/forms') }}">
-            <i class="fa fa-file-lines"></i>
-            <span>Formularios</span>
-        </a>
+                <a href="{{ url('/admin/forms') }}">
+                    <i class="fa fa-file-lines"></i>
+                    <span>Formularios</span>
+                </a>
 
-    </div>
+            </div>
 
-    <div class="menu-bottom">
-        <a href="{{ url('/admin/settings') }}">
-            <i class="fa fa-gear"></i>
-            <span>Ajustes</span>
-        </a>
-    </div>
-</nav>
+            <div class="menu-bottom">
+                
+                <!-- NOTIFICACIONES (Solo Desktop) -->
+                <a href="#" class="notification-trigger" style="position: relative;">
+                    <i class="fa fa-bell"></i>
+                    <span>Notificaciones</span>
+                    <!-- Badge dinámico (se oculta si count = 0) -->
+                    <span class="notification-badge" style="display: none;">0</span>
+                </a>
+                
+                <!-- AJUSTES -->
+                <a href="{{ url('/admin/settings') }}">
+                    <i class="fa fa-gear"></i>
+                    <span>Ajustes</span>
+                </a>
+                
+            </div>
+        </nav>
 
     </aside>
 
@@ -89,9 +107,55 @@
 
     </main>
 
+    <!-- PANEL LATERAL DE NOTIFICACIONES -->
+    <div class="notifications-overlay" id="notificationsOverlay"></div>
+    <div class="notifications-panel" id="notificationsPanel">
+        <div class="notifications-panel-header">
+            <h3><i class="fa fa-bell"></i> Notificaciones</h3>
+            <button class="notifications-panel-close" id="closeNotifications">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="notifications-panel-content" id="notificationsList">
+            <!-- Las notificaciones se cargarán dinámicamente aquí -->
+            <div class="notification-empty">
+                <i class="fa fa-spinner fa-spin"></i>
+                <p>Cargando notificaciones...</p>
+            </div>
+        </div>
+        
+        <div class="notifications-panel-footer">
+            <button class="btn-mark-read" id="markAllRead">
+                <i class="fa fa-check"></i> Marcar leídas
+            </button>
+            <button class="btn-clear-all" id="clearAll">
+                <i class="fa fa-trash"></i> Limpiar todo
+            </button>
+        </div>
+    </div>
+
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
 
     @stack('scripts')
+
+    <!-- Script para inicializar el contador de notificaciones -->
+    <script>
+        // Pasar el conteo inicial de notificaciones al JavaScript
+        @if(auth()->check())
+            const initialNotificationCount = {{ 
+                \App\Models\Notification::where('user_id', auth()->id())
+                    ->where('read', false)
+                    ->count() 
+            }};
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof updateNotificationCount === 'function') {
+                    updateNotificationCount(initialNotificationCount);
+                }
+            });
+        @endif
+    </script>
 
 </body>
 </html>

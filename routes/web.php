@@ -62,3 +62,14 @@ Route::put('/admin/users/{id}', [UserController::class, 'update'])
 /* Eliminar usuario */
 Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])
     ->name('admin.users.destroy');
+
+/* Edición de páginas de Ajal-Lol */
+
+Route::get('/admin/pages/home/edit', fn() => view('admin.pages.home_edit'))
+    ->name('admin.pages.home.edit');
+
+Route::get('/admin/pages/about/edit', fn() => view('admin.pages.about_edit'))
+    ->name('admin.pages.about.edit');
+
+Route::get('/admin/pages/contact/edit', fn() => view('admin.pages.contact_edit'))
+    ->name('admin.pages.contact.edit');

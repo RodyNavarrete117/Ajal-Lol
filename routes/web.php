@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ReportsController;
 
 /* Página principal */
@@ -18,7 +19,8 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::get('/loading', fn() => view('loading'))->name('loading');
 
 /* Admin (sin seguridad por ahora)*/
-Route::get('/admin/home', fn() => view('admin.home'))->name('admin.home');
+Route::get('/admin/home', [HomeController::class, 'index'])->name('admin.home');
+
 Route::get('/admin/page', fn() => view('admin.page'));
 Route::get('/admin/report', fn() => view('admin.reports'));
 Route::get('/admin/manual', fn() => view('admin.manual'));

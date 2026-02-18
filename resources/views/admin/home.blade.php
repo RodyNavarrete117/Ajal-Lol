@@ -13,7 +13,7 @@
     <div class="hero-section">
         <div class="hero-content">
             <h1 class="hero-title">
-                Bienvenido {{ session('nombre') ?? 'Usuario' }}
+                Bienvenido {{ session('user_name') ?? 'Usuario' }}
             </h1>
 
             <p class="hero-subtitle">
@@ -25,15 +25,15 @@
 
             <div class="hero-stats">
                 <div class="stat-item">
-                    <span class="stat-number">{{ $totalUsers ?? '0' }}</span>
+                    <span class="stat-number">{{ $totalUsers }}</span>
                     <span class="stat-label">Usuarios</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">{{ $totalPages ?? '0' }}</span>
+                    <span class="stat-number">{{ $totalPages }}</span>
                     <span class="stat-label">Páginas</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">{{ $totalForms ?? '0' }}</span>
+                    <span class="stat-number">{{ $totalForms }}</span>
                     <span class="stat-label">Formularios</span>
                 </div>
             </div>
@@ -80,7 +80,7 @@
             </div>
         </a>
 
-        <a href="{{ url('/admin/reports') }}" class="widget-card card-reports">
+        <a href="{{ url('/admin/report') }}" class="widget-card card-reports">
             <div class="widget-icon">
                 <i class="fa fa-chart-line"></i>
             </div>
@@ -106,6 +106,7 @@
             </div>
         </a>
 
+        @if(session('rol') === 'administrador')
         <a href="{{ url('/admin/users') }}" class="widget-card card-users">
             <div class="widget-icon">
                 <i class="fa fa-users"></i>
@@ -118,6 +119,7 @@
                 <i class="fa fa-arrow-right"></i>
             </div>
         </a>
+        @endif
 
         <a href="{{ url('/admin/forms') }}" class="widget-card card-forms">
             <div class="widget-icon">

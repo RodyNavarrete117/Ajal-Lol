@@ -170,12 +170,12 @@ CREATE TABLE contacto (
 -- =========================
 CREATE TABLE formulario_contacto (
     id_formcontacto INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_completo VARCHAR(150),
-    correo VARCHAR(100),
+    nombre_completo VARCHAR(150) NOT NULL,
+    correo VARCHAR(100) NOT NULL,
     numero_telefonico VARCHAR(50),
-    asunto VARCHAR(150),
-    mensaje TEXT,
-    fecha_envio DATE
+    asunto VARCHAR(150) NOT NULL,
+    mensaje TEXT NOT NULL,
+    fecha_envio DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 CREATE TABLE redes_sociales (

@@ -1,9 +1,13 @@
 @extends('admin.dashboard')
 
 @section('title', 'Formulario')
-<!-- //link para agregar estilos de esta área// -->
+
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/admincss/forms.css') }}">
+<!-- Sweet Alert 2 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<!-- CSRF Token -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @endpush
 
 @section('content')
@@ -14,11 +18,11 @@
         </div>
         <div class="header-stats">
             <div class="stat-card">
-                <span class="stat-number">{{ $forms->count() ?? 1 }}</span>
+                <span class="stat-number">{{ $forms->count() }}</span>
                 <span class="stat-label">Total</span>
             </div>
             <div class="stat-card">
-                <span class="stat-number">{{ $forms->where('created_at', '>=', now()->subDays(7))->count() ?? 0 }}</span>
+                <span class="stat-number">{{ $forms->where('fecha_envio', '>=', now()->subDays(7))->count() }}</span>
                 <span class="stat-label">Esta semana</span>
             </div>
         </div>
@@ -49,7 +53,7 @@
                     <span>Más reciente</span>
                 </button>
 
-                <button class="export-button">
+                <button class="export-button" onclick="exportForms()">
                     <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
                         <path d="M3 17v-2a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2M10 3v12m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     </svg>
@@ -76,46 +80,50 @@
                                 <path d="M8 3v10M8 3l-3 3m3-3l3 3" stroke="currentColor" stroke-width="1.5" fill="none"/>
                             </svg>
                         </th>
-                        <!-- <th class="th-actions">Acciones</th> -->
+                        <th class="th-actions">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($forms ?? [['id' => 1, 'nombre' => 'Salomón Alcocer', 'correo' => 'soysalo123@gmail.com', 'asunto' => 'Me interesa colaborar', 'telefono' => '999-273-4936', 'fecha' => '15/01/2026']] as $form)
-                    <tr data-date="{{ $form['fecha'] ?? '15/01/2026' }}">
+                    @forelse($forms as $form)
+                    <tr data-id="{{ $form->id_formcontacto }}" data-date="{{ $form->fecha_envio }}">
                         <td class="td-checkbox">
-                            <input type="checkbox" class="row-checkbox">
+                            <input type="checkbox" class="row-checkbox" value="{{ $form->id_formcontacto }}">
                         </td>
                         <td data-label="Nombre">
                             <div class="user-info">
-                                <div class="user-avatar">{{ substr($form['nombre'] ?? 'S', 0, 1) }}</div>
-                                <span class="user-name">{{ $form['nombre'] ?? 'Salomón Alcocer' }}</span>
+                                <div class="user-avatar">{{ strtoupper(substr($form->nombre_completo, 0, 1)) }}</div>
+                                <span class="user-name">{{ $form->nombre_completo }}</span>
                             </div>
                         </td>
                         <td data-label="Correo">
-                            <a href="mailto:{{ $form['correo'] ?? 'soysalo123@gmail.com' }}" class="email-link">
-                                {{ $form['correo'] ?? 'soysalo123@gmail.com' }}
+                            <a href="mailto:{{ $form->correo }}" class="email-link">
+                                {{ $form->correo }}
                             </a>
                         </td>
                         <td data-label="Asunto">
-                            <span class="subject-text">{{ $form['asunto'] ?? 'Me interesa colaborar' }}</span>
+                            <span class="subject-text">{{ $form->asunto }}</span>
                         </td>
                         <td data-label="Teléfono">
-                            <a href="tel:{{ $form['telefono'] ?? '999-273-4936' }}" class="phone-link">
-                                {{ $form['telefono'] ?? '999-273-4936' }}
-                            </a>
+                            @if($form->numero_telefonico)
+                                <a href="tel:{{ $form->numero_telefonico }}" class="phone-link">
+                                    {{ $form->numero_telefonico }}
+                                </a>
+                            @else
+                                <span class="text-muted">N/A</span>
+                            @endif
                         </td>
                         <td data-label="Fecha">
-                            <span class="date-badge">{{ $form['fecha'] ?? '15/01/2026' }}</span>
+                            <span class="date-badge">{{ \Carbon\Carbon::parse($form->fecha_envio)->format('d/m/Y H:i') }}</span>
                         </td>
                         <td class="td-actions">
                             <div class="action-buttons">
-                                <button class="btn-action btn-view" title="Ver detalles">
+                                <button class="btn-action btn-view" onclick="viewForm({{ $form->id_formcontacto }})" title="Ver detalles">
                                     <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
                                         <path d="M10 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" stroke="currentColor" stroke-width="1.5"/>
                                         <path d="M10 5C5.5 5 2 10 2 10s3.5 5 8 5 8-5 8-5-3.5-5-8-5z" stroke="currentColor" stroke-width="1.5"/>
                                     </svg>
                                 </button>
-                                <button class="btn-action btn-delete" title="Eliminar">
+                                <button class="btn-action btn-delete" onclick="deleteForm({{ $form->id_formcontacto }})" title="Eliminar">
                                     <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
                                         <path d="M3 5h14M8 5V3h4v2m-5 4v6m4-6v6m-7-9v11a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                                     </svg>
@@ -143,7 +151,7 @@
         <!-- Paginación -->
         <div class="table-footer">
             <div class="footer-info">
-                Mostrando <strong>1-1</strong> de <strong>1</strong> registros
+                Mostrando <strong>{{ $forms->count() > 0 ? '1-' . $forms->count() : '0' }}</strong> de <strong>{{ $forms->count() }}</strong> registros
             </div>
             <div class="pagination">
                 <button class="page-btn" disabled>Anterior</button>
@@ -152,8 +160,11 @@
             </div>
         </div>
     </div>
-
-    @push('scripts')
-    <script src="{{ asset('assets/js/forms.js') }}"></script>
-    @endpush
 @endsection
+
+@push('scripts')
+<!-- Sweet Alert 2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="{{ asset('assets/js/forms.js') }}"></script>
+@endpush

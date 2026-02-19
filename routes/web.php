@@ -26,8 +26,25 @@ Route::get('/admin/report', fn() => view('admin.reports'));
 Route::get('/admin/manual', fn() => view('admin.manual'));
 
 /* Formularios de contacto (se usa controller para pasar $forms) */
-Route::get('/admin/forms', [FormController::class, 'index'])
-    ->name('admin.forms');
+Route::prefix('admin')->group(function () {
+
+    // Muestra la lista de formularios
+    Route::get('/forms', [FormController::class, 'index'])
+        ->name('admin.forms');
+
+    // Muestra el detalle de un formulario por ID
+    Route::get('/forms/{id}', [FormController::class, 'show'])
+        ->name('admin.forms.show');
+
+    // Elimina un formulario por ID
+    Route::delete('/forms/{id}', [FormController::class, 'destroy'])
+        ->name('admin.forms.destroy');
+
+    // Exporta los formularios (ej. CSV o Excel)
+    Route::get('/forms/export', [FormController::class, 'export'])
+        ->name('admin.forms.export');
+
+});
 
 /* Configuración: acá se hacen los cambios de datos del usuario */
 Route::prefix('admin')->group(function () {
@@ -64,7 +81,8 @@ Route::put('/admin/users/{id}', [UserController::class, 'update'])
 /* Eliminar usuario */
 Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])
     ->name('admin.users.destroy');
-
+    
+/* Sección edición de páginas de Ajal-Lol
 /* Edición de páginas de Ajal-Lol */
 
 Route::get('/admin/pages/home/edit', fn() => view('admin.pages.home_edit'))

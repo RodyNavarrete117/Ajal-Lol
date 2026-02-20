@@ -27,6 +27,10 @@
                 <i class="fas fa-bell"></i>
                 <span>Notificaciones</span>
             </button>
+            <button class="tab-btn" data-tab="system">
+                <i class="fas fa-sliders-h"></i>
+                <span>Sistema</span>
+            </button>
         </div>
 
         <div class="tabs-content">
@@ -171,6 +175,105 @@
                 <button type="button" class="btn-primary" id="saveNotifications">
                     <i class="fas fa-save"></i> Guardar preferencias
                 </button>
+            </div>
+
+            <!-- Tab: Sistema -->
+            <div class="tab-panel" id="system">
+
+                <!-- Sección: Apariencia / Modo Oscuro -->
+                <div class="panel-header">
+                    <h3>Apariencia</h3>
+                </div>
+
+                <div class="system-section">
+                    <div class="system-card">
+                        <div class="system-card-header">
+                            <div class="system-card-icon">
+                                <i class="fas fa-moon"></i>
+                            </div>
+                            <div class="system-card-info">
+                                <div class="system-card-title">Modo oscuro</div>
+                                <div class="system-card-desc">Cambia entre tema claro y oscuro según tu preferencia</div>
+                            </div>
+                        </div>
+
+                        <!-- Selector de modo oscuro -->
+                        <div class="dark-mode-options">
+                            <label class="dm-option">
+                                <input type="radio" name="dark_mode" value="auto">
+                                <div class="dm-option-card">
+                                    <div class="dm-preview dm-preview-auto">
+                                        <div class="dm-preview-half dm-preview-light"></div>
+                                        <div class="dm-preview-half dm-preview-dark"></div>
+                                    </div>
+                                    <div class="dm-option-text">
+                                        <span class="dm-option-label">Automático</span>
+                                        <span class="dm-option-sub">Sigue la configuración del sistema</span>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="dm-option">
+                                <input type="radio" name="dark_mode" value="light" checked>
+                                <div class="dm-option-card">
+                                    <div class="dm-preview dm-preview-only-light">
+                                        <i class="fas fa-sun"></i>
+                                    </div>
+                                    <div class="dm-option-text">
+                                        <span class="dm-option-label">Claro</span>
+                                        <span class="dm-option-sub">Siempre tema claro</span>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="dm-option">
+                                <input type="radio" name="dark_mode" value="dark">
+                                <div class="dm-option-card">
+                                    <div class="dm-preview dm-preview-only-dark">
+                                        <i class="fas fa-moon"></i>
+                                    </div>
+                                    <div class="dm-option-text">
+                                        <span class="dm-option-label">Oscuro</span>
+                                        <span class="dm-option-sub">Siempre tema oscuro</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- Sección: Rendimiento -->
+                <div class="panel-header">
+                    <h3>Rendimiento</h3>
+                </div>
+
+                <div class="system-section">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">
+                                <i class="fas fa-bolt" style="color: var(--primary-pink); margin-right: 6px;"></i>
+                                Reducir animaciones
+                            </div>
+                            <div class="setting-desc">Desactiva la mayoría de animaciones para mejorar el rendimiento en dispositivos con menos potencia</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="reduce_animations">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="perf-hint" id="perfHint">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Las animaciones reducidas se activarán en la próxima carga de página y se mantendrán en tu próxima visita.</span>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-primary" id="saveSystemSettings">
+                    <i class="fas fa-save"></i> Guardar configuración
+                </button>
+
             </div>
 
         </div>

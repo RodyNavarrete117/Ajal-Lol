@@ -1,3 +1,31 @@
+/* ==================== DARK MODE VARIABLES ==================== */
+:root {
+    --home-bg:         transparent;
+    --card-bg:         #ffffff;
+    --card-border:     #f3f4f6;
+    --card-shadow:     0 4px 12px rgba(0, 0, 0, 0.06);
+    --card-shadow-hov: 0 12px 28px rgba(0, 0, 0, 0.12);
+    --card-border-hov: #e5e7eb;
+    --text-heading:    #111827;
+    --text-sub:        #6b7280;
+    --arrow-bg:        #f3f4f6;
+    --arrow-color:     #9ca3af;
+    --section-h2:      #111827;
+}
+
+[data-theme="dark"] {
+    --card-bg:         #161b27;
+    --card-border:     #2d4070;
+    --card-shadow:     0 4px 12px rgba(0, 0, 0, 0.3);
+    --card-shadow-hov: 0 12px 28px rgba(0, 0, 0, 0.5);
+    --card-border-hov: #3d5090;
+    --text-heading:    #e8e8f0;
+    --text-sub:        #a0a8c0;
+    --arrow-bg:        #1e2a45;
+    --arrow-color:     #6070a0;
+    --section-h2:      #e8e8f0;
+}
+
 /* Admin Home Styles */
 .admin-home {
     padding: 20px;
@@ -5,7 +33,7 @@
     margin: 0 auto;
 }
 
-/* Hero Section */
+/* ==================== HERO SECTION ==================== */
 .hero-section {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 24px;
@@ -14,6 +42,11 @@
     position: relative;
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+}
+
+/* Dark mode: hero mantiene su gradiente, solo ajustamos sombra */
+[data-theme="dark"] .hero-section {
+    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.15);
 }
 
 .hero-content {
@@ -63,13 +96,11 @@
     letter-spacing: 1px;
 }
 
-/* Hero Decoration */
+/* ==================== HERO DECORATION ==================== */
 .hero-decoration {
     position: absolute;
-    top: 0;
-    right: 0;
-    width: 50%;
-    height: 100%;
+    top: 0; right: 0;
+    width: 50%; height: 100%;
     pointer-events: none;
 }
 
@@ -77,77 +108,96 @@
     position: absolute;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.1);
+    animation: floatCircle 6s ease-in-out infinite;
 }
 
 .circle-1 {
-    width: 300px;
-    height: 300px;
-    top: -100px;
-    right: -50px;
+    width: 300px; height: 300px;
+    top: -100px; right: -50px;
+    animation-delay: 0s;
 }
 
 .circle-2 {
-    width: 200px;
-    height: 200px;
-    bottom: -50px;
-    right: 100px;
+    width: 200px; height: 200px;
+    bottom: -50px; right: 100px;
+    animation-delay: 2s;
 }
 
 .circle-3 {
-    width: 150px;
-    height: 150px;
-    top: 50%;
-    right: -30px;
+    width: 150px; height: 150px;
+    top: 50%; right: -30px;
     background: rgba(255, 255, 255, 0.05);
+    animation-delay: 4s;
 }
 
-/* Section Header */
+@keyframes floatCircle {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-12px); }
+}
+
+/* ── Reduce animations ── */
+body.reduce-animations .decoration-circle {
+    animation: none !important;
+}
+
+body.reduce-animations .widget-card,
+body.reduce-animations .widget-card::before,
+body.reduce-animations .widget-icon,
+body.reduce-animations .widget-arrow {
+    transition-duration: 0.1s !important;
+}
+
+body.reduce-animations .widget-card:hover {
+    transform: translateY(-2px) !important;
+}
+
+/* ==================== SECTION HEADER ==================== */
 .section-header {
     margin-bottom: 30px;
 }
 
 .section-header h2 {
-    color: #111827;
+    color: var(--section-h2);
     font-size: 28px;
     font-weight: 700;
     margin: 0 0 8px 0;
+    transition: color 0.3s ease;
 }
 
 .section-header p {
-    color: #6b7280;
+    color: var(--text-sub);
     font-size: 16px;
     margin: 0;
+    transition: color 0.3s ease;
 }
 
-/* Widgets Grid */
+/* ==================== WIDGETS GRID ==================== */
 .widgets-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 24px;
 }
 
-/* Widget Cards */
+/* ==================== WIDGET CARDS ==================== */
 .widget-card {
-    background: #ffffff;
+    background: var(--card-bg);
     padding: 28px;
     border-radius: 16px;
     display: flex;
     align-items: center;
     gap: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--card-shadow);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
     position: relative;
     overflow: hidden;
-    border: 1px solid #f3f4f6;
+    border: 1px solid var(--card-border);
 }
 
 .widget-card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     height: 4px;
     background: linear-gradient(90deg, #667eea, #764ba2);
     transform: scaleX(0);
@@ -157,8 +207,8 @@
 
 .widget-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
-    border-color: #e5e7eb;
+    box-shadow: var(--card-shadow-hov);
+    border-color: var(--card-border-hov);
 }
 
 .widget-card:hover::before {
@@ -182,32 +232,32 @@
     transform: scale(1.1) rotate(5deg);
 }
 
-.widget-info {
-    flex: 1;
-}
+.widget-info { flex: 1; }
 
 .widget-info h3 {
     margin: 0 0 4px 0;
     font-size: 18px;
-    color: #111827;
+    color: var(--text-heading);
     font-weight: 600;
+    transition: color 0.3s ease;
 }
 
 .widget-info p {
     margin: 0;
     font-size: 14px;
-    color: #6b7280;
+    color: var(--text-sub);
+    transition: color 0.3s ease;
 }
 
 .widget-arrow {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: #f3f4f6;
+    background: var(--arrow-bg);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #9ca3af;
+    color: var(--arrow-color);
     font-size: 14px;
     transition: all 0.3s ease;
 }
@@ -218,80 +268,30 @@
     transform: translateX(4px);
 }
 
-/* Individual Card Colors */
-.card-home .widget-icon {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
+/* ==================== INDIVIDUAL CARD COLORS ==================== */
+.card-home .widget-icon     { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.card-page .widget-icon     { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.card-reports .widget-icon  { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.card-manual .widget-icon   { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+.card-users .widget-icon    { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+.card-forms .widget-icon    { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+.card-settings .widget-icon { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
 
-.card-page .widget-icon {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-.card-reports .widget-icon {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
-
-.card-manual .widget-icon {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-}
-
-.card-users .widget-icon {
-    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-}
-
-.card-forms .widget-icon {
-    background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
-}
-
-.card-settings .widget-icon {
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-}
-
-/* Responsive Design */
+/* ==================== RESPONSIVE ==================== */
 @media (max-width: 768px) {
-    .hero-section {
-        padding: 40px 30px;
-    }
+    .hero-section  { padding: 40px 30px; }
+    .hero-title    { font-size: 32px; }
+    .hero-subtitle { font-size: 16px; }
+    .hero-stats    { gap: 30px; }
+    .stat-number   { font-size: 28px; }
 
-    .hero-title {
-        font-size: 32px;
-    }
-
-    .hero-subtitle {
-        font-size: 16px;
-    }
-
-    .hero-stats {
-        gap: 30px;
-    }
-
-    .stat-number {
-        font-size: 28px;
-    }
-
-    .widgets-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .admin-home {
-        padding: 15px;
-    }
+    .widgets-grid { grid-template-columns: 1fr; }
+    .admin-home   { padding: 15px; }
 }
 
 @media (max-width: 480px) {
-    .hero-section {
-        padding: 30px 20px;
-    }
-
-    .hero-title {
-        font-size: 26px;
-    }
-
-    .section-header h2 {
-        font-size: 22px;
-    }
-
-    .widget-card {
-        padding: 20px;
-    }
+    .hero-section     { padding: 30px 20px; }
+    .hero-title       { font-size: 26px; }
+    .section-header h2{ font-size: 22px; }
+    .widget-card      { padding: 20px; }
 }

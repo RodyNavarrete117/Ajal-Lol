@@ -79,37 +79,27 @@
             </div>
 
             <div class="menu-bottom">
-                
-                <!-- NOTIFICACIONES (Solo Desktop) -->
+                <!-- NOTIFICACIONES -->
                 <a href="#" class="notification-trigger" style="position: relative;">
                     <i class="fa fa-bell"></i>
                     <span>Notificaciones</span>
-                    <!-- Badge dinámico (se oculta si count = 0) -->
                     <span class="notification-badge" style="display: none;">0</span>
                 </a>
-                
+
                 <!-- AJUSTES -->
                 <a href="{{ url('/admin/settings') }}">
                     <i class="fa fa-gear"></i>
                     <span>Ajustes</span>
                 </a>
-                
             </div>
         </nav>
-
     </aside>
 
-    <!-- CONTENIDO -->
-    <main class="main" id="main">
-
-        <div class="content">
-            @yield('content')
-        </div>
-
-    </main>
-
-    <!-- PANEL LATERAL DE NOTIFICACIONES -->
-    <div class="notifications-overlay" id="notificationsOverlay"></div>
+    {{-- ============================================================
+         PANEL DE NOTIFICACIONES — FUERA DEL SIDEBAR
+         En expandido: se posiciona encima del sidebar (mismo lugar)
+         En colapsado: sale como flyout desde el borde del sidebar
+    ============================================================ --}}
     <div class="notifications-panel" id="notificationsPanel">
         <div class="notifications-panel-header">
             <h3><i class="fa fa-bell"></i> Notificaciones</h3>
@@ -117,15 +107,16 @@
                 <i class="fa fa-times"></i>
             </button>
         </div>
-        
+
         <div class="notifications-panel-content" id="notificationsList">
-            <!-- Las notificaciones se cargarán dinámicamente aquí -->
             <div class="notification-empty">
-                <i class="fa fa-spinner fa-spin"></i>
-                <p>Cargando notificaciones...</p>
+                <div class="notif-check-wrap">
+                    <i class="fa fa-spinner fa-spin"></i>
+                </div>
+                <p class="notif-empty-title">Cargando...</p>
             </div>
         </div>
-        
+
         <div class="notifications-panel-footer">
             <button class="btn-mark-read" id="markAllRead">
                 <i class="fa fa-check"></i> Marcar leídas
@@ -136,20 +127,27 @@
         </div>
     </div>
 
+    <!-- OVERLAY -->
+    <div class="notifications-overlay" id="notificationsOverlay"></div>
+
+    <!-- CONTENIDO -->
+    <main class="main" id="main">
+        <div class="content">
+            @yield('content')
+        </div>
+    </main>
+
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
 
     @stack('scripts')
 
-    <!-- Script para inicializar el contador de notificaciones -->
     <script>
-        // Pasar el conteo inicial de notificaciones al JavaScript
         @if(auth()->check())
             const initialNotificationCount = {{ 
                 \App\Models\Notification::where('user_id', auth()->id())
                     ->where('read', false)
                     ->count() 
             }};
-            
             document.addEventListener('DOMContentLoaded', function() {
                 if (typeof updateNotificationCount === 'function') {
                     updateNotificationCount(initialNotificationCount);

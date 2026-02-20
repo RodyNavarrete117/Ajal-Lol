@@ -1,108 +1,105 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     document.documentElement.classList.remove('sidebar-start-collapsed');
-    const sidebar = document.getElementById('sidebar');
-    const main = document.getElementById('main');
-    const toggleBtn = document.getElementById('toggleBtn');
-    const sidebarTitle = document.querySelector('.sidebar h2');
 
-    // Mapeo de rutas a nombres de página e iconos
+    const sidebar               = document.getElementById('sidebar');
+    const main                  = document.getElementById('main');
+    const toggleBtn             = document.getElementById('toggleBtn');
+    const sidebarTitle          = document.querySelector('.sidebar h2');
+    const notificationsPanel    = document.getElementById('notificationsPanel');
+    const notificationsOverlay  = document.getElementById('notificationsOverlay');
+    const notificationsList     = document.getElementById('notificationsList');
+    const closeNotificationsBtn = document.getElementById('closeNotifications');
+    const notificationBtns      = document.querySelectorAll('.notification-trigger');
+
+    // ── Helpers ──────────────────────────────────────────────────
+    function isMobile() { return window.innerWidth <= 768; }
+
+    function isSidebarCollapsed() {
+        return sidebar.classList.contains('collapsed');
+    }
+
+    // ── Page metadata ─────────────────────────────────────────────
     const pageNames = {
-        '/admin/home': 'Inicio',
-        '/admin/page': 'Página',
-        '/admin/report': 'Informe',
-        '/admin/manual': 'Manual',
-        '/admin/users': 'Usuarios',
-        '/admin/forms': 'Formularios',
+        '/admin/home':          'Inicio',
+        '/admin/page':          'Página',
+        '/admin/report':        'Informe',
+        '/admin/manual':        'Manual',
+        '/admin/users':         'Usuarios',
+        '/admin/forms':         'Formularios',
         '/admin/notifications': 'Notificaciones',
-        '/admin/settings': 'Ajustes'
+        '/admin/settings':      'Ajustes'
     };
 
     const pageIcons = {
-        '/admin/home': '\uf015',      // fa-house
-        '/admin/page': '\uf0ac',      // fa-globe
-        '/admin/report': '\uf201',    // fa-chart-line
-        '/admin/manual': '\uf02d',    // fa-book
-        '/admin/users': '\uf0c0',     // fa-users
-        '/admin/forms': '\uf15c',     // fa-file-lines
-        '/admin/notifications': '\uf0f3',  // fa-bell
-        '/admin/settings': '\uf013'   // fa-gear
+        '/admin/home':          '\uf015',
+        '/admin/page':          '\uf0ac',
+        '/admin/report':        '\uf201',
+        '/admin/manual':        '\uf02d',
+        '/admin/users':         '\uf0c0',
+        '/admin/forms':         '\uf15c',
+        '/admin/notifications': '\uf0f3',
+        '/admin/settings':      '\uf013'
     };
 
-    function isMobile() {
-        return window.innerWidth <= 768;
-    }
-
-    // Detectar página actual y marcar link activo
+    // ── Active page ───────────────────────────────────────────────
     function setActivePage() {
         const currentPath = window.location.pathname;
-        const menuLinks = document.querySelectorAll('.menu a:not(.notification-trigger)');
-        
-        menuLinks.forEach(link => {
+        document.querySelectorAll('.menu a:not(.notification-trigger)').forEach(link => {
             const linkPath = new URL(link.href).pathname;
-            
-            if (linkPath === currentPath) {
-                link.classList.add('active');
-                
-                // Actualizar título e icono en móvil
-                if (isMobile()) {
-                    if (pageNames[linkPath]) {
-                        sidebarTitle.textContent = pageNames[linkPath];
-                    }
-                    if (pageIcons[linkPath]) {
-                        sidebarTitle.setAttribute('data-page-icon', pageIcons[linkPath]);
-                    }
-                }
-            } else {
-                link.classList.remove('active');
+            link.classList.toggle('active', linkPath === currentPath);
+
+            if (isMobile() && linkPath === currentPath) {
+                if (pageNames[linkPath]) sidebarTitle.textContent = pageNames[linkPath];
+                if (pageIcons[linkPath]) sidebarTitle.setAttribute('data-page-icon', pageIcons[linkPath]);
             }
-            
-            // Agregar data-title para tooltip en desktop
-            if (pageNames[linkPath]) {
-                link.setAttribute('data-title', pageNames[linkPath]);
-            }
+
+            if (pageNames[linkPath]) link.setAttribute('data-title', pageNames[linkPath]);
         });
     }
 
-    // Ejecutar al cargar
     setActivePage();
 
-    toggleBtn.addEventListener('click', function(e) {
+    // ── Sync body class with sidebar collapsed state ──────────────
+    function syncBodyClass() {
+        document.body.classList.toggle('sidebar-collapsed', isSidebarCollapsed());
+    }
+
+    // ── Toggle sidebar ────────────────────────────────────────────
+    toggleBtn.addEventListener('click', function (e) {
         e.stopPropagation();
-        
+
         if (isMobile()) {
             sidebar.classList.toggle('mobile-open');
         } else {
+            // Close notif panel before toggling
+            if (document.body.classList.contains('notif-open')) {
+                closeNotificationsPanel(false); // silent close, no page restore
+            }
+
             sidebar.classList.toggle('collapsed');
             main.classList.toggle('expanded');
-            
-            if (sidebar.classList.contains('collapsed')) {
-                localStorage.setItem('sidebarState', 'collapsed');
-            } else {
-                localStorage.setItem('sidebarState', 'expanded');
-            }
+            syncBodyClass();
+
+            localStorage.setItem('sidebarState',
+                isSidebarCollapsed() ? 'collapsed' : 'expanded');
         }
     });
 
-    // Cerrar menú al hacer click fuera en móvil
-    document.addEventListener('click', function(e) {
-        if (isMobile() && sidebar.classList.contains('mobile-open')) {
-            if (!sidebar.contains(e.target)) {
-                sidebar.classList.remove('mobile-open');
-            }
+    // Close mobile menu on outside click
+    document.addEventListener('click', function (e) {
+        if (isMobile() && sidebar.classList.contains('mobile-open') && !sidebar.contains(e.target)) {
+            sidebar.classList.remove('mobile-open');
         }
     });
 
-    // Cerrar menú al hacer click en un enlace en móvil
-    const menuLinks = document.querySelectorAll('.menu a');
-    menuLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            if (isMobile()) {
-                sidebar.classList.remove('mobile-open');
-            }
+    // Close mobile menu on link click
+    document.querySelectorAll('.menu a').forEach(link => {
+        link.addEventListener('click', function () {
+            if (isMobile()) sidebar.classList.remove('mobile-open');
         });
     });
 
-    // Recuperar estado guardado solo en desktop
+    // Restore sidebar state on desktop
     if (!isMobile()) {
         const savedState = localStorage.getItem('sidebarState');
         if (savedState === 'collapsed') {
@@ -110,57 +107,47 @@ document.addEventListener('DOMContentLoaded', function() {
             main.classList.add('expanded');
         }
     }
-    
-    // Manejar cambio de tamaño de ventana
+
+    syncBodyClass(); // initial body class
+
+    // Handle resize
     let resizeTimer;
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', function () {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function() {
+        resizeTimer = setTimeout(function () {
             if (isMobile()) {
                 sidebar.classList.remove('collapsed');
                 main.classList.remove('expanded');
-                setActivePage(); // Actualizar título e icono móvil
+                setActivePage();
             } else {
                 sidebar.classList.remove('mobile-open');
-                
-                // Restaurar texto original en desktop
-                const originalRole = sidebarTitle.getAttribute('data-original-text');
-                if (originalRole) {
-                    sidebarTitle.textContent = originalRole;
-                }
+                const orig = sidebarTitle.getAttribute('data-original-text');
+                if (orig) sidebarTitle.textContent = orig;
                 sidebarTitle.removeAttribute('data-page-icon');
-                
+
                 const savedState = localStorage.getItem('sidebarState');
                 if (savedState === 'collapsed') {
                     sidebar.classList.add('collapsed');
                     main.classList.add('expanded');
                 }
             }
+            syncBodyClass();
         }, 250);
     });
-    
-    // Guardar texto original del título
+
     sidebarTitle.setAttribute('data-original-text', sidebarTitle.textContent);
 
-    // 🔹 QUITAR BLOQUEO DE TRANSICIONES DESPUÉS DEL RENDER
     requestAnimationFrame(() => {
         document.documentElement.classList.remove('no-transition');
     });
-    
-    // ==================== NOTIFICACIONES ====================
-    const notificationsPanel = document.getElementById('notificationsPanel');
-    const notificationsOverlay = document.getElementById('notificationsOverlay');
-    const notificationsList = document.getElementById('notificationsList');
-    const notificationBtns = document.querySelectorAll('.notification-trigger');
-    const closeNotificationsBtn = document.getElementById('closeNotifications');
-    
-    // Datos de notificaciones (se llenarán desde el servidor)
+
+    // ── NOTIFICATIONS ─────────────────────────────────────────────
+
     let notificationsData = [];
-    
-    // Actualizar el contador dinámicamente
-    window.updateNotificationCount = function(count) {
-        const badges = document.querySelectorAll('.notification-badge');
-        badges.forEach(badge => {
+
+    // Update badge count
+    window.updateNotificationCount = function (count) {
+        document.querySelectorAll('.notification-badge').forEach(badge => {
             if (count > 0) {
                 badge.textContent = count > 99 ? '99+' : count;
                 badge.style.display = 'block';
@@ -169,190 +156,171 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     };
-    
-    // Renderizar notificaciones en el panel
+
+    // Render
     function renderNotifications(notifications) {
         if (!notificationsList) return;
-        
+
         if (notifications.length === 0) {
             notificationsList.innerHTML = `
                 <div class="notification-empty">
-                    <i class="fa fa-bell-slash"></i>
-                    <p>No tienes notificaciones</p>
-                </div>
-            `;
+                    <div class="notif-check-wrap">
+                        <i class="fa fa-check"></i>
+                    </div>
+                    <p class="notif-empty-title">¡Estás al día!</p>
+                    <p class="notif-empty-sub">No tienes notificaciones nuevas por ahora.</p>
+                </div>`;
             return;
         }
-        
-        notificationsList.innerHTML = notifications.map(notif => `
-            <div class="notification-item ${notif.read ? '' : 'unread'}" data-id="${notif.id}">
+
+        notificationsList.innerHTML = notifications.map(n => `
+            <div class="notification-item ${n.read ? '' : 'unread'}" data-id="${n.id}">
                 <div class="notification-item-header">
-                    <div class="notification-item-title">${notif.title}</div>
-                    ${!notif.read ? '<span class="notification-item-badge">Nuevo</span>' : ''}
+                    <div class="notification-item-title">${n.title}</div>
+                    ${!n.read ? '<span class="notification-item-badge">Nuevo</span>' : ''}
                 </div>
-                <div class="notification-item-message">${notif.message}</div>
+                <div class="notification-item-message">${n.message}</div>
                 <div class="notification-item-time">
-                    <i class="fa fa-clock"></i> ${notif.time}
+                    <i class="fa fa-clock"></i> ${n.time}
                 </div>
-            </div>
-        `).join('');
-        
-        // Agregar click listeners a las notificaciones
+            </div>`).join('');
+
         document.querySelectorAll('.notification-item').forEach(item => {
-            item.addEventListener('click', function() {
-                const notifId = this.getAttribute('data-id');
-                markAsRead(notifId);
+            item.addEventListener('click', function () {
+                markAsRead(this.getAttribute('data-id'));
             });
         });
     }
-    
-    // Abrir panel de notificaciones
+
+    // Open
     function openNotificationsPanel() {
-        if (notificationsPanel && notificationsOverlay) {
-            notificationsPanel.classList.add('open');
+        if (!notificationsPanel) return;
+
+        // Sync collapsed class on body before opening
+        syncBodyClass();
+
+        document.body.classList.add('notif-open');
+
+        // Show overlay for: collapsed flyout or mobile (not expanded sidebar)
+        if (isSidebarCollapsed() || isMobile()) {
             notificationsOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            
-            // Difuminar el main y sidebar
-            main?.classList.add('blurred');
-            sidebar?.classList.add('blurred');
-            
-            // Quitar clase active de todos los links del menú
-            document.querySelectorAll('.menu a').forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            fetchNotificationsDetails();
         }
+
+        // Remove active state from menu links
+        document.querySelectorAll('.menu a').forEach(l => l.classList.remove('active'));
+
+        fetchNotificationsDetails();
     }
-    
-    // Cerrar panel de notificaciones
-    function closeNotificationsPanel() {
-        if (notificationsPanel && notificationsOverlay) {
-            notificationsPanel.classList.remove('open');
-            notificationsOverlay.classList.remove('active');
-            document.body.style.overflow = '';
-            
-            // Quitar difuminado
-            main?.classList.remove('blurred');
-            sidebar?.classList.remove('blurred');
-            
-            // Restaurar clase active a la página actual
-            setActivePage();
-        }
+
+    // Close
+    function closeNotificationsPanel(restorePage = true) {
+        if (!notificationsPanel) return;
+
+        document.body.classList.remove('notif-open');
+        notificationsOverlay.classList.remove('active');
+
+        if (restorePage) setActivePage();
     }
-    
-    // Event listeners para abrir panel
+
+    // Toggle on trigger click
     notificationBtns.forEach(btn => {
-        btn?.addEventListener('click', function(e) {
+        btn?.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
-            openNotificationsPanel();
+
+            if (document.body.classList.contains('notif-open')) {
+                closeNotificationsPanel();
+            } else {
+                openNotificationsPanel();
+            }
         });
     });
-    
-    // Event listeners para cerrar panel
-    closeNotificationsBtn?.addEventListener('click', closeNotificationsPanel);
-    notificationsOverlay?.addEventListener('click', closeNotificationsPanel);
-    
-    // Cerrar con tecla ESC
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && notificationsPanel?.classList.contains('open')) {
+
+    closeNotificationsBtn?.addEventListener('click', () => closeNotificationsPanel());
+    notificationsOverlay?.addEventListener('click', () => closeNotificationsPanel());
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && document.body.classList.contains('notif-open')) {
             closeNotificationsPanel();
         }
     });
-    
-    // Obtener conteo de notificaciones del servidor
+
+    // ── API ───────────────────────────────────────────────────────
     function fetchNotifications() {
         fetch('/api/notifications/count')
-            .then(res => res.json())
-            .then(data => window.updateNotificationCount(data.count))
-            .catch(err => console.error('Error al obtener notificaciones:', err));
+            .then(r => r.json())
+            .then(d => window.updateNotificationCount(d.count))
+            .catch(() => {});
     }
-    
-    // Obtener detalles de las notificaciones
+
     function fetchNotificationsDetails() {
+        if (!notificationsList) return;
+
+        notificationsList.innerHTML = `
+            <div class="notification-empty">
+                <div class="notif-check-wrap">
+                    <i class="fa fa-spinner fa-spin"></i>
+                </div>
+                <p class="notif-empty-title">Cargando...</p>
+            </div>`;
+
         fetch('/api/notifications/list')
-            .then(res => res.json())
-            .then(data => {
-                notificationsData = data.notifications || [];
+            .then(r => r.json())
+            .then(d => {
+                notificationsData = d.notifications || [];
                 renderNotifications(notificationsData);
             })
-            .catch(err => {
-                console.error('Error al obtener detalles de notificaciones:', err);
-                // Mostrar notificaciones de ejemplo si falla
-                renderNotifications([]);
-            });
+            .catch(() => renderNotifications([]));
     }
-    
-    // Marcar notificación como leída
-    function markAsRead(notificationId) {
-        fetch(`/api/notifications/${notificationId}/read`, {
+
+    function markAsRead(id) {
+        fetch(`/api/notifications/${id}/read`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
             }
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                // Actualizar visualmente
-                const notifElement = document.querySelector(`[data-id="${notificationId}"]`);
-                if (notifElement) {
-                    notifElement.classList.remove('unread');
-                    const badge = notifElement.querySelector('.notification-item-badge');
-                    if (badge) badge.remove();
+            .then(r => r.json())
+            .then(d => {
+                if (d.success) {
+                    const el = document.querySelector(`[data-id="${id}"]`);
+                    if (el) {
+                        el.classList.remove('unread');
+                        el.querySelector('.notification-item-badge')?.remove();
+                    }
+                    fetchNotifications();
                 }
-                // Actualizar contador
-                fetchNotifications();
-            }
-        })
-        .catch(err => console.error('Error al marcar como leída:', err));
+            })
+            .catch(() => {});
     }
-    
-    // Marcar todas como leídas
-    document.getElementById('markAllRead')?.addEventListener('click', function() {
+
+    document.getElementById('markAllRead')?.addEventListener('click', function () {
         fetch('/api/notifications/read-all', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
             }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                fetchNotificationsDetails();
-                fetchNotifications();
+        }).then(r => r.json()).then(d => {
+            if (d.success) { fetchNotificationsDetails(); fetchNotifications(); }
+        }).catch(() => {});
+    });
+
+    document.getElementById('clearAll')?.addEventListener('click', function () {
+        if (!confirm('¿Estás seguro de que quieres eliminar todas las notificaciones?')) return;
+
+        fetch('/api/notifications/clear-all', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
             }
-        })
-        .catch(err => console.error('Error:', err));
+        }).then(r => r.json()).then(d => {
+            if (d.success) { fetchNotificationsDetails(); fetchNotifications(); }
+        }).catch(() => {});
     });
-    
-    // Limpiar todas las notificaciones
-    document.getElementById('clearAll')?.addEventListener('click', function() {
-        if (confirm('¿Estás seguro de que quieres eliminar todas las notificaciones?')) {
-            fetch('/api/notifications/clear-all', {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    fetchNotificationsDetails();
-                    fetchNotifications();
-                }
-            })
-            .catch(err => console.error('Error:', err));
-        }
-    });
-    
-    // Llamar al cargar y cada 30 segundos
+
     fetchNotifications();
     setInterval(fetchNotifications, 30000);
-    
 });

@@ -13,7 +13,7 @@
     <div class="hero-section">
         <div class="hero-content">
             <h1 class="hero-title">
-                Bienvenido {{ session('user_name') ?? 'Usuario' }}
+                Bienvenido {{ session('nombre') ?? 'Usuario' }}
             </h1>
 
             <p class="hero-subtitle">

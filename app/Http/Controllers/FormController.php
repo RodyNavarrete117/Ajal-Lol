@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\FormPdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -13,7 +14,6 @@ class FormController extends Controller
      */
     public function index()
     {
-        // Obtener todos los formularios ordenados por fecha más reciente
         $forms = DB::table('formulario_contacto')
             ->select(
                 'id_formcontacto',
@@ -31,7 +31,7 @@ class FormController extends Controller
     }
 
     /**
-     * Mostrar detalles de un formulario específico
+     * Mostrar detalles de un formulario específico (AJAX)
      */
     public function show($id)
     {
@@ -53,6 +53,12 @@ class FormController extends Controller
             ]);
 
         } catch (\Exception $e) {
+
+            Log::error('Error al obtener formulario', [
+                'id' => $id,
+                'error' => $e->getMessage()
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener el formulario'
@@ -93,6 +99,7 @@ class FormController extends Controller
             ]);
 
         } catch (\Exception $e) {
+
             Log::error('Error al eliminar formulario', [
                 'id' => $id,
                 'error' => $e->getMessage()
@@ -136,6 +143,7 @@ class FormController extends Controller
             ]);
 
         } catch (\Exception $e) {
+
             Log::error('Error al eliminar múltiples formularios', [
                 'error' => $e->getMessage()
             ]);
@@ -158,16 +166,15 @@ class FormController extends Controller
                 ->get();
 
             $filename = 'formularios_contacto_' . date('Y-m-d_His') . '.csv';
-            
+
             $headers = [
                 'Content-Type' => 'text/csv',
                 'Content-Disposition' => "attachment; filename={$filename}",
             ];
 
-            $callback = function() use ($forms) {
+            $callback = function () use ($forms) {
                 $file = fopen('php://output', 'w');
-                
-                // Encabezados CSV
+
                 fputcsv($file, [
                     'ID',
                     'Nombre Completo',
@@ -178,7 +185,6 @@ class FormController extends Controller
                     'Fecha de Envío'
                 ]);
 
-                // Datos
                 foreach ($forms as $form) {
                     fputcsv($file, [
                         $form->id_formcontacto,
@@ -197,11 +203,29 @@ class FormController extends Controller
             return response()->stream($callback, 200, $headers);
 
         } catch (\Exception $e) {
-            Log::error('Error al exportar formularios', [
+
+            Log::error('Error al exportar CSV', [
                 'error' => $e->getMessage()
             ]);
 
             return back()->with('error', 'Error al exportar los formularios');
         }
     }
+
+public function exportPdf(FormPdfService $pdfService)
+{
+    $forms = DB::table('formulario_contacto')
+        ->orderBy('fecha_envio', 'desc')
+        ->get();
+
+    if ($forms->isEmpty()) {
+        return back()->with('error', 'No hay formularios para exportar');
+    }
+
+    $pdf = $pdfService->generate($forms);
+
+    // Esto fuerza la descarga
+    $pdf->Output('formularios_contacto.pdf', 'D'); // 'D' = download
+    exit; // importante para que Laravel no agregue nada más
+}
 }

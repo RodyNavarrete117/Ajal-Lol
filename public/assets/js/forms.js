@@ -306,32 +306,53 @@ async function deleteForm(id) {
     }
 }
 
-// ========================================
-// EXPORTAR A CSV
-// ========================================
-function exportForms() {
+async function exportForms() {
     Swal.fire({
         title: 'Exportando...',
-        text: 'Generando archivo CSV',
+        text: 'Generando archivo PDF',
         allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
+        didOpen: () => Swal.showLoading()
     });
 
-    // Redirigir a la ruta de exportación
-    window.location.href = '/admin/forms/export';
+    try {
+        const response = await fetch('/admin/forms/export/pdf', {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/pdf'
+            }
+        });
 
-    // Cerrar el loading después de un momento
-    setTimeout(() => {
-        Swal.close();
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            throw new Error(errorData?.message || 'Error al generar PDF');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'formularios_contacto.pdf';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
         Swal.fire({
             icon: 'success',
-            title: '¡Exportado!',
-            text: 'El archivo se ha descargado correctamente',
-            confirmButtonColor: '#10b981',
-            timer: 2000,
-            timerProgressBar: true
+            title: '¡Listo!',
+            text: 'PDF generado correctamente',
+            confirmButtonColor: '#7d3f6a'
         });
-    }, 1500);
+
+    } catch (error) {
+        console.error('Error exportando PDF:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message,
+            confirmButtonColor: '#ef4444'
+        });
+    }
 }

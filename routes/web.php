@@ -25,26 +25,29 @@ Route::get('/admin/page', fn() => view('admin.page'));
 Route::get('/admin/report', fn() => view('admin.reports'));
 Route::get('/admin/manual', fn() => view('admin.manual'));
 
-/* Formularios de contacto (se usa controller para pasar $forms) */
 Route::prefix('admin')->group(function () {
 
-    // Muestra la lista de formularios
+    // Lista
     Route::get('/forms', [FormController::class, 'index'])
         ->name('admin.forms');
 
-    // Muestra el detalle de un formulario por ID
-    Route::get('/forms/{id}', [FormController::class, 'show'])
-        ->name('admin.forms.show');
-
-    // Elimina un formulario por ID
-    Route::delete('/forms/{id}', [FormController::class, 'destroy'])
-        ->name('admin.forms.destroy');
-
-    // Exporta los formularios (ej. CSV o Excel)
+    // Exportaciones (ANTES del {id})
     Route::get('/forms/export', [FormController::class, 'export'])
         ->name('admin.forms.export');
 
+    Route::get('/forms/export/pdf', [FormController::class, 'exportPdf'])
+        ->name('admin.forms.export.pdf');
+
+    // Mostrar detalle
+    Route::get('/forms/{id}', [FormController::class, 'show'])
+        ->name('admin.forms.show');
+
+    // Eliminar
+    Route::delete('/forms/{id}', [FormController::class, 'destroy'])
+        ->name('admin.forms.destroy');
 });
+
+    
 
 /* Configuración: acá se hacen los cambios de datos del usuario */
 Route::prefix('admin')->group(function () {

@@ -26,15 +26,24 @@ body {
 html { overflow-y: scroll; }
 
 /* ==================== SIDEBAR START COLLAPSED ==================== */
+/*
+  Clase aplicada en <html> ANTES del render cuando sidebar arranca colapsado.
+  Congela TODO para que no haya ninguna animación de colapso visible.
+  Se remueve en JS después de restaurar el estado.
+*/
+.sidebar-start-collapsed *,
+.sidebar-start-collapsed *::before,
+.sidebar-start-collapsed *::after {
+    transition: none !important;
+    animation: none !important;
+}
+
 .sidebar-start-collapsed .sidebar  { width: 70px !important; }
 .sidebar-start-collapsed .main     { margin-left: 70px !important; }
-.sidebar-start-collapsed .sidebar,
-.sidebar-start-collapsed .main     { transition: none !important; }
 .sidebar-start-collapsed .sidebar h2,
 .sidebar-start-collapsed .menu a span { opacity: 0 !important; visibility: hidden !important; }
 .sidebar.collapsed .menu a,
 .sidebar-start-collapsed .menu a   { gap: 0; justify-content: center; }
-.sidebar-start-collapsed .toggle-btn { visibility: hidden !important; transition: none !important; }
 
 /* ==================== SIDEBAR ==================== */
 .sidebar {
@@ -568,6 +577,120 @@ body.notif-open:not(.sidebar-collapsed) .notifications-overlay {
 .sidebar.collapsed .sidebar-header { display: flex; justify-content: center; align-items: center; }
 .sidebar.collapsed .sidebar-header h2 { display: none !important; }
 .sidebar.collapsed .toggle-btn { margin: 0 !important; }
+
+
+/* ==================== DARK MODE — SIDEBAR ==================== */
+/*
+  En modo oscuro el sidebar pierde el gradiente sólido.
+  Se vuelve semitransparente/oscuro con borde derecho sutil.
+  Los links activos y hover muestran solo outline, sin relleno.
+*/
+
+/* Sidebar base — fondo oscuro con toque de color morado */
+[data-theme="dark"] .sidebar {
+    background: linear-gradient(180deg, #1a1028 0%, #120d1e 100%);
+    box-shadow: 1px 0 0 rgba(141, 58, 109, 0.2), 4px 0 20px rgba(0,0,0,0.5);
+}
+
+/* Panel de notificaciones igual */
+[data-theme="dark"] .notifications-panel {
+    background: linear-gradient(180deg, #1a1028 0%, #120d1e 100%);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+}
+
+/* Header del sidebar */
+[data-theme="dark"] .sidebar-header {
+    border-bottom-color: rgba(255,255,255,0.06);
+}
+
+/* Toggle btn */
+[data-theme="dark"] .toggle-btn:hover {
+    background: rgba(255,255,255,0.07);
+}
+
+/* Separador inferior */
+[data-theme="dark"] .menu-bottom::before {
+    background: rgba(255,255,255,0.07);
+}
+
+/* Links normales — texto más apagado */
+[data-theme="dark"] .menu a {
+    color: rgba(255,255,255,0.55);
+}
+
+/* Hover — outline sutil via box-shadow (no afecta layout) */
+[data-theme="dark"] .menu a:hover:not(.active),
+[data-theme="dark"] .menu a.notification-trigger:hover {
+    background: rgba(255,255,255,0.03);
+    color: rgba(255,255,255,0.9);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.13);
+}
+
+/* Barra lateral izquierda en hover */
+[data-theme="dark"] .menu a:hover::before,
+[data-theme="dark"] .menu a.notification-trigger:hover::before {
+    background: rgba(255,255,255,0.4);
+}
+
+/* Activo — outline acento via box-shadow (no afecta layout) */
+[data-theme="dark"] .menu a.active:not(.notification-trigger) {
+    background: rgba(212, 107, 168, 0.06);
+    color: #d46ba8;
+    box-shadow: inset 0 0 0 1px rgba(212, 107, 168, 0.3);
+    font-weight: 600;
+}
+
+/* Barra lateral izquierda activo — color acento */
+[data-theme="dark"] .menu a.active:not(.notification-trigger)::before {
+    background: #d46ba8;
+    height: 80%;
+}
+
+[data-theme="dark"] .menu a.active:not(.notification-trigger) i {
+    color: #d46ba8;
+}
+
+/* Iconos en sidebar oscuro — ligeramente más brillantes al hover */
+[data-theme="dark"] .menu a i {
+    color: rgba(255,255,255,0.5);
+    transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .menu a:hover i,
+[data-theme="dark"] .menu a.active i {
+    color: rgba(255,255,255,0.95);
+}
+
+[data-theme="dark"] .menu a.active:not(.notification-trigger) i {
+    color: #d46ba8;
+}
+
+/* Tooltip en collapsed — dark mode */
+[data-theme="dark"] .sidebar.collapsed .menu a:not(.notification-trigger)::after {
+    background: rgba(15, 20, 32, 0.95);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Sidebar colapsado — hover outline cuadrado centrado */
+[data-theme="dark"] .sidebar.collapsed .menu a:hover {
+    background: rgba(255,255,255,0.03);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.13);
+    transform: scale(1.05);
+}
+
+[data-theme="dark"] .sidebar.collapsed .menu a.active:not(.notification-trigger) {
+    background: rgba(212, 107, 168, 0.06);
+    box-shadow: inset 0 0 0 1px rgba(212, 107, 168, 0.3);
+}
+
+/* Notif panel header en oscuro */
+[data-theme="dark"] .notifications-panel-header {
+    border-bottom-color: rgba(255,255,255,0.06);
+}
+
+[data-theme="dark"] .notifications-panel-footer {
+    border-top-color: rgba(255,255,255,0.06);
+}
 
 /* ==================== REDUCE ANIMATIONS ==================== */
 body.reduce-animations *,

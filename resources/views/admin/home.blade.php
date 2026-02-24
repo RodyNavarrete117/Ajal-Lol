@@ -39,10 +39,20 @@
             </div>
         </div>
 
+        <!-- Decoración Maya -->
         <div class="hero-decoration">
-            <div class="decoration-circle circle-1"></div>
-            <div class="decoration-circle circle-2"></div>
-            <div class="decoration-circle circle-3"></div>
+            <div class="maya-bg-pattern"></div>
+            <div class="maya-glyph-strip-top"></div>
+            <div class="maya-glyph-strip"></div>
+            <div class="maya-serpent"></div>
+            <div class="maya-sun"></div>
+            <div class="maya-calendar"></div>
+            <div class="maya-square-glyph"></div>
+            <div class="maya-dot-cross"></div>
+            <div class="maya-venus"></div>
+            <div class="maya-numbers"></div>
+            <div class="maya-creature"></div>
+            <div class="maya-pyramid"></div>
         </div>
     </div>
 

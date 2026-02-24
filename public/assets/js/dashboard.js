@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    document.documentElement.classList.remove('sidebar-start-collapsed');
-
+    // Remove sidebar-start-collapsed AFTER restoring state to avoid flicker
     const sidebar               = document.getElementById('sidebar');
     const main                  = document.getElementById('main');
     const toggleBtn             = document.getElementById('toggleBtn');
@@ -99,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Restore sidebar state on desktop
+    // Restore sidebar state on desktop — sin animación todavía
     if (!isMobile()) {
         const savedState = localStorage.getItem('sidebarState');
         if (savedState === 'collapsed') {
@@ -109,6 +108,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     syncBodyClass(); // initial body class
+
+    // Quitar sidebar-start-collapsed en doble rAF:
+    // primer frame → browser pinta el estado colapsado sin transiciones
+    // segundo frame → se habilitan las transiciones normalmente
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            document.documentElement.classList.remove('sidebar-start-collapsed');
+        });
+    });
 
     // Handle resize
     let resizeTimer;
@@ -137,9 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     sidebarTitle.setAttribute('data-original-text', sidebarTitle.textContent);
 
-    requestAnimationFrame(() => {
-        document.documentElement.classList.remove('no-transition');
-    });
+    // no-transition ya no se usa — manejado por sidebar-start-collapsed
 
     // ── NOTIFICATIONS ─────────────────────────────────────────────
 

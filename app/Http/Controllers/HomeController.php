@@ -7,28 +7,25 @@ use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
-    /**
-     * Mostrar el dashboard principal con estadísticas
-     */
+    // Muestra el dashboard principal
     public function index()
     {
-        // Verificar que el usuario esté autenticado
+        // Verifica que el usuario tenga sesión activa
         if (!session()->has('user_id')) {
-            return redirect()->route('login')->with('error', 'Debes iniciar sesión');
+            return redirect()->route('login')
+                ->with('error', 'Debes iniciar sesión');
         }
 
-        // Obtener total de usuarios
+        // Cuenta el total de usuarios registrados
         $totalUsers = DB::table('usuario')->count();
 
-        // Total de páginas (dejar en 0 por ahora)
+        // Total de páginas (pendiente de implementación)
         $totalPages = 0;
 
-        // Total de formularios (dejar en 0 por ahora)
-        $totalForms = 0;
+        // Cuenta el total de mensajes del formulario de contacto
+        $totalForms = DB::table('formulario_contacto')->count();
 
-        // Obtener nombre del usuario desde la sesión
-        $userName = session('user_name', 'Usuario');
-
+        // Retorna la vista con las estadísticas
         return view('admin.home', compact(
             'totalUsers',
             'totalPages',

@@ -52,8 +52,8 @@
                     </svg>
                     <span>Más reciente</span>
                 </button>
-
-                <button type="button" class="export-button" onclick="window.location.href='{{ route('admin.forms.export.pdf') }}'">
+                <!-- Exportar PDF -->
+                <button type="button" class="export-button">
                     <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
                         <path d="M3 17v-2a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2M10 3v12m0 0l-4-4m4 4l4-4"
                             stroke="currentColor"
@@ -62,6 +62,11 @@
                     </svg>
                     Exportar PDF
                 </button>
+
+                <script>
+                const exportButton = document.querySelector('.export-button');
+                exportButton.addEventListener('click', exportForms); // Solo JS
+                </script>
         </div>
 
         <!-- Tabla -->

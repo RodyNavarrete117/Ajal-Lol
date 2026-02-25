@@ -8,6 +8,15 @@
 
 @section('content')
 <div class="reports-container">
+
+    {{-- ── Flash ── --}}
+    @if(session('success'))
+        <div class="alert-success" id="flash-msg"
+             style="background:#d1fae5;color:#065f46;padding:1rem 1.5rem;border-radius:12px;margin-bottom:1.5rem;font-weight:600;">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <!-- VISTA 1: Calendario (vista por defecto) -->
     <div id="calendar-view" class="view-section active">
         <div class="reports-header">
@@ -86,125 +95,132 @@
             <h2>Informe - crear nuevo informe</h2>
         </div>
 
-        <div class="create-form">
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Nombre de la organización</label>
-                    <div class="input-with-icon">
-                        <input type="text" value="Ajal-lol AC" readonly>
-                        <button class="btn-edit-input">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
+        @if($errors->any())
+            <div id="validation-errors"
+                 style="background:#fee2e2;color:#991b1b;padding:1rem 1.5rem;border-radius:12px;margin-bottom:1.5rem;">
+                <ul style="margin:0;padding-left:1.2rem;">
+                    @foreach($errors->all() as $e)
+                        <li>{{ $e }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('admin.reports.store') }}" method="POST" id="create-report-form">
+            @csrf
+            <div class="create-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre de la organización</label>
+                        <div class="input-with-icon">
+                            <input type="text" name="nombre_organizacion"
+                                   value="{{ old('nombre_organizacion', 'Ajal-lol AC') }}" required>
+                            <button type="button" class="btn-edit-input" onclick="toggleEdit(this)">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Evento</label>
+                        <div class="input-with-icon">
+                            <input type="text" name="evento"
+                                   value="{{ old('evento') }}" required placeholder="Nombre del evento">
+                            <button type="button" class="btn-edit-input" onclick="toggleEdit(this)">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Evento</label>
-                    <div class="input-with-icon">
-                        <input type="text" value="Campaña de prevención de caries">
-                        <button class="btn-edit-input">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Lugar</label>
+                        <div class="input-with-icon">
+                            <input type="text" name="lugar"
+                                   value="{{ old('lugar') }}" required placeholder="Ciudad, Estado">
+                            <button type="button" class="btn-edit-input" onclick="toggleEdit(this)">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
+
+                    <div class="form-group">
+                        <label>Fecha</label>
+                        <div class="input-with-icon">
+                            <input type="date" name="fecha"
+                                   value="{{ old('fecha') }}" required>
+                            <button type="button" class="btn-calendar">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="3" y="6" width="18" height="15" rx="2" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M3 10H21M8 3V6M16 3V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-section">
+                    <div class="table-header">
+                        <div class="table-col">Número</div>
+                        <div class="table-col">Personas beneficiarias</div>
+                        <div class="table-col">CURP</div>
+                    </div>
+                    <div class="table-body" id="beneficiaries-table">
+                        @php $oldBenef = old('beneficiarios', array_fill(0, 6, ['nombre'=>'','curp'=>''])); @endphp
+                        @foreach($oldBenef as $i => $b)
+                        <div class="table-row" id="row-{{ $i }}">
+                            <div class="table-cell row-num">{{ $i + 1 }}</div>
+                            <div class="table-cell">
+                                <input type="text" name="beneficiarios[{{ $i }}][nombre]"
+                                       placeholder="Nombre completo" value="{{ $b['nombre'] ?? '' }}">
+                            </div>
+                            <div class="table-cell">
+                                <input type="text" name="beneficiarios[{{ $i }}][curp]"
+                                       placeholder="CURP" value="{{ $b['curp'] ?? '' }}"
+                                       maxlength="18" style="text-transform:uppercase">
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    <button type="button" id="btn-add-row"
+                            style="width:100%;padding:0.85rem;border:2px dashed var(--rpt-border);background:transparent;border-radius:0 0 14px 14px;cursor:pointer;font-weight:600;color:var(--rpt-text-muted);transition:all .3s;">
+                        + Agregar beneficiario
+                    </button>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-form btn-export" id="btn-export-csv">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M7 10L12 15M12 15L17 10M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Exportar
+                    </button>
+                    <button type="button" class="btn-form btn-print" onclick="window.print()">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 9V2H18V9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M6 18H4C3.46957 18 2.96086 17.7893 2.58579 17.4142C2.21071 17.0391 2 16.5304 2 16V11C2 10.4696 2.21071 9.96086 2.58579 9.58579C2.96086 9.21071 3.46957 9 4 9H20C20.5304 9 21.0391 9.21071 21.4142 9.58579C21.7893 9.96086 22 10.4696 22 11V16C22 16.5304 21.7893 17.0391 21.4142 17.4142C21.0391 17.7893 20.5304 18 20 18H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        Imprimir
+                    </button>
+                    <button type="submit" class="btn-form btn-save">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16L21 8V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M17 21V13H7V21M7 3V8H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Guardar
+                    </button>
                 </div>
             </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Lugar</label>
-                    <div class="input-with-icon">
-                        <input type="text" value="Hoctún, Yucatán">
-                        <button class="btn-edit-input">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Fecha</label>
-                    <div class="input-with-icon">
-                        <input type="text" value="14/01/2026" readonly>
-                        <button class="btn-calendar">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="3" y="6" width="18" height="15" rx="2" stroke="currentColor" stroke-width="2"/>
-                                <path d="M3 10H21M8 3V6M16 3V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="table-section">
-                <div class="table-header">
-                    <div class="table-col">Número</div>
-                    <div class="table-col">Personas beneficiarias</div>
-                    <div class="table-col">Curp</div>
-                </div>
-                <div class="table-body" id="beneficiaries-table">
-                    <div class="table-row">
-                        <div class="table-cell">1</div>
-                        <div class="table-cell"><input type="text" placeholder="Nombre completo"></div>
-                        <div class="table-cell"><input type="text" placeholder="CURP"></div>
-                    </div>
-                    <div class="table-row">
-                        <div class="table-cell">2</div>
-                        <div class="table-cell"><input type="text" placeholder="Nombre completo"></div>
-                        <div class="table-cell"><input type="text" placeholder="CURP"></div>
-                    </div>
-                    <div class="table-row">
-                        <div class="table-cell">3</div>
-                        <div class="table-cell"><input type="text" placeholder="Nombre completo"></div>
-                        <div class="table-cell"><input type="text" placeholder="CURP"></div>
-                    </div>
-                    <div class="table-row">
-                        <div class="table-cell">4</div>
-                        <div class="table-cell"><input type="text" placeholder="Nombre completo"></div>
-                        <div class="table-cell"><input type="text" placeholder="CURP"></div>
-                    </div>
-                    <div class="table-row">
-                        <div class="table-cell">5</div>
-                        <div class="table-cell"><input type="text" placeholder="Nombre completo"></div>
-                        <div class="table-cell"><input type="text" placeholder="CURP"></div>
-                    </div>
-                    <div class="table-row">
-                        <div class="table-cell">6</div>
-                        <div class="table-cell"><input type="text" placeholder="Nombre completo"></div>
-                        <div class="table-cell"><input type="text" placeholder="CURP"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-actions">
-                <button class="btn-form btn-export">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M7 10L12 15M12 15L17 10M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    Exportar
-                </button>
-                <button class="btn-form btn-print">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 9V2H18V9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M6 18H4C3.46957 18 2.96086 17.7893 2.58579 17.4142C2.21071 17.0391 2 16.5304 2 16V11C2 10.4696 2.21071 9.96086 2.58579 9.58579C2.96086 9.21071 3.46957 9 4 9H20C20.5304 9 21.0391 9.21071 21.4142 9.58579C21.7893 9.96086 22 10.4696 22 11V16C22 16.5304 21.7893 17.0391 21.4142 17.4142C21.0391 17.7893 20.5304 18 20 18H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    Imprimir
-                </button>
-                <button class="btn-form btn-save">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16L21 8V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M17 21V13H7V21M7 3V8H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    Guardar
-                </button>
-            </div>
-        </div>
+        </form>
     </div>
 
     <!-- VISTA 3: Historial -->
@@ -217,156 +233,98 @@
             </button>
             <h2>Historial</h2>
             <div class="history-filters">
-                <button class="filter-btn active">Esta semana</button>
-                <button class="filter-btn">Enero</button>
-                <button class="filter-btn">2026</button>
+                <button class="filter-btn active" data-filter="week">Esta semana</button>
+                <button class="filter-btn" data-filter="month">Este mes</button>
+                <button class="filter-btn" data-filter="year">{{ date('Y') }}</button>
             </div>
         </div>
 
-        <div class="history-list">
+        <div class="history-list" id="history-list">
+            @forelse($reports as $index => $report)
             <div class="history-group">
-                <div class="history-item highlight">
+                <div class="history-item {{ $index % 2 === 0 ? 'highlight' : 'accent' }}"
+                     data-fecha="{{ $report->fecha }}"
+                     data-id="{{ $report->id_informe }}"
+                     style="cursor:pointer">
                     <div class="history-content">
-                        <h4>Campaña de prevención de caries...</h4>
-                        <span class="history-date">15/01/2026</span>
+                        <h4>{{ Str::limit($report->evento, 45) }}</h4>
+                        <span class="history-date">{{ \Carbon\Carbon::parse($report->fecha)->format('d/m/Y') }}</span>
                     </div>
-                    <button class="btn-print-small">
+                    <a href="{{ route('admin.reports.pdf', $report->id_informe) }}"
+                       class="btn-print-small"
+                       title="Descargar PDF"
+                       onclick="event.stopPropagation()">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M6 9V2H18V9" stroke="currentColor" stroke-width="2"/>
                             <path d="M6 18H4C2.89543 18 2 17.1046 2 16V11C2 9.89543 2.89543 9 4 9H20C21.1046 9 22 9.89543 22 11V16C22 17.1046 21.1046 18 20 18H18" stroke="currentColor" stroke-width="2"/>
                             <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2"/>
                         </svg>
-                    </button>
-                </div>
-
-                <div class="history-item accent">
-                    <div class="history-content">
-                        <h4>Actividad recreativa de año nuevo...</h4>
-                        <span class="history-date">16/01/2026</span>
-                    </div>
-                    <button class="btn-print-small">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 9V2H18V9" stroke="currentColor" stroke-width="2"/>
-                            <path d="M6 18H4C2.89543 18 2 17.1046 2 16V11C2 9.89543 2.89543 9 4 9H20C21.1046 9 22 9.89543 22 11V16C22 17.1046 21.1046 18 20 18H18" stroke="currentColor" stroke-width="2"/>
-                            <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="history-item">
-                    <div class="history-content">
-                        <h4>Día de reyes atrasado...</h4>
-                        <span class="history-date">15/01/2026</span>
-                    </div>
-                    <button class="btn-print-small">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 9V2H18V9" stroke="currentColor" stroke-width="2"/>
-                            <path d="M6 18H4C2.89543 18 2 17.1046 2 16V11C2 9.89543 2.89543 9 4 9H20C21.1046 9 22 9.89543 22 11V16C22 17.1046 21.1046 18 20 18H18" stroke="currentColor" stroke-width="2"/>
-                            <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </button>
+                    </a>
                 </div>
             </div>
-
-            <div class="history-group">
-                <div class="history-item accent">
-                    <div class="history-content">
-                        <h4>Recreación de actividades...</h4>
-                        <span class="history-date">17/01/2026</span>
-                    </div>
-                    <button class="btn-print-small">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 9V2H18V9" stroke="currentColor" stroke-width="2"/>
-                            <path d="M6 18H4C2.89543 18 2 17.1046 2 16V11C2 9.89543 2.89543 9 4 9H20C21.1046 9 22 9.89543 22 11V16C22 17.1046 21.1046 18 20 18H18" stroke="currentColor" stroke-width="2"/>
-                            <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="history-item highlight">
-                    <div class="history-content">
-                        <h4>Campaña de prevención de caries...</h4>
-                        <span class="history-date">15/01/2026</span>
-                    </div>
-                    <button class="btn-print-small">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 9V2H18V9" stroke="currentColor" stroke-width="2"/>
-                            <path d="M6 18H4C2.89543 18 2 17.1046 2 16V11C2 9.89543 2.89543 9 4 9H20C21.1046 9 22 9.89543 22 11V16C22 17.1046 21.1046 18 20 18H18" stroke="currentColor" stroke-width="2"/>
-                            <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="history-item accent">
-                    <div class="history-content">
-                        <h4>Recreación de actividades...</h4>
-                        <span class="history-date">17/01/2026</span>
-                    </div>
-                    <button class="btn-print-small">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 9V2H18V9" stroke="currentColor" stroke-width="2"/>
-                            <path d="M6 18H4C2.89543 18 2 17.1046 2 16V11C2 9.89543 2.89543 9 4 9H20C21.1046 9 22 9.89543 22 11V16C22 17.1046 21.1046 18 20 18H18" stroke="currentColor" stroke-width="2"/>
-                            <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="history-item">
-                    <div class="history-content">
-                        <h4>Día de reyes atrasado...</h4>
-                        <span class="history-date">15/01/2026</span>
-                    </div>
-                    <button class="btn-print-small">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 9V2H18V9" stroke="currentColor" stroke-width="2"/>
-                            <path d="M6 18H4C2.89543 18 2 17.1046 2 16V11C2 9.89543 2.89543 9 4 9H20C21.1046 9 22 9.89543 22 11V16C22 17.1046 21.1046 18 20 18H18" stroke="currentColor" stroke-width="2"/>
-                            <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
+            @empty
+            <p style="color:var(--rpt-text-muted);text-align:center;padding:2rem;">
+                No hay informes registrados aún.
+            </p>
+            @endforelse
         </div>
     </div>
 </div>
+
 <!-- MODAL DE DETALLES DEL EVENTO -->
-    <div class="event-modal-overlay" id="event-overlay" onclick="closeEventModal()"></div>
-    <div class="event-modal" id="event-modal">
-        <button class="btn-close-modal" onclick="closeEventModal()">
+<div class="event-modal-overlay" id="event-overlay" onclick="closeEventModal()"></div>
+<div class="event-modal" id="event-modal">
+    <button class="btn-close-modal" onclick="closeEventModal()">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+    <div class="event-modal-header">
+        <h3 id="event-modal-title">—</h3>
+        <p id="event-modal-subtitle"></p>
+    </div>
+    <div class="event-modal-content">
+        <p id="event-modal-description"></p>
+    </div>
+    <div class="event-modal-actions">
+        <a id="btn-modal-view" href="#" class="btn-modal btn-modal-view">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
+            Ver más
+        </a>
+        <a id="btn-modal-pdf" href="#" class="btn-modal btn-modal-print">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 9V2H18V9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6 18H4C3.46957 18 2.96086 17.7893 2.58579 17.4142C2.21071 17.0391 2 16.5304 2 16V11C2 10.4696 2.21071 9.96086 2.58579 9.58579C2.96086 9.21071 3.46957 9 4 9H20C20.5304 9 21.0391 9.21071 21.4142 9.58579C21.7893 9.96086 22 10.4696 22 11V16C22 16.5304 21.7893 17.0391 21.4142 17.4142C21.0391 17.7893 20.5304 18 20 18H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            Imprimir PDF
+        </a>
+        <button class="btn-modal btn-modal-edit" id="btn-modal-delete">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 6H21M8 6V4H16V6M19 6L18 20H6L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Eliminar
         </button>
-        <div class="event-modal-header">
-            <h3 id="event-modal-title">Prevención de caries</h3>
-            <p id="event-modal-subtitle">2026</p>
-        </div>
-        <div class="event-modal-content">
-            <p id="event-modal-description"></p>
-        </div>
-        <div class="event-modal-actions">
-            <button class="btn-modal btn-modal-view">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                Ver más
-            </button>
-            <button class="btn-modal btn-modal-print">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M6 9V2H18V9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M6 18H4C3.46957 18 2.96086 17.7893 2.58579 17.4142C2.21071 17.0391 2 16.5304 2 16V11C2 10.4696 2.21071 9.96086 2.58579 9.58579C2.96086 9.21071 3.46957 9 4 9H20C20.5304 9 21.0391 9.21071 21.4142 9.58579C21.7893 9.96086 22 10.4696 22 11V16C22 16.5304 21.7893 17.0391 21.4142 17.4142C21.0391 17.7893 20.5304 18 20 18H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2"/>
-                </svg>
-                Imprimir
-            </button>
-            <button class="btn-modal btn-modal-edit">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                Modificar
-            </button>
-        </div>
     </div>
 </div>
+
+{{-- Variables para reports.js --}}
+<script>
+    const eventsFromDB = @json($events->toArray());
+    const ROUTE_BASE   = "{{ url('admin/report') }}";
+    const CSRF_TOKEN   = "{{ csrf_token() }}";
+
+    @if($errors->any())
+        document.addEventListener('DOMContentLoaded', () => showCreateView());
+    @endif
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const flash = document.getElementById('flash-msg');
+        if (flash) setTimeout(() => { flash.style.transition = 'opacity .5s'; flash.style.opacity = '0'; }, 3000);
+    });
+</script>
 <script src="{{ asset('assets/js/reports.js') }}"></script>
 @endsection

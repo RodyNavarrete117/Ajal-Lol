@@ -30,7 +30,35 @@ Route::get('/loading', fn() => view('loading'))->name('loading');
 Route::get('/admin/home', [HomeController::class, 'index'])->name('admin.home');
 
 Route::get('/admin/page', fn() => view('admin.page'));
-Route::get('/admin/report', fn() => view('admin.reports'));
+
+// ——— Informes este es el apartado que se tiene que mejorar
+Route::prefix('admin')->group(function () {
+
+    // Vista principal (calendario + historial)
+    Route::get('/report', [ReportsController::class, 'index'])->name('admin.reports');
+
+    // Guardar nuevo informe
+    Route::post('/report', [ReportsController::class, 'store'])->name('admin.reports.store');
+
+    // Ver detalle
+    Route::get('/report/{id}', [ReportsController::class, 'show'])->name('admin.reports.show');
+
+    // Editar
+    Route::get('/report/{id}/edit', [ReportsController::class, 'edit'])->name('admin.reports.edit');
+
+    // Actualizar
+    Route::put('/report/{id}', [ReportsController::class, 'update'])->name('admin.reports.update');
+
+    // Eliminar
+    Route::delete('/report/{id}', [ReportsController::class, 'destroy'])->name('admin.reports.destroy');
+
+    // Descargar PDF
+    Route::get('/report/{id}/pdf', [ReportsController::class, 'pdf'])->name('admin.reports.pdf');
+
+    // API para AJAX (modal de detalles en el calendario)
+    Route::get('/api/report/{id}', [ReportsController::class, 'apiShow'])->name('admin.reports.api');
+});
+
 Route::get('/admin/manual', fn() => view('admin.manual'));
 
 /* ============================================

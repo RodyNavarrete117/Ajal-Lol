@@ -554,24 +554,26 @@ body.notif-open:not(.sidebar-collapsed) .notifications-overlay {
 
 /* ==================== MAIN CONTENT ==================== */
 .main {
-    margin-left: 220px;
-    padding: 30px;
+    margin-left: 200px; /* Exactamente el mismo ancho que tu sidebar (antes era 220px) */
+    padding: 0; /* Quitamos el espacio exterior (antes era 30px) */
     transition: margin-left 0.3s cubic-bezier(0.4,0,0.2,1), background 0.3s ease;
     min-height: 100vh;
-    background: var(--dash-bg);
+    background: var(--dash-content-bg); /* Ocultamos el color de fondo gris */
 }
 
-.main.expanded { margin-left: 70px; }
+.main.expanded { 
+    margin-left: 70px; /* Exactamente el ancho del sidebar colapsado */
+}
 
 .content {
     background: var(--dash-content-bg);
-    padding: 32px;
-    border-radius: 12px;
-    min-height: 400px;
-    max-width: 1400px;
-    margin: 0 auto;
-    box-shadow: var(--dash-shadow);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
+    padding: 32px; /* Esto solo es el margen interno para que tus textos no peguen a la pantalla */
+    border-radius: 0; /* Quitamos los bordes redondeados */
+    min-height: 100vh;
+    max-width: 100%; /* Forzamos a que ocupe el 100% de la pantalla restante */
+    margin: 0; /* Quitamos el centrado que tenía antes */
+    box-shadow: none; /* Como ahora ocupa todo, la sombra ya no es necesaria */
+    transition: background 0.3s ease;
 }
 
 .sidebar.collapsed .sidebar-header { display: flex; justify-content: center; align-items: center; }
@@ -847,14 +849,19 @@ body.reduce-animations *::after {
     .mobile-notification-btn:hover,
     .mobile-notification-btn:active { background: rgba(255,255,255,0.2); }
 
-    .main {
+.main {
         margin-left: 0;
-        margin-top: 65px;
-        padding: 20px;
+        margin-top: 65px; /* Altura de la barra en móvil */
+        padding: 0; /* Sin espacios en móvil */
     }
 
     .main.expanded { margin-left: 0; margin-top: 65px; }
-    .content       { padding: 24px; border-radius: 10px; }
+    
+    .content { 
+        padding: 24px; /* Espacio interno de lectura para móvil */
+        border-radius: 0; 
+        min-height: calc(100vh - 65px); /* Ocupa todo el alto visible de la pantalla */
+    }
 }
 
 @media (max-width: 480px) {

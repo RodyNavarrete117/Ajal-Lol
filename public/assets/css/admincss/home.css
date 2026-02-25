@@ -34,17 +34,20 @@
 
 /* ==================== HERO SECTION ==================== */
 .hero-section {
-    background: linear-gradient(135deg, #80416a 0%, #5a1f42 60%, #3d1230 100%);
+    /* Fondo ligeramente más vivo/elevado para el Modo Claro */
+    background: linear-gradient(135deg, #944e7c 0%, #68254c 60%, #461536 100%);
     border-radius: 24px;
     padding: 60px 50px;
     margin-bottom: 40px;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 20px 60px rgba(128, 65, 106, 0.4);
+    box-shadow: 0 20px 60px rgba(148, 78, 124, 0.4);
 }
 
 [data-theme="dark"] .hero-section {
-    box-shadow: 0 20px 60px rgba(128, 65, 106, 0.2);
+    /* Fondo exclusivo para Modo Oscuro: tonos vino/morado muy oscuros y profundos */
+    background: linear-gradient(135deg, #4d233d 0%, #2a0e20 60%, #14050f 100%);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
 }
 
 .hero-content {
@@ -94,12 +97,7 @@
     letter-spacing: 1px;
 }
 
-/* ==================== HERO DECORATION — MAYA ====================
-   Elementos decorativos inspirados en la cultura maya:
-   pirámide Chichén Itzá, calendario solar, glifos, serpiente,
-   numeración, Venus. Se distribuyen por todo el hero.
-   En modo rendimiento: estáticos (sin animación).
-*/
+/* ==================== HERO DECORATION — MAYA ==================== */
 
 .hero-decoration {
     position: absolute;
@@ -136,14 +134,15 @@
     background-repeat: repeat-x;
 }
 
-/* Pirámide Chichén Itzá — 9 niveles */
 .maya-pyramid {
     position: absolute;
-    bottom: 0; right: 18px;
-    width: 340px; height: 260px;
-    opacity: 0.22;
+    bottom: -8px;
+    right: 20px;
+    width: 480px;
+    height: 360px;
+    opacity: 0.35;
     animation: floatY 10s ease-in-out infinite;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 340 260'%3E%3Cg fill='none' stroke='white' stroke-width='1.8' stroke-linejoin='round'%3E%3Crect x='5' y='242' width='330' height='14'/%3E%3Crect x='22' y='221' width='296' height='21'/%3E%3Crect x='42' y='200' width='256' height='21'/%3E%3Crect x='62' y='179' width='216' height='21'/%3E%3Crect x='82' y='158' width='176' height='21'/%3E%3Crect x='102' y='137' width='136' height='21'/%3E%3Crect x='116' y='116' width='108' height='21'/%3E%3Crect x='130' y='95' width='80' height='21'/%3E%3Crect x='144' y='74' width='52' height='21'/%3E%3Crect x='152' y='53' width='36' height='21'/%3E%3Crect x='148' y='30' width='44' height='23'/%3E%3Crect x='154' y='14' width='32' height='16'/%3E%3Cline x1='170' y1='4' x2='170' y2='14'/%3E%3Cline x1='162' y1='8' x2='178' y2='8'/%3E%3Crect x='160' y='37' width='20' height='16'/%3E%3Crect x='151' y='37' width='7' height='8'/%3E%3Crect x='182' y='37' width='7' height='8'/%3E%3Cline x1='170' y1='53' x2='170' y2='242' stroke-width='1' opacity='.3'/%3E%3Ccircle cx='22' cy='242' r='5'/%3E%3Ccircle cx='318' cy='242' r='5'/%3E%3Cline x1='22' y1='231' x2='318' y2='231' stroke-width='.7' opacity='.35'/%3E%3Cline x1='42' y1='210' x2='298' y2='210' stroke-width='.7' opacity='.35'/%3E%3Cline x1='62' y1='189' x2='278' y2='189' stroke-width='.7' opacity='.35'/%3E%3Cline x1='82' y1='168' x2='258' y2='168' stroke-width='.7' opacity='.35'/%3E%3Cline x1='102' y1='147' x2='238' y2='147' stroke-width='.7' opacity='.35'/%3E%3Cline x1='116' y1='126' x2='224' y2='126' stroke-width='.7' opacity='.35'/%3E%3Cline x1='130' y1='105' x2='210' y2='105' stroke-width='.7' opacity='.35'/%3E%3Cline x1='144' y1='84' x2='196' y2='84' stroke-width='.7' opacity='.35'/%3E%3C/g%3E%3C/svg%3E") no-repeat bottom center;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 420 320'%3E%3Cg fill='none' stroke='white' stroke-linejoin='round' stroke-linecap='round'%3E%3C!-- 9 NIVELES PRINCIPALES (INTACTO) --%3E%3Cg stroke-width='1.2' stroke-opacity='0.6'%3E%3Cpath d='M35 300 H385 M55 282 H365 M75 264 H345 M95 246 H325 M115 228 H305 M135 210 H285 M155 192 H265 M175 174 H245 M185 156 H235' /%3E%3Cpath d='M35 300 V282 H55 V264 H75 V246 H95 V228 H115 V210 H135 V192 H155 V174 H175 V156 H185' /%3E%3Cpath d='M385 300 V282 H365 V264 H345 V246 H325 V228 H305 V210 H285 V192 H265 V174 H245 V156 H235' /%3E%3C/g%3E%3C!-- NUEVO: EFECTO DE RELIEVE/GROSOR EN LOS NIVELES LATERALES --%3E%3Cg stroke-width='0.7' stroke-opacity='0.3'%3E%3C!-- Líneas paralelas sutiles debajo de los bordes para dar sensación de losa gruesa --%3E%3Cpath d='M55 285 H173 M365 285 H247' /%3E%3Cpath d='M75 267 H175 M345 267 H245' /%3E%3Cpath d='M95 249 H177 M325 249 H243' /%3E%3Cpath d='M115 231 H179 M305 231 H241' /%3E%3Cpath d='M135 213 H181 M285 213 H239' /%3E%3Cpath d='M155 195 H183 M265 195 H237' /%3E%3Cpath d='M175 177 H185 M245 177 H235' /%3E%3C/g%3E%3C!-- DETALLES DE PANELES INTERIORES (INTACTO) --%3E%3Cg stroke-width='0.5' stroke-opacity='0.3'%3E%3Cpath d='M42 295 H172.2 M62 277 H174.2 M82 259 H176.2 M102 241 H178.2 M122 223 H180.2 M142 205 H182.2 M162 187 H184.2 M182 169 H186.2' /%3E%3Cpath d='M247.8 295 H378 M245.8 277 H358 M243.8 259 H338 M241.8 241 H318 M239.8 223 H298 M237.8 205 H278 M235.8 187 H258 M233.8 169 H238' /%3E%3C/g%3E%3C!-- ESCALINATA CENTRAL (OPACIDAD REDUCIDA, SIN EFECTO DOBLE) --%3E%3Cg stroke-opacity='0.8'%3E%3Cpath d='M169 300 L188 156 M251 300 L232 156' stroke-width='1.8' /%3E%3C!-- Escalones simples, opacidad media --%3E%3Cpath d='M172.7 294 H247.3 M173.3 288 H246.7 M174 282 H246 M174.7 276 H245.3 M175.3 270 H244.7 M176 264 H244 M176.7 258 H243.3 M177.3 252 H242.7 M178 246 H242 M178.7 240 H241.3 M179.3 234 H240.7 M180 228 H240 M180.7 222 H239.3 M181.3 216 H238.7 M182 210 H238 M182.7 204 H237.3 M183.3 198 H236.7 M184 192 H236 M184.7 186 H235.3 M185.3 180 H234.7 M186 174 H234 M186.7 168 H233.3 M187.3 162 H232.7' stroke-width='0.6' stroke-opacity='0.5' /%3E%3C/g%3E%3C!-- TEMPLO SUPERIOR DETALLADO (INTACTO) --%3E%3Cg stroke-width='1.2'%3E%3Cpath d='M185 156 V125 H235 V156' /%3E%3Crect x='191' y='138' width='9' height='18' /%3E%3Crect x='205.5' y='138' width='9' height='18' /%3E%3Crect x='220' y='138' width='9' height='18' /%3E%3Cpath d='M185 135 H235' stroke-width='0.5' stroke-opacity='0.4' /%3E%3Cpath d='M192.5 138 v18 M207 138 v18 M221.5 138 v18' stroke-width='0.3' stroke-opacity='0.5' /%3E%3Cpath d='M180 125 H240 V115 H180 Z' fill='white' fill-opacity='0.1' /%3E%3Cpath d='M185 120 h2 M192 120 h2 M199 120 h2 M206 120 h2 M213 120 h2 M220 120 h2 M227 120 h2 M234 120 h2' stroke-width='1.5' stroke-opacity='0.4' /%3E%3C/g%3E%3C!-- CABEZAS DE SERPIENTE MIRANDO FUERA (INTACTO) --%3E%3Cg stroke-width='1.1' stroke-opacity='1' fill='white' fill-opacity='0.05'%3E%3Cpath d='M169 300 l-2-10 c-2-3 -8-5 -16-4 v6 h8 v4 h-8 v4 h18 Z' /%3E%3Cpath d='M167 289 c-4-2 -8-1 -12 1' stroke-width='0.8' fill='none' /%3E%3Cpath d='M160 294 v3' stroke-width='0.8' fill='none' /%3E%3Ccircle cx='163' cy='293' r='0.9' fill-opacity='1' stroke='none' /%3E%3Cpath d='M251 300 l2-10 c2-3 8-5 16-4 v6 h-8 v4 h8 v4 h-18 Z' /%3E%3Cpath d='M253 289 c4-2 8-1 12 1' stroke-width='0.8' fill='none' /%3E%3Cpath d='M260 294 v3' stroke-width='0.8' fill='none' /%3E%3Ccircle cx='257' cy='293' r='0.9' fill-opacity='1' stroke='none' /%3E%3C/g%3E%3C!-- LÍNEA DE TIERRA (INTACTO) --%3E%3Cpath d='M15 300 H405' stroke-width='0.6' stroke-opacity='0.25' stroke-dasharray='10 5' /%3E%3C/g%3E%3C/svg%3E") no-repeat bottom center;
     background-size: contain;
 }
 
@@ -247,8 +246,50 @@
     from { transform: rotate(0deg); }
     to   { transform: rotate(360deg); }
 }
-    to   { transform: rotate(360deg); }
+
+/* ==================== ANIMACIONES DE ENTRADA ==================== */
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.93); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+.hero-section {
+    animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.hero-title {
+    animation: fadeInDown 0.5s ease both;
+    animation-delay: 0.12s;
+}
+.hero-subtitle {
+    animation: fadeInDown 0.5s ease both;
+    animation-delay: 0.22s;
+}
+.hero-stats {
+    animation: fadeInUp 0.5s ease both;
+    animation-delay: 0.32s;
+}
+.section-header {
+    animation: fadeInLeft 0.5s ease both;
+    animation-delay: 0.38s;
+}
+.widget-card:nth-child(1) { animation: fadeInUp 0.45s ease both; animation-delay: 0.42s; }
+.widget-card:nth-child(2) { animation: fadeInUp 0.45s ease both; animation-delay: 0.50s; }
+.widget-card:nth-child(3) { animation: fadeInUp 0.45s ease both; animation-delay: 0.58s; }
+.widget-card:nth-child(4) { animation: fadeInUp 0.45s ease both; animation-delay: 0.66s; }
+.widget-card:nth-child(5) { animation: fadeInUp 0.45s ease both; animation-delay: 0.74s; }
+.widget-card:nth-child(6) { animation: fadeInUp 0.45s ease both; animation-delay: 0.82s; }
 
 /* ==================== REDUCE ANIMATIONS ==================== */
 body.reduce-animations .maya-pyramid,
@@ -258,6 +299,13 @@ body.reduce-animations .maya-venus,
 body.reduce-animations .maya-square-glyph,
 body.reduce-animations .maya-creature,
 body.reduce-animations .maya-dot-cross { animation: none !important; transform: none !important; }
+
+body.reduce-animations .hero-section,
+body.reduce-animations .hero-title,
+body.reduce-animations .hero-subtitle,
+body.reduce-animations .hero-stats,
+body.reduce-animations .section-header,
+body.reduce-animations .widget-card { animation: none !important; opacity: 1 !important; transform: none !important; }
 
 body.reduce-animations .widget-card,
 body.reduce-animations .widget-card::before,
@@ -321,40 +369,12 @@ body.reduce-animations .widget-card:hover {
     transition: transform 0.3s ease;
 }
 
-/* HOME */
-.card-home::before {
-    background: linear-gradient(90deg, #667eea, #7f8cff);
-}
-
-/* PAGE */
-.card-page::before {
-    background: linear-gradient(90deg, #f093fb, #f5576c);
-}
-
-/* REPORTS */
-.card-reports::before {
-    background: linear-gradient(90deg, #4facfe, #00f2fe);
-}
-
-/* MANUAL */
-.card-manual::before {
-    background: linear-gradient(90deg, #43e97b, #38f9d7);
-}
-
-/* USERS */
-.card-users::before {
-    background: linear-gradient(90deg, #fa709a, #fee140);
-}
-
-/* FORMS */
-.card-forms::before {
-    background: linear-gradient(90deg, #30cfd0, #330867);
-}
-
-/* SETTINGS */
-.card-settings::before {
-    background: linear-gradient(90deg, #a8edea, #fed6e3);
-}
+.card-page::before     { background: linear-gradient(90deg, #f093fb, #f5576c); }
+.card-reports::before  { background: linear-gradient(90deg, #4facfe, #00f2fe); }
+.card-manual::before   { background: linear-gradient(90deg, #43e97b, #38f9d7); }
+.card-users::before    { background: linear-gradient(90deg, #fa709a, #fee140); }
+.card-forms::before    { background: linear-gradient(90deg, #30cfd0, #330867); }
+.card-settings::before { background: linear-gradient(90deg, #a8edea, #fed6e3); }
 
 .widget-card:hover {
     transform: translateY(-8px);
@@ -364,7 +384,7 @@ body.reduce-animations .widget-card:hover {
 
 .widget-card:hover::before { transform: scaleX(1); }
 
-/* ==================== WIDGET ICON — MODO CLARO (original) ==================== */
+/* ==================== WIDGET ICON — MODO CLARO ==================== */
 .widget-icon {
     width: 56px;
     height: 56px;
@@ -382,15 +402,6 @@ body.reduce-animations .widget-card:hover {
     transform: scale(1.1) rotate(5deg);
 }
 
-/* Colores originales modo claro */
-.card-home .widget-icon {
-    background: linear-gradient(
-        135deg,
-        #7f8cff 0%,
-        #667eea 55%,
-        #5665d8 100%
-    );
-}
 .card-page     .widget-icon { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
 .card-reports  .widget-icon { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
 .card-manual   .widget-icon { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
@@ -398,63 +409,22 @@ body.reduce-animations .widget-card:hover {
 .card-forms    .widget-icon { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
 .card-settings .widget-icon { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
 
-/* ==================== WIDGET ICON — MODO OSCURO (neon outline box) ==================== */
-/*
-  En modo oscuro: fondo semitransparente del color del ícono,
-  borde sólido brillante, icono del mismo color con glow.
-  Igual que la referencia visual: caja redondeada sin relleno sólido.
-*/
+/* ==================== WIDGET ICON — MODO OSCURO ==================== */
 [data-theme="dark"] .widget-icon {
     background: transparent !important;
     border-radius: 14px !important;
     font-size: 26px;
     border: 2px solid;
-    transition: transform 0.3s ease,
-                box-shadow 0.4s ease,
-                background 0.3s ease,
-                color 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.4s ease, background 0.3s ease, color 0.3s ease;
 }
 
-/* Colores neon por card — borde + icono + glow */
-[data-theme="dark"] .card-home     .widget-icon {
-    color: #818cf8;
-    border-color: #818cf8;
-    background: rgba(129, 140, 248, 0.08) !important;
-}
-[data-theme="dark"] .card-page     .widget-icon {
-    color: #f472b6;
-    border-color: #f472b6;
-    background: rgba(244, 114, 182, 0.08) !important;
-}
-[data-theme="dark"] .card-reports  .widget-icon {
-    color: #38bdf8;
-    border-color: #38bdf8;
-    background: rgba(56, 189, 248, 0.08) !important;
-}
-[data-theme="dark"] .card-manual   .widget-icon {
-    color: #34d399;
-    border-color: #34d399;
-    background: rgba(52, 211, 153, 0.08) !important;
-}
-[data-theme="dark"] .card-users    .widget-icon {
-    color: #fb7185;
-    border-color: #fb7185;
-    background: rgba(251, 113, 133, 0.08) !important;
-}
-[data-theme="dark"] .card-forms    .widget-icon {
-    color: #22d3ee;
-    border-color: #22d3ee;
-    background: rgba(34, 211, 238, 0.08) !important;
-}
-[data-theme="dark"] .card-settings .widget-icon {
-    color: #a78bfa;
-    border-color: #a78bfa;
-    background: rgba(167, 139, 250, 0.08) !important;
-}
+[data-theme="dark"] .card-page     .widget-icon { color: #f472b6; border-color: #f472b6; background: rgba(244,114,182,0.08) !important; }
+[data-theme="dark"] .card-reports  .widget-icon { color: #38bdf8; border-color: #38bdf8; background: rgba(56,189,248,0.08) !important; }
+[data-theme="dark"] .card-manual   .widget-icon { color: #34d399; border-color: #34d399; background: rgba(52,211,153,0.08) !important; }
+[data-theme="dark"] .card-users    .widget-icon { color: #fb7185; border-color: #fb7185; background: rgba(251,113,133,0.08) !important; }
+[data-theme="dark"] .card-forms    .widget-icon { color: #22d3ee; border-color: #22d3ee; background: rgba(34,211,238,0.08) !important; }
+[data-theme="dark"] .card-settings .widget-icon { color: #a78bfa; border-color: #a78bfa; background: rgba(167,139,250,0.08) !important; }
 
-
-/* Borde superior de la card en oscuro */
-[data-theme="dark"] .card-home::before     { background: linear-gradient(90deg, #818cf8, #a78bfa); }
 [data-theme="dark"] .card-page::before     { background: linear-gradient(90deg, #f472b6, #fb7185); }
 [data-theme="dark"] .card-reports::before  { background: linear-gradient(90deg, #38bdf8, #22d3ee); }
 [data-theme="dark"] .card-manual::before   { background: linear-gradient(90deg, #34d399, #6ee7b7); }
@@ -462,7 +432,6 @@ body.reduce-animations .widget-card:hover {
 [data-theme="dark"] .card-forms::before    { background: linear-gradient(90deg, #22d3ee, #818cf8); }
 [data-theme="dark"] .card-settings::before { background: linear-gradient(90deg, #a78bfa, #f472b6); }
 
-/* Modo rendimiento: transición más rápida */
 body.reduce-animations [data-theme="dark"] .widget-icon { transition-duration: 0.1s !important; }
 
 /* ==================== WIDGET TEXT & ARROW ==================== */
@@ -501,34 +470,21 @@ body.reduce-animations [data-theme="dark"] .widget-icon { transition-duration: 0
     transform: translateX(4px);
 }
 
-.card-home:hover .widget-arrow {
-    background: #667eea;
-}
+.card-page:hover .widget-arrow     { background: #f5576c; }
+.card-reports:hover .widget-arrow  { background: #00c6ff; }
+.card-manual:hover .widget-arrow   { background: #38f9d7; }
+.card-users:hover .widget-arrow    { background: #fa709a; }
+.card-forms:hover .widget-arrow    { background: #30cfd0; }
+.card-settings:hover .widget-arrow { background: #a8edea; color: #111827; }
 
-.card-page:hover .widget-arrow {
-    background: #f5576c;
-}
-
-.card-reports:hover .widget-arrow {
-    background: #00c6ff;
-}
-
-.card-manual:hover .widget-arrow {
-    background: #38f9d7;
-}
-
-.card-users:hover .widget-arrow {
-    background: #fa709a;
-}
-
-.card-forms:hover .widget-arrow {
-    background: #30cfd0;
-}
-
-.card-settings:hover .widget-arrow {
-    background: #a8edea;
-    color: #111827; /* mejor contraste */
-}
+/* Dark mode arrows — mejor contraste */
+[data-theme="dark"] .widget-arrow { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.5); }
+[data-theme="dark"] .card-page:hover .widget-arrow     { background: #e11d6a; color: #fff; }
+[data-theme="dark"] .card-reports:hover .widget-arrow  { background: #0284c7; color: #fff; }
+[data-theme="dark"] .card-manual:hover .widget-arrow   { background: #059669; color: #fff; }
+[data-theme="dark"] .card-users:hover .widget-arrow    { background: #e11d48; color: #fff; }
+[data-theme="dark"] .card-forms:hover .widget-arrow    { background: #0891b2; color: #fff; }
+[data-theme="dark"] .card-settings:hover .widget-arrow { background: #7c3aed; color: #fff; }
 
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 768px) {
@@ -539,6 +495,22 @@ body.reduce-animations [data-theme="dark"] .widget-icon { transition-duration: 0
     .stat-number   { font-size: 28px; }
     .widgets-grid  { grid-template-columns: 1fr; }
     .admin-home    { padding: 15px; }
+
+    /* Capa overlay (MODO CLARO) - Muy suave para no apagar tu gradiente */
+    .hero-section::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.15); /* Apenas un 15% para suavizar el contraste */
+        z-index: 1;
+        border-radius: 24px;
+        pointer-events: none;
+    }
+
+    /* Para que se lea bien en modo claro sin oscurecer, hacemos los dibujos más transparentes */
+    .maya-pyramid { opacity: 0.15; }
+    .maya-calendar, .maya-sun { opacity: 0.05; }
+    .maya-venus, .maya-square-glyph, .maya-numbers, .maya-creature, .maya-dot-cross { opacity: 0.04; }
 }
 
 @media (max-width: 480px) {

@@ -64,19 +64,6 @@
 
     <div class="widgets-grid">
 
-        <a href="{{ url('/admin/home') }}" class="widget-card card-home">
-            <div class="widget-icon">
-                <i class="fa fa-house"></i>
-            </div>
-            <div class="widget-info">
-                <h3>Inicio</h3>
-                <p>Panel principal</p>
-            </div>
-            <div class="widget-arrow">
-                <i class="fa fa-arrow-right"></i>
-            </div>
-        </a>
-
         <a href="{{ url('/admin/page') }}" class="widget-card card-page">
             <div class="widget-icon">
                 <i class="fa fa-globe"></i>

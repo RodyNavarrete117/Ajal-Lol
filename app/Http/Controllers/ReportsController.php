@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Report;
-use App\Models\Beneficiary;
+use App\Services\ReportPdfService;
 use Illuminate\Http\Request;
-use Mpdf\Mpdf;
 
 class ReportsController extends Controller
 {
+    public function __construct(protected ReportPdfService $pdfService) {}
+
     // =============================================
     // Listar informes (vista calendario + historial)
     // =============================================
@@ -18,7 +19,6 @@ class ReportsController extends Controller
             ->latest('fecha')
             ->get();
 
-        // Agrupar eventos por fecha para el calendario JS
         $events = $reports->mapWithKeys(function ($report) {
             return [
                 $report->fecha => [
@@ -34,6 +34,7 @@ class ReportsController extends Controller
 
     // =============================================
     // Guardar nuevo informe + beneficiarios
+    // Si se envía con action=pdf, guarda y descarga
     // =============================================
     public function store(Request $request)
     {
@@ -47,28 +48,33 @@ class ReportsController extends Controller
             'beneficiarios.*.nombre'   => 'required|string|max:150',
             'beneficiarios.*.curp'     => 'required|string|max:30',
         ], [
-            'beneficiarios.required'         => 'Debes agregar al menos un beneficiario.',
+            'beneficiarios.required'          => 'Debes agregar al menos un beneficiario.',
             'beneficiarios.*.nombre.required' => 'El nombre del beneficiario es obligatorio.',
             'beneficiarios.*.curp.required'   => 'El CURP del beneficiario es obligatorio.',
         ]);
 
-        // Crear el informe
         $report = Report::create($request->only([
-            'nombre_organizacion',
-            'evento',
-            'lugar',
-            'fecha',
-            'numero_telefonico',
+            'nombre_organizacion', 'evento', 'lugar', 'fecha', 'numero_telefonico',
         ]));
 
-        // Crear beneficiarios, filtrando filas vacías
-        $beneficiarios = collect($request->beneficiarios)
-            ->filter(fn($b) => !empty(trim($b['nombre'])) && !empty(trim($b['curp'])));
+        collect($request->beneficiarios)
+            ->filter(fn($b) => !empty(trim($b['nombre'])) && !empty(trim($b['curp'])))
+            ->each(fn($b) => $report->beneficiaries()->create([
+                'nombre' => trim($b['nombre']),
+                'curp'   => strtoupper(trim($b['curp'])),
+            ]));
 
-        foreach ($beneficiarios as $beneficiario) {
-            $report->beneficiaries()->create([
-                'nombre' => trim($beneficiario['nombre']),
-                'curp'   => strtoupper(trim($beneficiario['curp'])),
+        // Si el botón fue "Exportar" o "Imprimir", generar PDF directamente
+        $action = $request->input('_action');
+
+        if ($action === 'pdf_download' || $action === 'pdf_print') {
+            $report->load('beneficiaries');
+            $content     = $this->pdfService->generate($report);
+            $disposition = $action === 'pdf_print' ? 'inline' : 'attachment';
+
+            return response($content, 200, [
+                'Content-Type'        => 'application/pdf',
+                'Content-Disposition' => $disposition . '; filename="informe_' . $report->id_informe . '.pdf"',
             ]);
         }
 
@@ -112,32 +118,24 @@ class ReportsController extends Controller
 
         $report = Report::findOrFail($id);
         $report->update($request->only([
-            'nombre_organizacion',
-            'evento',
-            'lugar',
-            'fecha',
-            'numero_telefonico',
+            'nombre_organizacion', 'evento', 'lugar', 'fecha', 'numero_telefonico',
         ]));
 
-        // Reemplazar beneficiarios (eliminar los anteriores y crear los nuevos)
         $report->beneficiaries()->delete();
 
-        $beneficiarios = collect($request->beneficiarios)
-            ->filter(fn($b) => !empty(trim($b['nombre'])) && !empty(trim($b['curp'])));
-
-        foreach ($beneficiarios as $beneficiario) {
-            $report->beneficiaries()->create([
-                'nombre' => trim($beneficiario['nombre']),
-                'curp'   => strtoupper(trim($beneficiario['curp'])),
-            ]);
-        }
+        collect($request->beneficiarios)
+            ->filter(fn($b) => !empty(trim($b['nombre'])) && !empty(trim($b['curp'])))
+            ->each(fn($b) => $report->beneficiaries()->create([
+                'nombre' => trim($b['nombre']),
+                'curp'   => strtoupper(trim($b['curp'])),
+            ]));
 
         return redirect()->route('admin.reports')
             ->with('success', 'Informe actualizado correctamente.');
     }
 
     // =============================================
-    // Eliminar informe (cascade borra beneficiarios)
+    // Eliminar informe
     // =============================================
     public function destroy($id)
     {
@@ -148,38 +146,21 @@ class ReportsController extends Controller
     }
 
     // =============================================
-    // Generar y descargar PDF
+    // Generar PDF de informe existente (historial)
     // =============================================
     public function pdf($id)
     {
-        $report = Report::with('beneficiaries')->findOrFail($id);
+        $report  = Report::with('beneficiaries')->findOrFail($id);
+        $content = $this->pdfService->generate($report);
 
-        $html = view('admin.reports-pdf', compact('report'))->render();
-
-        $mpdf = new Mpdf([
-            'mode'        => 'utf-8',
-            'format'      => 'A4',
-            'margin_top'  => 15,
-            'margin_bottom' => 15,
-            'margin_left' => 15,
-            'margin_right' => 15,
+        return response($content, 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="informe_' . $report->id_informe . '.pdf"',
         ]);
-
-        $mpdf->SetTitle('Informe - ' . $report->evento);
-        $mpdf->WriteHTML($html);
-
-        return response(
-            $mpdf->Output('informe_' . $report->id_informe . '.pdf', 'S'),
-            200,
-            [
-                'Content-Type'        => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="informe_' . $report->id_informe . '.pdf"',
-            ]
-        );
     }
 
     // =============================================
-    // Devolver datos de un informe como JSON (para AJAX)
+    // JSON para AJAX (modal del calendario)
     // =============================================
     public function apiShow($id)
     {

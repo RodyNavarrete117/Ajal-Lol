@@ -61,23 +61,11 @@ function toggleEdit(btn) {
 }
 
 // ============================================
-// EXPORTAR CSV
+// ACCIÓN DEL FORMULARIO
+// Cambia el campo _action antes de hacer submit
 // ============================================
-function exportarCSV() {
-    const rows = [['#', 'Nombre completo', 'CURP']];
-    document.querySelectorAll('#beneficiaries-table .table-row').forEach((row, i) => {
-        const inputs = row.querySelectorAll('input');
-        const nombre = inputs[0]?.value?.trim();
-        const curp   = inputs[1]?.value?.trim();
-        if (nombre || curp) {
-            rows.push([i + 1, nombre || '', curp || '']);
-        }
-    });
-    const csv  = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
-    const link = document.createElement('a');
-    link.href     = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csv);
-    link.download = 'beneficiarios.csv';
-    link.click();
+function setAction(action) {
+    document.getElementById('form-action').value = action;
 }
 
 // ============================================
@@ -264,9 +252,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const btnAdd = document.getElementById('btn-add-row');
     if (btnAdd) btnAdd.addEventListener('click', addRow);
 
-    // Exportar CSV
-    const btnExport = document.getElementById('btn-export-csv');
-    if (btnExport) btnExport.addEventListener('click', exportarCSV);
+    // btn-export-csv ya no existe; los botones son type=submit
+    // con onclick=setAction(...) declarado en la Blade
 
     // Eliminar desde modal
     const btnDelete = document.getElementById('btn-modal-delete');

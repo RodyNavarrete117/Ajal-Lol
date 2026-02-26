@@ -445,9 +445,10 @@ body.reduce-animations *::after {
 
 .admin-table {
     width: 100%;
+    min-width: 1100px; /* Le da un ancho mínimo para que si la pantalla es pequeña, puedas deslizar en lugar de aplastar todo */
     border-collapse: collapse;
     font-size: 14px;
-    table-layout: fixed;
+    /* ELIMINAMOS "table-layout: fixed;" para que la tabla calcule bien los espacios */
 }
 
 .admin-table thead {
@@ -517,10 +518,11 @@ body.reduce-animations *::after {
 }
 
 .admin-table td {
-    padding: 22px 24px;
+    padding: 16px 24px; /* Reducimos un poco el alto para compensar que ahora habrá 2 renglones */
     color: var(--text);
     font-size: 14.5px;
-    white-space: nowrap;
+    white-space: normal; /* LA MAGIA: Esto permite que el texto baje (haga el "Enter") */
+    word-wrap: break-word;
     transition: color 0.3s;
 }
 
@@ -707,6 +709,17 @@ tr.row-selected {
     color: var(--text-sub);
     display: inline-block;
     max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    transition: var(--transition);
+}
+
+/* Mensaje */
+.message-text {
+    color: var(--text-sub);
+    display: inline-block;
+    max-width: 200px; /* Limita el ancho del mensaje */
     overflow: hidden;
     text-overflow: ellipsis;
     vertical-align: middle;
@@ -913,11 +926,13 @@ tr:hover .date-badge {
 /* Oculta Teléfono y Correo */
 
 @media (max-width: 1024px) and (min-width: 769px) {
-
-    .admin-table th:nth-child(3),
-    .admin-table td:nth-child(2),
-    .admin-table th:nth-child(5),
-    .admin-table td:nth-child(4) {
+    /* Oculta Correo, Mensaje y Teléfono en Tablet */
+    .admin-table th:nth-child(3), /* Correo */
+    .admin-table th:nth-child(5), /* Mensaje */
+    .admin-table th:nth-child(6), /* Teléfono */
+    .admin-table td:nth-child(2), /* Correo td */
+    .admin-table td:nth-child(4), /* Mensaje td */
+    .admin-table td:nth-child(5)  /* Teléfono td */ {
         display: none;
     }
 
@@ -957,16 +972,20 @@ tr:hover .date-badge {
 
 
 /* ==================== MÓVIL (≤ 768px) ==================== */
-
 @media (max-width: 768px) {
 
     .header-content h2 { font-size: 24px; }
     .stat-card         { padding: 16px 20px; }
     .stat-number       { font-size: 28px; }
 
-    /* La tabla se convierte en tarjetas */
-    .table-wrapper { overflow-x: visible; }
-    .admin-table   { table-layout: auto; }
+    /* La tabla se convierte en tarjetas y bloqueamos el scroll fantasma */
+    .table-wrapper { overflow-x: hidden; width: 100%; }
+    
+    /* ¡LA SOLUCIÓN! Reseteamos el ancho gigante del escritorio a 100% */
+    .admin-table { 
+        min-width: 100% !important; 
+        table-layout: auto; 
+    }
 
     .admin-table thead { display: none; }
 
@@ -995,11 +1014,13 @@ tr:hover .date-badge {
     .admin-table td {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start; /* Permite que si hay 2 renglones, no se desalinee el texto */
         padding: 12px 0 !important;
         border: none;
         white-space: normal;
         word-break: break-word;
+        text-align: right;
+        gap: 16px; /* Espacio de seguridad entre el título y el valor */
     }
 
     .admin-table td::before {
@@ -1010,6 +1031,7 @@ tr:hover .date-badge {
         letter-spacing: 0.5px;
         color: var(--primary);
         flex-shrink: 0;
+        text-align: left;
     }
 
     [data-theme="dark"] .admin-table td::before { color: #d4a0c8; }
@@ -1017,7 +1039,7 @@ tr:hover .date-badge {
     .td-checkbox::before,
     .td-actions::before { content: ''; }
 
-    /* En móvil el td del Nombre muestra: [NOMBRE label] [avatar + nombre] en fila normal */
+    /* En móvil el td del Nombre muestra: [NOMBRE label] [avatar + nombre] */
     .admin-table td[data-label="Nombre"] {
         align-items: center;
         gap: 0;
@@ -1025,7 +1047,6 @@ tr:hover .date-badge {
         padding-bottom: 14px !important;
     }
 
-    /* El avatar en móvil — tamaño normal, sin posicionamiento absoluto raro */
     .admin-table td[data-label="Nombre"] .user-avatar {
         width: 40px;
         height: 40px;
@@ -1033,15 +1054,19 @@ tr:hover .date-badge {
         flex-shrink: 0;
     }
 
-    /* user-info ocupa el lado derecho del label */
     .user-info {
         flex: 1;
         justify-content: flex-end;
         gap: 10px;
     }
 
-    .user-name {
-        font-size: 14px;
+    .user-name { font-size: 14px; }
+
+    /* Textos largos en móvil */
+    .subject-text, 
+    .message-text {
+        max-width: 100%;
+        text-align: right;
     }
 
     .action-buttons {
@@ -1049,13 +1074,11 @@ tr:hover .date-badge {
         flex: 1;
     }
 
-    /* Fila seleccionada en móvil */
     tr.row-selected {
         border-color: var(--primary) !important;
         border-width: 2px !important;
     }
 
-    /* Footer en móvil */
     .table-footer {
         flex-direction: column;
         align-items: center;

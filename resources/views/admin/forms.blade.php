@@ -84,6 +84,7 @@
                         <th>Nombre completo</th>
                         <th>Correo</th>
                         <th>Asunto</th>
+                        <th>Mensaje</th> 
                         <th>Teléfono</th>
                         <th class="sortable" data-column="date">
                             Fecha
@@ -122,6 +123,10 @@
 
                         <td data-label="Asunto">
                             <span class="subject-text">{{ $form->asunto }}</span>
+                        </td>
+
+                        <td data-label="Mensaje" title="{{ $form->mensaje }}">
+                            <span class="message-text">{{ $form->mensaje }}</span>
                         </td>
 
                         <td data-label="Teléfono">

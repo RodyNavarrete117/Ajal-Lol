@@ -1,81 +1,340 @@
+/* ==================== VARIABLES — MODO CLARO / OSCURO ==================== */
+:root {
+    /* Modo claro */
+    --bg-page:        #f9fafc;
+    --bg-container:   #ffffff;
+    --bg-input:       #f9fafc;
+    --bg-input-focus: #ffffff;
+
+    --border:         #e2e8f0;
+    --border-focus:   #7d3f6a;
+
+    --text-heading:   #1a202c;
+    --text-sub:       #718096;
+    --text-label:     #4a5568;
+    --text-input:     #1a202c;
+    --text-placeholder: #a0aec0;
+
+    --accent:         #7d3f6a;
+    --accent-hover:   #662f57;
+    --accent-light:   rgba(125, 63, 106, 0.08);
+
+    --btn-cancel-bg:      #edf2f7;
+    --btn-cancel-color:   #4a5568;
+    --btn-cancel-hover:   #e2e8f0;
+
+    --shadow-container: 0 2px 12px rgba(0,0,0,0.06);
+    --shadow-input-focus: 0 0 0 3px rgba(125, 63, 106, 0.15);
+
+    --label-accent: #7d3f6a;
+
+    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] {
+    /* Modo oscuro — azul marino oscuro igual al resto del dashboard */
+    --bg-page:        #0f1420;
+    --bg-container:   #161b27;
+    --bg-input:       #1e2a45;
+    --bg-input-focus: #243356;
+
+    --border:         #2d4070;
+    --border-focus:   #d46ba8;
+
+    --text-heading:   #e8e8f0;
+    --text-sub:       #6878a8;
+    --text-label:     #a0a8c0;
+    --text-input:     #e8e8f0;
+    --text-placeholder: #4a5878;
+
+    --accent:         #d46ba8;
+    --accent-hover:   #e07db8;
+    --accent-light:   rgba(212, 107, 168, 0.10);
+
+    --btn-cancel-bg:      #1e2a45;
+    --btn-cancel-color:   #a0a8c0;
+    --btn-cancel-hover:   #243356;
+
+    --shadow-container: 0 2px 12px rgba(0,0,0,0.35);
+    --shadow-input-focus: 0 0 0 3px rgba(212, 107, 168, 0.18);
+
+    --label-accent: #d46ba8;
+}
+
+/* ==================== BASE ==================== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* ==================== PAGE WRAPPER ==================== */
+.edit-page-wrapper {
+    transition: background var(--transition);
+    padding: 40px 20px 60px;
+}
+
+/* ==================== CONTAINER ==================== */
 .edit-container {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 30px;
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 44px 48px;
+    background: var(--bg-container);
+    border-radius: 20px;
+    box-shadow: var(--shadow-container);
+    border: 1px solid var(--border);
+    transition: background var(--transition), box-shadow var(--transition), border-color var(--transition);
+
+    /* Animación de entrada */
+    animation: containerIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* ==================== HEADER ==================== */
+.edit-header {
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    transition: border-color var(--transition);
+
+    animation: fadeSlideDown 0.5s ease both;
+    animation-delay: 0.08s;
+}
+
+.edit-header-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+}
+
+.edit-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: var(--accent-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: background var(--transition), color var(--transition);
 }
 
 .edit-container h2 {
-    margin-bottom: 10px;
-    font-size: 24px;
-    color: #333;
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-heading);
+    transition: color var(--transition);
+    letter-spacing: -0.3px;
 }
 
 .subtitle {
-    margin-bottom: 25px;
-    color: #666;
+    margin: 0;
+    color: var(--text-sub);
     font-size: 14px;
+    line-height: 1.6;
+    transition: color var(--transition);
+    padding-left: 56px; /* align with title (icon width + gap) */
 }
 
+/* ==================== FORM GROUPS ==================== */
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 22px;
     display: flex;
     flex-direction: column;
 }
 
+.form-group:nth-child(1) { animation: fadeSlideUp 0.45s ease both; animation-delay: 0.16s; }
+.form-group:nth-child(2) { animation: fadeSlideUp 0.45s ease both; animation-delay: 0.24s; }
+.form-group:nth-child(3) { animation: fadeSlideUp 0.45s ease both; animation-delay: 0.32s; }
+.form-group:nth-child(4) { animation: fadeSlideUp 0.45s ease both; animation-delay: 0.40s; }
+
 .form-group label {
-    margin-bottom: 6px;
+    margin-bottom: 7px;
     font-weight: 600;
-    color: #444;
+    font-size: 13px;
+    color: var(--text-label);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    transition: color var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.form-group label::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 13px;
+    background: var(--label-accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+    transition: background var(--transition);
 }
 
 .form-group input,
 .form-group textarea {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border 0.2s ease;
+    padding: 12px 14px;
+    background: var(--bg-input);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 14.5px;
+    color: var(--text-input);
+    transition: border-color var(--transition), background var(--transition),
+                box-shadow var(--transition), color var(--transition);
+    font-family: inherit;
+    resize: vertical;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--text-placeholder);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
-    border-color: #2563eb;
+    border-color: var(--border-focus);
+    background: var(--bg-input-focus);
     outline: none;
+    box-shadow: var(--shadow-input-focus);
 }
 
+.form-group textarea {
+    min-height: 110px;
+    line-height: 1.6;
+}
+
+/* ==================== ACTIONS ==================== */
 .form-actions {
     display: flex;
-    gap: 10px;
-    margin-top: 20px;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    transition: border-color var(--transition);
+
+    animation: fadeSlideUp 0.45s ease both;
+    animation-delay: 0.46s;
+}
+
+.btn-save,
+.btn-cancel {
+    padding: 11px 24px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background var(--transition), color var(--transition),
+                transform 0.15s ease, box-shadow 0.15s ease;
+    font-family: inherit;
+    letter-spacing: 0.2px;
 }
 
 .btn-save {
-    background-color: #2563eb;
-    color: white;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s ease;
+    background: var(--accent);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(128, 65, 106, 0.3);
 }
 
 .btn-save:hover {
-    background-color: #1e4fd6;
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(128, 65, 106, 0.38);
+}
+
+.btn-save:active {
+    transform: translateY(0px) scale(0.97);
+    box-shadow: 0 2px 8px rgba(128, 65, 106, 0.25);
 }
 
 .btn-cancel {
-    background-color: #e5e7eb;
-    color: #333;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s ease;
+    background: var(--btn-cancel-bg);
+    color: var(--btn-cancel-color);
 }
 
 .btn-cancel:hover {
-    background-color: #d1d5db;
+    background: var(--btn-cancel-hover);
+    transform: translateY(-2px);
+}
+
+.btn-cancel:active {
+    transform: translateY(0px) scale(0.97);
+}
+
+/* ==================== KEYFRAMES ==================== */
+@keyframes containerIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ==================== REDUCE ANIMATIONS ==================== */
+@media (prefers-reduced-motion: reduce) {
+    .edit-container,
+    .edit-header,
+    .form-group,
+    .form-actions {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+body.reduce-animations .edit-container,
+body.reduce-animations .edit-header,
+body.reduce-animations .form-group,
+body.reduce-animations .form-actions {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+body.reduce-animations .btn-save:hover,
+body.reduce-animations .btn-cancel:hover {
+    transform: none !important;
+}
+
+body.reduce-animations .btn-save:active,
+body.reduce-animations .btn-cancel:active {
+    transform: scale(0.98) !important;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 600px) {
+    .edit-container {
+        padding: 28px 22px;
+    }
+
+    .subtitle {
+        padding-left: 0;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-save,
+    .btn-cancel {
+        width: 100%;
+        text-align: center;
+    }
 }

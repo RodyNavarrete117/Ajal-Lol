@@ -25,6 +25,7 @@
     margin: 0 auto;
 }
 
+/* ==================== HEADER ==================== */
 .pages-header {
     background: linear-gradient(135deg, #9b4d77 0%, #783d66 100%);
     border-radius: 20px;
@@ -43,10 +44,8 @@
 .pages-header::before {
     content: '';
     position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 300px;
-    height: 300px;
+    top: -50%; right: -10%;
+    width: 300px; height: 300px;
     background: rgba(255,255,255,0.08);
     border-radius: 50%;
     animation: float 6s ease-in-out infinite;
@@ -91,14 +90,11 @@
 }
 
 .btn-new-page svg {
-    width: 20px;
-    height: 20px;
+    width: 20px; height: 20px;
     transition: transform 0.3s ease;
 }
 
-.btn-new-page:hover svg {
-    transform: rotate(90deg);
-}
+.btn-new-page:hover svg { transform: rotate(90deg); }
 
 /* ==================== FILTER TABS ==================== */
 .filter-tabs {
@@ -119,14 +115,8 @@
     color: var(--tab-color);
 }
 
-.tab-btn.active {
-    background: #9b4d77;
-    color: white;
-}
-
-.tab-btn:hover {
-    transform: translateY(-2px);
-}
+.tab-btn.active { background: #9b4d77; color: white; }
+.tab-btn:hover  { transform: translateY(-2px); }
 
 /* ==================== PAGES LIST ==================== */
 .pages-list {
@@ -160,8 +150,7 @@
 
 /* ==================== PAGE ICON ==================== */
 .page-icon-wrapper {
-    width: 70px;
-    height: 70px;
+    width: 70px; height: 70px;
     border-radius: 14px;
     display: flex;
     align-items: center;
@@ -172,26 +161,47 @@
     overflow: hidden;
 }
 
-/* Modo claro: gradientes originales sin tocar */
+/* Modo claro: gradientes sólidos */
 .page-item:nth-child(1) .page-icon-wrapper { background: linear-gradient(135deg, #9b4d77 0%, #783d66 100%); }
 .page-item:nth-child(2) .page-icon-wrapper { background: linear-gradient(135deg, #b35a8b 0%, #9b4d77 100%); }
 .page-item:nth-child(3) .page-icon-wrapper { background: linear-gradient(135deg, #c96d9f 0%, #b35a8b 100%); }
 
-/* ── Modo oscuro: solo el ícono visible, sin fondo, sin glow ── */
+/* Modo oscuro: fondo transparente, sin overflow hidden para que el ícono respire */
 [data-theme="dark"] .page-icon-wrapper {
     background: transparent !important;
     overflow: visible;
 }
 
+/* ── Íconos home y team: fill directo al SVG ── */
 [data-theme="dark"] .page-item:nth-child(1) .page-icon-wrapper svg { fill: #d46ba8; }
 [data-theme="dark"] .page-item:nth-child(2) .page-icon-wrapper svg { fill: #e07fb8; }
-[data-theme="dark"] .page-item:nth-child(3) .page-icon-wrapper svg { fill: #f09cc8; }
 
+/* ── Ícono contacto (envelope): tratamiento especial ──
+   El sobre tiene rect (cuerpo) + path (solapa con stroke).
+   En dark mode: cuerpo con fill semitransparente + stroke visible,
+   solapa solo con stroke, sin fill.
+*/
+[data-theme="dark"] .page-item:nth-child(3) .page-icon-wrapper svg {
+    fill: none;  /* no llenar el SVG global */
+}
+
+[data-theme="dark"] .icon-contact rect {
+    fill: rgba(240, 156, 200, 0.18);
+    stroke: #f09cc8;
+    stroke-width: 1.5px;
+}
+
+[data-theme="dark"] .icon-contact .envelope-flap {
+    fill: none;
+    stroke: #f09cc8;
+    stroke-width: 1.8px;
+}
+
+/* Brillo del hover en modo claro */
 .page-icon-wrapper::before {
     content: '';
     position: absolute;
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     background: rgba(255,255,255,0.2);
     transform: translateX(-100%) rotate(45deg);
     transition: transform 0.6s ease;
@@ -200,22 +210,19 @@
 [data-theme="dark"] .page-icon-wrapper::before { display: none; }
 
 .page-item:hover .page-icon-wrapper::before { transform: translateX(100%) rotate(45deg); }
-.page-item:hover .page-icon-wrapper { transform: scale(1.1) rotate(-8deg); }
+.page-item:hover .page-icon-wrapper         { transform: scale(1.1) rotate(-8deg); }
 
 .page-icon-wrapper svg {
-    width: 36px;
-    height: 36px;
+    width: 36px; height: 36px;
     fill: white;
     transition: all 0.4s ease;
     position: relative;
     z-index: 1;
 }
 
-.page-item:hover .page-icon-wrapper svg {
-    transform: scale(1.15);
-}
+.page-item:hover .page-icon-wrapper svg { transform: scale(1.15); }
 
-/* Animaciones de iconos */
+/* Animaciones de iconos individuales */
 .icon-home .door { transform-origin: left center; transition: transform 0.4s ease; }
 .page-item:hover .icon-home .door { transform: rotateY(20deg); }
 
@@ -253,8 +260,7 @@
 .page-actions { display: flex; gap: 0.75rem; flex-shrink: 0; }
 
 .action-btn {
-    width: 44px;
-    height: 44px;
+    width: 44px; height: 44px;
     border-radius: 12px;
     border: 2px solid transparent;
     cursor: pointer;
@@ -264,18 +270,23 @@
     transition: all 0.3s ease;
     position: relative;
     background: transparent;
+    text-decoration: none;
 }
 
-.action-btn svg { width: 22px; height: 22px; transition: all 0.3s ease; stroke-width: 2; }
+.action-btn svg {
+    width: 22px; height: 22px;
+    transition: all 0.3s ease;
+    stroke-width: 2;
+}
 
 .btn-edit   { border-color: #9b4d77; }
 .btn-edit svg { stroke: #9b4d77; fill: none; }
-.btn-edit:hover { background: #9b4d77; transform: translateY(-3px) rotate(5deg); box-shadow: 0 6px 20px rgba(155,77,119,0.3); }
+.btn-edit:hover   { background: #9b4d77; transform: translateY(-3px) rotate(5deg); box-shadow: 0 6px 20px rgba(155,77,119,0.3); }
 .btn-edit:hover svg { stroke: white; }
 
 .btn-view   { border-color: #48bb78; }
 .btn-view svg { stroke: #48bb78; fill: none; }
-.btn-view:hover { background: #48bb78; transform: translateY(-3px) scale(1.05); box-shadow: 0 6px 20px rgba(72,187,120,0.3); }
+.btn-view:hover   { background: #48bb78; transform: translateY(-3px) scale(1.05); box-shadow: 0 6px 20px rgba(72,187,120,0.3); }
 .btn-view:hover svg { stroke: white; }
 
 .btn-delete { border-color: #f56565; }

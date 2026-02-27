@@ -21,9 +21,33 @@
                 <span class="stat-number">{{ $forms->count() }}</span>
                 <span class="stat-label">Total</span>
             </div>
+
+            {{--
+                Tarjeta dinámica: busca el período más reciente con datos.
+                Cascada: semana → mes → 3 meses → 6 meses → año
+            --}}
+            @php
+                $periods = [
+                    ['days' => 7,   'label' => 'Esta semana'],
+                    ['days' => 30,  'label' => 'Este mes'],
+                    ['days' => 90,  'label' => 'Últimos 3 meses'],
+                    ['days' => 180, 'label' => 'Últimos 6 meses'],
+                    ['days' => 365, 'label' => 'Este año'],
+                ];
+                $dynamicCount = 0;
+                $dynamicLabel = 'Este año';
+                foreach ($periods as $period) {
+                    $count = $forms->where('fecha_envio', '>=', now()->subDays($period['days']))->count();
+                    if ($count > 0) {
+                        $dynamicCount = $count;
+                        $dynamicLabel = $period['label'];
+                        break;
+                    }
+                }
+            @endphp
             <div class="stat-card">
-                <span class="stat-number">{{ $forms->where('fecha_envio', '>=', now()->subDays(7))->count() }}</span>
-                <span class="stat-label">Esta semana</span>
+                <span class="stat-number">{{ $dynamicCount }}</span>
+                <span class="stat-label">{{ $dynamicLabel }}</span>
             </div>
         </div>
     </div>
@@ -84,7 +108,7 @@
                         <th>Nombre completo</th>
                         <th>Correo</th>
                         <th>Asunto</th>
-                        <th>Mensaje</th> 
+                        <th>Mensaje</th>
                         <th>Teléfono</th>
                         <th class="sortable" data-column="date">
                             Fecha
@@ -103,7 +127,6 @@
                         <td data-label="Nombre">
                             <div class="user-info">
                                 <div class="user-avatar">
-                                    {{-- Checkbox integrado en el avatar --}}
                                     <input type="checkbox"
                                         class="row-checkbox"
                                         value="{{ $form->id_formcontacto }}">
@@ -171,13 +194,11 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="empty-state">
+                        <td colspan="8" class="empty-state">
                             <div class="empty-content">
                                 <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-                                    <circle cx="32" cy="32" r="30"
-                                        stroke="#e5e7eb" stroke-width="4"/>
-                                    <path d="M32 20v16m0 4h.02"
-                                        stroke="#9ca3af" stroke-width="4" stroke-linecap="round"/>
+                                    <circle cx="32" cy="32" r="30" stroke="#e5e7eb" stroke-width="4"/>
+                                    <path d="M32 20v16m0 4h.02" stroke="#9ca3af" stroke-width="4" stroke-linecap="round"/>
                                 </svg>
                                 <p>No hay formularios para mostrar</p>
                             </div>
@@ -206,22 +227,110 @@
     </div>
     {{-- FIN table-container --}}
 
-    {{-- Barra flotante de selección (fixed, aparece al seleccionar filas) --}}
+    {{-- Modal de detalle de formulario --}}
+    <div class="form-modal-overlay" id="formModalOverlay" role="dialog" aria-modal="true">
+        <div class="form-modal" id="formModal">
+
+            <div class="form-modal-header">
+                <div class="form-modal-avatar" id="modalAvatar">?</div>
+                <div class="form-modal-title">
+                    <h3 id="modalName">—</h3>
+                    <span id="modalAsunto">—</span>
+                </div>
+                <button class="form-modal-close" id="modalClose" aria-label="Cerrar">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                        <path d="M14 4L4 14M4 4l10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="form-modal-body">
+
+                <div class="form-modal-field">
+                    <div class="form-modal-field-icon">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                            <path d="M2 5l8 5 8-5M2 5v10a1 1 0 001 1h14a1 1 0 001-1V5a1 1 0 00-1-1H3a1 1 0 00-1 1z"
+                                stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="form-modal-field-content">
+                        <div class="form-modal-field-label">Correo electrónico</div>
+                        <div class="form-modal-field-value" id="modalCorreo">—</div>
+                    </div>
+                </div>
+
+                <div class="form-modal-field">
+                    <div class="form-modal-field-icon">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                            <path d="M2 3h3l2 4.5L5 9a11 11 0 006 6l1.5-2 4.5 2v3A1 1 0 0116 19C8.3 19 1 11.7 1 4a1 1 0 011-1z"
+                                stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="form-modal-field-content">
+                        <div class="form-modal-field-label">Teléfono</div>
+                        <div class="form-modal-field-value" id="modalTelefono">—</div>
+                    </div>
+                </div>
+
+                <div class="form-modal-field">
+                    <div class="form-modal-field-icon">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="9" r="7" stroke="currentColor" stroke-width="1.6"/>
+                            <path d="M10 6v4l2.5 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="form-modal-field-content">
+                        <div class="form-modal-field-label">Fecha de envío</div>
+                        <div class="form-modal-field-value">
+                            <span class="form-modal-date-badge" id="modalFecha">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-modal-field">
+                    <div class="form-modal-field-icon">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                            <path d="M2 5h16M2 10h10M2 15h7"
+                                stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="form-modal-field-content">
+                        <div class="form-modal-field-label">Mensaje</div>
+                        <div class="form-modal-message" id="modalMensaje">—</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-modal-footer">
+                <button class="form-modal-btn form-modal-btn-close" id="modalBtnClose">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M12 4L4 12M4 4l8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                    Cerrar
+                </button>
+                <button class="form-modal-btn form-modal-btn-delete" id="modalBtnDelete">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                        <path d="M3 5h14M8 5V3h4v2m-5 4v6m4-6v6m-7-9v11a2 2 0 002 2h6a2 2 0 002-2V5"
+                            stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                    </svg>
+                    Eliminar
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    {{-- Barra flotante de selección --}}
     <div class="selection-bar" id="selectionBar">
         <div class="sel-info">
             <span>Seleccionados:</span>
             <span class="sel-count" id="selCount">0</span>
         </div>
         <div class="sel-actions">
-            <button class="sel-btn sel-btn-all" id="selectAllBtn">
-                Seleccionar todos
-            </button>
-            <button class="sel-btn sel-btn-clear" id="clearSelBtn">
-                Limpiar selección
-            </button>
-            <button class="sel-btn sel-btn-delete" id="deleteSelBtn">
-                Eliminar seleccionados
-            </button>
+            <button class="sel-btn sel-btn-all" id="selectAllBtn">Seleccionar todos</button>
+            <button class="sel-btn sel-btn-clear" id="clearSelBtn">Limpiar selección</button>
+            <button class="sel-btn sel-btn-delete" id="deleteSelBtn">Eliminar seleccionados</button>
         </div>
     </div>
 
@@ -230,96 +339,4 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{{ asset('assets/js/forms.js') }}"></script>
-<script>
-    // ── Exportar PDF ──
-    document.querySelector('.export-button')
-        .addEventListener('click', exportForms);
-
-    // ── Selección de filas ──
-    const tableContainer = document.getElementById('tableContainer');
-    const selectionBar   = document.getElementById('selectionBar');
-    const selCount       = document.getElementById('selCount');
-
-    function getChecked() {
-        return [...document.querySelectorAll('.row-checkbox')].filter(c => c.checked);
-    }
-
-    function updateSelectionBar() {
-        const checked = getChecked();
-        const count   = checked.length;
-
-        selCount.textContent = count;
-
-        if (count > 0) {
-            tableContainer.classList.add('has-selection');
-            selectionBar.classList.add('has-selection');   // barra visible
-        } else {
-            tableContainer.classList.remove('has-selection');
-            selectionBar.classList.remove('has-selection');
-        }
-    }
-
-    // Marcar fila y actualizar barra al cambiar checkbox
-    document.querySelectorAll('.row-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('change', function () {
-            this.closest('tr').classList.toggle('row-selected', this.checked);
-            updateSelectionBar();
-        });
-    });
-
-    // Click en el avatar activa el checkbox aunque no caiga exactamente en él
-    document.querySelectorAll('.user-avatar').forEach(avatar => {
-        avatar.addEventListener('click', function (e) {
-            if (e.target.classList.contains('row-checkbox')) return;
-            const cb = this.querySelector('.row-checkbox');
-            if (cb) {
-                cb.checked = !cb.checked;
-                cb.dispatchEvent(new Event('change'));
-            }
-        });
-    });
-
-    // Seleccionar TODOS
-    document.getElementById('selectAllBtn').addEventListener('click', () => {
-        document.querySelectorAll('.row-checkbox').forEach(cb => {
-            cb.checked = true;
-            cb.closest('tr').classList.add('row-selected');
-        });
-        updateSelectionBar();
-    });
-
-    // Limpiar selección
-    document.getElementById('clearSelBtn').addEventListener('click', () => {
-        document.querySelectorAll('.row-checkbox').forEach(cb => {
-            cb.checked = false;
-            cb.closest('tr').classList.remove('row-selected');
-        });
-        updateSelectionBar();
-    });
-
-    // Eliminar seleccionados (llama a la función existente de forms.js si existe)
-    document.getElementById('deleteSelBtn').addEventListener('click', () => {
-        const ids = getChecked().map(cb => cb.value);
-        if (ids.length === 0) return;
-        if (typeof deleteMultipleForms === 'function') {
-            deleteMultipleForms(ids);
-        } else {
-            Swal.fire({
-                title: '¿Eliminar ' + ids.length + ' registro(s)?',
-                text: 'Esta acción no se puede deshacer.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#7c3f69',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then(result => {
-                if (result.isConfirmed) {
-                    // Aquí iría la petición al servidor
-                    console.log('Eliminar IDs:', ids);
-                }
-            });
-        }
-    });
-</script>
 @endpush

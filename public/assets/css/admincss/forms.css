@@ -53,107 +53,6 @@
 }
 
 
-
-/* ==================== BARRA DE SELECCIÓN MASIVA ==================== */
-
-/*
-   Aparece encima de la tabla cuando hay al menos una fila seleccionada.
-   Oculta por defecto, visible con JS añadiendo .has-selection al table-container.
-*/
-.selection-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 14px 24px;
-    background: var(--gradient);
-    color: #ffffff;
-
-    /* Flotante en la parte inferior de la ventana */
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    z-index: 100;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(124, 63, 105, 0.40);
-    width: max-content;
-    max-width: calc(100vw - 32px);   /* en móvil no se sale de la pantalla */
-
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.selection-bar.has-selection {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-    pointer-events: all;
-}
-
-.selection-bar .sel-info {
-    font-size: 14px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.selection-bar .sel-count {
-    background: rgba(255, 255, 255, 0.25);
-    padding: 3px 12px;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 13px;
-}
-
-.selection-bar .sel-actions {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-}
-
-.sel-btn {
-    padding: 8px 18px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    border: 2px solid rgba(255, 255, 255, 0.4);
-    transition: all 0.2s ease;
-}
-
-.sel-btn-all {
-    background: rgba(255, 255, 255, 0.20);
-    color: #ffffff;
-}
-
-.sel-btn-all:hover {
-    background: rgba(255, 255, 255, 0.35);
-    border-color: rgba(255, 255, 255, 0.7);
-}
-
-.sel-btn-clear {
-    background: transparent;
-    color: rgba(255, 255, 255, 0.85);
-}
-
-.sel-btn-clear:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
-}
-
-.sel-btn-delete {
-    background: rgba(239, 68, 68, 0.75);
-    color: #ffffff;
-    border-color: transparent;
-}
-
-.sel-btn-delete:hover {
-    background: rgba(239, 68, 68, 1);
-}
-
 /* ==================== ANIMACIONES ==================== */
 
 @keyframes fadeIn {
@@ -179,6 +78,12 @@
 @keyframes shimmer {
     0%   { background-position: -1000px 0; }
     100% { background-position:  1000px 0; }
+}
+
+@keyframes avatarClickBounce {
+    0%   { transform: scale(1.08); } 
+    50%  { transform: scale(0.92); }
+    100% { transform: scale(1); } /* Termina en 1 para evitar saltos al quitar el cursor */
 }
 
 body.reduce-animations *,
@@ -346,9 +251,7 @@ body.reduce-animations *::after {
     box-shadow: 0 0 0 4px rgba(124, 63, 105, 0.10);
 }
 
-.search-input::placeholder {
-    color: var(--text-muted);
-}
+.search-input::placeholder { color: var(--text-muted); }
 
 .filter-group {
     display: flex;
@@ -378,9 +281,7 @@ body.reduce-animations *::after {
     box-shadow: 0 0 0 4px rgba(124, 63, 105, 0.10);
 }
 
-.filter-select:hover {
-    border-color: var(--primary-light);
-}
+.filter-select:hover { border-color: var(--primary-light); }
 
 .sort-button {
     display: flex;
@@ -445,10 +346,9 @@ body.reduce-animations *::after {
 
 .admin-table {
     width: 100%;
-    min-width: 1100px; /* Le da un ancho mínimo para que si la pantalla es pequeña, puedas deslizar en lugar de aplastar todo */
+    min-width: 1100px;
     border-collapse: collapse;
     font-size: 14px;
-    /* ELIMINAMOS "table-layout: fixed;" para que la tabla calcule bien los espacios */
 }
 
 .admin-table thead {
@@ -473,10 +373,7 @@ body.reduce-animations *::after {
     transition: background 0.3s, color 0.3s;
 }
 
-.admin-table th.sortable {
-    cursor: pointer;
-    user-select: none;
-}
+.admin-table th.sortable { cursor: pointer; user-select: none; }
 
 .admin-table th.sortable:hover {
     background: var(--primary-bg);
@@ -518,30 +415,31 @@ body.reduce-animations *::after {
 }
 
 .admin-table td {
-    padding: 16px 24px; /* Reducimos un poco el alto para compensar que ahora habrá 2 renglones */
+    padding: 16px 24px;
     color: var(--text);
     font-size: 14.5px;
-    white-space: normal; /* LA MAGIA: Esto permite que el texto baje (haga el "Enter") */
+    white-space: normal;
     word-wrap: break-word;
     transition: color 0.3s;
 }
 
-/* ── Columna checkbox: oculta — el checkbox vive dentro del avatar ── */
+/* Columna checkbox oculta — el checkbox vive dentro del avatar */
 .th-checkbox,
 .td-checkbox {
     display: none;
 }
 
-/* ── Avatar-checkbox integrado ── */
+#selectAll { display: none; }
+
+
+/* ==================== AVATAR-CHECKBOX INTEGRADO ==================== */
+
 .user-info {
     display: flex;
     align-items: center;
     gap: 14px;
 }
 
-/*
-   position: relative permite superponer el checkbox y las capas de animación.
-*/
 .user-avatar {
     width: 46px;
     height: 46px;
@@ -567,7 +465,7 @@ body.reduce-animations *::after {
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-/* Checkbox real: invisible, cubre todo el avatar — z-index más alto que ::before/::after */
+/* Checkbox invisible encima de todo */
 .user-avatar .row-checkbox {
     position: absolute;
     inset: 0;
@@ -576,11 +474,11 @@ body.reduce-animations *::after {
     margin: 0;
     opacity: 0;
     cursor: pointer;
-    z-index: 10;   /* por encima de ::before (1) y ::after (1) */
+    z-index: 10;
     border-radius: 50%;
 }
 
-/* Capa blanca de fondo que aparece en hover */
+/* Capa blanca (::before) */
 .user-avatar::before {
     content: '';
     position: absolute;
@@ -594,47 +492,71 @@ body.reduce-animations *::after {
     pointer-events: none;
 }
 
-/* Ícono check que aparece en hover */
+/* Check/Círculo (::after) */
 .user-avatar::after {
     content: '';
     position: absolute;
-    inset: 0;
+    inset: 6px;
     border-radius: 50%;
+    border: 2.5px solid var(--primary);
+    background-color: transparent;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237c3f69' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L19 7'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 22px 22px;
+    background-size: 0 0; /* Oculto inicialmente */
     opacity: 0;
     transform: scale(0.5);
-    transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     z-index: 1;
     pointer-events: none;
 }
 
-/* Hover: mostrar capas + ocultar letra */
-.user-avatar:hover::before,
-.user-avatar:hover::after {
+/* Hover: solo se aplica si NO está seleccionado */
+tr:not(.row-selected) .user-avatar:hover::before {
     opacity: 1;
     transform: scale(1);
 }
 
-.user-avatar:hover .avatar-letter {
+tr:not(.row-selected) .user-avatar:hover::after {
+    opacity: 1;
+    transform: scale(1);
+    background-size: 0 0;
+    border-width: 2.5px;
+    inset: 6px;
+}
+
+tr:not(.row-selected) .user-avatar:hover .avatar-letter {
     opacity: 0;
     transform: scale(0.7);
 }
 
-.user-avatar:hover {
+tr:not(.row-selected) .user-avatar:hover {
     box-shadow: var(--shadow-md);
     transform: scale(1.08);
 }
 
-/* Fila seleccionada: el check queda visible permanentemente */
+/* Fila seleccionada: Rebote, borde desaparece y palomita crece */
 tr.row-selected .user-avatar {
     box-shadow: 0 0 0 3px var(--primary), var(--shadow-sm);
+    animation: avatarClickBounce 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: scale(1);
 }
 
-tr.row-selected .user-avatar::before,
+/* Hover muy sutil para la fila que YA está seleccionada */
+tr.row-selected .user-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 4px var(--primary), var(--shadow-md);
+}
+
+tr.row-selected .user-avatar::before {
+    opacity: 1;
+    transform: scale(1);
+}
+
 tr.row-selected .user-avatar::after {
+    inset: 0;
+    border-width: 0; 
+    background-size: 22px 22px; 
     opacity: 1;
     transform: scale(1);
 }
@@ -642,6 +564,11 @@ tr.row-selected .user-avatar::after {
 tr.row-selected .user-avatar .avatar-letter {
     opacity: 0;
     transform: scale(0.7);
+}
+
+/* Fila deseleccionada (Para animación de rebote de salida) */
+tr.row-unselected .user-avatar {
+    animation: avatarClickBounce 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Fondo sutil de la fila seleccionada */
@@ -653,10 +580,8 @@ tr.row-selected {
     background: rgba(124, 63, 105, 0.12) !important;
 }
 
-/* El selectAll del header lo ocultamos también */
-#selectAll {
-    display: none;
-}
+
+/* ==================== CONTENIDO DE CELDAS ==================== */
 
 .user-name {
     font-weight: 600;
@@ -668,7 +593,6 @@ tr.row-selected {
 .user-info:hover .user-name { color: var(--primary); }
 [data-theme="dark"] .user-info:hover .user-name { color: #d4a0c8; }
 
-/* Links */
 .email-link,
 .phone-link {
     color: var(--text-sub);
@@ -690,21 +614,14 @@ tr.row-selected {
 }
 
 .email-link:hover,
-.phone-link:hover {
-    color: var(--primary);
-}
+.phone-link:hover { color: var(--primary); }
 
 .email-link:hover::after,
-.phone-link:hover::after {
-    width: 100%;
-}
+.phone-link:hover::after { width: 100%; }
 
 [data-theme="dark"] .email-link:hover,
-[data-theme="dark"] .phone-link:hover {
-    color: #d4a0c8;
-}
+[data-theme="dark"] .phone-link:hover { color: #d4a0c8; }
 
-/* Asunto */
 .subject-text {
     color: var(--text-sub);
     display: inline-block;
@@ -715,11 +632,10 @@ tr.row-selected {
     transition: var(--transition);
 }
 
-/* Mensaje */
 .message-text {
     color: var(--text-sub);
     display: inline-block;
-    max-width: 200px; /* Limita el ancho del mensaje */
+    max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
     vertical-align: middle;
@@ -729,7 +645,6 @@ tr.row-selected {
 tr:hover .subject-text { color: var(--text); }
 .text-muted { color: var(--text-muted); }
 
-/* Fecha */
 .date-badge {
     display: inline-block;
     padding: 6px 14px;
@@ -754,7 +669,7 @@ tr:hover .date-badge {
     box-shadow: var(--shadow-sm);
 }
 
-/* Botones de acción */
+/* Acciones */
 .th-actions { width: 120px; text-align: center; }
 .td-actions  { text-align: center; }
 
@@ -781,10 +696,8 @@ tr:hover .date-badge {
 .btn-action::before {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.50);
     transform: translate(-50%, -50%);
@@ -793,7 +706,7 @@ tr:hover .date-badge {
 
 .btn-action:hover::before { width: 100px; height: 100px; }
 
-.btn-view         { background: #dbeafe; color: #1e40af; }
+.btn-view        { background: #dbeafe; color: #1e40af; }
 .btn-view:hover   { background: #1e40af; color: #ffffff; transform: translateY(-3px) rotate(5deg);  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.30); }
 .btn-delete       { background: #fee2e2; color: #dc2626; }
 .btn-delete:hover { background: #dc2626; color: #ffffff; transform: translateY(-3px) rotate(-5deg); box-shadow: 0 4px 12px rgba(220, 38, 38, 0.30); }
@@ -835,20 +748,10 @@ tr:hover .date-badge {
     transition: color 0.3s;
 }
 
-.footer-info strong {
-    color: var(--primary);
-    font-weight: 700;
-}
+.footer-info strong { color: var(--primary); font-weight: 700; }
+[data-theme="dark"] .footer-info strong { color: #d4a0c8; }
 
-[data-theme="dark"] .footer-info strong {
-    color: #d4a0c8;
-}
-
-.pagination {
-    display: flex;
-    gap: 8px;
-    flex-shrink: 0;
-}
+.pagination { display: flex; gap: 8px; flex-shrink: 0; }
 
 .page-btn {
     padding: 10px 18px;
@@ -875,10 +778,7 @@ tr:hover .date-badge {
     color: #d4a0c8;
 }
 
-.page-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
+.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .page-btn.active {
     background: var(--gradient);
@@ -904,65 +804,347 @@ tr:hover .date-badge {
 }
 
 
+/* ==================== BARRA DE SELECCIÓN FLOTANTE ==================== */
+
+.selection-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 24px;
+    background: var(--gradient);
+    color: #ffffff;
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    z-index: 100;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(124, 63, 105, 0.40);
+    width: max-content;
+    max-width: calc(100vw - 32px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.selection-bar.has-selection {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: all;
+}
+
+.selection-bar .sel-info {
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.selection-bar .sel-count {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.selection-bar .sel-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.sel-btn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    transition: all 0.2s ease;
+}
+
+.sel-btn-all   { background: rgba(255, 255, 255, 0.20); color: #ffffff; }
+.sel-btn-all:hover { background: rgba(255, 255, 255, 0.35); border-color: rgba(255, 255, 255, 0.7); }
+
+.sel-btn-clear { background: transparent; color: rgba(255, 255, 255, 0.85); }
+.sel-btn-clear:hover { background: rgba(255, 255, 255, 0.15); color: #ffffff; }
+
+.sel-btn-delete { background: rgba(239, 68, 68, 0.75); color: #ffffff; border-color: transparent; }
+.sel-btn-delete:hover { background: rgba(239, 68, 68, 1); }
+
+
+/* ==================== MODAL DE DETALLE ==================== */
+
+/* Overlay con blur */
+.form-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 10, 25, 0.50);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.form-modal-overlay.is-open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Tarjeta */
+.form-modal {
+    background: var(--bg);
+    border-radius: 24px;
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(124, 63, 105, 0.12);
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(28px) scale(0.96);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.form-modal-overlay.is-open .form-modal {
+    transform: translateY(0) scale(1);
+}
+
+/* Header */
+.form-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 28px 20px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+}
+
+.form-modal-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.20);
+    border: 2px solid rgba(255, 255, 255, 0.40);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    flex-shrink: 0;
+}
+
+.form-modal-title { flex: 1; min-width: 0; }
+
+.form-modal-title h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.form-modal-title span {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.form-modal-close {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+}
+
+.form-modal-close:hover { background: rgba(255, 255, 255, 0.28); }
+
+/* Cuerpo */
+.form-modal-body {
+    padding: 8px 28px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.form-modal-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.form-modal-field:last-child { border-bottom: none; }
+
+.form-modal-field-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--primary-bg);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+[data-theme="dark"] .form-modal-field-icon {
+    background: rgba(124, 63, 105, 0.18);
+    color: #d4a0c8;
+}
+
+.form-modal-field-content { flex: 1; min-width: 0; }
+
+.form-modal-field-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.form-modal-field-value {
+    font-size: 14.5px;
+    color: var(--text);
+    word-break: break-word;
+    line-height: 1.5;
+}
+
+.form-modal-field-value a { color: var(--primary); text-decoration: none; }
+.form-modal-field-value a:hover { text-decoration: underline; }
+[data-theme="dark"] .form-modal-field-value a { color: #d4a0c8; }
+
+/* Caja del mensaje */
+.form-modal-message {
+    background: var(--bg-alt);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--text-sub);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin-top: 4px;
+}
+
+/* Badge fecha */
+.form-modal-date-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--primary-bg);
+    color: var(--primary-dark);
+}
+
+[data-theme="dark"] .form-modal-date-badge {
+    background: rgba(124, 63, 105, 0.20);
+    color: #d4a0c8;
+}
+
+/* Footer */
+.form-modal-footer {
+    display: flex;
+    gap: 10px;
+    padding: 18px 28px 24px;
+    border-top: 1px solid var(--border-soft);
+}
+
+.form-modal-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.form-modal-btn-close {
+    background: var(--border-soft);
+    color: var(--text-sub);
+    border: 1.5px solid var(--border);
+}
+
+.form-modal-btn-close:hover { background: var(--border); color: var(--text); }
+
+.form-modal-btn-delete { background: #fee2e2; color: #dc2626; }
+.form-modal-btn-delete:hover { background: #dc2626; color: #ffffff; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.30); }
+
+[data-theme="dark"] .form-modal-btn-delete { background: rgba(220, 38, 38, 0.15); color: #fca5a5; }
+[data-theme="dark"] .form-modal-btn-delete:hover { background: #dc2626; color: #ffffff; }
+
+
 /* ==================== LAPTOP 14" (1025px – 1280px) ==================== */
-/* Solo ajusta espaciado — todas las columnas visibles */
 
 @media (max-width: 1280px) and (min-width: 1025px) {
-
     .admin-table th,
-    .admin-table td {
-        padding: 14px 14px;
-    }
-
-    .user-avatar    { width: 38px; height: 38px; font-size: 14px; }
-    .user-info      { gap: 10px; }
-    .date-badge     { padding: 5px 10px; font-size: 12px; }
-    .btn-action     { width: 34px; height: 34px; }
-    .action-buttons { gap: 6px; }
+    .admin-table td    { padding: 14px 14px; }
+    .user-avatar       { width: 38px; height: 38px; font-size: 14px; }
+    .user-info         { gap: 10px; }
+    .date-badge        { padding: 5px 10px; font-size: 12px; }
+    .btn-action        { width: 34px; height: 34px; }
+    .action-buttons    { gap: 6px; }
 }
 
 
-/* ==================== TABLET / LAPTOP PEQUEÑA (769px – 1024px) ==================== */
-/* Oculta Teléfono y Correo */
+/* ==================== TABLET (769px – 1024px) ==================== */
 
 @media (max-width: 1024px) and (min-width: 769px) {
-    /* Oculta Correo, Mensaje y Teléfono en Tablet */
-    .admin-table th:nth-child(3), /* Correo */
-    .admin-table th:nth-child(5), /* Mensaje */
-    .admin-table th:nth-child(6), /* Teléfono */
-    .admin-table td:nth-child(2), /* Correo td */
-    .admin-table td:nth-child(4), /* Mensaje td */
-    .admin-table td:nth-child(5)  /* Teléfono td */ {
-        display: none;
-    }
+    /* Ocultar Correo, Mensaje y Teléfono */
+    .admin-table th:nth-child(3),
+    .admin-table th:nth-child(5),
+    .admin-table th:nth-child(6),
+    .admin-table td:nth-child(2),
+    .admin-table td:nth-child(4),
+    .admin-table td:nth-child(5) { display: none; }
 
     .admin-table th,
-    .admin-table td {
-        padding: 12px 10px;
-    }
-
-    .admin-table th   { font-size: 11px; letter-spacing: 0.4px; }
-    .admin-table td   { font-size: 13px; }
-    .user-avatar      { width: 36px; height: 36px; font-size: 13px; }
-    .user-info        { gap: 8px; }
-    .user-name        { font-size: 13px; }
-    .subject-text     { max-width: 200px; white-space: nowrap; }
-    .date-badge       { padding: 4px 8px; font-size: 11px; }
-    .btn-action       { width: 32px; height: 32px; border-radius: 8px; }
-    .action-buttons   { gap: 5px; }
+    .admin-table td { padding: 12px 10px; }
+    .admin-table th { font-size: 11px; letter-spacing: 0.4px; }
+    .admin-table td { font-size: 13px; }
+    .user-avatar    { width: 36px; height: 36px; font-size: 13px; }
+    .user-info      { gap: 8px; }
+    .user-name      { font-size: 13px; }
+    .subject-text   { max-width: 200px; white-space: nowrap; }
+    .date-badge     { padding: 4px 8px; font-size: 11px; }
+    .btn-action     { width: 32px; height: 32px; border-radius: 8px; }
+    .action-buttons { gap: 5px; }
 }
 
 
 /* ==================== TABLET GENERAL (≤ 1024px) ==================== */
 
 @media (max-width: 1024px) {
-
-    .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 20px;
-    }
-
+    .page-header   { flex-direction: column; align-items: flex-start; gap: 20px; }
     .header-stats  { width: 100%; justify-content: space-between; }
     .stat-card     { flex: 1; min-width: 0; }
     .table-toolbar { flex-direction: column; align-items: stretch; }
@@ -972,29 +1154,19 @@ tr:hover .date-badge {
 
 
 /* ==================== MÓVIL (≤ 768px) ==================== */
-@media (max-width: 768px) {
 
+@media (max-width: 768px) {
     .header-content h2 { font-size: 24px; }
     .stat-card         { padding: 16px 20px; }
     .stat-number       { font-size: 28px; }
 
-    /* La tabla se convierte en tarjetas y bloqueamos el scroll fantasma */
     .table-wrapper { overflow-x: hidden; width: 100%; }
-    
-    /* ¡LA SOLUCIÓN! Reseteamos el ancho gigante del escritorio a 100% */
-    .admin-table { 
-        min-width: 100% !important; 
-        table-layout: auto; 
-    }
-
+    .admin-table   { min-width: 100% !important; table-layout: auto; }
     .admin-table thead { display: none; }
 
     .admin-table,
     .admin-table tbody,
-    .admin-table tr {
-        display: block;
-        width: 100%;
-    }
+    .admin-table tr { display: block; width: 100%; }
 
     .admin-table tbody tr {
         margin-bottom: 16px;
@@ -1006,21 +1178,18 @@ tr:hover .date-badge {
         position: relative;
     }
 
-    .admin-table tbody tr:hover {
-        transform: none;
-        box-shadow: var(--shadow-md);
-    }
+    .admin-table tbody tr:hover { transform: none; box-shadow: var(--shadow-md); }
 
     .admin-table td {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start; /* Permite que si hay 2 renglones, no se desalinee el texto */
+        align-items: flex-start;
         padding: 12px 0 !important;
         border: none;
         white-space: normal;
         word-break: break-word;
         text-align: right;
-        gap: 16px; /* Espacio de seguridad entre el título y el valor */
+        gap: 16px;
     }
 
     .admin-table td::before {
@@ -1039,7 +1208,7 @@ tr:hover .date-badge {
     .td-checkbox::before,
     .td-actions::before { content: ''; }
 
-    /* En móvil el td del Nombre muestra: [NOMBRE label] [avatar + nombre] */
+    /* Fila Nombre en móvil */
     .admin-table td[data-label="Nombre"] {
         align-items: center;
         gap: 0;
@@ -1054,50 +1223,35 @@ tr:hover .date-badge {
         flex-shrink: 0;
     }
 
-    .user-info {
-        flex: 1;
-        justify-content: flex-end;
-        gap: 10px;
-    }
+    .user-info     { flex: 1; justify-content: flex-end; gap: 10px; }
+    .user-name     { font-size: 14px; }
 
-    .user-name { font-size: 14px; }
+    .subject-text,
+    .message-text  { max-width: 100%; text-align: right; }
 
-    /* Textos largos en móvil */
-    .subject-text, 
-    .message-text {
-        max-width: 100%;
-        text-align: right;
-    }
+    .action-buttons { justify-content: flex-end; flex: 1; }
 
-    .action-buttons {
-        justify-content: flex-end;
-        flex: 1;
-    }
+    tr.row-selected { border-color: var(--primary) !important; }
 
-    tr.row-selected {
-        border-color: var(--primary) !important;
-        border-width: 2px !important;
-    }
-
-    .table-footer {
-        flex-direction: column;
-        align-items: center;
-        gap: 16px;
-    }
-
-    .pagination   { justify-content: center; }
-    .filter-group { flex-direction: column; }
+    .table-footer  { flex-direction: column; align-items: center; gap: 16px; }
+    .pagination    { justify-content: center; }
+    .filter-group  { flex-direction: column; }
 
     .filter-select,
     .sort-button,
     .export-button { width: 100%; justify-content: center; }
+
+    /* Modal en móvil */
+    .form-modal          { border-radius: 20px; max-height: 95vh; }
+    .form-modal-header   { padding: 20px 20px 16px; }
+    .form-modal-body     { padding: 4px 20px; }
+    .form-modal-footer   { padding: 14px 20px 20px; flex-direction: column; }
 }
 
 
 /* ==================== MÓVIL PEQUEÑO (≤ 480px) ==================== */
 
 @media (max-width: 480px) {
-
     .header-content h2 { font-size: 20px; }
     .stat-card         { padding: 12px 16px; }
     .stat-number       { font-size: 24px; }
@@ -1108,7 +1262,8 @@ tr:hover .date-badge {
 }
 
 
-/* Barra de selección en móvil */
+/* ==================== BARRA SELECCIÓN EN MÓVIL (≤ 600px) ==================== */
+
 @media (max-width: 600px) {
     .selection-bar {
         flex-direction: column;
@@ -1119,14 +1274,8 @@ tr:hover .date-badge {
         border-radius: 14px;
     }
 
-    .selection-bar .sel-info {
-        justify-content: center;
-        font-size: 13px;
-    }
-
-    .selection-bar .sel-actions {
-        justify-content: stretch;
-    }
+    .selection-bar .sel-info   { justify-content: center; font-size: 13px; }
+    .selection-bar .sel-actions { justify-content: stretch; }
 
     .sel-btn {
         flex: 1;

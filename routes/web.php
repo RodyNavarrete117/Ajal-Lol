@@ -8,132 +8,122 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ReportsController;
 
-/* ============================================
-   PÁGINA PRINCIPAL
-   ============================================ */
+/* Página pública */
 Route::get('/', fn() => view('index'));
 
-/* ============================================
-   LOGIN
-   ============================================ */
-Route::get('/login', fn() => view('login'))->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
-/* ============================================
-   LOADER
-   ============================================ */
+/* Login */
+Route::get('/login', fn() => view('login'))->name('login'); // Formulario
+Route::post('/login', [AuthController::class, 'login'])->name('login.post'); // Autenticación
+
+
+/* Pantalla de carga */
 Route::get('/loading', fn() => view('loading'))->name('loading');
 
-/* ============================================
-   ADMIN (SIN SEGURIDAD POR AHORA)
-   ============================================ */
-Route::get('/admin/home', [HomeController::class, 'index'])->name('admin.home');
 
-Route::get('/admin/page', fn() => view('admin.page'));
+/* Panel admin */
+Route::get('/admin/home', [HomeController::class, 'index'])->name('admin.home'); // Dashboard
+Route::get('/admin/page', fn() => view('admin.page')); // Vista prueba
 
-// ——— Informes este es el apartado que se tiene que mejorar
+
+/* ===== INFORMES ===== */
 Route::prefix('admin')->group(function () {
 
-    // Vista principal (calendario + historial)
-    Route::get('/report', [ReportsController::class, 'index'])->name('admin.reports');
+    Route::get('/report', [ReportsController::class, 'index'])
+        ->name('admin.reports'); // Listado
 
-    // Guardar nuevo informe
-    Route::post('/report', [ReportsController::class, 'store'])->name('admin.reports.store');
+    Route::post('/report', [ReportsController::class, 'store'])
+        ->name('admin.reports.store'); // Crear
 
-    // Ver detalle
-    Route::get('/report/{id}', [ReportsController::class, 'show'])->name('admin.reports.show');
+    Route::get('/report/blank', [ReportsController::class, 'blankPdf'])
+        ->name('admin.reports.blank'); // PDF vacío
 
-    // Editar
-    Route::get('/report/{id}/edit', [ReportsController::class, 'edit'])->name('admin.reports.edit');
+    Route::get('/api/report/{id}', [ReportsController::class, 'apiShow'])
+        ->name('admin.reports.api'); // Datos AJAX
 
-    // Actualizar
-    Route::put('/report/{id}', [ReportsController::class, 'update'])->name('admin.reports.update');
+    Route::get('/report/{id}', [ReportsController::class, 'show'])
+        ->name('admin.reports.show'); // Ver
 
-    // Eliminar
-    Route::delete('/report/{id}', [ReportsController::class, 'destroy'])->name('admin.reports.destroy');
+    Route::get('/report/{id}/edit', [ReportsController::class, 'edit'])
+        ->name('admin.reports.edit'); // Editar vista
 
-    // Descargar PDF
-    Route::get('/report/{id}/pdf', [ReportsController::class, 'pdf'])->name('admin.reports.pdf');
+    Route::put('/report/{id}', [ReportsController::class, 'update'])
+        ->name('admin.reports.update'); // Actualizar
 
-    // API para AJAX (modal de detalles en el calendario)
-    Route::get('/api/report/{id}', [ReportsController::class, 'apiShow'])->name('admin.reports.api');
+    Route::delete('/report/{id}', [ReportsController::class, 'destroy'])
+        ->name('admin.reports.destroy'); // Eliminar
+
+    Route::get('/report/{id}/pdf', [ReportsController::class, 'pdf'])
+        ->name('admin.reports.pdf'); // Descargar PDF
 });
 
+
+/* Manual */
 Route::get('/admin/manual', fn() => view('admin.manual'));
 
-/* ============================================
-   SECCIÓN FORMULARIOS
-   ============================================ */
+
+/* ===== FORMULARIOS ===== */
 Route::prefix('admin')->group(function () {
 
-    // Lista de formularios
     Route::get('/forms', [FormController::class, 'index'])
-        ->name('admin.forms');
+        ->name('admin.forms'); // Listado
 
-    // Exportaciones (ANTES del {id})
     Route::get('/forms/export', [FormController::class, 'export'])
-        ->name('admin.forms.export');
+        ->name('admin.forms.export'); // Exportar datos
 
     Route::get('/forms/export/pdf', [FormController::class, 'exportPdf'])
-        ->name('admin.forms.export.pdf');
+        ->name('admin.forms.export.pdf'); // Exportar PDF
 
-    // Mostrar detalle de formulario
     Route::get('/forms/{id}', [FormController::class, 'show'])
-        ->name('admin.forms.show');
+        ->name('admin.forms.show'); // Ver detalle
 
-    // Eliminar formulario
     Route::delete('/forms/{id}', [FormController::class, 'destroy'])
-        ->name('admin.forms.destroy');
+        ->name('admin.forms.destroy'); // Eliminar
 });
 
-/* ============================================
-   CONFIGURACIÓN (CAMBIOS DE DATOS DEL USUARIO)
-   ============================================ */
+
+/* ===== CONFIGURACIÓN ===== */
 Route::prefix('admin')->group(function () {
 
     Route::get('/settings', [SettingsController::class, 'index'])
-        ->name('admin.settings');
+        ->name('admin.settings'); // Vista ajustes
 
-    Route::post('/settings/change-password', [SettingsController::class, 'changePassword'])
-        ->name('admin.settings.change-password');
+    Route::post('/settings/change-password',
+        [SettingsController::class, 'changePassword'])
+        ->name('admin.settings.change-password'); // Cambiar contraseña
 
-    Route::post('/settings/update-profile', [SettingsController::class, 'updateProfile'])
-        ->name('admin.settings.update-profile');
+    Route::post('/settings/update-profile',
+        [SettingsController::class, 'updateProfile'])
+        ->name('admin.settings.update-profile'); // Actualizar perfil
 });
 
-/* ============================================
-   SECCIÓN USUARIOS
-   Actividades: agregar, editar, eliminar
-   ============================================ */
 
-// Listado de usuarios
+/* ===== USUARIOS ===== */
 Route::get('/admin/users', [UserController::class, 'index'])
-    ->name('admin.users');
+    ->name('admin.users'); // Listar
 
-// Crear nuevo usuario
 Route::post('/admin/users', [UserController::class, 'store'])
-    ->name('admin.users.store');
+    ->name('admin.users.store'); // Crear
 
-// Obtener usuario específico (editar)
 Route::get('/admin/users/{id}', [UserController::class, 'show'])
-    ->name('admin.users.show');
+    ->name('admin.users.show'); // Obtener
 
-// Actualizar usuario
 Route::put('/admin/users/{id}', [UserController::class, 'update'])
-    ->name('admin.users.update');
+    ->name('admin.users.update'); // Actualizar
 
-// Eliminar usuario
 Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])
-    ->name('admin.users.destroy');
+    ->name('admin.users.destroy'); // Eliminar
 
-/* ============================================
-   SECCIÓN EDICIÓN DE PÁGINAS DE AJAL-LOL
-   ============================================ */
-Route::get('/admin/pages/home/edit', fn() => view('admin.pages.home_edit'))
-    ->name('admin.pages.home.edit');
 
-Route::get('/admin/pages/about/edit', fn() => view('admin.pages.about_edit'))
-    ->name('admin.pages.about.edit');
+/* ===== EDICIÓN DE PÁGINAS ===== */
+Route::get('/admin/pages/home/edit',
+    fn() => view('admin.pages.home_edit'))
+    ->name('admin.pages.home.edit'); // Editar inicio
 
-Route::get('/admin/pages/contact/edit', fn() => view('admin.pages.contact_edit'))
-    ->name('admin.pages.contact.edit');
+Route::get('/admin/pages/about/edit',
+    fn() => view('admin.pages.about_edit'))
+    ->name('admin.pages.about.edit'); // Editar nosotros
+
+Route::get('/admin/pages/contact/edit',
+    fn() => view('admin.pages.contact_edit'))
+    ->name('admin.pages.contact.edit'); // Editar contacto

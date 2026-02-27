@@ -101,12 +101,6 @@
             </div>
         @endif
 
-        {{--
-            Campo oculto _action:
-            - "save"         → solo guarda (botón Guardar)
-            - "pdf_download" → guarda + descarga PDF (botón Exportar)
-            - "pdf_print"    → guarda + abre PDF inline (botón Imprimir)
-        --}}
         <form action="{{ route('admin.reports.store') }}" method="POST" id="create-report-form">
             @csrf
             <input type="hidden" name="_action" id="form-action" value="save">
@@ -199,7 +193,19 @@
                 </div>
 
                 <div class="form-actions">
-                    {{-- Exportar: guarda + descarga PDF --}}
+
+                    {{-- Formato en blanco: descarga PDF vacío para llenar a mano --}}
+                    <a href="{{ route('admin.reports.blank') }}"
+                       class="btn-form btn-blank"
+                       title="Descargar formato vacío para llenar a mano con lapicero">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M14 2V8H20M8 13H16M8 17H12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Solo formato
+                    </a>
+
+                    {{-- Exportar: guarda + descarga PDF con datos --}}
                     <button type="submit" class="btn-form btn-export"
                             onclick="setAction('pdf_download')">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

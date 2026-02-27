@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Report;
 use App\Services\ReportPdfService;
+use App\Services\BlankPdfService;
 use Illuminate\Http\Request;
 
 class ReportsController extends Controller
 {
-    public function __construct(protected ReportPdfService $pdfService) {}
+    public function __construct(
+        protected ReportPdfService $pdfService,
+        protected BlankPdfService  $blankService,
+    ) {}
 
     // =============================================
     // Listar informes (vista calendario + historial)
@@ -64,7 +68,6 @@ class ReportsController extends Controller
                 'curp'   => strtoupper(trim($b['curp'])),
             ]));
 
-        // Si el botón fue "Exportar" o "Imprimir", generar PDF directamente
         $action = $request->input('_action');
 
         if ($action === 'pdf_download' || $action === 'pdf_print') {
@@ -146,7 +149,7 @@ class ReportsController extends Controller
     }
 
     // =============================================
-    // Generar PDF de informe existente (historial)
+    // Descargar PDF de informe existente (historial)
     // =============================================
     public function pdf($id)
     {
@@ -156,6 +159,20 @@ class ReportsController extends Controller
         return response($content, 200, [
             'Content-Type'        => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="informe_' . $report->id_informe . '.pdf"',
+        ]);
+    }
+
+    // =============================================
+    // Descargar formato en blanco (sin base de datos)
+    // PDF con 20 filas vacías para llenar a mano
+    // =============================================
+    public function blankPdf()
+    {
+        $content = $this->blankService->generate();
+
+        return response($content, 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="formato_informe_ajal_lol.pdf"',
         ]);
     }
 

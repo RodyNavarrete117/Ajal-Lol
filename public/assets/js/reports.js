@@ -61,13 +61,6 @@ function toggleEdit(btn) {
 }
 
 // ============================================
-// ACCIÓN DEL FORMULARIO
-// ============================================
-function setAction(action) {
-    document.getElementById('form-action').value = action;
-}
-
-// ============================================
 // MODAL DE DETALLES DEL EVENTO
 // ============================================
 let currentReportId = null;
@@ -247,6 +240,31 @@ function formatDate(dateStr) {
 }
 
 // ============================================
+// VALIDACIÓN CAMPOS OBLIGATORIOS
+// ============================================
+function validarCamposObligatorios(form) {
+    const evento = form.querySelector('[name="evento"]').value.trim();
+    const lugar  = form.querySelector('[name="lugar"]').value.trim();
+    const fecha  = form.querySelector('[name="fecha"]').value.trim();
+    let hayError = false;
+
+    [['evento', evento], ['lugar', lugar], ['fecha', fecha]].forEach(([name, val]) => {
+        const input = form.querySelector(`[name="${name}"]`);
+        if (!val) {
+            hayError = true;
+            input.style.border = '2px solid #ef4444';
+            input.addEventListener('input', () => { input.style.border = ''; }, { once: true });
+        }
+    });
+
+    if (hayError) {
+        alert('Por favor completa los campos obligatorios: Evento, Lugar y Fecha.');
+    }
+
+    return !hayError;
+}
+
+// ============================================
 // INICIALIZACIÓN
 // ============================================
 document.addEventListener('DOMContentLoaded', function () {
@@ -288,61 +306,56 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // ============================================
-    // EXPORTAR / IMPRIMIR — abrir PDF en nueva pestaña
+    // EXPORTAR — descarga PDF sin guardar en BD
     // ============================================
     const form = document.getElementById('create-report-form');
-    if (form) {
-        form.addEventListener('submit', function (e) {
-            const action = document.getElementById('form-action').value;
 
-            if (action === 'pdf_download' || action === 'pdf_print') {
-                e.preventDefault();
+    document.querySelectorAll('.btn-form[data-action="pdf_download"], .btn-form[data-action="pdf_print"]').forEach(btn => {
+        btn.addEventListener('click', function () {
+            if (!form) return;
+            if (!validarCamposObligatorios(form)) return;
 
-                // ✅ Validación de campos obligatorios
-                const evento = form.querySelector('[name="evento"]').value.trim();
-                const lugar  = form.querySelector('[name="lugar"]').value.trim();
-                const fecha  = form.querySelector('[name="fecha"]').value.trim();
+            const action   = this.dataset.action;
+            const formData = new FormData(form);
+            formData.set('_action', action);
 
-                let hayError = false;
-
-                [['evento', evento], ['lugar', lugar], ['fecha', fecha]].forEach(([name, val]) => {
-                    const input = form.querySelector(`[name="${name}"]`);
-                    if (!val) {
-                        hayError = true;
-                        input.style.border = '2px solid #ef4444';
-                        input.addEventListener('input', () => {
-                            input.style.border = '';
-                        }, { once: true });
-                    }
-                });
-
-                if (hayError) {
-                    alert('Por favor completa los campos obligatorios: Evento, Lugar y Fecha.');
-                    return;
-                }
-
-                const formData = new FormData(form);
-
-                fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                })
-                .then(res => {
-                    if (!res.ok) throw new Error('Error en el servidor');
-                    return res.blob();
-                })
-                .then(blob => {
-                    const url = URL.createObjectURL(blob);
+            fetch(ROUTE_PREVIEW_PDF, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-CSRF-TOKEN': CSRF_TOKEN }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Error en el servidor');
+                return res.blob();
+            })
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                if (action === 'pdf_download') {
+                    // Descarga directa
+                    const a    = document.createElement('a');
+                    a.href     = url;
+                    a.download = 'informe.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                } else {
+                    // Abrir en nueva pestaña para visualizar/imprimir
                     window.open(url, '_blank');
-                })
-                .catch(err => {
-                    console.error('Error al generar PDF:', err);
-                    alert('No se pudo generar el PDF. Intenta de nuevo.');
-                });
-            }
-            // Si la acción es 'save', el submit ocurre normalmente
-            // y el navegador valida los campos required del HTML
+                }
+            })
+            .catch(err => {
+                console.error('Error al generar PDF:', err);
+                alert('No se pudo generar el PDF. Intenta de nuevo.');
+            });
+        });
+    });
+
+    // ============================================
+    // GUARDAR — submit normal hacia store()
+    // ============================================
+    if (form) {
+        form.addEventListener('submit', function () {
+            document.getElementById('form-action').value = 'save';
         });
     }
 });

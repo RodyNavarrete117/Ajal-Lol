@@ -30,31 +30,33 @@ Route::get('/admin/page', fn() => view('admin.page')); // Vista prueba
 Route::prefix('admin')->group(function () {
 
     Route::get('/report', [ReportsController::class, 'index'])
-        ->name('admin.reports'); // Listado
+        ->name('admin.reports');
 
     Route::post('/report', [ReportsController::class, 'store'])
-        ->name('admin.reports.store'); // Crear
+        ->name('admin.reports.store');
 
     Route::get('/report/blank', [ReportsController::class, 'blankPdf'])
-        ->name('admin.reports.blank'); // PDF vacío
+        ->name('admin.reports.blank');
+
+    // ← NUEVA RUTA (antes de las rutas con {id})
+    Route::post('/report/preview-pdf', [ReportsController::class, 'previewPdf'])
+        ->name('admin.reports.previewPdf');
 
     Route::get('/api/report/{id}', [ReportsController::class, 'apiShow'])
-        ->name('admin.reports.api'); // Datos AJAX
-
+        ->name('admin.reports.api');
 
     Route::get('/report/{id}/edit', [ReportsController::class, 'edit'])
-        ->name('admin.reports.edit'); // Editar vista
+        ->name('admin.reports.edit');
 
     Route::put('/report/{id}', [ReportsController::class, 'update'])
-        ->name('admin.reports.update'); // Actualizar
+        ->name('admin.reports.update');
 
     Route::delete('/report/{id}', [ReportsController::class, 'destroy'])
-        ->name('admin.reports.destroy'); // Eliminar
+        ->name('admin.reports.destroy');
 
     Route::get('/report/{id}/pdf', [ReportsController::class, 'pdf'])
-        ->name('admin.reports.pdf'); // Descargar PDF
+        ->name('admin.reports.pdf');
 });
-
 
 /* Manual */
 Route::get('/admin/manual', fn() => view('admin.manual'));

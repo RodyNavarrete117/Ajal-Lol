@@ -37,7 +37,7 @@ class ReportsController extends Controller
     }
 
     // =============================================
-    // CREAR INFORME
+    // CREAR INFORME (solo guarda — botón Guardar)
     // =============================================
     public function store(Request $request)
     {
@@ -72,28 +72,50 @@ class ReportsController extends Controller
                 ])
             );
 
-        $action = $request->input('_action');
-
-        // =============================================
-        // EXPORTAR / IMPRIMIR PDF
-        // =============================================
-        if ($action === 'pdf_download' || $action === 'pdf_print') {
-
-            $report->load('beneficiaries');
-
-            $content = $this->pdfService->generate($report);
-
-            return response($content, 200, [
-                'Content-Type'        => 'application/pdf',
-                'Content-Disposition' =>
-                    ($action === 'pdf_print' ? 'inline' : 'attachment')
-                    . '; filename="informe_' . $report->id_informe . '.pdf"',
-            ]);
-        }
-
         return redirect()
             ->route('admin.reports')
             ->with('success', 'Informe creado correctamente.');
+    }
+
+    // =============================================
+    // PREVIEW PDF SIN GUARDAR (Exportar / Imprimir)
+    // =============================================
+    public function previewPdf(Request $request)
+    {
+        $request->validate([
+            'nombre_organizacion'    => 'required|string|max:150',
+            'evento'                 => 'required|string|max:150',
+            'lugar'                  => 'required|string|max:150',
+            'fecha'                  => 'required|date',
+            'numero_telefonico'      => 'nullable|string|max:50',
+            'beneficiarios'          => 'nullable|array',
+            'beneficiarios.*.nombre' => 'nullable|string|max:150',
+            'beneficiarios.*.curp'   => 'nullable|string|max:30',
+        ]);
+
+        // Objeto temporal, nunca se persiste en BD
+        $report = new Report($request->only([
+            'nombre_organizacion', 'evento', 'lugar', 'fecha', 'numero_telefonico',
+        ]));
+        $report->id_informe = 0;
+
+        $beneficiarios = collect($request->beneficiarios ?? [])
+            ->filter(fn($b) => !empty(trim($b['nombre'] ?? '')) && !empty(trim($b['curp'] ?? '')))
+            ->map(fn($b) => (object)[
+                'nombre' => trim($b['nombre']),
+                'curp'   => strtoupper(trim($b['curp'])),
+            ]);
+
+        $report->setRelation('beneficiaries', $beneficiarios);
+
+        $disposition = $request->input('_action') === 'pdf_download' ? 'attachment' : 'inline';
+
+        $content = $this->pdfService->generate($report);
+
+        return response($content, 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => $disposition . '; filename="informe_preview.pdf"',
+        ]);
     }
 
     // =============================================
@@ -141,9 +163,7 @@ class ReportsController extends Controller
     {
         Report::findOrFail($id)->delete();
 
-        return response()->json([
-            'success' => true
-        ]);
+        return response()->json(['success' => true]);
     }
 
     // =============================================
@@ -151,15 +171,13 @@ class ReportsController extends Controller
     // =============================================
     public function pdf($id)
     {
-        $report = Report::with('beneficiaries')
-            ->findOrFail($id);
+        $report = Report::with('beneficiaries')->findOrFail($id);
 
         $content = $this->pdfService->generate($report);
 
         return response($content, 200, [
             'Content-Type'        => 'application/pdf',
-            'Content-Disposition' =>
-                'inline; filename="informe_' . $report->id_informe . '.pdf"',
+            'Content-Disposition' => 'inline; filename="informe_' . $report->id_informe . '.pdf"',
         ]);
     }
 
@@ -181,8 +199,7 @@ class ReportsController extends Controller
     // =============================================
     public function apiShow($id)
     {
-        $report = Report::with('beneficiaries')
-            ->findOrFail($id);
+        $report = Report::with('beneficiaries')->findOrFail($id);
 
         return response()->json($report);
     }

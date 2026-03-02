@@ -17,7 +17,7 @@
         </div>
     @endif
 
-    <!-- VISTA 1: Calendario (vista por defecto) -->
+    <!-- VISTA 1: Calendario -->
     <div id="calendar-view" class="view-section active">
         <div class="reports-header">
             <div class="header-actions">
@@ -65,9 +65,7 @@
                     <div class="day-header"><span class="day-full">Sábado</span><span class="day-short">S</span></div>
                     <div class="day-header"><span class="day-full">Domingo</span><span class="day-short">D</span></div>
                 </div>
-                <div id="calendar-dates" class="calendar-dates">
-                    <!-- Se genera dinámicamente con JavaScript -->
-                </div>
+                <div id="calendar-dates" class="calendar-dates"></div>
             </div>
 
             <div class="calendar-notes">
@@ -193,11 +191,9 @@
                 </div>
 
                 <div class="form-actions">
-
-                    {{-- Formato en blanco: descarga PDF vacío para llenar a mano --}}
                     <a href="{{ route('admin.reports.blank') }}"
                        class="btn-form btn-blank"
-                       title="Descargar formato vacío para llenar a mano con lapicero">
+                       title="Descargar formato vacío">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M14 2V8H20M8 13H16M8 17H12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -205,9 +201,8 @@
                         Solo formato
                     </a>
 
-                    {{-- Exportar: guarda + descarga PDF con datos --}}
-                    <button type="submit" class="btn-form btn-export"
-                            onclick="setAction('pdf_download')">
+                    {{-- Exportar: genera PDF sin guardar, descarga --}}
+                    <button type="button" class="btn-form btn-export" data-action="pdf_download">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M7 10L12 15M12 15L17 10M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -215,9 +210,8 @@
                         Exportar
                     </button>
 
-                    {{-- Imprimir: guarda + abre PDF en el navegador --}}
-                    <button type="submit" class="btn-form btn-print"
-                            onclick="setAction('pdf_print')">
+                    {{-- Imprimir: genera PDF sin guardar, abre en nueva pestaña --}}
+                    <button type="button" class="btn-form btn-print" data-action="pdf_print">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M6 9V2H18V9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M6 18H4C3.46957 18 2.96086 17.7893 2.58579 17.4142C2.21071 17.0391 2 16.5304 2 16V11C2 10.4696 2.21071 9.96086 2.58579 9.58579C2.96086 9.21071 3.46957 9 4 9H20C20.5304 9 21.0391 9.21071 21.4142 9.58579C21.7893 9.96086 22 10.4696 22 11V16C22 16.5304 21.7893 17.0391 21.4142 17.4142C21.0391 17.7893 20.5304 18 20 18H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -226,9 +220,8 @@
                         Imprimir
                     </button>
 
-                    {{-- Guardar: solo guarda, redirige al historial --}}
-                    <button type="submit" class="btn-form btn-save"
-                            onclick="setAction('save')">
+                    {{-- Guardar: submit normal → store() → guarda en BD --}}
+                    <button type="submit" class="btn-form btn-save" data-action="save">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16L21 8V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M17 21V13H7V21M7 3V8H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -288,7 +281,7 @@
     </div>
 </div>
 
-<!-- MODAL DE DETALLES DEL EVENTO -->
+<!-- MODAL -->
 <div class="event-modal-overlay" id="event-overlay" onclick="closeEventModal()"></div>
 <div class="event-modal" id="event-modal">
     <button class="btn-close-modal" onclick="closeEventModal()">
@@ -307,7 +300,7 @@
         <a id="btn-modal-view" href="#" class="btn-modal btn-modal-view">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
             </svg>
             Ver más
         </a>
@@ -330,9 +323,10 @@
 
 {{-- Variables para reports.js --}}
 <script>
-    const eventsFromDB = @json($events->toArray());
-    const ROUTE_BASE   = "{{ url('admin/report') }}";
-    const CSRF_TOKEN   = "{{ csrf_token() }}";
+    const eventsFromDB       = @json($events->toArray());
+    const ROUTE_BASE         = "{{ url('admin/report') }}";
+    const CSRF_TOKEN         = "{{ csrf_token() }}";
+    const ROUTE_PREVIEW_PDF  = "{{ route('admin.reports.previewPdf') }}";
 
     @if($errors->any())
         document.addEventListener('DOMContentLoaded', () => showCreateView());
@@ -340,8 +334,13 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         const flash = document.getElementById('flash-msg');
-        if (flash) setTimeout(() => { flash.style.transition = 'opacity .5s'; flash.style.opacity = '0'; }, 3000);
+        if (flash)
+            setTimeout(() => {
+                flash.style.transition = 'opacity .5s';
+                flash.style.opacity = '0';
+            }, 3000);
     });
 </script>
+
 <script src="{{ asset('assets/js/reports.js') }}"></script>
 @endsection

@@ -41,8 +41,6 @@ Route::prefix('admin')->group(function () {
     Route::get('/api/report/{id}', [ReportsController::class, 'apiShow'])
         ->name('admin.reports.api'); // Datos AJAX
 
-    Route::get('/report/{id}', [ReportsController::class, 'show'])
-        ->name('admin.reports.show'); // Ver
 
     Route::get('/report/{id}/edit', [ReportsController::class, 'edit'])
         ->name('admin.reports.edit'); // Editar vista

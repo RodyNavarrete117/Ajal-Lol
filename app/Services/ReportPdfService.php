@@ -12,7 +12,7 @@ class ReportPdfService
         $mpdf = new Mpdf([
             'mode'          => 'utf-8',
             'format'        => 'A4',
-            'margin_top'    => 45,
+            'margin_top'    => 28,
             'margin_bottom' => 32,
             'margin_left'   => 20,
             'margin_right'  => 20,
@@ -27,38 +27,13 @@ class ReportPdfService
                     <td width="12%" style="vertical-align: middle;">
                         <img src="' . public_path('assets/img/logo_ajal_lol.png') . '" style="height: 50px;">
                     </td>
-                    <td width="60%" style="vertical-align: middle; padding-left: 14px;">
+                    <td width="88%" style="vertical-align: middle; padding-left: 14px; text-align: center;">
                         <div style="font-size: 17px; font-weight: bold; color: #5a2d4d; letter-spacing: 2px; text-transform: uppercase;">
                             Ajal-Lol A.C.
                         </div>
                         <div style="font-size: 9px; color: #777; margin-top: 3px; letter-spacing: 1px; text-transform: uppercase;">
                             Sistema Administrativo &nbsp;·&nbsp; Informe de Evento / Actividad
                         </div>
-                    </td>
-                    <td width="28%" style="vertical-align: middle;">
-                        <table width="100%" style="border-collapse: collapse; border: 1.5px solid #e0c8d8; font-family: Arial, sans-serif;">
-                            <tr style="background-color: #783d66;">
-                                <td colspan="2" style="padding: 4px 10px; font-size: 8px; color: #fff; font-weight: bold; text-transform: uppercase; letter-spacing: 0.8px;">
-                                    Datos del documento
-                                </td>
-                            </tr>
-                            <tr style="background-color: #fdf8fc;">
-                                <td style="padding: 3px 8px; font-size: 8px; color: #888; border-bottom: 1px solid #eedde8; width: 45%;">Folio</td>
-                                <td style="padding: 3px 8px; font-size: 9px; color: #5a2d4d; font-weight: bold; border-bottom: 1px solid #eedde8;">
-                                    INF-' . str_pad($report->id_informe, 5, '0', STR_PAD_LEFT) . '
-                                </td>
-                            </tr>
-                            <tr style="background-color: #fff;">
-                                <td style="padding: 3px 8px; font-size: 8px; color: #888; border-bottom: 1px solid #eedde8;">Fecha</td>
-                                <td style="padding: 3px 8px; font-size: 9px; color: #333; border-bottom: 1px solid #eedde8;">
-                                    ' . \Carbon\Carbon::parse($report->fecha)->format('d/m/Y') . '
-                                </td>
-                            </tr>
-                            <tr style="background-color: #fdf8fc;">
-                                <td style="padding: 3px 8px; font-size: 8px; color: #888;">Página</td>
-                                <td style="padding: 3px 8px; font-size: 9px; color: #333;">{PAGENO} / {nb}</td>
-                            </tr>
-                        </table>
                     </td>
                 </tr>
             </table>
@@ -176,7 +151,6 @@ class ReportPdfService
             td.sign-cell {
                 width: 32%;
                 background-color: #fffbfe;
-                /* Línea guía para firma manuscrita */
                 border-bottom: 1.5px dashed #c9a8c0;
             }
 
@@ -280,28 +254,6 @@ class ReportPdfService
 
         $html .= '
             </tbody>
-        </table>
-
-        <!-- ─ RESUMEN ────────────────────────────────── -->
-        <table class="summary-table">
-            <tr>
-                <td>
-                    <span class="summary-label">Total beneficiarios</span>
-                    <span class="summary-value">' . $totalBenef . '</span>
-                </td>
-                <td>
-                    <span class="summary-label">Evento</span>
-                    <span class="summary-value" style="font-size:11px;">' . htmlspecialchars($report->evento) . '</span>
-                </td>
-                <td>
-                    <span class="summary-label">Lugar</span>
-                    <span class="summary-value" style="font-size:11px;">' . htmlspecialchars($report->lugar) . '</span>
-                </td>
-                <td>
-                    <span class="summary-label">Fecha de emisión</span>
-                    <span class="summary-value" style="font-size:11px;">' . $emisionFecha . ' hrs</span>
-                </td>
-            </tr>
         </table>
 
         ';

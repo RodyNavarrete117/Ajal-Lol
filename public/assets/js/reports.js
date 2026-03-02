@@ -62,7 +62,6 @@ function toggleEdit(btn) {
 
 // ============================================
 // ACCIÓN DEL FORMULARIO
-// Cambia el campo _action antes de hacer submit
 // ============================================
 function setAction(action) {
     document.getElementById('form-action').value = action;
@@ -80,8 +79,14 @@ function openEventModal(id, title, date, lugar) {
     document.getElementById('event-modal-subtitle').textContent = lugar + ' — ' + formatDate(date);
     document.getElementById('event-modal-description').textContent = '';
 
-    document.getElementById('btn-modal-view').href = `${ROUTE_BASE}/${id}`;
-    document.getElementById('btn-modal-pdf').href  = `${ROUTE_BASE}/${id}/pdf`;
+    const btnView = document.getElementById('btn-modal-view');
+    const btnPdf  = document.getElementById('btn-modal-pdf');
+
+    btnView.href   = `${ROUTE_BASE}/${id}/pdf`;
+    btnView.target = '_blank';
+
+    btnPdf.href    = `${ROUTE_BASE}/${id}/pdf`;
+    btnPdf.target  = '_blank';
 
     document.getElementById('event-modal').classList.add('active');
     document.getElementById('event-overlay').classList.add('active');
@@ -252,9 +257,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const btnAdd = document.getElementById('btn-add-row');
     if (btnAdd) btnAdd.addEventListener('click', addRow);
 
-    // btn-export-csv ya no existe; los botones son type=submit
-    // con onclick=setAction(...) declarado en la Blade
-
     // Eliminar desde modal
     const btnDelete = document.getElementById('btn-modal-delete');
     if (btnDelete) btnDelete.addEventListener('click', () => deleteReport(currentReportId));
@@ -284,4 +286,63 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') closeEventModal();
     });
+
+    // ============================================
+    // EXPORTAR / IMPRIMIR — abrir PDF en nueva pestaña
+    // ============================================
+    const form = document.getElementById('create-report-form');
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            const action = document.getElementById('form-action').value;
+
+            if (action === 'pdf_download' || action === 'pdf_print') {
+                e.preventDefault();
+
+                // ✅ Validación de campos obligatorios
+                const evento = form.querySelector('[name="evento"]').value.trim();
+                const lugar  = form.querySelector('[name="lugar"]').value.trim();
+                const fecha  = form.querySelector('[name="fecha"]').value.trim();
+
+                let hayError = false;
+
+                [['evento', evento], ['lugar', lugar], ['fecha', fecha]].forEach(([name, val]) => {
+                    const input = form.querySelector(`[name="${name}"]`);
+                    if (!val) {
+                        hayError = true;
+                        input.style.border = '2px solid #ef4444';
+                        input.addEventListener('input', () => {
+                            input.style.border = '';
+                        }, { once: true });
+                    }
+                });
+
+                if (hayError) {
+                    alert('Por favor completa los campos obligatorios: Evento, Lugar y Fecha.');
+                    return;
+                }
+
+                const formData = new FormData(form);
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error('Error en el servidor');
+                    return res.blob();
+                })
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    window.open(url, '_blank');
+                })
+                .catch(err => {
+                    console.error('Error al generar PDF:', err);
+                    alert('No se pudo generar el PDF. Intenta de nuevo.');
+                });
+            }
+            // Si la acción es 'save', el submit ocurre normalmente
+            // y el navegador valida los campos required del HTML
+        });
+    }
 });

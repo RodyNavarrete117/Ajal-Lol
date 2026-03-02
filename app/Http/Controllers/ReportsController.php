@@ -15,7 +15,7 @@ class ReportsController extends Controller
     ) {}
 
     // =============================================
-    // Listar informes (vista calendario + historial)
+    // LISTADO (Calendario + Historial)
     // =============================================
     public function index()
     {
@@ -37,8 +37,7 @@ class ReportsController extends Controller
     }
 
     // =============================================
-    // Guardar nuevo informe + beneficiarios
-    // Si se envía con action=pdf, guarda y descarga
+    // CREAR INFORME
     // =============================================
     public function store(Request $request)
     {
@@ -51,60 +50,54 @@ class ReportsController extends Controller
             'beneficiarios'            => 'required|array|min:1',
             'beneficiarios.*.nombre'   => 'required|string|max:150',
             'beneficiarios.*.curp'     => 'required|string|max:30',
-        ], [
-            'beneficiarios.required'          => 'Debes agregar al menos un beneficiario.',
-            'beneficiarios.*.nombre.required' => 'El nombre del beneficiario es obligatorio.',
-            'beneficiarios.*.curp.required'   => 'El CURP del beneficiario es obligatorio.',
         ]);
 
         $report = Report::create($request->only([
-            'nombre_organizacion', 'evento', 'lugar', 'fecha', 'numero_telefonico',
+            'nombre_organizacion',
+            'evento',
+            'lugar',
+            'fecha',
+            'numero_telefonico',
         ]));
 
         collect($request->beneficiarios)
-            ->filter(fn($b) => !empty(trim($b['nombre'])) && !empty(trim($b['curp'])))
-            ->each(fn($b) => $report->beneficiaries()->create([
-                'nombre' => trim($b['nombre']),
-                'curp'   => strtoupper(trim($b['curp'])),
-            ]));
+            ->filter(fn ($b) =>
+                !empty(trim($b['nombre'])) &&
+                !empty(trim($b['curp']))
+            )
+            ->each(fn ($b) =>
+                $report->beneficiaries()->create([
+                    'nombre' => trim($b['nombre']),
+                    'curp'   => strtoupper(trim($b['curp'])),
+                ])
+            );
 
         $action = $request->input('_action');
 
+        // =============================================
+        // EXPORTAR / IMPRIMIR PDF
+        // =============================================
         if ($action === 'pdf_download' || $action === 'pdf_print') {
+
             $report->load('beneficiaries');
-            $content     = $this->pdfService->generate($report);
-            $disposition = $action === 'pdf_print' ? 'inline' : 'attachment';
+
+            $content = $this->pdfService->generate($report);
 
             return response($content, 200, [
                 'Content-Type'        => 'application/pdf',
-                'Content-Disposition' => $disposition . '; filename="informe_' . $report->id_informe . '.pdf"',
+                'Content-Disposition' =>
+                    ($action === 'pdf_print' ? 'inline' : 'attachment')
+                    . '; filename="informe_' . $report->id_informe . '.pdf"',
             ]);
         }
 
-        return redirect()->route('admin.reports')
+        return redirect()
+            ->route('admin.reports')
             ->with('success', 'Informe creado correctamente.');
     }
 
     // =============================================
-    // Ver detalle de un informe
-    // =============================================
-    public function show($id)
-    {
-        $report = Report::with('beneficiaries')->findOrFail($id);
-        return view('admin.reports-show', compact('report'));
-    }
-
-    // =============================================
-    // Mostrar formulario de edición
-    // =============================================
-    public function edit($id)
-    {
-        $report = Report::with('beneficiaries')->findOrFail($id);
-        return view('admin.reports-edit', compact('report'));
-    }
-
-    // =============================================
-    // Actualizar informe + beneficiarios
+    // ACTUALIZAR INFORME
     // =============================================
     public function update(Request $request, $id)
     {
@@ -113,58 +106,65 @@ class ReportsController extends Controller
             'evento'                   => 'required|string|max:150',
             'lugar'                    => 'required|string|max:150',
             'fecha'                    => 'required|date',
-            'numero_telefonico'        => 'nullable|string|max:50',
             'beneficiarios'            => 'required|array|min:1',
-            'beneficiarios.*.nombre'   => 'required|string|max:150',
-            'beneficiarios.*.curp'     => 'required|string|max:30',
         ]);
 
         $report = Report::findOrFail($id);
+
         $report->update($request->only([
-            'nombre_organizacion', 'evento', 'lugar', 'fecha', 'numero_telefonico',
+            'nombre_organizacion',
+            'evento',
+            'lugar',
+            'fecha',
+            'numero_telefonico',
         ]));
 
         $report->beneficiaries()->delete();
 
         collect($request->beneficiarios)
-            ->filter(fn($b) => !empty(trim($b['nombre'])) && !empty(trim($b['curp'])))
-            ->each(fn($b) => $report->beneficiaries()->create([
-                'nombre' => trim($b['nombre']),
-                'curp'   => strtoupper(trim($b['curp'])),
-            ]));
+            ->each(fn ($b) =>
+                $report->beneficiaries()->create([
+                    'nombre' => trim($b['nombre']),
+                    'curp'   => strtoupper(trim($b['curp'])),
+                ])
+            );
 
-        return redirect()->route('admin.reports')
+        return redirect()
+            ->route('admin.reports')
             ->with('success', 'Informe actualizado correctamente.');
     }
 
     // =============================================
-    // Eliminar informe
+    // ELIMINAR INFORME
     // =============================================
     public function destroy($id)
     {
         Report::findOrFail($id)->delete();
 
-        return redirect()->route('admin.reports')
-            ->with('success', 'Informe eliminado correctamente.');
-    }
-
-    // =============================================
-    // Descargar PDF de informe existente (historial)
-    // =============================================
-    public function pdf($id)
-    {
-        $report  = Report::with('beneficiaries')->findOrFail($id);
-        $content = $this->pdfService->generate($report);
-
-        return response($content, 200, [
-            'Content-Type'        => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="informe_' . $report->id_informe . '.pdf"',
+        return response()->json([
+            'success' => true
         ]);
     }
 
     // =============================================
-    // Descargar formato en blanco (sin base de datos)
-    // PDF con 20 filas vacías para llenar a mano
+    // PDF DESDE HISTORIAL
+    // =============================================
+    public function pdf($id)
+    {
+        $report = Report::with('beneficiaries')
+            ->findOrFail($id);
+
+        $content = $this->pdfService->generate($report);
+
+        return response($content, 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' =>
+                'inline; filename="informe_' . $report->id_informe . '.pdf"',
+        ]);
+    }
+
+    // =============================================
+    // FORMATO EN BLANCO
     // =============================================
     public function blankPdf()
     {
@@ -177,11 +177,13 @@ class ReportsController extends Controller
     }
 
     // =============================================
-    // JSON para AJAX (modal del calendario)
+    // API JSON (MODAL CALENDARIO)
     // =============================================
     public function apiShow($id)
     {
-        $report = Report::with('beneficiaries')->findOrFail($id);
+        $report = Report::with('beneficiaries')
+            ->findOrFail($id);
+
         return response()->json($report);
     }
 }

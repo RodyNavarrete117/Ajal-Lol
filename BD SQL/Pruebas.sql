@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 20-02-2026 a las 18:07:24
+-- Tiempo de generación: 02-03-2026 a las 18:06:30
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -57,7 +57,7 @@ CREATE TABLE `beneficiarios` (
   `id_beneficiario` int NOT NULL,
   `id_informe` int NOT NULL,
   `nombre` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `curp` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `curp` char(18) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -74,7 +74,45 @@ INSERT INTO `beneficiarios` (`id_beneficiario`, `id_informe`, `nombre`, `curp`, 
 (6, 3, 'José Chan Yam', 'CHYJ870914HYNMRR05', '2026-02-20 18:06:10'),
 (7, 3, 'Daniela Torres Cauich', 'TOCD990120MYNTRR06', '2026-02-20 18:06:10'),
 (8, 3, 'Miguel Uc Ek', 'UCEM910315HYNMKR04', '2026-02-20 18:06:10'),
-(9, 3, 'Laura Canul Poot', 'CAPL920725MYNPRR02', '2026-02-20 18:06:10');
+(9, 3, 'Laura Canul Poot', 'CAPL920725MYNPRR02', '2026-02-20 18:06:10'),
+(34, 8, 'José Rafael Nic Sandoval', 'PELJ900101HYNLRN01', '2026-02-26 17:19:56'),
+(35, 8, 'Juan Carlos Pérez López\'', 'MADL880430HYNTRS03', '2026-02-26 17:19:56'),
+(36, 8, 'María Fernanda Gómez Ruiz', 'RAVL910305MDFMGN06', '2026-02-26 17:19:56'),
+(37, 8, 'Carlos Eduardo Flores León', 'FOLC860118HYNLRR07', '2026-02-26 17:19:56'),
+(39, 8, 'Gabriela Mendoza Paredes', 'MEPG980418MDFRRS16', '2026-02-26 17:19:56'),
+(40, 8, 'Valeria Peña Cabrera', 'TOCD990120MYNTRR06', '2026-02-26 17:19:56'),
+(41, 9, 'José Rafael Nic Sandoval', 'PELJ900101HYNLRN01', '2026-03-02 16:15:32'),
+(42, 9, 'Juan Carlos Pérez López\'', 'MADL880430HYNTRS03', '2026-03-02 16:15:32'),
+(43, 9, 'María Fernanda Gómez Ruiz', 'RAVL910305MDFMGN06', '2026-03-02 16:15:32'),
+(44, 9, 'Carlos Eduardo Flores León', 'FOLC860118HYNLRR07', '2026-03-02 16:15:32'),
+(46, 9, 'Gabriela Mendoza Paredes', 'MEPG980418MDFRRS16', '2026-03-02 16:15:32'),
+(47, 10, 'José Rafael Nic Sandoval', 'PELJ900101HYNLRN01', '2026-03-02 16:17:44'),
+(48, 10, 'Juan Carlos Pérez López\'', 'MADL880430HYNTRS03', '2026-03-02 16:17:44'),
+(49, 10, 'María Fernanda Gómez Ruiz', 'RAVL910305MDFMGN06', '2026-03-02 16:17:44'),
+(50, 10, 'Carlos Eduardo Flores León', 'FOLC860118HYNLRR07', '2026-03-02 16:17:44'),
+(52, 10, 'Gabriela Mendoza Paredes', 'MEPG980418MDFRRS16', '2026-03-02 16:17:44'),
+(53, 10, 'Valeria Peña Cabrera', 'TOCD990120MYNTRR06', '2026-03-02 16:17:44'),
+(54, 10, 'Nfasfsdfsdfsdfsd', 'FSDFSDFSDFSDFSDFSD', '2026-03-02 16:17:44'),
+(103, 14, 'José Rafael Nic Sandoval', 'PELJ900101HYNLRN01', '2026-03-02 17:23:06'),
+(104, 14, 'Juan Carlos Pérez López\'', 'MADL880430HYNTRS03', '2026-03-02 17:23:06'),
+(105, 14, 'María Fernanda Gómez Ruiz', 'RAVL910305MDFMGN06', '2026-03-02 17:23:06'),
+(106, 14, 'Carlos Eduardo Flores León', 'FOLC860118HYNLRR07', '2026-03-02 17:23:06'),
+(108, 14, 'Gabriela Mendoza Paredes', 'MEPG980418MDFRRS16', '2026-03-02 17:23:06'),
+(127, 18, 'José Rafael Nic Sandoval', 'PELJ900101HYNLRN01', '2026-03-02 17:25:21'),
+(128, 18, 'Juan Carlos Pérez López\'', 'MADL880430HYNTRS03', '2026-03-02 17:25:21'),
+(129, 18, 'María Fernanda Gómez Ruiz', 'RAVL910305MDFMGN06', '2026-03-02 17:25:21'),
+(130, 18, 'Carlos Eduardo Flores León', 'FOLC860118HYNLRR07', '2026-03-02 17:25:21'),
+(132, 18, 'Gabriela Mendoza Paredes', 'MEPG980418MDFRRS16', '2026-03-02 17:25:21'),
+(151, 22, 'José Rafael Nic Sandoval', 'PELJ900101HYNLRN01', '2026-03-02 18:05:35'),
+(152, 22, 'Juan Carlos Pérez López\'', 'MADL880430HYNTRS03', '2026-03-02 18:05:35'),
+(153, 22, 'María Fernanda Gómez Ruiz', 'RAVL910305MDFMGN06', '2026-03-02 18:05:35'),
+(154, 22, 'Carlos Eduardo Flores León', 'FOLC860118HYNLRR07', '2026-03-02 18:05:35'),
+(155, 22, 'Miguel Ángel Navarro Ortiz', 'IHP970214MDFMRR10', '2026-03-02 18:05:35'),
+(156, 22, 'Gabriela Mendoza Paredes', 'MEPG980418MDFRRS16', '2026-03-02 18:05:35'),
+(157, 22, 'Valeria Peña Cabrera', 'TOCD990120MYNTRR06', '2026-03-02 18:05:35'),
+(158, 22, 'José López Reyes', 'LORJ860118HDFPYR07', '2026-03-02 18:05:35'),
+(159, 22, 'Fernando Mendoza Silva', 'MESF840519HDFNLR11', '2026-03-02 18:05:35'),
+(160, 22, 'Ángel Medina Torres', 'META900315HDFDNR21', '2026-03-02 18:05:35');
 
 -- --------------------------------------------------------
 
@@ -181,8 +219,7 @@ INSERT INTO `formulario_contacto` (`id_formcontacto`, `nombre_completo`, `correo
 (1, 'Salomón Alcocer', 'soysalo123@gmail.com', '999-273-4936', 'Me interesa colaborar', 'Hola, estoy interesado en colaborar como voluntario en sus próximos proyectos.', '2026-02-19 10:45:03'),
 (2, 'María Fernanda López', 'maria.lopez@email.com', '999-111-2233', 'Donación', 'Buenas tardes, me gustaría realizar una donación y conocer el proceso.', '2026-02-19 10:45:03'),
 (3, 'Carlos Méndez', 'carlos.mendez@email.com', '999-555-7788', 'Información sobre proyectos', 'Quisiera recibir más información sobre los proyectos activos este año.', '2026-02-19 10:45:03'),
-(4, 'Ana Rodríguez', 'ana.rodriguez@email.com', NULL, 'Servicio social', 'Soy estudiante universitaria y estoy interesada en realizar mi servicio social con ustedes.', '2026-02-19 10:45:03'),
-(5, 'Luis Torres', 'luis.torres@email.com', '999-888-9900', 'Patrocinio empresarial', 'Represento a una empresa interesada en apoyar iniciativas comunitarias.', '2026-02-19 10:45:03');
+(4, 'Ana Rodríguez', 'ana.rodriguez@email.com', NULL, 'Servicio social', 'Soy estudiante universitaria y estoy interesada en realizar mi servicio social con ustedes.', '2026-02-19 10:45:03');
 
 -- --------------------------------------------------------
 
@@ -222,7 +259,15 @@ CREATE TABLE `informe` (
 INSERT INTO `informe` (`id_informe`, `nombre_organizacion`, `evento`, `lugar`, `fecha`, `numero_telefonico`, `created_at`, `updated_at`) VALUES
 (1, 'Ajal-lol AC', 'Campaña de prevención de caries', 'Hoctún, Yucatán', '2026-01-14', '9991234567', '2026-02-20 18:06:10', '2026-02-20 18:06:10'),
 (2, 'Ajal-lol AC', 'Actividad recreativa de año nuevo', 'Izamal, Yucatán', '2026-01-16', '9997654321', '2026-02-20 18:06:10', '2026-02-20 18:06:10'),
-(3, 'Ajal-lol AC', 'Día de reyes atrasado', 'Tekit, Yucatán', '2026-01-15', '9998887777', '2026-02-20 18:06:10', '2026-02-20 18:06:10');
+(3, 'Ajal-lol AC', 'Día de reyes atrasado', 'Tekit, Yucatán', '2026-01-15', '9998887777', '2026-02-20 18:06:10', '2026-02-20 18:06:10'),
+(4, 'Ajal-lol AC', 'Halo', 'a', '2992-09-29', NULL, '2026-02-25 23:33:04', '2026-02-25 23:33:04'),
+(7, 'Ajal-lol AC', 'Entrega de mariguana', 'Akil, Yucatán', '2002-02-20', NULL, '2026-02-26 23:10:08', '2026-02-26 23:10:08'),
+(8, 'Ajal-lol AC', 'Venta de fentanilo', 'Akil, Yucatán', '2026-02-20', NULL, '2026-02-26 23:19:56', '2026-02-26 23:19:56'),
+(9, 'Ajal-lol AC', 'Entrega de mariguana', 'Akil, Yucatán', '2026-02-20', NULL, '2026-03-02 22:15:32', '2026-03-02 22:15:32'),
+(10, 'Ajal-lol AC', 'Entrega de bienes', 'Akil, Yucatán', '2026-03-20', NULL, '2026-03-02 22:17:44', '2026-03-02 22:17:44'),
+(14, 'Ajal-lol AC', 'Entrega de mariguana', 'Akil, Yucatán', '2026-03-12', NULL, '2026-03-02 23:23:06', '2026-03-02 23:23:06'),
+(18, 'Ajal-lol AC', 'Entrega de mariguana', 'Akil, Yucatán', '2026-03-20', NULL, '2026-03-02 23:25:21', '2026-03-02 23:25:21'),
+(22, 'Ajal-lol AC', 'Entrega de huevos', 'Akil, Yucatán', '2026-02-20', NULL, '2026-03-03 00:05:35', '2026-03-03 00:05:35');
 
 -- --------------------------------------------------------
 
@@ -383,7 +428,8 @@ INSERT INTO `rol_usuario` (`id_rol_usuario`, `id_usuario`, `cargo_usuario`) VALU
 (2, 2, 'editor'),
 (5, 5, 'administrador'),
 (6, 6, 'editor'),
-(7, 7, 'editor');
+(7, 7, 'editor'),
+(8, 8, 'administrador');
 
 -- --------------------------------------------------------
 
@@ -426,7 +472,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('isRsWFlG7iKlfiL0iesq1XVjyI8PJs4DH4qarQIT', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoidXVWb05jZThJV0hTNkNMdzFsSVE5RnFUMkxVdnBzS05wOElycmc5bCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzQ6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9yZXBvcnQiO3M6NToicm91dGUiO047fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NzoidXNlcl9pZCI7aToxO3M6Njoibm9tYnJlIjtzOjIzOiJSYWZhZWwgU8OhbmNoZXogTWFydMOtbiI7czo1OiJlbWFpbCI7czoxNzoiYWRtaW5AYWphbGxvbC5jb20iO3M6Mzoicm9sIjtzOjEzOiJhZG1pbmlzdHJhZG9yIjt9', 1771609418);
+('YOR7JNMERoW4dTKaMASltXH6BGYasKKIBsvg4qmP', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiV3hYdzJKZ2lmc3dtT2ZWd3VLeDVHTGpOMk9wVHRITlNidnMydTE3ZyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9yZXBvcnQvMjIvcGRmIjtzOjU6InJvdXRlIjtzOjE3OiJhZG1pbi5yZXBvcnRzLnBkZiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NzoidXNlcl9pZCI7aToxO3M6Njoibm9tYnJlIjtzOjIzOiJSYWZhZWwgU8OhbmNoZXogTWFydMOtbiI7czo1OiJlbWFpbCI7czoxNzoiYWRtaW5AYWphbGxvbC5jb20iO3M6Mzoicm9sIjtzOjEzOiJhZG1pbmlzdHJhZG9yIjt9', 1772474776);
 
 -- --------------------------------------------------------
 
@@ -463,11 +509,12 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`id_usuario`, `nombre_usuario`, `correo_usuario`, `contraseña_usuario`) VALUES
-(1, 'Rodolfo Sánchez Martín', 'admin@ajallol.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
+(1, 'Rafael Sánchez Martín', 'admin@ajallol.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
 (2, 'Editor General', 'editor@ajallol.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
-(5, 'Superestamos Navarrete Sanchéz', 'Nintendo2@gmail.com', '$2y$12$iLo8g7nF5zhGdVshUv3mYuKdmAQP5QWAyND84bOv58788ZGE8UOJi'),
-(6, 'Leonardo Aaron Sánchez Martín', 'lorenzo@gmail.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
-(7, 'Jefe de Area', 'Nintendo@gmail.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f');
+(5, 'Nintendo Xbox Sanchéz', 'Nintendo2@gmail.com', '$2y$12$iLo8g7nF5zhGdVshUv3mYuKdmAQP5QWAyND84bOv58788ZGE8UOJi'),
+(6, 'Lorenzo Sánchez Martín', 'lorenzo@gmail.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
+(7, 'Jefe de Area', 'Nintendo@gmail.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
+(8, 'Oscar AlejandroS anchéz', 'Martin@gmail.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92');
 
 -- --------------------------------------------------------
 
@@ -505,7 +552,7 @@ ALTER TABLE `aliados`
 --
 ALTER TABLE `beneficiarios`
   ADD PRIMARY KEY (`id_beneficiario`),
-  ADD KEY `id_informe` (`id_informe`);
+  ADD UNIQUE KEY `unique_beneficiario_informe` (`id_informe`,`curp`);
 
 --
 -- Indices de la tabla `cache`
@@ -565,7 +612,8 @@ ALTER TABLE `imagenes_proyectos`
 -- Indices de la tabla `informe`
 --
 ALTER TABLE `informe`
-  ADD PRIMARY KEY (`id_informe`);
+  ADD PRIMARY KEY (`id_informe`),
+  ADD UNIQUE KEY `unique_informe_evento` (`evento`,`lugar`,`fecha`);
 
 --
 -- Indices de la tabla `inicio`
@@ -690,7 +738,7 @@ ALTER TABLE `aliados`
 -- AUTO_INCREMENT de la tabla `beneficiarios`
 --
 ALTER TABLE `beneficiarios`
-  MODIFY `id_beneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_beneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=161;
 
 --
 -- AUTO_INCREMENT de la tabla `categoria_proyectos`
@@ -732,7 +780,7 @@ ALTER TABLE `imagenes_proyectos`
 -- AUTO_INCREMENT de la tabla `informe`
 --
 ALTER TABLE `informe`
-  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT de la tabla `inicio`
@@ -780,7 +828,7 @@ ALTER TABLE `redes_sociales`
 -- AUTO_INCREMENT de la tabla `rol_usuario`
 --
 ALTER TABLE `rol_usuario`
-  MODIFY `id_rol_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_rol_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `seccion`
@@ -798,7 +846,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `widgets_actividades`

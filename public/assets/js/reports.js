@@ -50,7 +50,7 @@ function setTodayDate() {
 }
 
 // ============================================
-// TABLA — NUEVA LÓGICA MÁS LIMPIA
+// TABLA — BENEFICIARIOS
 // ============================================
 let rowCount = document.querySelectorAll('#beneficiaries-table .table-row').length;
 
@@ -77,7 +77,7 @@ function addRow() {
 function removeLastRow() {
     const table = document.getElementById('beneficiaries-table');
     const rows  = table.querySelectorAll('.table-row');
-    if (rows.length <= 1) return; // Protege para que no se borre la última fila
+    if (rows.length <= 6) return; 
     rows[rows.length - 1].remove();
     rowCount = table.querySelectorAll('.table-row').length;
     renumberRows();
@@ -98,8 +98,7 @@ function toggleRemoveButton() {
     const btnRemove = document.getElementById('btn-remove-row');
     const rowLength = document.querySelectorAll('#beneficiaries-table .table-row').length;
     if (btnRemove) {
-        // Oculta el botón de eliminar si solo queda 1 fila
-        btnRemove.style.display = rowLength > 1 ? 'flex' : 'none';
+        btnRemove.style.display = rowLength > 6 ? 'flex' : 'none';
     }
 }
 
@@ -115,8 +114,9 @@ function openEventModal(id, title, date, lugar) {
     document.getElementById('event-modal-description').textContent = '';
     const btnView = document.getElementById('btn-modal-view');
     const btnPdf  = document.getElementById('btn-modal-pdf');
-    btnView.href = btnPdf.href = `${ROUTE_BASE}/${id}/pdf`;
-    btnView.target = btnPdf.target = '_blank';
+    if (btnView) { btnView.href = `${ROUTE_BASE}/${id}/pdf`; btnView.target = '_blank'; }
+    if (btnPdf)  { btnPdf.href = `${ROUTE_BASE}/${id}/pdf`; btnPdf.target = '_blank'; }
+    
     document.getElementById('event-modal').classList.add('active');
     document.getElementById('event-overlay').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -160,19 +160,19 @@ function generateCalendar() {
     const lastDay     = new Date(currentYear, currentMonth + 1, 0);
     const prevLast    = new Date(currentYear, currentMonth, 0);
     const startOffset = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
-    for (let i = startOffset; i > 0; i--)
-        container.appendChild(createDayCell(prevLast.getDate() - i + 1, true));
-    for (let d = 1; d <= lastDay.getDate(); d++)
-        container.appendChild(createDayCell(d, false));
+    
+    for (let i = startOffset; i > 0; i--) container.appendChild(createDayCell(prevLast.getDate() - i + 1, true));
+    for (let d = 1; d <= lastDay.getDate(); d++) container.appendChild(createDayCell(d, false));
+        
     const remaining = 42 - (startOffset + lastDay.getDate());
-    for (let d = 1; d <= remaining; d++)
-        container.appendChild(createDayCell(d, true));
+    for (let d = 1; d <= remaining; d++) container.appendChild(createDayCell(d, true));
 }
 
 function createDayCell(day, isOther) {
     const div = document.createElement('div');
     div.className = 'calendar-date' + (isOther ? ' other-month' : '');
     div.textContent = day;
+    
     if (!isOther) {
         const key = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
         if (typeof eventsFromDB !== 'undefined' && eventsFromDB[key]) {
@@ -187,7 +187,8 @@ function createDayCell(day, isOther) {
             div.addEventListener('click', () => {
                 document.querySelectorAll('.calendar-date.selected').forEach(el => el.classList.remove('selected'));
                 div.classList.add('selected');
-                document.getElementById('selected-date-notes').textContent = 'Sin eventos para ' + formatDate(key);
+                const notes = document.getElementById('selected-date-notes');
+                if (notes) notes.textContent = 'Sin eventos para ' + formatDate(key);
             });
         }
     }
@@ -196,39 +197,248 @@ function createDayCell(day, isOther) {
 
 function updateCalendarNotes(title, date, lugar) {
     const notes = document.getElementById('selected-date-notes');
-    if (notes) notes.innerHTML = `<strong>${title}</strong><br>${lugar} · ${formatDate(date)}`;
+    if (notes) {
+        notes.innerHTML = `<strong>${title}</strong><br>${lugar} · ${formatDate(date)}`;
+        if (window.innerWidth < 768) notes.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 }
 
-function previousMonth() {
-    if (--currentMonth < 0) { currentMonth = 11; currentYear--; }
-    generateCalendar();
-}
-function nextMonth() {
-    if (++currentMonth > 11) { currentMonth = 0; currentYear++; }
-    generateCalendar();
-}
+function previousMonth() { if (--currentMonth < 0) { currentMonth = 11; currentYear--; } generateCalendar(); }
+function nextMonth() { if (++currentMonth > 11) { currentMonth = 0; currentYear++; } generateCalendar(); }
 
 // ============================================
-// FILTROS & UTILS
+// SISTEMA DE ORDENAMIENTO (NUEVO)
 // ============================================
-function applyHistoryFilter(filter) {
-    const now = new Date();
-    document.querySelectorAll('#history-list .history-item').forEach(card => {
-        const fecha = new Date(card.dataset.fecha + 'T00:00:00');
-        let show = true;
-        if (filter === 'week') {
-            const sw = new Date(now); sw.setDate(now.getDate() - now.getDay()); sw.setHours(0,0,0,0);
-            show = fecha >= sw;
-        } else if (filter === 'month') {
-            show = fecha.getMonth() === now.getMonth() && fecha.getFullYear() === now.getFullYear();
-        } else if (filter === 'year') {
-            show = fecha.getFullYear() === now.getFullYear();
+function initSort() {
+    const btnSort = document.getElementById('btn-sort-date');
+    if (!btnSort) return;
+
+    btnSort.addEventListener('click', () => {
+        const currentOrder = btnSort.dataset.order;
+        const newOrder = currentOrder === 'desc' ? 'asc' : 'desc'; // Alterna
+        btnSort.dataset.order = newOrder;
+        
+        // Cambiar el texto y el dibujo del ícono según el orden
+        const span = btnSort.querySelector('#sort-text');
+        const path = btnSort.querySelector('.sort-icon-path');
+        
+        if (newOrder === 'desc') {
+            span.textContent = 'Recientes';
+            path.setAttribute('d', 'M4 6h16M4 12h10M4 18h4'); // Líneas de mayor a menor
+            btnSort.classList.remove('active');
+        } else {
+            span.textContent = 'Antiguos';
+            path.setAttribute('d', 'M4 18h16M4 12h10M4 6h4'); // Líneas de menor a mayor
+            btnSort.classList.add('active'); // Se pone morado cuando está en modo "Antiguos"
         }
-        const group = card.closest('.history-group');
-        if (group) group.style.display = show ? '' : 'none';
+
+        sortHistoryList(newOrder);
     });
 }
 
+function sortHistoryList(order) {
+    const list = document.getElementById('history-list');
+    const groups = Array.from(list.querySelectorAll('.history-group'));
+    
+    // Ordenar las tarjetas en memoria
+    groups.sort((a, b) => {
+        const itemA = a.querySelector('.history-item');
+        const itemB = b.querySelector('.history-item');
+        if (!itemA || !itemB) return 0;
+        
+        const dateA = new Date(itemA.dataset.fecha + 'T00:00:00').getTime();
+        const dateB = new Date(itemB.dataset.fecha + 'T00:00:00').getTime();
+        
+        return order === 'desc' ? dateB - dateA : dateA - dateB;
+    });
+
+    // Reinsertarlas en el DOM en el nuevo orden y corregir los colores alternados
+    groups.forEach((group, index) => {
+        list.appendChild(group);
+        
+        const item = group.querySelector('.history-item');
+        if (item) {
+            item.classList.remove('highlight', 'accent');
+            item.classList.add(index % 2 === 0 ? 'highlight' : 'accent');
+        }
+    });
+}
+
+// ============================================
+// FILTROS AVANZADOS
+// ============================================
+let currentFilterState = 'none'; 
+
+function resetSelectsToCurrent() {
+    const selMonth = document.getElementById('dropdown-month');
+    const selYear = document.getElementById('dropdown-year');
+    
+    if (selMonth) {
+        let currentM = String(new Date().getMonth() + 1).padStart(2, '0');
+        resetCustomDropdown('dropdown-month', currentM);
+    }
+    if (selYear) {
+        let currentY = new Date().getFullYear().toString();
+        resetCustomDropdown('dropdown-year', currentY);
+    }
+}
+
+function initCustomDropdowns() {
+    const dropdowns = document.querySelectorAll('.custom-dropdown');
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.custom-dropdown')) dropdowns.forEach(d => d.classList.remove('open'));
+    });
+
+    dropdowns.forEach(dropdown => {
+        const trigger = dropdown.querySelector('.dropdown-trigger');
+        const label = dropdown.querySelector('.dropdown-label');
+        const items = dropdown.querySelectorAll('.dropdown-item');
+
+        const initialSelected = dropdown.querySelector('.dropdown-item.selected');
+        if (initialSelected) {
+            dropdown.dataset.value = initialSelected.dataset.value;
+            label.textContent = initialSelected.textContent.trim();
+        } else {
+            dropdown.dataset.value = 'all';
+        }
+
+        trigger.addEventListener('click', () => {
+            dropdowns.forEach(d => { if (d !== dropdown) d.classList.remove('open'); });
+            dropdown.classList.toggle('open');
+        });
+
+        items.forEach(item => {
+            item.addEventListener('click', () => {
+                items.forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+                label.textContent = item.textContent.trim();
+                dropdown.dataset.value = item.dataset.value;
+                dropdown.classList.remove('open');
+                triggerFiltersChange();
+            });
+        });
+    });
+}
+
+function resetCustomDropdown(dropdownId, valueToSelect) {
+    const dropdown = document.getElementById(dropdownId);
+    if (!dropdown) return;
+    const items = dropdown.querySelectorAll('.dropdown-item');
+    const label = dropdown.querySelector('.dropdown-label');
+    const trigger = dropdown.querySelector('.dropdown-trigger');
+    
+    let targetItem = dropdown.querySelector(`.dropdown-item[data-value="${valueToSelect}"]`);
+    if (!targetItem) targetItem = dropdown.querySelector('.dropdown-item[data-value="all"]');
+
+    if (targetItem) {
+        items.forEach(i => i.classList.remove('selected'));
+        targetItem.classList.add('selected');
+        label.textContent = targetItem.textContent.trim();
+        dropdown.dataset.value = targetItem.dataset.value;
+        trigger.classList.remove('active');
+    }
+}
+
+function triggerFiltersChange() {
+    const btnWeek = document.getElementById('btn-filter-week');
+    const dropMonth = document.getElementById('dropdown-month');
+    const dropYear = document.getElementById('dropdown-year');
+
+    if (btnWeek) btnWeek.classList.remove('active');
+    
+    const mVal = dropMonth ? dropMonth.dataset.value : 'all';
+    const yVal = dropYear ? dropYear.dataset.value : 'all';
+
+    if (dropMonth) {
+        const trigger = dropMonth.querySelector('.dropdown-trigger');
+        mVal !== 'all' ? trigger.classList.add('active') : trigger.classList.remove('active');
+    }
+    if (dropYear) {
+        const trigger = dropYear.querySelector('.dropdown-trigger');
+        yVal !== 'all' ? trigger.classList.add('active') : trigger.classList.remove('active');
+    }
+
+    if (mVal === 'all' && yVal === 'all') {
+        currentFilterState = 'none';
+        applyFilters('none');
+    } else {
+        currentFilterState = 'custom';
+        applyFilters('custom');
+    }
+    
+    const btnClear = document.getElementById('btn-clear-filters');
+    if (btnClear) btnClear.style.display = (currentFilterState === 'none') ? 'none' : 'block';
+}
+
+function initFilters() {
+    initCustomDropdowns();
+    const btnWeek = document.getElementById('btn-filter-week');
+    const btnClear = document.getElementById('btn-clear-filters');
+
+    applyFilters('none'); 
+
+    if (btnWeek) {
+        btnWeek.addEventListener('click', () => {
+            if (currentFilterState === 'week') return; 
+            btnWeek.classList.add('active');
+            resetSelectsToCurrent();
+            currentFilterState = 'week';
+            applyFilters('week');
+            if (btnClear) btnClear.style.display = 'block';
+        });
+    }
+
+    if (btnClear) {
+        btnClear.addEventListener('click', () => {
+            if (btnWeek) btnWeek.classList.remove('active');
+            resetCustomDropdown('dropdown-month', 'all');
+            resetCustomDropdown('dropdown-year', 'all');
+            currentFilterState = 'none';
+            applyFilters('none');
+            btnClear.style.display = 'none';
+        });
+    }
+}
+
+function applyFilters(mode) {
+    const dropMonth = document.getElementById('dropdown-month');
+    const dropYear = document.getElementById('dropdown-year');
+    const now = new Date();
+
+    document.querySelectorAll('#history-list .history-group').forEach(group => {
+        const card = group.querySelector('.history-item');
+        if (!card) return;
+
+        const dateStr = card.dataset.fecha; 
+        const fecha = new Date(dateStr + 'T00:00:00');
+        let show = true;
+
+        if (mode === 'week') {
+            const sw = new Date(now); 
+            sw.setDate(now.getDate() - now.getDay()); 
+            sw.setHours(0,0,0,0);
+            show = (fecha >= sw);
+        } else if (mode === 'custom') {
+            const selectedYear = dropYear ? dropYear.dataset.value : 'all';
+            const selectedMonth = dropMonth ? dropMonth.dataset.value : 'all';
+
+            const cardYear = dateStr.substring(0, 4);
+            const cardMonth = dateStr.substring(5, 7);
+
+            let matchYear = (selectedYear === 'all') ? true : (cardYear === selectedYear);
+            let matchMonth = (selectedMonth === 'all') ? true : (cardMonth === selectedMonth);
+
+            show = matchYear && matchMonth;
+        }
+
+        if (show) group.classList.remove('hidden');
+        else group.classList.add('hidden');
+    });
+}
+
+// ============================================
+// UTILIDADES
+// ============================================
 function formatDate(dateStr) {
     if (!dateStr) return '';
     const [y, m, d] = dateStr.split('-');
@@ -239,7 +449,7 @@ function validarCamposObligatorios(form) {
     let hayError = false;
     ['evento', 'lugar', 'fecha'].forEach(name => {
         const input = form.querySelector(`[name="${name}"]`);
-        if (!input.value.trim()) {
+        if (input && !input.value.trim()) {
             hayError = true;
             input.style.border = '2px solid #ef4444';
             input.addEventListener('input', () => { input.style.border = ''; }, { once: true });
@@ -257,26 +467,18 @@ document.addEventListener('DOMContentLoaded', function () {
     initHeaderInputs();
     setTodayDate();
     toggleRemoveButton();
+    
+    initFilters();
+    initSort(); // Inicia la función del botón de ordenar
 
-    // Eventos Tabla
     const btnAdd = document.getElementById('btn-add-row');
     if (btnAdd) btnAdd.addEventListener('click', addRow);
     const btnRemove = document.getElementById('btn-remove-row');
     if (btnRemove) btnRemove.addEventListener('click', removeLastRow);
 
-    // Eventos Modal
     const btnDelete = document.getElementById('btn-modal-delete');
     if (btnDelete) btnDelete.addEventListener('click', () => deleteReport(currentReportId));
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEventModal(); });
-
-    // Filtros
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            applyHistoryFilter(this.dataset.filter);
-        });
-    });
 
     document.querySelectorAll('#history-list .history-item').forEach(item => {
         item.addEventListener('click', function () {
@@ -289,7 +491,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Envío e Impresión
     const form = document.getElementById('create-report-form');
     document.querySelectorAll('.btn-form[data-action="pdf_download"], .btn-form[data-action="pdf_print"]').forEach(btn => {
         btn.addEventListener('click', function () {
@@ -297,6 +498,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const action = this.dataset.action;
             const formData = new FormData(form);
             formData.set('_action', action);
+            
             fetch(ROUTE_PREVIEW_PDF, { method: 'POST', body: formData, headers: { 'X-CSRF-TOKEN': CSRF_TOKEN } })
                 .then(res => { if (!res.ok) throw new Error(); return res.blob(); })
                 .then(blob => {
@@ -310,5 +512,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (form) form.addEventListener('submit', () => { document.getElementById('form-action').value = 'save'; });
+    if (form) {
+        form.addEventListener('submit', () => { 
+            const actionInput = document.getElementById('form-action');
+            if (actionInput) actionInput.value = 'save'; 
+        });
+    }
 });

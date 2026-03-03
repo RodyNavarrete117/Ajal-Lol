@@ -243,12 +243,72 @@
                 <span>Volver</span>
             </button>
             <h2>Historial</h2>
+          @php
+                $currentMonth = date('m');
+                $currentYear = date('Y');
+
+                $dbYears = $reports->pluck('fecha')->map(fn($f) => substr($f, 0, 4))->unique();
+                $dbMonthsNum = $reports->pluck('fecha')->map(fn($f) => substr($f, 5, 2))->unique();
+                
+                if (!$dbYears->contains($currentYear)) $dbYears->push($currentYear);
+                if (!$dbMonthsNum->contains($currentMonth)) $dbMonthsNum->push($currentMonth);
+
+                $dbYears = $dbYears->sortDesc();
+                $dbMonthsNum = $dbMonthsNum->sort();
+
+                $nombresMeses = [
+                    '01'=>'Enero', '02'=>'Febrero', '03'=>'Marzo', '04'=>'Abril', 
+                    '05'=>'Mayo', '06'=>'Junio', '07'=>'Julio', '08'=>'Agosto', 
+                    '09'=>'Septiembre', '10'=>'Octubre', '11'=>'Noviembre', '12'=>'Diciembre'
+                ];
+            @endphp
+
             <div class="history-filters">
-                <button class="filter-btn active" data-filter="week">Esta semana</button>
-                <button class="filter-btn" data-filter="month">Este mes</button>
-                <button class="filter-btn" data-filter="year">{{ date('Y') }}</button>
+                <button class="filter-btn" id="btn-filter-week">Esta semana</button>
+
+                <button class="filter-btn" id="btn-sort-date" data-order="desc" title="Ordenar por fecha">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+                        <path class="sort-icon-path" d="M4 6h16M4 12h10M4 18h4"/>
+                    </svg>
+                    <span id="sort-text">Recientes</span>
+                </button>
+
+                <div class="custom-dropdown" id="dropdown-month">
+                    <button class="dropdown-trigger" type="button">
+                        <span class="dropdown-label">Todos los meses</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-item" data-value="all">Todos los meses</li>
+                        @foreach($dbMonthsNum as $num)
+                            <li class="dropdown-item {{ $num == $currentMonth ? 'selected' : '' }}" data-value="{{ $num }}">
+                                {{ $nombresMeses[$num] }}
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                <div class="custom-dropdown" id="dropdown-year">
+                    <button class="dropdown-trigger" type="button">
+                        <span class="dropdown-label">Todos los años</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-item" data-value="all">Todos los años</li>
+                        @foreach($dbYears as $year)
+                            <li class="dropdown-item {{ $year == $currentYear ? 'selected' : '' }}" data-value="{{ $year }}">
+                                {{ $year }}
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+                
+                <button class="filter-btn" id="btn-clear-filters" style="display:none;" title="Limpiar filtros">
+                    <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;stroke:currentColor;stroke-width:2;">
+                        <path d="M18 6L6 18M6 6L18 18" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
             </div>
-        </div>
 
         <div class="history-list" id="history-list">
             @forelse($reports as $index => $report)

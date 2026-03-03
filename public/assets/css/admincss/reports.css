@@ -651,7 +651,7 @@
     height: 15px; 
 }
 
-/* ── 8. TABLA (COLUMNAS Y ALINEACIÓN CORREGIDAS) ─────────── */
+/* ── 8. TABLA ────────────────────────────────────────────── */
 .table-section { 
     margin-top: 1.25rem; 
     border-radius: 12px; 
@@ -778,7 +778,7 @@
     pointer-events: none; 
 }
 
-/* ── BOTONES DE AGREGAR Y QUITAR (NUEVO DISEÑO CON RELLENO) ── */
+/* Botones Inferiores de la Tabla */
 .table-footer-actions {
     display: flex;
     gap: 1rem;
@@ -807,7 +807,6 @@
     transition: all 0.25s ease;
 }
 
-/* Botón Morado de Agregar */
 .btn-table-action.add {
     background: rgba(120, 61, 102, 0.1);
     color: var(--rpt-accent);
@@ -825,7 +824,6 @@
     box-shadow: 0 4px 10px rgba(120,61,102,0.2); 
 }
 
-/* Botón Rojo de Quitar */
 .btn-table-action.remove {
     background: rgba(229, 62, 62, 0.1);
     color: #e53e3e;
@@ -930,11 +928,12 @@
     box-shadow: 0 5px 14px rgba(120,61,102,0.3); 
 }
 
-/* ── 10. HISTORIAL ───────────────────────────────────────── */
+/* ── 10. HISTORIAL & DROPDOWNS PERSONALIZADOS ────────────── */
 .history-filters { 
     display: flex; 
     gap: 0.6rem; 
     margin-left: auto; 
+    align-items: center;
 }
 
 .filter-btn { 
@@ -958,19 +957,140 @@
     transform: translateY(-1px); 
 }
 
+/* Estilo para alinear el icono del botón ordenar */
+#btn-sort-date {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+/* Menús Desplegables Custom */
+.custom-dropdown { 
+    position: relative; 
+}
+
+.dropdown-trigger {
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    gap: 0.5rem;
+    padding: 0.5rem 1rem; 
+    border: none; 
+    border-radius: 9px; 
+    font-weight: 600; 
+    font-size: 0.85rem;
+    cursor: pointer; 
+    transition: all 0.25s; 
+    background: var(--rpt-filter-bg); 
+    color: var(--rpt-filter-color);
+    min-width: 140px; 
+    font-family: inherit;
+}
+
+.dropdown-trigger.active { 
+    background: var(--rpt-accent); 
+    color: white; 
+}
+
+.dropdown-trigger svg { 
+    width: 14px; 
+    height: 14px; 
+    transition: transform 0.3s ease; 
+}
+
+.custom-dropdown.open .dropdown-trigger svg { 
+    transform: rotate(180deg); 
+}
+
+.dropdown-menu {
+    position: absolute; 
+    top: calc(100% + 0.5rem); 
+    right: 0; 
+    z-index: 1000;
+    background: var(--rpt-bg); 
+    border: 1px solid var(--rpt-border); 
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+    padding: 0.5rem; 
+    margin: 0; 
+    list-style: none;
+    min-width: 100%; 
+    opacity: 0; 
+    visibility: hidden; 
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    max-height: 250px; 
+    overflow-y: auto;
+}
+
+[data-theme="dark"] .dropdown-menu { 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
+}
+
+.custom-dropdown.open .dropdown-menu { 
+    opacity: 1; 
+    visibility: visible; 
+    transform: translateY(0); 
+}
+
+.dropdown-item {
+    padding: 0.6rem 1rem; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-size: 0.85rem; 
+    font-weight: 500;
+    color: var(--rpt-text); 
+    transition: all 0.2s; 
+    white-space: nowrap;
+}
+
+.dropdown-item:hover { 
+    background: var(--rpt-bg-soft); 
+    color: var(--rpt-accent); 
+}
+
+.dropdown-item.selected { 
+    background: rgba(120,61,102,0.1); 
+    color: var(--rpt-accent); 
+    font-weight: 700; 
+}
+
+[data-theme="dark"] .dropdown-item.selected { 
+    background: rgba(196, 122, 170, 0.15); 
+    color: #c47aaa; 
+}
+
+/* Lista y Tarjetas CORREGIDAS (Ancho Completo 100%) */
 .history-list { 
     display: flex; 
     flex-direction: column; 
     gap: 0.5rem; 
+    width: 100%; 
     max-width: 100%; 
 } 
 
 .history-group { 
-    display: flex; 
-    flex-direction: column; 
+    width: 100%;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.4s ease, margin 0.4s ease; 
+    overflow: hidden; 
+    opacity: 1; 
+    transform: scale(1); 
+    max-height: 200px; 
+    margin-bottom: 0.5rem; 
+}
+
+.history-group.hidden { 
+    opacity: 0; 
+    max-height: 0; 
+    margin-bottom: 0; 
+    transform: scale(0.95); 
+    pointer-events: none; 
 }
 
 .history-item { 
+    width: 100%;
+    box-sizing: border-box;
     background: var(--rpt-history-bg); 
     border-radius: 12px; 
     padding: 1rem 1.25rem; 
@@ -1056,7 +1176,9 @@ body.reduce-animations .view-section {
     animation: none !important; 
 }
 
+
 /* ── 12. RESPONSIVE ──────────────────────────────────────── */
+
 @media (max-width: 1024px) {
     #calendar-view.active { 
         grid-template-columns: 1fr; 
@@ -1086,6 +1208,7 @@ body.reduce-animations .view-section {
     }
 }
 
+/* ── ESTILOS EXCLUSIVOS PARA MÓVIL ── */
 @media (max-width: 768px) {
     .reports-container { 
         padding: 0.9rem; 
@@ -1342,7 +1465,6 @@ body.reduce-animations .view-section {
         height: 26px; 
     }
     
-    /* Adaptación perfecta de los botones inferiores en móvil */
     .table-footer-actions { 
         flex-direction: column; 
         gap: 0.75rem; 
@@ -1367,20 +1489,55 @@ body.reduce-animations .view-section {
         justify-content: center; 
     }
     
-    .history-list { 
-        max-width: 100%; 
-    }
-    
+    /* ── FILTROS ADAPTADOS PARA MÓVIL (TIPO GRID 2x2) ── */
     .history-filters { 
-        flex-wrap: wrap; 
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
         width: 100%; 
         margin-left: 0; 
     }
     
+    #btn-filter-week, 
+    #btn-sort-date {
+        grid-column: span 1; 
+        width: 100%;
+    }
+    
+    #btn-clear-filters {
+        grid-column: span 2; 
+        width: 100%;
+    }
+
     .filter-btn { 
-        flex: 1; 
-        min-width: 80px; 
         text-align: center; 
+        width: 100%;
+    }
+
+    .custom-dropdown { 
+        width: 100%;
+        min-width: unset; 
+        grid-column: span 1;
+    }
+    
+    .dropdown-trigger { 
+        width: 100%; 
+        justify-content: space-between; 
+        padding: 0.6rem 0.8rem; 
+        font-size: 0.8rem;
+    }
+    
+    .dropdown-menu { 
+        left: 0; 
+        right: auto; 
+        min-width: 100%;
+        width: max-content; 
+    }
+    /* ── FIN FILTROS MÓVIL ── */
+    
+    .history-list { 
+        width: 100%; 
+        max-width: 100%; 
     }
     
     .history-item { 
@@ -1392,6 +1549,7 @@ body.reduce-animations .view-section {
     }
 }
 
+/* Teléfonos muy pequeños */
 @media (max-width: 480px) {
     .calendar-right-col { 
         grid-template-columns: 1fr; 

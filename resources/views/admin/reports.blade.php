@@ -18,12 +18,9 @@
 
     {{-- ════════════════════════════════════════
          VISTA 1: Calendario
-         Desktop: [Calendario] | [Botones ↓ Notas]
-         Móvil:   Botones → Calendario → Notas
     ════════════════════════════════════════ --}}
     <div id="calendar-view" class="view-section active">
 
-        {{-- Columna derecha: Botones + Notas (en móvil van arriba por order CSS) --}}
         <div class="calendar-right-col">
             <button class="btn-action btn-create" onclick="showCreateView()">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -42,7 +39,6 @@
                 Historial
             </button>
 
-            {{-- Notas — debajo de los botones en desktop, debajo del calendario en móvil --}}
             <div class="calendar-notes-panel">
                 <h4>NOTAS</h4>
                 <p id="selected-date-notes" class="notes-content">
@@ -51,7 +47,6 @@
             </div>
         </div>
 
-        {{-- Calendario --}}
         <div class="calendar-wrapper">
             <div class="calendar-header">
                 <button class="btn-nav" onclick="previousMonth()">
@@ -86,7 +81,6 @@
     ════════════════════════════════════════ --}}
     <div id="create-view" class="view-section">
         <div class="reports-header">
-            {{-- Botón volver mejorado --}}
             <button class="btn-back" onclick="showCalendarView()">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -111,7 +105,6 @@
             <div class="create-form">
 
                 <div class="form-row">
-                    {{-- Nombre org. — readonly, solo lápiz --}}
                     <div class="form-group">
                         <label>Nombre de la organización</label>
                         <div class="input-with-icon">
@@ -125,7 +118,6 @@
                         </div>
                     </div>
 
-                    {{-- Evento — libre, sin lápiz --}}
                     <div class="form-group">
                         <label>Evento</label>
                         <div class="input-with-icon">
@@ -136,7 +128,6 @@
                 </div>
 
                 <div class="form-row">
-                    {{-- Lugar — libre, sin lápiz --}}
                     <div class="form-group">
                         <label>Lugar</label>
                         <div class="input-with-icon">
@@ -145,7 +136,6 @@
                         </div>
                     </div>
 
-                    {{-- Fecha — readonly, solo lápiz. JS pone hoy al cargar --}}
                     <div class="form-group">
                         <label>Fecha</label>
                         <div class="input-with-icon">
@@ -159,7 +149,6 @@
                     </div>
                 </div>
 
-                {{-- Tabla de beneficiarios --}}
                 <div class="table-section">
                     <div class="table-header">
                         <div class="table-col">Nº</div>
@@ -181,7 +170,6 @@
                                        placeholder="CURP" value="{{ $b['curp'] ?? '' }}"
                                        maxlength="18" style="text-transform:uppercase">
                             </div>
-                            {{-- .cell-delete lo inyecta JS --}}
                         </div>
                         @endforeach
                     </div>
@@ -246,41 +234,35 @@
 
             @php
                 $currentMonth = date('m');
-                $currentYear = date('Y');
-
-                $dbYears = $reports->pluck('fecha')->map(fn($f) => substr($f, 0, 4))->unique();
-                $dbMonthsNum = $reports->pluck('fecha')->map(fn($f) => substr($f, 5, 2))->unique();
-                
-                if (!$dbYears->contains($currentYear)) $dbYears->push($currentYear);
+                $currentYear  = date('Y');
+                $dbYears      = $reports->pluck('fecha')->map(fn($f) => substr($f, 0, 4))->unique();
+                $dbMonthsNum  = $reports->pluck('fecha')->map(fn($f) => substr($f, 5, 2))->unique();
+                if (!$dbYears->contains($currentYear))     $dbYears->push($currentYear);
                 if (!$dbMonthsNum->contains($currentMonth)) $dbMonthsNum->push($currentMonth);
-
-                $dbYears = $dbYears->sortDesc();
+                $dbYears     = $dbYears->sortDesc();
                 $dbMonthsNum = $dbMonthsNum->sort();
-
                 $nombresMeses = [
-                    '01'=>'Enero', '02'=>'Febrero', '03'=>'Marzo', '04'=>'Abril', 
-                    '05'=>'Mayo', '06'=>'Junio', '07'=>'Julio', '08'=>'Agosto', 
-                    '09'=>'Septiembre', '10'=>'Octubre', '11'=>'Noviembre', '12'=>'Diciembre'
+                    '01'=>'Enero','02'=>'Febrero','03'=>'Marzo','04'=>'Abril',
+                    '05'=>'Mayo','06'=>'Junio','07'=>'Julio','08'=>'Agosto',
+                    '09'=>'Septiembre','10'=>'Octubre','11'=>'Noviembre','12'=>'Diciembre'
                 ];
             @endphp
 
             <div class="history-controls">
-                
                 <div class="quick-filters desktop-only">
                     <button class="filter-tag" data-filter="week">Esta semana</button>
                     <button class="filter-tag" data-filter="month">Este mes</button>
                     <button class="filter-tag active" data-filter="year">Este año</button>
                     <button class="filter-tag" data-filter="all">Todos</button>
                 </div>
-
                 <div class="controls-right">
                     <button class="filter-btn" id="btn-sort-date" data-order="desc" title="Ordenar por fecha">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
-                            <path class="sort-icon-path" d="M4 6h16M4 12h10M4 18h4"/>
+                            <path class="sort-desc" d="M4 6h16M4 12h10M4 18h4"/>
+                            <path class="sort-asc"  d="M4 18h16M4 12h10M4 6h4"/>
                         </svg>
                         <span id="sort-text">Recientes</span>
                     </button>
-
                     <button class="filter-btn" id="btn-toggle-filters" title="Mostrar opciones de filtrado">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
                             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
@@ -289,87 +271,147 @@
                     </button>
                 </div>
             </div>
-        </div> <div class="filters-panel" id="filters-panel">
-            <div class="filters-panel-inner">
-                
-                <div class="filters-section mobile-only">
-                    <span class="filters-label">Rápidos:</span>
-                    <div class="quick-filters">
-                        <button class="filter-tag" data-filter="week">Esta semana</button>
-                        <button class="filter-tag" data-filter="month">Este mes</button>
-                        <button class="filter-tag active" data-filter="year">Este año</button>
-                        <button class="filter-tag" data-filter="all">Todos</button>
-                    </div>
-                </div>
+        </div>
 
-                <div class="filters-divider mobile-only"></div>
+        {{-- Panel filtros --}}
+        <div class="filters-panel" id="filters-panel">
+            <div class="filters-panel-inner-wrap">
+                <div class="filters-panel-inner">
 
-                <div class="filters-section">
-                    <span class="filters-label">Específicos:</span>
-                    <div class="custom-filters">
-                        <div class="custom-dropdown" id="dropdown-month">
-                            <button class="dropdown-trigger" type="button">
-                                <span class="dropdown-label">Todos los meses</span>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li class="dropdown-item" data-value="all">Todos los meses</li>
-                                @foreach($dbMonthsNum as $num)
-                                    <li class="dropdown-item" data-value="{{ $num }}">
-                                        {{ $nombresMeses[$num] }}
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
-
-                        <div class="custom-dropdown" id="dropdown-year">
-                            <button class="dropdown-trigger" type="button">
-                                <span class="dropdown-label">Todos los años</span>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li class="dropdown-item" data-value="all">Todos los años</li>
-                                @foreach($dbYears as $year)
-                                    <li class="dropdown-item" data-value="{{ $year }}">
-                                        {{ $year }}
-                                    </li>
-                                @endforeach
-                            </ul>
+                    <div class="filters-section mobile-only">
+                        <span class="filters-label">Rápidos:</span>
+                        <div class="quick-filters">
+                            <button class="filter-tag" data-filter="week">Esta semana</button>
+                            <button class="filter-tag" data-filter="month">Este mes</button>
+                            <button class="filter-tag active" data-filter="year">Este año</button>
+                            <button class="filter-tag" data-filter="all">Todos</button>
                         </div>
                     </div>
-                </div>
 
+                    <div class="filters-divider mobile-only"></div>
+
+                    <div class="filters-section">
+                        <span class="filters-label">Específicos:</span>
+                        <div class="custom-filters">
+                            <div class="custom-dropdown" id="dropdown-month">
+                                <button class="dropdown-trigger" type="button">
+                                    <span class="dropdown-label">Todos los meses</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-item selected" data-value="all">Todos los meses</li>
+                                    @foreach($dbMonthsNum as $num)
+                                        <li class="dropdown-item" data-value="{{ $num }}">{{ $nombresMeses[$num] }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+
+                            <div class="custom-dropdown" id="dropdown-year">
+                                <button class="dropdown-trigger" type="button">
+                                    <span class="dropdown-label">Todos los años</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-item selected" data-value="all">Todos los años</li>
+                                    @foreach($dbYears as $year)
+                                        <li class="dropdown-item" data-value="{{ $year }}">{{ $year }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
-        
+
+        {{-- Barra de búsqueda --}}
+        <div class="search-bar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <input type="text" id="search-input" placeholder="Buscar evento o lugar…">
+        </div>
+
+        {{-- Separador con contador --}}
+        <div class="history-meta">
+            <div class="history-meta-line"></div>
+            <div class="history-count">
+                <span>Mostrando</span>
+                <span class="count-badge" id="count-badge">{{ $reports->count() }}</span>
+                <span>informes</span>
+            </div>
+            <div class="history-meta-line"></div>
+        </div>
+
+        {{-- Lista --}}
         <div class="history-list" id="history-list">
             @forelse($reports as $index => $report)
             <div class="history-group">
                 <div class="history-item {{ $index % 2 === 0 ? 'highlight' : 'accent' }}"
                      data-fecha="{{ $report->fecha }}"
                      data-id="{{ $report->id_informe }}">
+
+                    {{-- Ícono --}}
+                    <div class="item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2"/>
+                            <path d="M16 2v4M8 2v4M3 10h18"/>
+                        </svg>
+                    </div>
+
+                    {{-- Contenido --}}
                     <div class="history-content">
                         <h4>{{ Str::limit($report->evento, 50) }}</h4>
-                        <span class="history-date">
-                            {{ \Carbon\Carbon::parse($report->fecha)->format('d/m/Y') }}
-                            @if($report->lugar) · {{ Str::limit($report->lugar, 30) }} @endif
-                        </span>
+                        <div class="history-meta-row">
+                            <span class="history-date">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                                </svg>
+                                {{ \Carbon\Carbon::parse($report->fecha)->format('d/m/Y') }}
+                            </span>
+                            @if($report->lugar)
+                                <span class="history-dot"></span>
+                                <span class="history-place">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    {{ Str::limit($report->lugar, 25) }}
+                                </span>
+                            @endif
+                        </div>
                     </div>
-                    <a href="{{ route('admin.reports.pdf', $report->id_informe) }}"
-                       class="btn-print-small" title="Descargar PDF"
-                       onclick="event.stopPropagation()">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 9V2H18V9" stroke="currentColor" stroke-width="2"/>
-                            <path d="M6 18H4C2.89543 18 2 17.1046 2 16V11C2 9.89543 2.89543 9 4 9H20C21.1046 9 22 9.89543 22 11V16C22 17.1046 21.1046 18 20 18H18" stroke="currentColor" stroke-width="2"/>
-                            <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2"/>
+
+                    {{-- Botón PDF --}}
+                    <div class="item-actions">
+                        <a href="{{ route('admin.reports.pdf', $report->id_informe) }}"
+                           class="btn-print-small" title="Descargar PDF"
+                           onclick="event.stopPropagation()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                                <rect x="6" y="14" width="12" height="8"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                    {{-- Flecha --}}
+                    <div class="item-arrow">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 18l6-6-6-6"/>
                         </svg>
-                    </a>
+                    </div>
+
                 </div>
             </div>
             @empty
-            <p style="color:var(--rpt-text-muted);text-align:center;padding:2.5rem 1rem;">
-                No hay informes registrados aún.
-            </p>
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+                </svg>
+                <p>No hay informes registrados aún.</p>
+            </div>
             @endforelse
         </div>
     </div>
@@ -379,41 +421,102 @@
 <!-- MODAL -->
 <div class="event-modal-overlay" id="event-overlay" onclick="closeEventModal()"></div>
 <div class="event-modal" id="event-modal">
+
     <button class="btn-close-modal" onclick="closeEventModal()">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
     </button>
-    <div class="event-modal-header">
-        <h3 id="event-modal-title">—</h3>
-        <p id="event-modal-subtitle"></p>
-    </div>
-    <div class="event-modal-content">
-        <p id="event-modal-description"></p>
-    </div>
-    <div class="event-modal-actions">
-        <a id="btn-modal-view" href="#" class="btn-modal btn-modal-view">
+
+    {{-- Hero con gradiente --}}
+    <div class="event-modal-hero">
+        <div class="modal-hero-icon">
+            {{-- Ícono de manos / evento --}}
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 11V7a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v4M14 9V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v5M10 10V5a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v9l-1-1a2 2 0 0 0-2.73.12l-.14.15 4 5.5A5 5 0 0 0 8 21h6a5 5 0 0 0 5-5v-5a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2z" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <h3 id="event-modal-title">—</h3>
+        <div class="modal-hero-chips">
+            <div class="modal-chip" id="modal-chip-fecha">
+                <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke="white" stroke-width="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+                <span id="event-modal-subtitle">—</span>
+            </div>
+            <div class="modal-chip" id="modal-chip-lugar">
+                {{-- Silueta de ciudad --}}
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M2 20h20M4 20V10l5-4 5 4v10M14 20v-6h4v6M9 12h2M9 16h2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span id="event-modal-lugar">—</span>
+            </div>
+        </div>
+    </div>
+
+    {{-- Tarjetas de info --}}
+    <div class="event-modal-body">
+        <div class="modal-info-card">
+            <div class="modal-info-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                    <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="modal-info-text">
+                <div class="modal-info-label">Fecha del evento</div>
+                <div class="modal-info-value" id="modal-info-fecha">—</div>
+            </div>
+        </div>
+        <div class="modal-info-card">
+            <div class="modal-info-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M2 20h20M4 20V10l5-4 5 4v10M14 20v-6h4v6M9 12h2M9 16h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="modal-info-text">
+                <div class="modal-info-label">Lugar</div>
+                <div class="modal-info-value" id="modal-info-lugar">—</div>
+            </div>
+        </div>
+        <div class="modal-info-card">
+            <div class="modal-info-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="modal-info-text">
+                <div class="modal-info-label">Organización</div>
+                <div class="modal-info-value" id="modal-info-org">Ajal-lol AC</div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Acciones --}}
+    <div class="event-modal-actions">
+        <a id="btn-modal-view" href="#" class="btn-modal btn-modal-view" target="_blank">
+            <svg viewBox="0 0 24 24" fill="none">
                 <path d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
             </svg>
             Ver PDF
         </a>
-        <a id="btn-modal-pdf" href="#" class="btn-modal btn-modal-print">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <a id="btn-modal-pdf" href="#" class="btn-modal btn-modal-print" target="_blank">
+            <svg viewBox="0 0 24 24" fill="none">
                 <path d="M6 9V2H18V9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M6 18H4C3.46957 18 2.96086 17.7893 2.58579 17.4142C2.21071 17.0391 2 16.5304 2 16V11C2 10.4696 2.21071 9.96086 2.58579 9.58579C2.96086 9.21071 3.46957 9 4 9H20C20.5304 9 21.0391 9.21071 21.4142 9.58579C21.7893 9.96086 22 10.4696 22 11V16C22 16.5304 21.7893 17.0391 21.4142 17.4142C21.0391 17.7893 20.5304 18 20 18H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6 18H4C2.89543 18 2 17.1046 2 16V11C2 9.89543 2.89543 9 4 9H20C21.1046 9 22 9.89543 22 11V16C22 17.1046 21.1046 18 20 18H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2"/>
             </svg>
             Imprimir PDF
         </a>
         <button class="btn-modal btn-modal-edit" id="btn-modal-delete">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 24 24" fill="none">
                 <path d="M3 6H21M8 6V4H16V6M19 6L18 20H6L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            Eliminar
+            Eliminar informe
         </button>
     </div>
+
 </div>
 
 <script>

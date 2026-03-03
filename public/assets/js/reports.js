@@ -77,7 +77,7 @@ function addRow() {
 function removeLastRow() {
     const table = document.getElementById('beneficiaries-table');
     const rows  = table.querySelectorAll('.table-row');
-    if (rows.length <= 6) return; 
+    if (rows.length <= 6) return;
     rows[rows.length - 1].remove();
     rowCount = table.querySelectorAll('.table-row').length;
     renumberRows();
@@ -109,14 +109,23 @@ let currentReportId = null;
 
 function openEventModal(id, title, date, lugar) {
     currentReportId = id;
+
+    const fechaFormateada = formatDate(date);
+
+    // Hero
     document.getElementById('event-modal-title').textContent    = title;
-    document.getElementById('event-modal-subtitle').textContent = lugar + ' — ' + formatDate(date);
-    document.getElementById('event-modal-description').textContent = '';
+    document.getElementById('event-modal-subtitle').textContent = fechaFormateada;
+    document.getElementById('event-modal-lugar').textContent    = lugar || 'Sin especificar';
+
+    // Tarjetas de info
+    document.getElementById('modal-info-fecha').textContent = fechaFormateada;
+    document.getElementById('modal-info-lugar').textContent = lugar || 'Sin especificar';
+
     const btnView = document.getElementById('btn-modal-view');
     const btnPdf  = document.getElementById('btn-modal-pdf');
     if (btnView) { btnView.href = `${ROUTE_BASE}/${id}/pdf`; btnView.target = '_blank'; }
-    if (btnPdf)  { btnPdf.href = `${ROUTE_BASE}/${id}/pdf`; btnPdf.target = '_blank'; }
-    
+    if (btnPdf)  { btnPdf.href  = `${ROUTE_BASE}/${id}/pdf`; btnPdf.target = '_blank'; }
+
     document.getElementById('event-modal').classList.add('active');
     document.getElementById('event-overlay').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -160,10 +169,9 @@ function generateCalendar() {
     const lastDay     = new Date(currentYear, currentMonth + 1, 0);
     const prevLast    = new Date(currentYear, currentMonth, 0);
     const startOffset = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
-    
+
     for (let i = startOffset; i > 0; i--) container.appendChild(createDayCell(prevLast.getDate() - i + 1, true));
     for (let d = 1; d <= lastDay.getDate(); d++) container.appendChild(createDayCell(d, false));
-        
     const remaining = 42 - (startOffset + lastDay.getDate());
     for (let d = 1; d <= remaining; d++) container.appendChild(createDayCell(d, true));
 }
@@ -172,7 +180,7 @@ function createDayCell(day, isOther) {
     const div = document.createElement('div');
     div.className = 'calendar-date' + (isOther ? ' other-month' : '');
     div.textContent = day;
-    
+
     if (!isOther) {
         const key = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
         if (typeof eventsFromDB !== 'undefined' && eventsFromDB[key]) {
@@ -204,7 +212,7 @@ function updateCalendarNotes(title, date, lugar) {
 }
 
 function previousMonth() { if (--currentMonth < 0) { currentMonth = 11; currentYear--; } generateCalendar(); }
-function nextMonth() { if (++currentMonth > 11) { currentMonth = 0; currentYear++; } generateCalendar(); }
+function nextMonth()     { if (++currentMonth > 11) { currentMonth = 0;  currentYear++; } generateCalendar(); }
 
 // ============================================
 // SISTEMA DE ORDENAMIENTO
@@ -215,19 +223,19 @@ function initSort() {
 
     btnSort.addEventListener('click', () => {
         const currentOrder = btnSort.dataset.order;
-        const newOrder = currentOrder === 'desc' ? 'asc' : 'desc'; 
+        const newOrder = currentOrder === 'desc' ? 'asc' : 'desc';
         btnSort.dataset.order = newOrder;
-        
+
         const span = btnSort.querySelector('#sort-text');
         const path = btnSort.querySelector('.sort-icon-path');
-        
+
         if (newOrder === 'desc') {
-            span.textContent = 'Recientes';
-            path.setAttribute('d', 'M4 6h16M4 12h10M4 18h4');
+            if (span) span.textContent = 'Recientes';
+            if (path) path.setAttribute('d', 'M4 6h16M4 12h10M4 18h4');
             btnSort.classList.remove('active');
         } else {
-            span.textContent = 'Antiguos';
-            path.setAttribute('d', 'M4 18h16M4 12h10M4 6h4');
+            if (span) span.textContent = 'Antiguos';
+            if (path) path.setAttribute('d', 'M4 18h16M4 12h10M4 6h4');
             btnSort.classList.add('active');
         }
 
@@ -237,16 +245,15 @@ function initSort() {
 
 function sortHistoryList(order) {
     const list = document.getElementById('history-list');
+    if (!list) return;
     const groups = Array.from(list.querySelectorAll('.history-group'));
-    
+
     groups.sort((a, b) => {
         const itemA = a.querySelector('.history-item');
         const itemB = b.querySelector('.history-item');
         if (!itemA || !itemB) return 0;
-        
         const dateA = new Date(itemA.dataset.fecha + 'T00:00:00').getTime();
         const dateB = new Date(itemB.dataset.fecha + 'T00:00:00').getTime();
-        
         return order === 'desc' ? dateB - dateA : dateA - dateB;
     });
 
@@ -258,6 +265,8 @@ function sortHistoryList(order) {
             item.classList.add(index % 2 === 0 ? 'highlight' : 'accent');
         }
     });
+
+    updateCountBadge();
 }
 
 // ============================================
@@ -265,14 +274,25 @@ function sortHistoryList(order) {
 // ============================================
 function initPanelToggle() {
     const btnToggle = document.getElementById('btn-toggle-filters');
-    const panel = document.getElementById('filters-panel');
+    const panel     = document.getElementById('filters-panel');
+    if (!btnToggle || !panel) return;
 
-    if (btnToggle && panel) {
-        btnToggle.addEventListener('click', () => {
-            panel.classList.toggle('open');
-            btnToggle.classList.toggle('active');
-        });
-    }
+    btnToggle.addEventListener('click', () => {
+        if (panel.classList.contains('open')) {
+            // Salida animada: agregar closing, quitar open, luego limpiar
+            panel.classList.add('closing');
+            panel.classList.remove('open');
+            btnToggle.classList.remove('active');
+            panel.addEventListener('transitionend', () => {
+                panel.classList.remove('closing');
+            }, { once: true });
+        } else {
+            // Entrada: quitar closing por si quedó, agregar open
+            panel.classList.remove('closing');
+            panel.classList.add('open');
+            btnToggle.classList.add('active');
+        }
+    });
 }
 
 function initCustomDropdowns() {
@@ -283,13 +303,13 @@ function initCustomDropdowns() {
 
     dropdowns.forEach(dropdown => {
         const trigger = dropdown.querySelector('.dropdown-trigger');
-        const label = dropdown.querySelector('.dropdown-label');
-        const items = dropdown.querySelectorAll('.dropdown-item');
+        const label   = dropdown.querySelector('.dropdown-label');
+        const items   = dropdown.querySelectorAll('.dropdown-item');
 
         const initialSelected = dropdown.querySelector('.dropdown-item.selected');
         if (initialSelected) {
             dropdown.dataset.value = initialSelected.dataset.value;
-            label.textContent = initialSelected.textContent.trim();
+            if (label) label.textContent = initialSelected.textContent.trim();
         } else {
             dropdown.dataset.value = 'all';
         }
@@ -303,10 +323,10 @@ function initCustomDropdowns() {
             item.addEventListener('click', () => {
                 items.forEach(i => i.classList.remove('selected'));
                 item.classList.add('selected');
-                label.textContent = item.textContent.trim();
+                if (label) label.textContent = item.textContent.trim();
                 dropdown.dataset.value = item.dataset.value;
                 dropdown.classList.remove('open');
-                
+
                 document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
                 triggerDropdownFilter();
             });
@@ -317,19 +337,19 @@ function initCustomDropdowns() {
 function resetCustomDropdown(dropdownId, valueToSelect) {
     const dropdown = document.getElementById(dropdownId);
     if (!dropdown) return;
-    const items = dropdown.querySelectorAll('.dropdown-item');
-    const label = dropdown.querySelector('.dropdown-label');
+    const items   = dropdown.querySelectorAll('.dropdown-item');
+    const label   = dropdown.querySelector('.dropdown-label');
     const trigger = dropdown.querySelector('.dropdown-trigger');
-    
+
     let targetItem = dropdown.querySelector(`.dropdown-item[data-value="${valueToSelect}"]`);
     if (!targetItem) targetItem = dropdown.querySelector('.dropdown-item[data-value="all"]');
 
     if (targetItem) {
         items.forEach(i => i.classList.remove('selected'));
         targetItem.classList.add('selected');
-        label.textContent = targetItem.textContent.trim();
+        if (label) label.textContent = targetItem.textContent.trim();
         dropdown.dataset.value = targetItem.dataset.value;
-        trigger.classList.remove('active');
+        if (trigger) trigger.classList.remove('active');
     }
 }
 
@@ -338,82 +358,142 @@ function initFilters() {
     initCustomDropdowns();
 
     const quickTags = document.querySelectorAll('.filter-tag');
-    
-    // Iniciar por defecto en "Este año" (year)
+
     applyFilterLogic('year');
+    updateCountBadge();
 
     quickTags.forEach(tag => {
         tag.addEventListener('click', () => {
             quickTags.forEach(t => t.classList.remove('active'));
             tag.classList.add('active');
-            
             resetCustomDropdown('dropdown-month', 'all');
             resetCustomDropdown('dropdown-year', 'all');
-            
             applyFilterLogic(tag.dataset.filter);
+            updateCountBadge();
         });
     });
 }
 
 function triggerDropdownFilter() {
     const dropMonth = document.getElementById('dropdown-month');
-    const dropYear = document.getElementById('dropdown-year');
-    
+    const dropYear  = document.getElementById('dropdown-year');
+
     const mVal = dropMonth ? dropMonth.dataset.value : 'all';
-    const yVal = dropYear ? dropYear.dataset.value : 'all';
+    const yVal = dropYear  ? dropYear.dataset.value  : 'all';
 
     if (dropMonth) {
         const trigger = dropMonth.querySelector('.dropdown-trigger');
-        mVal !== 'all' ? trigger.classList.add('active') : trigger.classList.remove('active');
+        if (trigger) mVal !== 'all' ? trigger.classList.add('active') : trigger.classList.remove('active');
     }
     if (dropYear) {
         const trigger = dropYear.querySelector('.dropdown-trigger');
-        yVal !== 'all' ? trigger.classList.add('active') : trigger.classList.remove('active');
+        if (trigger) yVal !== 'all' ? trigger.classList.add('active') : trigger.classList.remove('active');
     }
 
     applyFilterLogic('custom');
+    updateCountBadge();
 }
 
 function applyFilterLogic(mode) {
     const dropMonth = document.getElementById('dropdown-month');
-    const dropYear = document.getElementById('dropdown-year');
+    const dropYear  = document.getElementById('dropdown-year');
     const now = new Date();
+
+    // También aplicar búsqueda de texto si hay algo escrito
+    const search = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
 
     document.querySelectorAll('#history-list .history-group').forEach(group => {
         const card = group.querySelector('.history-item');
         if (!card) return;
 
-        const dateStr = card.dataset.fecha; 
-        const fecha = new Date(dateStr + 'T00:00:00');
+        const dateStr = card.dataset.fecha;
+        const fecha   = new Date(dateStr + 'T00:00:00');
         let show = true;
 
         if (mode === 'all') {
             show = true;
         } else if (mode === 'week') {
-            const sw = new Date(now); 
-            sw.setDate(now.getDate() - now.getDay()); 
-            sw.setHours(0,0,0,0);
+            const sw = new Date(now);
+            sw.setDate(now.getDate() - now.getDay());
+            sw.setHours(0, 0, 0, 0);
             show = (fecha >= sw);
         } else if (mode === 'month') {
             show = (fecha.getMonth() === now.getMonth() && fecha.getFullYear() === now.getFullYear());
         } else if (mode === 'year') {
             show = (fecha.getFullYear() === now.getFullYear());
         } else if (mode === 'custom') {
-            const selectedYear = dropYear ? dropYear.dataset.value : 'all';
+            const selectedYear  = dropYear  ? dropYear.dataset.value  : 'all';
             const selectedMonth = dropMonth ? dropMonth.dataset.value : 'all';
-
-            const cardYear = dateStr.substring(0, 4);
+            const cardYear  = dateStr.substring(0, 4);
             const cardMonth = dateStr.substring(5, 7);
-
-            let matchYear = (selectedYear === 'all') ? true : (cardYear === selectedYear);
-            let matchMonth = (selectedMonth === 'all') ? true : (cardMonth === selectedMonth);
-
+            const matchYear  = selectedYear  === 'all' || cardYear  === selectedYear;
+            const matchMonth = selectedMonth === 'all' || cardMonth === selectedMonth;
             show = matchYear && matchMonth;
         }
 
-        if (show) group.classList.remove('hidden');
-        else group.classList.add('hidden');
+        // Aplicar filtro de búsqueda de texto encima del filtro de fecha
+        if (show && search) {
+            const texto = (card.querySelector('h4')?.textContent || '').toLowerCase() +
+                          (card.querySelector('.history-place')?.textContent || '').toLowerCase();
+            if (!texto.includes(search)) show = false;
+        }
+
+        group.classList.toggle('hidden', !show);
     });
+
+    updateCountBadge();
+}
+
+// ============================================
+// BÚSQUEDA EN TIEMPO REAL
+// ============================================
+function initSearch() {
+    const input = document.getElementById('search-input');
+    if (!input) return;
+    input.addEventListener('input', () => {
+        // Reutiliza el modo activo actual para no romper los filtros de fecha
+        const activeTag = document.querySelector('.filter-tag.active');
+        const mode = activeTag ? activeTag.dataset.filter : 'all';
+
+        // Si hay dropdowns con valor específico, usar modo custom
+        const dropMonth = document.getElementById('dropdown-month');
+        const dropYear  = document.getElementById('dropdown-year');
+        const hasCustom = (dropMonth?.dataset.value !== 'all') || (dropYear?.dataset.value !== 'all');
+
+        applyFilterLogic(hasCustom ? 'custom' : mode);
+    });
+}
+
+// ============================================
+// CONTADOR DE RESULTADOS
+// ============================================
+function updateCountBadge() {
+    const badge   = document.getElementById('count-badge');
+    if (!badge) return;
+    const visible = document.querySelectorAll('#history-list .history-group:not(.hidden)').length;
+    badge.textContent = visible;
+
+    // Estado vacío dinámico
+    const list = document.getElementById('history-list');
+    if (!list) return;
+    let emptyState = list.querySelector('.empty-state');
+
+    if (visible === 0) {
+        if (!emptyState) {
+            emptyState = document.createElement('div');
+            emptyState.className = 'empty-state';
+            emptyState.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+                </svg>
+                <p>No se encontraron informes</p>`;
+            list.appendChild(emptyState);
+        }
+    } else if (emptyState) {
+        emptyState.remove();
+    }
 }
 
 // ============================================
@@ -443,13 +523,19 @@ function validarCamposObligatorios(form) {
 // INIT PRINCIPAL
 // ============================================
 document.addEventListener('DOMContentLoaded', function () {
+    // Modo rendimiento — leer localStorage y aplicar clase al body
+    if (localStorage.getItem('performanceMode') === 'true') {
+        document.body.classList.add('performance-mode');
+    }
+
     generateCalendar();
     initHeaderInputs();
     setTodayDate();
     toggleRemoveButton();
-    
+
     initSort();
     initFilters();
+    initSearch();
 
     const btnAdd = document.getElementById('btn-add-row');
     if (btnAdd) btnAdd.addEventListener('click', addRow);
@@ -475,10 +561,10 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.btn-form[data-action="pdf_download"], .btn-form[data-action="pdf_print"]').forEach(btn => {
         btn.addEventListener('click', function () {
             if (!form || !validarCamposObligatorios(form)) return;
-            const action = this.dataset.action;
+            const action   = this.dataset.action;
             const formData = new FormData(form);
             formData.set('_action', action);
-            
+
             fetch(ROUTE_PREVIEW_PDF, { method: 'POST', body: formData, headers: { 'X-CSRF-TOKEN': CSRF_TOKEN } })
                 .then(res => { if (!res.ok) throw new Error(); return res.blob(); })
                 .then(blob => {
@@ -493,9 +579,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     if (form) {
-        form.addEventListener('submit', () => { 
+        form.addEventListener('submit', () => {
             const actionInput = document.getElementById('form-action');
-            if (actionInput) actionInput.value = 'save'; 
+            if (actionInput) actionInput.value = 'save';
         });
     }
 });

@@ -177,36 +177,6 @@ class FormPdfService
             .summary-box strong {
                 color: #b71c50;
             }
-
-            /* ── Firma / validación ── */
-            .signature-section {
-                margin-top: 36px;
-            }
-            .signature-section table {
-                width: 100%;
-                border: none;
-                margin: 0;
-            }
-            .signature-section td {
-                border: none;
-                text-align: center;
-                padding: 0 20px;
-                font-size: 10px;
-                color: #444;
-            }
-            .sig-line {
-                border-top: 1px solid #555;
-                margin: 0 auto 6px auto;
-                width: 160px;
-            }
-            .sig-label {
-                font-weight: bold;
-                color: #222;
-            }
-            .sig-sub {
-                color: #888;
-                font-size: 9px;
-            }
         </style>
         ';
 
@@ -289,29 +259,6 @@ class FormPdfService
             Período: desde <strong>' . ($forms->min('fecha_envio') ? date('d/m/Y', strtotime($forms->min('fecha_envio'))) : '—') . '</strong>
             hasta <strong>' . ($forms->max('fecha_envio') ? date('d/m/Y', strtotime($forms->max('fecha_envio'))) : '—') . '</strong> &nbsp;|&nbsp;
             Documento emitido el <strong>' . $fechaGeneracion . ' hrs</strong>
-        </div>
-
-        <!-- Sección de firmas -->
-        <div class="signature-section">
-            <table>
-                <tr>
-                    <td>
-                        <div class="sig-line"></div>
-                        <div class="sig-label">Elaboró</div>
-                        <div class="sig-sub">Administrador del Sistema</div>
-                    </td>
-                    <td>
-                        <div class="sig-line"></div>
-                        <div class="sig-label">Revisó</div>
-                        <div class="sig-sub">Coordinación General</div>
-                    </td>
-                    <td>
-                        <div class="sig-line"></div>
-                        <div class="sig-label">Autorizó</div>
-                        <div class="sig-sub">Dirección · Ajal-Lol A.C.</div>
-                    </td>
-                </tr>
-            </table>
         </div>
         ';
 

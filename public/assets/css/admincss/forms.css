@@ -352,7 +352,7 @@ body.reduce-animations *::after {
 }
 
 .admin-table thead {
-    background: linear-gradient(to bottom, var(--th-bg) 0%, var(--bg-alt) 100%);
+    /* background: linear-gradient(to bottom, var(--th-bg) 0%, var(--bg-alt) 100%); */
     border-bottom: 2px solid var(--primary);
     transition: background 0.3s;
 }
@@ -1140,7 +1140,6 @@ tr:hover .date-badge {
     .action-buttons { gap: 5px; }
 }
 
-
 /* ==================== TABLET GENERAL (≤ 1024px) ==================== */
 
 @media (max-width: 1024px) {
@@ -1159,6 +1158,12 @@ tr:hover .date-badge {
     .header-content h2 { font-size: 24px; }
     .stat-card         { padding: 16px 20px; }
     .stat-number       { font-size: 28px; }
+
+    .table-container { 
+        background: transparent !important; 
+        border: none !important; 
+        box-shadow: none !important; 
+    }
 
     .table-wrapper { overflow-x: hidden; width: 100%; }
     .admin-table   { min-width: 100% !important; table-layout: auto; }

@@ -9,37 +9,49 @@
 @section('content')
 <div class="reports-container">
 
-    {{-- ── Flash ── --}}
     @if(session('success'))
-        <div class="alert-success" id="flash-msg"
-             style="background:#d1fae5;color:#065f46;padding:1rem 1.5rem;border-radius:12px;margin-bottom:1.5rem;font-weight:600;">
+        <div id="flash-msg"
+             style="background:#d1fae5;color:#065f46;padding:0.85rem 1.25rem;border-radius:10px;margin-bottom:1.25rem;font-weight:600;font-size:0.9rem;">
             {{ session('success') }}
         </div>
     @endif
 
-    <!-- VISTA 1: Calendario -->
+    {{-- ════════════════════════════════════════
+         VISTA 1: Calendario
+         Desktop: [Calendario] | [Botones ↓ Notas]
+         Móvil:   Botones → Calendario → Notas
+    ════════════════════════════════════════ --}}
     <div id="calendar-view" class="view-section active">
-        <div class="reports-header">
-            <div class="header-actions">
-                <button class="btn-action btn-create" onclick="showCreateView()">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="3" y="6" width="18" height="15" rx="2" stroke="currentColor" stroke-width="2"/>
-                        <path d="M3 10H21M8 3V6M16 3V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M12 14V18M10 16H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    Crear nuevo informe
-                </button>
-                <button class="btn-action btn-history" onclick="showHistoryView()">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 8V12L14.5 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M3.05 11C3.55 6.5 7.36 3 12 3C16.97 3 21 7.03 21 12C21 16.97 16.97 21 12 21C8.41 21 5.32 19.18 3.64 16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M3 16H7V20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    Historial
-                </button>
+
+        {{-- Columna derecha: Botones + Notas (en móvil van arriba por order CSS) --}}
+        <div class="calendar-right-col">
+            <button class="btn-action btn-create" onclick="showCreateView()">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="6" width="18" height="15" rx="2" stroke="currentColor" stroke-width="2"/>
+                    <path d="M3 10H21M8 3V6M16 3V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M12 14V18M10 16H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Crear nuevo informe
+            </button>
+            <button class="btn-action btn-history" onclick="showHistoryView()">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 8V12L14.5 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M3.05 11C3.55 6.5 7.36 3 12 3C16.97 3 21 7.03 21 12C21 16.97 16.97 21 12 21C8.41 21 5.32 19.18 3.64 16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M3 16H7V20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Historial
+            </button>
+
+            {{-- Notas — debajo de los botones en desktop, debajo del calendario en móvil --}}
+            <div class="calendar-notes-panel">
+                <h4>NOTAS</h4>
+                <p id="selected-date-notes" class="notes-content">
+                    Selecciona una fecha para ver los eventos
+                </p>
             </div>
         </div>
 
+        {{-- Calendario --}}
         <div class="calendar-wrapper">
             <div class="calendar-header">
                 <button class="btn-nav" onclick="previousMonth()">
@@ -54,47 +66,40 @@
                     </svg>
                 </button>
             </div>
-
-            <div class="calendar-grid">
-                <div class="calendar-days">
-                    <div class="day-header"><span class="day-full">Lunes</span><span class="day-short">L</span></div>
-                    <div class="day-header"><span class="day-full">Martes</span><span class="day-short">M</span></div>
-                    <div class="day-header"><span class="day-full">Miércoles</span><span class="day-short">X</span></div>
-                    <div class="day-header"><span class="day-full">Jueves</span><span class="day-short">J</span></div>
-                    <div class="day-header"><span class="day-full">Viernes</span><span class="day-short">V</span></div>
-                    <div class="day-header"><span class="day-full">Sábado</span><span class="day-short">S</span></div>
-                    <div class="day-header"><span class="day-full">Domingo</span><span class="day-short">D</span></div>
-                </div>
-                <div id="calendar-dates" class="calendar-dates"></div>
+            <div class="calendar-days">
+                <div class="day-header"><span class="day-full">Lunes</span><span class="day-short">L</span></div>
+                <div class="day-header"><span class="day-full">Martes</span><span class="day-short">M</span></div>
+                <div class="day-header"><span class="day-full">Miércoles</span><span class="day-short">X</span></div>
+                <div class="day-header"><span class="day-full">Jueves</span><span class="day-short">J</span></div>
+                <div class="day-header"><span class="day-full">Viernes</span><span class="day-short">V</span></div>
+                <div class="day-header"><span class="day-full">Sábado</span><span class="day-short">S</span></div>
+                <div class="day-header"><span class="day-full">Domingo</span><span class="day-short">D</span></div>
             </div>
-
-            <div class="calendar-notes">
-                <h4>NOTAS</h4>
-                <div id="selected-date-notes" class="notes-content">
-                    Selecciona una fecha para ver los eventos
-                </div>
-            </div>
+            <div id="calendar-dates" class="calendar-dates"></div>
         </div>
-    </div>
 
-    <!-- VISTA 2: Crear Informe -->
+    </div>{{-- /#calendar-view --}}
+
+
+    {{-- ════════════════════════════════════════
+         VISTA 2: Crear Informe
+    ════════════════════════════════════════ --}}
     <div id="create-view" class="view-section">
         <div class="reports-header">
+            {{-- Botón volver mejorado --}}
             <button class="btn-back" onclick="showCalendarView()">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
+                <span>Volver</span>
             </button>
-            <h2>Informe - crear nuevo informe</h2>
+            <h2>Nuevo informe</h2>
         </div>
 
         @if($errors->any())
-            <div id="validation-errors"
-                 style="background:#fee2e2;color:#991b1b;padding:1rem 1.5rem;border-radius:12px;margin-bottom:1.5rem;">
+            <div style="background:#fee2e2;color:#991b1b;padding:0.85rem 1.25rem;border-radius:10px;margin-bottom:1rem;font-size:0.88rem;">
                 <ul style="margin:0;padding-left:1.2rem;">
-                    @foreach($errors->all() as $e)
-                        <li>{{ $e }}</li>
-                    @endforeach
+                    @foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach
                 </ul>
             </div>
         @endif
@@ -104,13 +109,15 @@
             <input type="hidden" name="_action" id="form-action" value="save">
 
             <div class="create-form">
+
                 <div class="form-row">
+                    {{-- Nombre org. — readonly, solo lápiz --}}
                     <div class="form-group">
                         <label>Nombre de la organización</label>
                         <div class="input-with-icon">
                             <input type="text" name="nombre_organizacion"
                                    value="{{ old('nombre_organizacion', 'Ajal-lol AC') }}" required>
-                            <button type="button" class="btn-edit-input" onclick="toggleEdit(this)">
+                            <button type="button" class="btn-edit-input" onclick="toggleEdit(this)" title="Editar">
                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
@@ -118,54 +125,47 @@
                         </div>
                     </div>
 
+                    {{-- Evento — libre, sin lápiz --}}
                     <div class="form-group">
                         <label>Evento</label>
                         <div class="input-with-icon">
                             <input type="text" name="evento"
                                    value="{{ old('evento') }}" required placeholder="Nombre del evento">
-                            <button type="button" class="btn-edit-input" onclick="toggleEdit(this)">
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </button>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-row">
+                    {{-- Lugar — libre, sin lápiz --}}
                     <div class="form-group">
                         <label>Lugar</label>
                         <div class="input-with-icon">
                             <input type="text" name="lugar"
                                    value="{{ old('lugar') }}" required placeholder="Ciudad, Estado">
-                            <button type="button" class="btn-edit-input" onclick="toggleEdit(this)">
+                        </div>
+                    </div>
+
+                    {{-- Fecha — readonly, solo lápiz. JS pone hoy al cargar --}}
+                    <div class="form-group">
+                        <label>Fecha</label>
+                        <div class="input-with-icon">
+                            <input type="date" name="fecha" value="{{ old('fecha') }}" required>
+                            <button type="button" class="btn-edit-input" onclick="toggleEdit(this)" title="Editar fecha">
                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </button>
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <label>Fecha</label>
-                        <div class="input-with-icon">
-                            <input type="date" name="fecha"
-                                   value="{{ old('fecha') }}" required>
-                            <button type="button" class="btn-calendar">
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="3" y="6" width="18" height="15" rx="2" stroke="currentColor" stroke-width="2"/>
-                                    <path d="M3 10H21M8 3V6M16 3V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
                 </div>
 
+                {{-- Tabla de beneficiarios --}}
                 <div class="table-section">
                     <div class="table-header">
-                        <div class="table-col">Número</div>
-                        <div class="table-col">Personas beneficiarias</div>
+                        <div class="table-col">Nº</div>
+                        <div class="table-col">Persona beneficiaria</div>
                         <div class="table-col">CURP</div>
+                        <div class="table-col col-delete"></div>
                     </div>
                     <div class="table-body" id="beneficiaries-table">
                         @php $oldBenef = old('beneficiarios', array_fill(0, 6, ['nombre'=>'','curp'=>''])); @endphp
@@ -181,27 +181,28 @@
                                        placeholder="CURP" value="{{ $b['curp'] ?? '' }}"
                                        maxlength="18" style="text-transform:uppercase">
                             </div>
+                            {{-- .cell-delete lo inyecta JS --}}
                         </div>
                         @endforeach
                     </div>
-                    <button type="button" id="btn-add-row"
-                            style="width:100%;padding:0.85rem;border:2px dashed var(--rpt-border);background:transparent;border-radius:0 0 14px 14px;cursor:pointer;font-weight:600;color:var(--rpt-text-muted);transition:all .3s;">
-                        + Agregar beneficiario
-                    </button>
+                    <div class="table-footer-actions">
+                        <button type="button" id="btn-add-row" class="btn-table-action add">
+                            + Agregar beneficiario
+                        </button>
+                        <button type="button" id="btn-remove-row" class="btn-table-action remove">
+                            - Quitar último
+                        </button>
+                    </div>
                 </div>
 
                 <div class="form-actions">
-                    <a href="{{ route('admin.reports.blank') }}"
-                       class="btn-form btn-blank"
-                       title="Descargar formato vacío">
+                    <a href="{{ route('admin.reports.blank') }}" class="btn-form btn-blank">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M14 2V8H20M8 13H16M8 17H12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                         </svg>
                         Solo formato
                     </a>
-
-                    {{-- Exportar: genera PDF sin guardar, descarga --}}
                     <button type="button" class="btn-form btn-export" data-action="pdf_download">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -209,8 +210,6 @@
                         </svg>
                         Exportar
                     </button>
-
-                    {{-- Imprimir: genera PDF sin guardar, abre en nueva pestaña --}}
                     <button type="button" class="btn-form btn-print" data-action="pdf_print">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M6 9V2H18V9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -219,9 +218,7 @@
                         </svg>
                         Imprimir
                     </button>
-
-                    {{-- Guardar: submit normal → store() → guarda en BD --}}
-                    <button type="submit" class="btn-form btn-save" data-action="save">
+                    <button type="submit" class="btn-form btn-save">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16L21 8V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M17 21V13H7V21M7 3V8H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -233,13 +230,17 @@
         </form>
     </div>
 
-    <!-- VISTA 3: Historial -->
+
+    {{-- ════════════════════════════════════════
+         VISTA 3: Historial
+    ════════════════════════════════════════ --}}
     <div id="history-view" class="view-section">
         <div class="reports-header">
             <button class="btn-back" onclick="showCalendarView()">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
+                <span>Volver</span>
             </button>
             <h2>Historial</h2>
             <div class="history-filters">
@@ -254,15 +255,16 @@
             <div class="history-group">
                 <div class="history-item {{ $index % 2 === 0 ? 'highlight' : 'accent' }}"
                      data-fecha="{{ $report->fecha }}"
-                     data-id="{{ $report->id_informe }}"
-                     style="cursor:pointer">
+                     data-id="{{ $report->id_informe }}">
                     <div class="history-content">
-                        <h4>{{ Str::limit($report->evento, 45) }}</h4>
-                        <span class="history-date">{{ \Carbon\Carbon::parse($report->fecha)->format('d/m/Y') }}</span>
+                        <h4>{{ Str::limit($report->evento, 50) }}</h4>
+                        <span class="history-date">
+                            {{ \Carbon\Carbon::parse($report->fecha)->format('d/m/Y') }}
+                            @if($report->lugar) · {{ Str::limit($report->lugar, 30) }} @endif
+                        </span>
                     </div>
                     <a href="{{ route('admin.reports.pdf', $report->id_informe) }}"
-                       class="btn-print-small"
-                       title="Descargar PDF"
+                       class="btn-print-small" title="Descargar PDF"
                        onclick="event.stopPropagation()">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M6 9V2H18V9" stroke="currentColor" stroke-width="2"/>
@@ -273,12 +275,13 @@
                 </div>
             </div>
             @empty
-            <p style="color:var(--rpt-text-muted);text-align:center;padding:2rem;">
+            <p style="color:var(--rpt-text-muted);text-align:center;padding:2.5rem 1rem;">
                 No hay informes registrados aún.
             </p>
             @endforelse
         </div>
     </div>
+
 </div>
 
 <!-- MODAL -->
@@ -302,7 +305,7 @@
                 <path d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
             </svg>
-            Ver más
+            Ver PDF
         </a>
         <a id="btn-modal-pdf" href="#" class="btn-modal btn-modal-print">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -321,12 +324,11 @@
     </div>
 </div>
 
-{{-- Variables para reports.js --}}
 <script>
-    const eventsFromDB       = @json($events->toArray());
-    const ROUTE_BASE         = "{{ url('admin/report') }}";
-    const CSRF_TOKEN         = "{{ csrf_token() }}";
-    const ROUTE_PREVIEW_PDF  = "{{ route('admin.reports.previewPdf') }}";
+    const eventsFromDB      = @json($events->toArray());
+    const ROUTE_BASE        = "{{ url('admin/report') }}";
+    const CSRF_TOKEN        = "{{ csrf_token() }}";
+    const ROUTE_PREVIEW_PDF = "{{ route('admin.reports.previewPdf') }}";
 
     @if($errors->any())
         document.addEventListener('DOMContentLoaded', () => showCreateView());
@@ -334,13 +336,8 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         const flash = document.getElementById('flash-msg');
-        if (flash)
-            setTimeout(() => {
-                flash.style.transition = 'opacity .5s';
-                flash.style.opacity = '0';
-            }, 3000);
+        if (flash) setTimeout(() => { flash.style.transition = 'opacity .5s'; flash.style.opacity = '0'; }, 3000);
     });
 </script>
-
 <script src="{{ asset('assets/js/reports.js') }}"></script>
 @endsection

@@ -207,7 +207,7 @@ function previousMonth() { if (--currentMonth < 0) { currentMonth = 11; currentY
 function nextMonth() { if (++currentMonth > 11) { currentMonth = 0; currentYear++; } generateCalendar(); }
 
 // ============================================
-// SISTEMA DE ORDENAMIENTO (NUEVO)
+// SISTEMA DE ORDENAMIENTO
 // ============================================
 function initSort() {
     const btnSort = document.getElementById('btn-sort-date');
@@ -215,21 +215,20 @@ function initSort() {
 
     btnSort.addEventListener('click', () => {
         const currentOrder = btnSort.dataset.order;
-        const newOrder = currentOrder === 'desc' ? 'asc' : 'desc'; // Alterna
+        const newOrder = currentOrder === 'desc' ? 'asc' : 'desc'; 
         btnSort.dataset.order = newOrder;
         
-        // Cambiar el texto y el dibujo del ícono según el orden
         const span = btnSort.querySelector('#sort-text');
         const path = btnSort.querySelector('.sort-icon-path');
         
         if (newOrder === 'desc') {
             span.textContent = 'Recientes';
-            path.setAttribute('d', 'M4 6h16M4 12h10M4 18h4'); // Líneas de mayor a menor
+            path.setAttribute('d', 'M4 6h16M4 12h10M4 18h4');
             btnSort.classList.remove('active');
         } else {
             span.textContent = 'Antiguos';
-            path.setAttribute('d', 'M4 18h16M4 12h10M4 6h4'); // Líneas de menor a mayor
-            btnSort.classList.add('active'); // Se pone morado cuando está en modo "Antiguos"
+            path.setAttribute('d', 'M4 18h16M4 12h10M4 6h4');
+            btnSort.classList.add('active');
         }
 
         sortHistoryList(newOrder);
@@ -240,7 +239,6 @@ function sortHistoryList(order) {
     const list = document.getElementById('history-list');
     const groups = Array.from(list.querySelectorAll('.history-group'));
     
-    // Ordenar las tarjetas en memoria
     groups.sort((a, b) => {
         const itemA = a.querySelector('.history-item');
         const itemB = b.querySelector('.history-item');
@@ -252,10 +250,8 @@ function sortHistoryList(order) {
         return order === 'desc' ? dateB - dateA : dateA - dateB;
     });
 
-    // Reinsertarlas en el DOM en el nuevo orden y corregir los colores alternados
     groups.forEach((group, index) => {
         list.appendChild(group);
-        
         const item = group.querySelector('.history-item');
         if (item) {
             item.classList.remove('highlight', 'accent');
@@ -265,21 +261,17 @@ function sortHistoryList(order) {
 }
 
 // ============================================
-// FILTROS AVANZADOS
+// PANEL DE FILTROS COLAPSABLE Y LÓGICA
 // ============================================
-let currentFilterState = 'none'; 
+function initPanelToggle() {
+    const btnToggle = document.getElementById('btn-toggle-filters');
+    const panel = document.getElementById('filters-panel');
 
-function resetSelectsToCurrent() {
-    const selMonth = document.getElementById('dropdown-month');
-    const selYear = document.getElementById('dropdown-year');
-    
-    if (selMonth) {
-        let currentM = String(new Date().getMonth() + 1).padStart(2, '0');
-        resetCustomDropdown('dropdown-month', currentM);
-    }
-    if (selYear) {
-        let currentY = new Date().getFullYear().toString();
-        resetCustomDropdown('dropdown-year', currentY);
+    if (btnToggle && panel) {
+        btnToggle.addEventListener('click', () => {
+            panel.classList.toggle('open');
+            btnToggle.classList.toggle('active');
+        });
     }
 }
 
@@ -314,7 +306,9 @@ function initCustomDropdowns() {
                 label.textContent = item.textContent.trim();
                 dropdown.dataset.value = item.dataset.value;
                 dropdown.classList.remove('open');
-                triggerFiltersChange();
+                
+                document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+                triggerDropdownFilter();
             });
         });
     });
@@ -339,12 +333,31 @@ function resetCustomDropdown(dropdownId, valueToSelect) {
     }
 }
 
-function triggerFiltersChange() {
-    const btnWeek = document.getElementById('btn-filter-week');
+function initFilters() {
+    initPanelToggle();
+    initCustomDropdowns();
+
+    const quickTags = document.querySelectorAll('.filter-tag');
+    
+    // Iniciar por defecto en "Este año" (year)
+    applyFilterLogic('year');
+
+    quickTags.forEach(tag => {
+        tag.addEventListener('click', () => {
+            quickTags.forEach(t => t.classList.remove('active'));
+            tag.classList.add('active');
+            
+            resetCustomDropdown('dropdown-month', 'all');
+            resetCustomDropdown('dropdown-year', 'all');
+            
+            applyFilterLogic(tag.dataset.filter);
+        });
+    });
+}
+
+function triggerDropdownFilter() {
     const dropMonth = document.getElementById('dropdown-month');
     const dropYear = document.getElementById('dropdown-year');
-
-    if (btnWeek) btnWeek.classList.remove('active');
     
     const mVal = dropMonth ? dropMonth.dataset.value : 'all';
     const yVal = dropYear ? dropYear.dataset.value : 'all';
@@ -358,49 +371,10 @@ function triggerFiltersChange() {
         yVal !== 'all' ? trigger.classList.add('active') : trigger.classList.remove('active');
     }
 
-    if (mVal === 'all' && yVal === 'all') {
-        currentFilterState = 'none';
-        applyFilters('none');
-    } else {
-        currentFilterState = 'custom';
-        applyFilters('custom');
-    }
-    
-    const btnClear = document.getElementById('btn-clear-filters');
-    if (btnClear) btnClear.style.display = (currentFilterState === 'none') ? 'none' : 'block';
+    applyFilterLogic('custom');
 }
 
-function initFilters() {
-    initCustomDropdowns();
-    const btnWeek = document.getElementById('btn-filter-week');
-    const btnClear = document.getElementById('btn-clear-filters');
-
-    applyFilters('none'); 
-
-    if (btnWeek) {
-        btnWeek.addEventListener('click', () => {
-            if (currentFilterState === 'week') return; 
-            btnWeek.classList.add('active');
-            resetSelectsToCurrent();
-            currentFilterState = 'week';
-            applyFilters('week');
-            if (btnClear) btnClear.style.display = 'block';
-        });
-    }
-
-    if (btnClear) {
-        btnClear.addEventListener('click', () => {
-            if (btnWeek) btnWeek.classList.remove('active');
-            resetCustomDropdown('dropdown-month', 'all');
-            resetCustomDropdown('dropdown-year', 'all');
-            currentFilterState = 'none';
-            applyFilters('none');
-            btnClear.style.display = 'none';
-        });
-    }
-}
-
-function applyFilters(mode) {
+function applyFilterLogic(mode) {
     const dropMonth = document.getElementById('dropdown-month');
     const dropYear = document.getElementById('dropdown-year');
     const now = new Date();
@@ -413,11 +387,17 @@ function applyFilters(mode) {
         const fecha = new Date(dateStr + 'T00:00:00');
         let show = true;
 
-        if (mode === 'week') {
+        if (mode === 'all') {
+            show = true;
+        } else if (mode === 'week') {
             const sw = new Date(now); 
             sw.setDate(now.getDate() - now.getDay()); 
             sw.setHours(0,0,0,0);
             show = (fecha >= sw);
+        } else if (mode === 'month') {
+            show = (fecha.getMonth() === now.getMonth() && fecha.getFullYear() === now.getFullYear());
+        } else if (mode === 'year') {
+            show = (fecha.getFullYear() === now.getFullYear());
         } else if (mode === 'custom') {
             const selectedYear = dropYear ? dropYear.dataset.value : 'all';
             const selectedMonth = dropMonth ? dropMonth.dataset.value : 'all';
@@ -468,8 +448,8 @@ document.addEventListener('DOMContentLoaded', function () {
     setTodayDate();
     toggleRemoveButton();
     
+    initSort();
     initFilters();
-    initSort(); // Inicia la función del botón de ordenar
 
     const btnAdd = document.getElementById('btn-add-row');
     if (btnAdd) btnAdd.addEventListener('click', addRow);

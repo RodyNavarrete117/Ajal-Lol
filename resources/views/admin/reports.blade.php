@@ -243,7 +243,8 @@
                 <span>Volver</span>
             </button>
             <h2>Historial</h2>
-          @php
+
+            @php
                 $currentMonth = date('m');
                 $currentYear = date('Y');
 
@@ -263,53 +264,84 @@
                 ];
             @endphp
 
-            <div class="history-filters">
-                <button class="filter-btn" id="btn-filter-week">Esta semana</button>
-
-                <button class="filter-btn" id="btn-sort-date" data-order="desc" title="Ordenar por fecha">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
-                        <path class="sort-icon-path" d="M4 6h16M4 12h10M4 18h4"/>
-                    </svg>
-                    <span id="sort-text">Recientes</span>
-                </button>
-
-                <div class="custom-dropdown" id="dropdown-month">
-                    <button class="dropdown-trigger" type="button">
-                        <span class="dropdown-label">Todos los meses</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li class="dropdown-item" data-value="all">Todos los meses</li>
-                        @foreach($dbMonthsNum as $num)
-                            <li class="dropdown-item {{ $num == $currentMonth ? 'selected' : '' }}" data-value="{{ $num }}">
-                                {{ $nombresMeses[$num] }}
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-
-                <div class="custom-dropdown" id="dropdown-year">
-                    <button class="dropdown-trigger" type="button">
-                        <span class="dropdown-label">Todos los años</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li class="dropdown-item" data-value="all">Todos los años</li>
-                        @foreach($dbYears as $year)
-                            <li class="dropdown-item {{ $year == $currentYear ? 'selected' : '' }}" data-value="{{ $year }}">
-                                {{ $year }}
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
+            <div class="history-controls">
                 
-                <button class="filter-btn" id="btn-clear-filters" style="display:none;" title="Limpiar filtros">
-                    <svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px;stroke:currentColor;stroke-width:2;">
-                        <path d="M18 6L6 18M6 6L18 18" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
-            </div>
+                <div class="quick-filters desktop-only">
+                    <button class="filter-tag" data-filter="week">Esta semana</button>
+                    <button class="filter-tag" data-filter="month">Este mes</button>
+                    <button class="filter-tag active" data-filter="year">Este año</button>
+                    <button class="filter-tag" data-filter="all">Todos</button>
+                </div>
 
+                <div class="controls-right">
+                    <button class="filter-btn" id="btn-sort-date" data-order="desc" title="Ordenar por fecha">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+                            <path class="sort-icon-path" d="M4 6h16M4 12h10M4 18h4"/>
+                        </svg>
+                        <span id="sort-text">Recientes</span>
+                    </button>
+
+                    <button class="filter-btn" id="btn-toggle-filters" title="Mostrar opciones de filtrado">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                        <span>Filtros</span>
+                    </button>
+                </div>
+            </div>
+        </div> <div class="filters-panel" id="filters-panel">
+            <div class="filters-panel-inner">
+                
+                <div class="filters-section mobile-only">
+                    <span class="filters-label">Rápidos:</span>
+                    <div class="quick-filters">
+                        <button class="filter-tag" data-filter="week">Esta semana</button>
+                        <button class="filter-tag" data-filter="month">Este mes</button>
+                        <button class="filter-tag active" data-filter="year">Este año</button>
+                        <button class="filter-tag" data-filter="all">Todos</button>
+                    </div>
+                </div>
+
+                <div class="filters-divider mobile-only"></div>
+
+                <div class="filters-section">
+                    <span class="filters-label">Específicos:</span>
+                    <div class="custom-filters">
+                        <div class="custom-dropdown" id="dropdown-month">
+                            <button class="dropdown-trigger" type="button">
+                                <span class="dropdown-label">Todos los meses</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li class="dropdown-item" data-value="all">Todos los meses</li>
+                                @foreach($dbMonthsNum as $num)
+                                    <li class="dropdown-item" data-value="{{ $num }}">
+                                        {{ $nombresMeses[$num] }}
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+
+                        <div class="custom-dropdown" id="dropdown-year">
+                            <button class="dropdown-trigger" type="button">
+                                <span class="dropdown-label">Todos los años</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li class="dropdown-item" data-value="all">Todos los años</li>
+                                @foreach($dbYears as $year)
+                                    <li class="dropdown-item" data-value="{{ $year }}">
+                                        {{ $year }}
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
         <div class="history-list" id="history-list">
             @forelse($reports as $index => $report)
             <div class="history-group">

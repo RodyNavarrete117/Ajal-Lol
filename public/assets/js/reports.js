@@ -1,4 +1,9 @@
 // ============================================
+// FECHA SELECCIONADA EN CALENDARIO
+// ============================================
+let calendarSelectedDate = null; // null = usar fecha de hoy
+
+// ============================================
 // NAVEGACIÓN
 // ============================================
 function showCalendarView() {
@@ -6,15 +11,39 @@ function showCalendarView() {
     document.getElementById('create-view').classList.remove('active');
     document.getElementById('history-view').classList.remove('active');
 }
+
 function showCreateView() {
     document.getElementById('calendar-view').classList.remove('active');
     document.getElementById('create-view').classList.add('active');
     document.getElementById('history-view').classList.remove('active');
+
+    // Usar fecha seleccionada en calendario, o hoy si no hay ninguna
+    applyDateToForm(calendarSelectedDate);
 }
+
 function showHistoryView() {
     document.getElementById('calendar-view').classList.remove('active');
     document.getElementById('create-view').classList.remove('active');
     document.getElementById('history-view').classList.add('active');
+}
+
+// ============================================
+// APLICAR FECHA AL FORMULARIO
+// ============================================
+function applyDateToForm(dateStr) {
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, '0');
+    const d = String(today.getDate()).padStart(2, '0');
+    const fechaToUse = dateStr || `${y}-${m}-${d}`;
+
+    const h = document.getElementById('fecha_header');
+    const mob = document.getElementById('fecha_mobile');
+    const hid = document.getElementById('fecha');
+
+    if (h)   h.value   = fechaToUse;
+    if (mob) mob.value = fechaToUse;
+    if (hid) hid.value = fechaToUse;
 }
 
 // ============================================
@@ -40,13 +69,10 @@ function initHeaderInputs() {
 }
 
 function setTodayDate() {
-    const inputFecha = document.querySelector('[name="fecha"]');
-    if (!inputFecha || inputFecha.value) return;
-    const today = new Date();
-    const y = today.getFullYear();
-    const m = String(today.getMonth() + 1).padStart(2, '0');
-    const d = String(today.getDate()).padStart(2, '0');
-    inputFecha.value = `${y}-${m}-${d}`;
+    // Si hay old('fecha') en el servidor (formulario con errores), respetar ese valor
+    const hid = document.getElementById('fecha');
+    if (hid && hid.value) return; // ya viene con valor del servidor
+    applyDateToForm(calendarSelectedDate);
 }
 
 // ============================================
@@ -112,19 +138,16 @@ function openEventModal(id, title, date, lugar) {
 
     const fechaFormateada = formatDate(date);
 
-    // Hero
     document.getElementById('event-modal-title').textContent    = title;
     document.getElementById('event-modal-subtitle').textContent = fechaFormateada;
     document.getElementById('event-modal-lugar').textContent    = lugar || 'Sin especificar';
-
-    // Tarjetas de info
-    document.getElementById('modal-info-fecha').textContent = fechaFormateada;
-    document.getElementById('modal-info-lugar').textContent = lugar || 'Sin especificar';
+    document.getElementById('modal-info-fecha').textContent     = fechaFormateada;
+    document.getElementById('modal-info-lugar').textContent     = lugar || 'Sin especificar';
 
     const btnView = document.getElementById('btn-modal-view');
     const btnPdf  = document.getElementById('btn-modal-pdf');
     if (btnView) { btnView.href = `${ROUTE_BASE}/${id}/pdf`; btnView.target = '_blank'; }
-    if (btnPdf)  { btnPdf.href  = `${ROUTE_BASE}/${id}/pdf`; btnPdf.target = '_blank'; }
+    if (btnPdf)  { btnPdf.href  = `${ROUTE_BASE}/${id}/pdf`; btnPdf.target  = '_blank'; }
 
     document.getElementById('event-modal').classList.add('active');
     document.getElementById('event-overlay').classList.add('active');
@@ -165,15 +188,19 @@ function generateCalendar() {
     if (!container || !title) return;
     container.innerHTML = '';
     title.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+
     const firstDay    = new Date(currentYear, currentMonth, 1);
     const lastDay     = new Date(currentYear, currentMonth + 1, 0);
     const prevLast    = new Date(currentYear, currentMonth, 0);
     const startOffset = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
 
-    for (let i = startOffset; i > 0; i--) container.appendChild(createDayCell(prevLast.getDate() - i + 1, true));
-    for (let d = 1; d <= lastDay.getDate(); d++) container.appendChild(createDayCell(d, false));
+    for (let i = startOffset; i > 0; i--)
+        container.appendChild(createDayCell(prevLast.getDate() - i + 1, true));
+    for (let d = 1; d <= lastDay.getDate(); d++)
+        container.appendChild(createDayCell(d, false));
     const remaining = 42 - (startOffset + lastDay.getDate());
-    for (let d = 1; d <= remaining; d++) container.appendChild(createDayCell(d, true));
+    for (let d = 1; d <= remaining; d++)
+        container.appendChild(createDayCell(d, true));
 }
 
 function createDayCell(day, isOther) {
@@ -183,18 +210,35 @@ function createDayCell(day, isOther) {
 
     if (!isOther) {
         const key = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+
+        // Marcar día actual
+        const now = new Date();
+        const todayKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+        if (key === todayKey) div.classList.add('today');
+
+        // Marcar fecha seleccionada si coincide con este día
+        if (calendarSelectedDate === key) div.classList.add('selected');
+
         if (typeof eventsFromDB !== 'undefined' && eventsFromDB[key]) {
             const evt = eventsFromDB[key];
             div.classList.add('has-event');
             div.title = evt.title;
-            div.addEventListener('click', () => {
-                openEventModal(evt.id, evt.title, key, evt.lugar);
-                updateCalendarNotes(evt.title, key, evt.lugar);
+
+        div.addEventListener('click', () => {
+                // Si la fecha clickeada es la que YA estaba seleccionada, abrimos el modal
+                if (calendarSelectedDate === key) {
+                    openEventModal(evt.id, evt.title, key, evt.lugar);
+                } else {
+                    // Si es el primer clic, la marcamos como seleccionada y actualizamos las notas
+                    calendarSelectedDate = key;
+                    markSelectedDay(div);
+                    updateCalendarNotes(evt.title, key, evt.lugar);
+                }
             });
         } else {
             div.addEventListener('click', () => {
-                document.querySelectorAll('.calendar-date.selected').forEach(el => el.classList.remove('selected'));
-                div.classList.add('selected');
+                calendarSelectedDate = key;
+                markSelectedDay(div);
                 const notes = document.getElementById('selected-date-notes');
                 if (notes) notes.textContent = 'Sin eventos para ' + formatDate(key);
             });
@@ -203,16 +247,30 @@ function createDayCell(day, isOther) {
     return div;
 }
 
+// Quita .selected de todos y marca el actual
+function markSelectedDay(activeDiv) {
+    document.querySelectorAll('.calendar-date.selected').forEach(el => {
+        // Mantener .today si aplica
+        el.classList.remove('selected');
+    });
+    activeDiv.classList.add('selected');
+}
+
 function updateCalendarNotes(title, date, lugar) {
     const notes = document.getElementById('selected-date-notes');
     if (notes) {
         notes.innerHTML = `<strong>${title}</strong><br>${lugar} · ${formatDate(date)}`;
-        if (window.innerWidth < 768) notes.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 }
 
-function previousMonth() { if (--currentMonth < 0) { currentMonth = 11; currentYear--; } generateCalendar(); }
-function nextMonth()     { if (++currentMonth > 11) { currentMonth = 0;  currentYear++; } generateCalendar(); }
+function previousMonth() {
+    if (--currentMonth < 0) { currentMonth = 11; currentYear--; }
+    generateCalendar();
+}
+function nextMonth() {
+    if (++currentMonth > 11) { currentMonth = 0; currentYear++; }
+    generateCalendar();
+}
 
 // ============================================
 // SISTEMA DE ORDENAMIENTO
@@ -279,7 +337,6 @@ function initPanelToggle() {
 
     btnToggle.addEventListener('click', () => {
         if (panel.classList.contains('open')) {
-            // Salida animada: agregar closing, quitar open, luego limpiar
             panel.classList.add('closing');
             panel.classList.remove('open');
             btnToggle.classList.remove('active');
@@ -287,7 +344,6 @@ function initPanelToggle() {
                 panel.classList.remove('closing');
             }, { once: true });
         } else {
-            // Entrada: quitar closing por si quedó, agregar open
             panel.classList.remove('closing');
             panel.classList.add('open');
             btnToggle.classList.add('active');
@@ -326,7 +382,6 @@ function initCustomDropdowns() {
                 if (label) label.textContent = item.textContent.trim();
                 dropdown.dataset.value = item.dataset.value;
                 dropdown.classList.remove('open');
-
                 document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
                 triggerDropdownFilter();
             });
@@ -377,7 +432,6 @@ function initFilters() {
 function triggerDropdownFilter() {
     const dropMonth = document.getElementById('dropdown-month');
     const dropYear  = document.getElementById('dropdown-year');
-
     const mVal = dropMonth ? dropMonth.dataset.value : 'all';
     const yVal = dropYear  ? dropYear.dataset.value  : 'all';
 
@@ -398,8 +452,6 @@ function applyFilterLogic(mode) {
     const dropMonth = document.getElementById('dropdown-month');
     const dropYear  = document.getElementById('dropdown-year');
     const now = new Date();
-
-    // También aplicar búsqueda de texto si hay algo escrito
     const search = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
 
     document.querySelectorAll('#history-list .history-group').forEach(group => {
@@ -426,12 +478,10 @@ function applyFilterLogic(mode) {
             const selectedMonth = dropMonth ? dropMonth.dataset.value : 'all';
             const cardYear  = dateStr.substring(0, 4);
             const cardMonth = dateStr.substring(5, 7);
-            const matchYear  = selectedYear  === 'all' || cardYear  === selectedYear;
-            const matchMonth = selectedMonth === 'all' || cardMonth === selectedMonth;
-            show = matchYear && matchMonth;
+            show = (selectedYear  === 'all' || cardYear  === selectedYear) &&
+                   (selectedMonth === 'all' || cardMonth === selectedMonth);
         }
 
-        // Aplicar filtro de búsqueda de texto encima del filtro de fecha
         if (show && search) {
             const texto = (card.querySelector('h4')?.textContent || '').toLowerCase() +
                           (card.querySelector('.history-place')?.textContent || '').toLowerCase();
@@ -451,15 +501,11 @@ function initSearch() {
     const input = document.getElementById('search-input');
     if (!input) return;
     input.addEventListener('input', () => {
-        // Reutiliza el modo activo actual para no romper los filtros de fecha
         const activeTag = document.querySelector('.filter-tag.active');
         const mode = activeTag ? activeTag.dataset.filter : 'all';
-
-        // Si hay dropdowns con valor específico, usar modo custom
         const dropMonth = document.getElementById('dropdown-month');
         const dropYear  = document.getElementById('dropdown-year');
         const hasCustom = (dropMonth?.dataset.value !== 'all') || (dropYear?.dataset.value !== 'all');
-
         applyFilterLogic(hasCustom ? 'custom' : mode);
     });
 }
@@ -468,12 +514,11 @@ function initSearch() {
 // CONTADOR DE RESULTADOS
 // ============================================
 function updateCountBadge() {
-    const badge   = document.getElementById('count-badge');
+    const badge = document.getElementById('count-badge');
     if (!badge) return;
     const visible = document.querySelectorAll('#history-list .history-group:not(.hidden)').length;
     badge.textContent = visible;
 
-    // Estado vacío dinámico
     const list = document.getElementById('history-list');
     if (!list) return;
     let emptyState = list.querySelector('.empty-state');
@@ -520,10 +565,175 @@ function validarCamposObligatorios(form) {
 }
 
 // ============================================
+// AUTOCOMPLETE
+// ============================================
+const MUNICIPIOS_YUCATAN = [
+    "Abalá, Yucatán","Acanceh, Yucatán","Akil, Yucatán","Baca, Yucatán","Bokobá, Yucatán",
+    "Buctzotz, Yucatán","Cacalchén, Yucatán","Calotmul, Yucatán","Cansahcab, Yucatán",
+    "Cantamayec, Yucatán","Celestún, Yucatán","Cenotillo, Yucatán","Conkal, Yucatán",
+    "Cuncunul, Yucatán","Cuzamá, Yucatán","Chacsinkín, Yucatán","Chankom, Yucatán",
+    "Chapab, Yucatán","Chemax, Yucatán","Chicxulub Pueblo, Yucatán","Chichimilá, Yucatán",
+    "Chikindzonot, Yucatán","Chocholá, Yucatán","Chumayel, Yucatán","Dzán, Yucatán",
+    "Dzemul, Yucatán","Dzidzantún, Yucatán","Dzilam de Bravo, Yucatán",
+    "Dzilam González, Yucatán","Dzitás, Yucatán","Dzoncauich, Yucatán","Espita, Yucatán",
+    "Halachó, Yucatán","Hocabá, Yucatán","Hoctún, Yucatán","Homún, Yucatán","Huhí, Yucatán",
+    "Hunucmá, Yucatán","Ixil, Yucatán","Izamal, Yucatán","Kanasín, Yucatán",
+    "Kantunil, Yucatán","Kaua, Yucatán","Kinchil, Yucatán","Kopomá, Yucatán",
+    "Mama, Yucatán","Maní, Yucatán","Maxcanú, Yucatán","Mayapán, Yucatán","Mérida, Yucatán",
+    "Mocochá, Yucatán","Motul, Yucatán","Muna, Yucatán","Muxupip, Yucatán","Opichén, Yucatán",
+    "Oxkutzcab, Yucatán","Panabá, Yucatán","Peto, Yucatán","Pixoy, Yucatán","Progreso, Yucatán",
+    "Quintana Roo, Yucatán","Río Lagartos, Yucatán","Sacalum, Yucatán","Samahil, Yucatán",
+    "Sanahcat, Yucatán","San Felipe, Yucatán","Santa Elena, Yucatán","Seyé, Yucatán",
+    "Sinanché, Yucatán","Sotuta, Yucatán","Sucilá, Yucatán","Sudzal, Yucatán",
+    "Suma de Hidalgo, Yucatán","Tahdziú, Yucatán","Tahmek, Yucatán","Teabo, Yucatán",
+    "Tecoh, Yucatán","Tekal de Venegas, Yucatán","Tekantó, Yucatán","Tekax, Yucatán",
+    "Tekit, Yucatán","Tekom, Yucatán","Telchac Pueblo, Yucatán","Telchac Puerto, Yucatán",
+    "Temax, Yucatán","Temozón, Yucatán","Tepakán, Yucatán","Tetiz, Yucatán","Teya, Yucatán",
+    "Ticul, Yucatán","Timucuy, Yucatán","Tinum, Yucatán","Tixcacalcupul, Yucatán",
+    "Tixkokob, Yucatán","Tixmehuac, Yucatán","Tixpéhual, Yucatán","Tizimín, Yucatán",
+    "Tunkás, Yucatán","Tzucacab, Yucatán","Uayma, Yucatán","Ucú, Yucatán","Umán, Yucatán",
+    "Valladolid, Yucatán","Xocchel, Yucatán","Yaxcabá, Yucatán","Yaxkukul, Yucatán",
+    "Yobaín, Yucatán"
+];
+
+function initAutocomplete(inputId, dropdownId, getDbSuggestions, includeMunicipios) {
+    const input = document.getElementById(inputId);
+    const dropdown = document.getElementById(dropdownId);
+    if (!input || !dropdown) return;
+
+    let activeIndex = -1;
+    let currentItems = [];
+
+    function normalize(str) {
+        return str.toLowerCase()
+            .normalize('NFD').replace(/[̀-ͯ]/g, '');
+    }
+
+    function buildList(query) {
+        const q = normalize(query.trim());
+        if (!q) { closeDropdown(); return; }
+
+        const dbItems = getDbSuggestions()
+            .filter(s => s && normalize(s).includes(q))
+            .slice(0, 5);
+
+        const munItems = includeMunicipios
+            ? MUNICIPIOS_YUCATAN.filter(m =>
+                normalize(m).includes(q) &&
+                !dbItems.some(d => normalize(d) === normalize(m))
+              ).slice(0, 6)
+            : [];
+
+        if (!dbItems.length && !munItems.length) { closeDropdown(); return; }
+
+        dropdown.innerHTML = '';
+        currentItems = [];
+        activeIndex = -1;
+
+        if (dbItems.length) {
+            const lbl = document.createElement('li');
+            lbl.className = 'ac-section-label';
+            lbl.textContent = 'Registrados';
+            dropdown.appendChild(lbl);
+
+            dbItems.forEach(text => {
+                currentItems.push(text);
+                dropdown.appendChild(buildItem(text, 'db'));
+            });
+        }
+
+        if (munItems.length) {
+            const lbl = document.createElement('li');
+            lbl.className = 'ac-section-label';
+            lbl.textContent = 'Municipios de Yucatán';
+            dropdown.appendChild(lbl);
+
+            munItems.forEach(text => {
+                currentItems.push(text);
+                dropdown.appendChild(buildItem(text, 'mun'));
+            });
+        }
+
+        dropdown.classList.add('open');
+    }
+
+    function buildItem(text, type) {
+        const li = document.createElement('li');
+        li.className = 'ac-item';
+        const badge = type === 'db'
+            ? '<span class="ac-item-badge badge-db">BD</span>'
+            : '<span class="ac-item-badge badge-mun">Mun</span>';
+        li.innerHTML = `${badge}<span class="ac-item-text">${text}</span>`;
+        li.addEventListener('mousedown', e => {
+            e.preventDefault();
+            selectItem(text);
+        });
+        return li;
+    }
+
+    function selectItem(text) {
+        input.value = text;
+        closeDropdown();
+        input.focus();
+    }
+
+    function closeDropdown() {
+        dropdown.classList.remove('open');
+        dropdown.innerHTML = '';
+        currentItems = [];
+        activeIndex = -1;
+    }
+
+    function highlightItem(index) {
+        const items = dropdown.querySelectorAll('.ac-item');
+        items.forEach((el, i) => el.classList.toggle('ac-active', i === index));
+    }
+
+    input.addEventListener('input', () => buildList(input.value));
+    input.addEventListener('focus', () => { if (input.value) buildList(input.value); });
+    input.addEventListener('blur', () => setTimeout(closeDropdown, 150));
+
+    input.addEventListener('keydown', e => {
+        const items = dropdown.querySelectorAll('.ac-item');
+        if (!dropdown.classList.contains('open') || !items.length) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            activeIndex = Math.min(activeIndex + 1, items.length - 1);
+            highlightItem(activeIndex);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            activeIndex = Math.max(activeIndex - 1, 0);
+            highlightItem(activeIndex);
+        } else if (e.key === 'Enter' && activeIndex >= 0) {
+            e.preventDefault();
+            selectItem(currentItems[activeIndex]);
+        } else if (e.key === 'Escape') {
+            closeDropdown();
+        }
+    });
+}
+
+function initAllAutocompletes() {
+    // Evento: solo sugerencias de BD
+    initAutocomplete(
+        'input-evento', 'ac-evento',
+        () => (typeof DB_EVENTOS !== 'undefined' ? DB_EVENTOS : []),
+        false
+    );
+
+    // Lugar: BD + municipios de Yucatán
+    initAutocomplete(
+        'input-lugar', 'ac-lugar',
+        () => (typeof DB_LUGARES !== 'undefined' ? DB_LUGARES : []),
+        true
+    );
+}
+
+// ============================================
 // INIT PRINCIPAL
 // ============================================
 document.addEventListener('DOMContentLoaded', function () {
-    // Modo rendimiento — leer localStorage y aplicar clase al body
     if (localStorage.getItem('performanceMode') === 'true') {
         document.body.classList.add('performance-mode');
     }
@@ -536,6 +746,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initSort();
     initFilters();
     initSearch();
+    initAllAutocompletes();
 
     const btnAdd = document.getElementById('btn-add-row');
     if (btnAdd) btnAdd.addEventListener('click', addRow);

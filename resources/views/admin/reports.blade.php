@@ -80,6 +80,8 @@
          VISTA 2: Crear Informe
     ════════════════════════════════════════ --}}
     <div id="create-view" class="view-section">
+
+        {{-- HEADER: Volver + Título + Organización a la derecha (solo desktop) --}}
         <div class="reports-header">
             <button class="btn-back" onclick="showCalendarView()">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -88,6 +90,40 @@
                 <span>Volver</span>
             </button>
             <h2>Nuevo informe</h2>
+
+            {{-- Organización en header (desktop) --}}
+            <div class="header-org">
+                <label for="nombre_organizacion_header">Organización</label>
+                <div class="input-with-icon">
+                    <input type="text" id="nombre_organizacion_header"
+                           value="{{ old('nombre_organizacion', 'Ajal-lol AC') }}"
+                           readonly>
+                    <button type="button" class="btn-edit-input"
+                            onclick="toggleEditById('nombre_organizacion_header', 'nombre_organizacion')"
+                            title="Editar">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Fecha en header (desktop) --}}
+            <div class="header-fecha">
+                <label for="fecha_header">Fecha</label>
+                <div class="input-with-icon">
+                    <input type="date" id="fecha_header"
+                           value="{{ old('fecha') }}"
+                           readonly>
+                    <button type="button" class="btn-edit-input"
+                            onclick="toggleEditById('fecha_header', 'fecha')"
+                            title="Editar fecha">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
         </div>
 
         @if($errors->any())
@@ -101,60 +137,77 @@
         <form action="{{ route('admin.reports.store') }}" method="POST" id="create-report-form">
             @csrf
             <input type="hidden" name="_action" id="form-action" value="save">
+            {{-- Campo oculto que sincroniza con el input del header --}}
+            <input type="hidden" name="nombre_organizacion" id="nombre_organizacion"
+                   value="{{ old('nombre_organizacion', 'Ajal-lol AC') }}">
 
             <div class="create-form">
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Nombre de la organización</label>
-                        <div class="input-with-icon">
-                            <input type="text" name="nombre_organizacion"
-                                   value="{{ old('nombre_organizacion', 'Ajal-lol AC') }}" required>
-                            <button type="button" class="btn-edit-input" onclick="toggleEdit(this)" title="Editar">
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </button>
-                        </div>
+                {{-- Organización visible solo en móvil (dentro del form) --}}
+                <div class="form-group form-org-mobile" style="display:none; margin-bottom:0.9rem;">
+                    <label>Nombre de la organización</label>
+                    <div class="input-with-icon">
+                        <input type="text" id="nombre_organizacion_mobile"
+                               value="{{ old('nombre_organizacion', 'Ajal-lol AC') }}"
+                               readonly>
+                        <button type="button" class="btn-edit-input"
+                                onclick="toggleEditById('nombre_organizacion_mobile', 'nombre_organizacion')"
+                                title="Editar">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
                     </div>
+                </div>
 
+                {{-- Campo hidden fecha (sincronizado con header) --}}
+                <input type="hidden" name="fecha" id="fecha" value="{{ old('fecha') }}">
+
+                {{-- Fila única: Evento + Lugar (fecha está en el header en desktop, abajo en móvil) --}}
+                <div class="form-row-single">
                     <div class="form-group">
                         <label>Evento</label>
-                        <div class="input-with-icon">
-                            <input type="text" name="evento"
-                                   value="{{ old('evento') }}" required placeholder="Nombre del evento">
+                        <div class="autocomplete-wrapper">
+                            <input type="text" name="evento" id="input-evento" class="free-input"
+                                   value="{{ old('evento') }}" required placeholder="Nombre del evento"
+                                   autocomplete="off">
+                            <ul class="ac-dropdown" id="ac-evento"></ul>
                         </div>
                     </div>
-                </div>
 
-                <div class="form-row">
                     <div class="form-group">
                         <label>Lugar</label>
-                        <div class="input-with-icon">
-                            <input type="text" name="lugar"
-                                   value="{{ old('lugar') }}" required placeholder="Ciudad, Estado">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Fecha</label>
-                        <div class="input-with-icon">
-                            <input type="date" name="fecha" value="{{ old('fecha') }}" required>
-                            <button type="button" class="btn-edit-input" onclick="toggleEdit(this)" title="Editar fecha">
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </button>
+                        <div class="autocomplete-wrapper">
+                            <input type="text" name="lugar" id="input-lugar" class="free-input"
+                                   value="{{ old('lugar') }}" required placeholder="Ciudad, Estado"
+                                   autocomplete="off">
+                            <ul class="ac-dropdown" id="ac-lugar"></ul>
                         </div>
                     </div>
                 </div>
 
+                {{-- Fecha visible solo en móvil --}}
+                <div class="form-group form-fecha-mobile" style="display:none; margin-bottom:0.9rem;">
+                    <label>Fecha</label>
+                    <div class="input-with-icon">
+                        <input type="date" id="fecha_mobile"
+                               value="{{ old('fecha') }}" readonly>
+                        <button type="button" class="btn-edit-input"
+                                onclick="toggleEditById('fecha_mobile', 'fecha')"
+                                title="Editar fecha">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Tabla de beneficiarios (sin columna de eliminar) --}}
                 <div class="table-section">
                     <div class="table-header">
                         <div class="table-col">Nº</div>
                         <div class="table-col">Persona beneficiaria</div>
                         <div class="table-col">CURP</div>
-                        <div class="table-col col-delete"></div>
                     </div>
                     <div class="table-body" id="beneficiaries-table">
                         @php $oldBenef = old('beneficiarios', array_fill(0, 6, ['nombre'=>'','curp'=>''])); @endphp
@@ -178,7 +231,7 @@
                             + Agregar beneficiario
                         </button>
                         <button type="button" id="btn-remove-row" class="btn-table-action remove">
-                            - Quitar último
+                            − Quitar último
                         </button>
                     </div>
                 </div>
@@ -352,7 +405,6 @@
                      data-fecha="{{ $report->fecha }}"
                      data-id="{{ $report->id_informe }}">
 
-                    {{-- Ícono --}}
                     <div class="item-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="4" width="18" height="18" rx="2"/>
@@ -360,7 +412,6 @@
                         </svg>
                     </div>
 
-                    {{-- Contenido --}}
                     <div class="history-content">
                         <h4>{{ Str::limit($report->evento, 50) }}</h4>
                         <div class="history-meta-row">
@@ -383,7 +434,6 @@
                         </div>
                     </div>
 
-                    {{-- Botón PDF --}}
                     <div class="item-actions">
                         <a href="{{ route('admin.reports.pdf', $report->id_informe) }}"
                            class="btn-print-small" title="Descargar PDF"
@@ -395,7 +445,6 @@
                         </a>
                     </div>
 
-                    {{-- Flecha --}}
                     <div class="item-arrow">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M9 18l6-6-6-6"/>
@@ -428,10 +477,8 @@
         </svg>
     </button>
 
-    {{-- Hero con gradiente --}}
     <div class="event-modal-hero">
         <div class="modal-hero-icon">
-            {{-- Ícono de manos / evento --}}
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M18 11V7a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v4M14 9V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v5M10 10V5a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v9l-1-1a2 2 0 0 0-2.73.12l-.14.15 4 5.5A5 5 0 0 0 8 21h6a5 5 0 0 0 5-5v-5a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2z" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -443,7 +490,6 @@
                 <span id="event-modal-subtitle">—</span>
             </div>
             <div class="modal-chip" id="modal-chip-lugar">
-                {{-- Silueta de ciudad --}}
                 <svg viewBox="0 0 24 24" fill="none">
                     <path d="M2 20h20M4 20V10l5-4 5 4v10M14 20v-6h4v6M9 12h2M9 16h2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -452,7 +498,6 @@
         </div>
     </div>
 
-    {{-- Tarjetas de info --}}
     <div class="event-modal-body">
         <div class="modal-info-card">
             <div class="modal-info-icon">
@@ -492,7 +537,6 @@
         </div>
     </div>
 
-    {{-- Acciones --}}
     <div class="event-modal-actions">
         <a id="btn-modal-view" href="#" class="btn-modal btn-modal-view" target="_blank">
             <svg viewBox="0 0 24 24" fill="none">
@@ -522,6 +566,8 @@
 <script>
     const eventsFromDB      = @json($events->toArray());
     const ROUTE_BASE        = "{{ url('admin/report') }}";
+    const DB_EVENTOS        = @json($reports->pluck('evento')->unique()->values());
+    const DB_LUGARES        = @json($reports->pluck('lugar')->filter()->unique()->values());
     const CSRF_TOKEN        = "{{ csrf_token() }}";
     const ROUTE_PREVIEW_PDF = "{{ route('admin.reports.previewPdf') }}";
 
@@ -532,7 +578,82 @@
     document.addEventListener('DOMContentLoaded', () => {
         const flash = document.getElementById('flash-msg');
         if (flash) setTimeout(() => { flash.style.transition = 'opacity .5s'; flash.style.opacity = '0'; }, 3000);
+
+        // Sincronizar organización
+        const headerOrgInput  = document.getElementById('nombre_organizacion_header');
+        const mobileOrgInput  = document.getElementById('nombre_organizacion_mobile');
+        const hiddenOrgInput  = document.getElementById('nombre_organizacion');
+
+        function syncOrg(val) {
+            if (hiddenOrgInput) hiddenOrgInput.value = val;
+            if (headerOrgInput) headerOrgInput.value = val;
+            if (mobileOrgInput) mobileOrgInput.value = val;
+        }
+        if (headerOrgInput) headerOrgInput.addEventListener('input', () => syncOrg(headerOrgInput.value));
+        if (mobileOrgInput) mobileOrgInput.addEventListener('input', () => syncOrg(mobileOrgInput.value));
+
+        // Sincronizar fecha
+        const headerFechaInput = document.getElementById('fecha_header');
+        const mobileFechaInput = document.getElementById('fecha_mobile');
+        const hiddenFechaInput = document.getElementById('fecha');
+
+        function syncFecha(val) {
+            if (hiddenFechaInput) hiddenFechaInput.value = val;
+            if (headerFechaInput) headerFechaInput.value = val;
+            if (mobileFechaInput) mobileFechaInput.value = val;
+        }
+        // Si no hay valor (no hay old('fecha')), usar fecha de hoy
+        const today = new Date().toISOString().split('T')[0];
+        if (headerFechaInput && !headerFechaInput.value) headerFechaInput.value = today;
+        if (mobileFechaInput && !mobileFechaInput.value) mobileFechaInput.value = today;
+        if (hiddenFechaInput && !hiddenFechaInput.value) hiddenFechaInput.value = today;
+
+        if (headerFechaInput) headerFechaInput.addEventListener('change', () => syncFecha(headerFechaInput.value));
+        if (mobileFechaInput) mobileFechaInput.addEventListener('change', () => syncFecha(mobileFechaInput.value));
+
+        // Mostrar campos móvil según tamaño de pantalla
+        function applyMobileFields() {
+            const isMobile = window.innerWidth <= 768;
+            const orgMobile   = document.getElementById('nombre_organizacion_mobile');
+            const fechaMobile = document.querySelector('.form-fecha-mobile');
+            const headerOrg   = document.querySelector('.header-org');
+            const headerFecha = document.querySelector('.header-fecha');
+            if (orgMobile)   orgMobile.closest('.form-org-mobile').style.display   = isMobile ? 'flex' : 'none';
+            if (fechaMobile) fechaMobile.style.display = isMobile ? 'flex' : 'none';
+            if (headerOrg)   headerOrg.style.display   = isMobile ? 'none' : 'flex';
+            if (headerFecha) headerFecha.style.display  = isMobile ? 'none' : 'flex';
+        }
+        applyMobileFields();
+        window.addEventListener('resize', applyMobileFields);
     });
+
+    // Función para editar por id y sincronizar con campo hidden
+    function toggleEditById(inputId, hiddenId) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        const isReadonly = input.hasAttribute('readonly');
+        if (isReadonly) {
+            input.removeAttribute('readonly');
+            input.focus();
+        } else {
+            input.setAttribute('readonly', true);
+            const hidden = document.getElementById(hiddenId);
+            if (hidden) hidden.value = input.value;
+            // Sincronizar campos relacionados
+            if (hiddenId === 'nombre_organizacion') {
+                const h = document.getElementById('nombre_organizacion_header');
+                const m = document.getElementById('nombre_organizacion_mobile');
+                if (h) h.value = input.value;
+                if (m) m.value = input.value;
+            }
+            if (hiddenId === 'fecha') {
+                const h = document.getElementById('fecha_header');
+                const m = document.getElementById('fecha_mobile');
+                if (h) h.value = input.value;
+                if (m) m.value = input.value;
+            }
+        }
+    }
 </script>
 <script src="{{ asset('assets/js/reports.js') }}"></script>
 @endsection

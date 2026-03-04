@@ -7,24 +7,21 @@ use App\Http\Controllers\FormController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\NotificationController;
 
 /* Página pública */
 Route::get('/', fn() => view('index'));
 
-
 /* Login */
-Route::get('/login', fn() => view('login'))->name('login'); // Formulario
-Route::post('/login', [AuthController::class, 'login'])->name('login.post'); // Autenticación
-
+Route::get('/login', fn() => view('login'))->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
 /* Pantalla de carga */
 Route::get('/loading', fn() => view('loading'))->name('loading');
 
-
 /* Panel admin */
-Route::get('/admin/home', [HomeController::class, 'index'])->name('admin.home'); // Dashboard
-Route::get('/admin/page', fn() => view('admin.page')); // Vista prueba
-
+Route::get('/admin/home', [HomeController::class, 'index'])->name('admin.home');
+Route::get('/admin/page', fn() => view('admin.page'));
 
 /* ===== INFORMES ===== */
 Route::prefix('admin')->group(function () {
@@ -38,7 +35,6 @@ Route::prefix('admin')->group(function () {
     Route::get('/report/blank', [ReportsController::class, 'blankPdf'])
         ->name('admin.reports.blank');
 
-    // ← NUEVA RUTA (antes de las rutas con {id})
     Route::post('/report/preview-pdf', [ReportsController::class, 'previewPdf'])
         ->name('admin.reports.previewPdf');
 
@@ -61,69 +57,77 @@ Route::prefix('admin')->group(function () {
 /* Manual */
 Route::get('/admin/manual', fn() => view('admin.manual'));
 
-
 /* ===== FORMULARIOS ===== */
 Route::prefix('admin')->group(function () {
 
     Route::get('/forms', [FormController::class, 'index'])
-        ->name('admin.forms'); // Listado
+        ->name('admin.forms');
 
     Route::get('/forms/export', [FormController::class, 'export'])
-        ->name('admin.forms.export'); // Exportar datos
+        ->name('admin.forms.export');
 
     Route::get('/forms/export/pdf', [FormController::class, 'exportPdf'])
-        ->name('admin.forms.export.pdf'); // Exportar PDF
+        ->name('admin.forms.export.pdf');
 
     Route::get('/forms/{id}', [FormController::class, 'show'])
-        ->name('admin.forms.show'); // Ver detalle
+        ->name('admin.forms.show');
 
     Route::delete('/forms/{id}', [FormController::class, 'destroy'])
-        ->name('admin.forms.destroy'); // Eliminar
+        ->name('admin.forms.destroy');
 });
-
 
 /* ===== CONFIGURACIÓN ===== */
 Route::prefix('admin')->group(function () {
 
     Route::get('/settings', [SettingsController::class, 'index'])
-        ->name('admin.settings'); // Vista ajustes
+        ->name('admin.settings');
 
     Route::post('/settings/change-password',
         [SettingsController::class, 'changePassword'])
-        ->name('admin.settings.change-password'); // Cambiar contraseña
+        ->name('admin.settings.change-password');
 
     Route::post('/settings/update-profile',
         [SettingsController::class, 'updateProfile'])
-        ->name('admin.settings.update-profile'); // Actualizar perfil
+        ->name('admin.settings.update-profile');
 });
-
 
 /* ===== USUARIOS ===== */
 Route::get('/admin/users', [UserController::class, 'index'])
-    ->name('admin.users'); // Listar
+    ->name('admin.users');
 
 Route::post('/admin/users', [UserController::class, 'store'])
-    ->name('admin.users.store'); // Crear
+    ->name('admin.users.store');
 
 Route::get('/admin/users/{id}', [UserController::class, 'show'])
-    ->name('admin.users.show'); // Obtener
+    ->name('admin.users.show');
 
 Route::put('/admin/users/{id}', [UserController::class, 'update'])
-    ->name('admin.users.update'); // Actualizar
+    ->name('admin.users.update');
 
 Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])
-    ->name('admin.users.destroy'); // Eliminar
-
+    ->name('admin.users.destroy');
 
 /* ===== EDICIÓN DE PÁGINAS ===== */
 Route::get('/admin/pages/home/edit',
     fn() => view('admin.pages.home_edit'))
-    ->name('admin.pages.home.edit'); // Editar inicio
+    ->name('admin.pages.home.edit');
 
 Route::get('/admin/pages/about/edit',
     fn() => view('admin.pages.about_edit'))
-    ->name('admin.pages.about.edit'); // Editar nosotros
+    ->name('admin.pages.about.edit');
 
 Route::get('/admin/pages/contact/edit',
     fn() => view('admin.pages.contact_edit'))
-    ->name('admin.pages.contact.edit'); // Editar contacto
+    ->name('admin.pages.contact.edit');
+
+/* ===== NOTIFICACIONES (API) ===== */
+Route::prefix('api/notifications')->group(function () {
+
+    Route::get('count',        [NotificationController::class, 'count']);
+    Route::get('list',         [NotificationController::class, 'list']);
+
+    Route::post('read-all',    [NotificationController::class, 'markAllRead']);
+    Route::delete('clear-all', [NotificationController::class, 'clearAll']);
+
+    Route::post('{id}/read',   [NotificationController::class, 'markRead']);
+});

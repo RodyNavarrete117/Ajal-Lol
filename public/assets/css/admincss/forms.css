@@ -102,7 +102,6 @@ body.reduce-animations *::after {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 32px;
-    padding: 20px 0;
     animation: fadeIn 0.6s ease-out;
 }
 
@@ -339,14 +338,17 @@ body.reduce-animations *::after {
 /* ==================== TABLA ==================== */
 
 .table-wrapper {
-    overflow-x: hidden;
+    overflow-x: auto; /* MODIFICADO: cambiado de hidden a auto para permitir scroll si la pantalla es muy pequeña */
     overflow-y: visible;
     width: 100%;
+    /* Estilo sutil para la barra de desplazamiento */
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-light) var(--bg-alt);
 }
 
 .admin-table {
     width: 100%;
-    min-width: 1100px;
+    min-width: 950px; /* MODIFICADO: Reducido de 1100px a 950px para aprovechar mejor el layout */
     border-collapse: collapse;
     font-size: 14px;
 }
@@ -358,7 +360,7 @@ body.reduce-animations *::after {
 }
 
 .admin-table th {
-    padding: 18px 24px;
+    padding: 16px 14px; /* MODIFICADO: Reducido el padding lateral para ahorrar espacio */
     text-align: left;
     font-weight: 700;
     font-size: 13px;
@@ -415,7 +417,7 @@ body.reduce-animations *::after {
 }
 
 .admin-table td {
-    padding: 16px 24px;
+    padding: 14px 14px; /* MODIFICADO: Reducido el padding lateral para ganar más espacio en cada celda */
     color: var(--text);
     font-size: 14.5px;
     white-space: normal;
@@ -588,6 +590,13 @@ tr.row-selected {
     font-size: 15px;
     color: var(--text-name);
     transition: var(--transition);
+    
+    /* Agregado para forzar el salto de línea */
+    max-width: 90px; /* Al limitar el ancho, el texto baja a la siguiente línea */
+    display: inline-block;
+    line-height: 1.2;
+    white-space: normal;
+    word-break: break-word;
 }
 
 .user-info:hover .user-name { color: var(--primary); }
@@ -625,7 +634,7 @@ tr.row-selected {
 .subject-text {
     color: var(--text-sub);
     display: inline-block;
-    max-width: 250px;
+    max-width: 160px; /* MODIFICADO: Reducido de 250px a 160px para que no empuje otras columnas */
     overflow: hidden;
     text-overflow: ellipsis;
     vertical-align: middle;
@@ -635,7 +644,7 @@ tr.row-selected {
 .message-text {
     color: var(--text-sub);
     display: inline-block;
-    max-width: 200px;
+    max-width: 180px; /* MODIFICADO: Reducido de 200px a 180px para ahorrar espacio */
     overflow: hidden;
     text-overflow: ellipsis;
     vertical-align: middle;
@@ -670,7 +679,11 @@ tr:hover .date-badge {
 }
 
 /* Acciones */
-.th-actions { width: 120px; text-align: center; }
+.th-actions { 
+    width: 70px; /* Reducido para ajustarse a un solo botón */
+    text-align: center; 
+}
+
 .td-actions  { text-align: center; }
 
 .action-buttons {
@@ -710,7 +723,10 @@ tr:hover .date-badge {
 .btn-view:hover   { background: #1e40af; color: #ffffff; transform: translateY(-3px) rotate(5deg);  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.30); }
 .btn-delete       { background: #fee2e2; color: #dc2626; }
 .btn-delete:hover { background: #dc2626; color: #ffffff; transform: translateY(-3px) rotate(-5deg); box-shadow: 0 4px 12px rgba(220, 38, 38, 0.30); }
-
+/* Oculta el botón de eliminar en las filas de la tabla */
+.td-actions .btn-delete {
+    display: none;
+}
 [data-theme="dark"] .btn-view   { background: rgba(30,  64, 175, 0.20); color: #93c5fd; }
 [data-theme="dark"] .btn-delete { background: rgba(220, 38,  38, 0.20); color: #fca5a5; }
 
@@ -1107,10 +1123,10 @@ tr:hover .date-badge {
 
 @media (max-width: 1280px) and (min-width: 1025px) {
     .admin-table th,
-    .admin-table td    { padding: 14px 14px; }
+    .admin-table td    { padding: 12px 12px; } /* MODIFICADO: Ajustado para mayor fluidez en pantallas pequeñas */
     .user-avatar       { width: 38px; height: 38px; font-size: 14px; }
     .user-info         { gap: 10px; }
-    .date-badge        { padding: 5px 10px; font-size: 12px; }
+    .date-badge        { padding: 5px 10px; font-size: 12px;  text-align: center;}
     .btn-action        { width: 34px; height: 34px; }
     .action-buttons    { gap: 6px; }
 }

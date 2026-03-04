@@ -71,7 +71,6 @@
 /* ==================== PAGE WRAPPER ==================== */
 .edit-page-wrapper {
     transition: background var(--transition);
-    padding: 40px 20px 60px;
 }
 
 /* ==================== CONTAINER ==================== */

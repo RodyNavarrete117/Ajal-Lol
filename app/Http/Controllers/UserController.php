@@ -76,7 +76,13 @@ class UserController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Usuario creado exitosamente'
+                'message' => 'Usuario creado exitosamente',
+                'data' => [
+                    'id_usuario' => $userId,
+                    'nombre_usuario' => $request->nombre_usuario,
+                    'correo_usuario' => $request->correo_usuario,
+                    'cargo_usuario' => $request->cargo_usuario
+                ]
             ]);
 
         } catch (\Exception $e) {

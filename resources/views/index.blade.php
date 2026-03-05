@@ -103,7 +103,7 @@
 
         <div class="d-flex">
           <a href="#about" class="btn-get-started">¡Empieza ahora!</a>
-          <a href="https://www.youtube.com/watch?v=lRM7kJdDUM4"
+          <a href=""
              class="glightbox btn-watch-video d-flex align-items-center">
             <i class="bi bi-play-circle"></i>
             <span>Ver video</span>

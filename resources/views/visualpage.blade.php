@@ -10,8 +10,8 @@
   <meta name="keywords"    content="Ajal Lol, asistencia social, Yucatán, voluntariado, donaciones">
 
   <!-- ── Favicons ── -->
-  <link rel="icon"             href="assets/img/logo.webp">
-  <link rel="apple-touch-icon" href="assets/img/logo.webp">
+  <link rel="icon"             href="{{ asset('assets2.0/img/logo.webp') }}">
+  <link rel="apple-touch-icon" href="{{ asset('assets2.0/img/logo.webp') }}">
 
   <!-- ── Google Fonts (Playfair Display + DM Sans) ── -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,14 +21,14 @@
   <!-- ── Bootstrap Icons 1.11 ── -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-  <!-- ── Font Awesome 6 (solo íconos sólidos) ── -->
+  <!-- ── Font Awesome 6 ── -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <!-- ── Bootstrap 5.3 ── -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
   <!-- ── CSS propio ── -->
-  <link href="assets/css/main.css" rel="stylesheet">
+  <link href="{{ asset('assets2.0/css/visualpage.css') }}" rel="stylesheet">
 
 </head>
 
@@ -88,7 +88,7 @@
     <div class="container">
 
       <a href="#hero" class="logo" aria-label="Ajal Lol – Inicio">
-        <img src="assets/img/logo.webp" alt="Ajal Lol" width="90">
+        <img src="{{ asset('assets2.0/img/logo.webp') }}" alt="Ajal Lol" width="90">
       </a>
 
       <nav id="navmenu" class="navmenu" aria-label="Navegación principal">
@@ -121,37 +121,41 @@
      ====================================================== -->
 <section id="hero" class="hero section">
 
-  <!-- Hoja decorativa SVG de fondo -->
-  <svg class="hero-leaf" viewBox="0 0 200 340" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <path d="M100 330 C20 260 0 180 10 100 C20 20 80 0 100 10 C120 0 180 20 190 100 C200 180 180 260 100 330Z" fill="white"/>
-    <path d="M100 330 L100 10" stroke="white" stroke-width="2" opacity=".4"/>
-    <path d="M100 150 C60 130 30 100 15 70" stroke="white" stroke-width="1.5" opacity=".3"/>
-    <path d="M100 150 C140 130 170 100 185 70" stroke="white" stroke-width="1.5" opacity=".3"/>
-  </svg>
+  <!-- Círculos decorativos -->
+  <div class="hero-circle hero-circle-1" aria-hidden="true"></div>
+  <div class="hero-circle hero-circle-2" aria-hidden="true"></div>
+  <div class="hero-circle hero-circle-3" aria-hidden="true"></div>
 
   <div class="container">
-    <div class="hero-content" data-anim="fade-up">
+    <div class="hero-content">
+      <div class="hero-eyebrow">Organización sin fines de lucro</div>
       <h1>
-        Bienvenidos al portal informativo de
-        <span>Ajal Lol</span>
+        Portal informativo de
+        <em>Ajal Lol A.C.</em>
       </h1>
-      <p>Organización de Asistencia Social, sin fines de lucro, que transforma vidas en las comunidades mayas de Yucatán.</p>
+      <p>Transformando vidas en las comunidades mayas de Yucatán desde el año 2000, con amor, compromiso e interculturalidad.</p>
 
       <div class="hero-buttons">
-        <a href="#about" class="btn-primary">
-          <i class="bi bi-arrow-down-circle"></i>
+        <a href="#about" class="btn-rose">
+          <i class="bi bi-heart-fill"></i>
           Conoce más
         </a>
         <a href="https://www.youtube.com/watch?v=lRM7kJdDUM4"
-           class="btn-outline" target="_blank" rel="noopener">
-          <i class="bi bi-play-circle-fill"></i>
+           class="btn-ghost" target="_blank" rel="noopener">
+          <span class="play-icon"><i class="bi bi-play-fill"></i></span>
           Ver video
         </a>
       </div>
     </div>
   </div>
 
+  <div class="hero-scroll" aria-hidden="true">
+    <div class="hero-scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+
 </section>
+
 <!-- ======================================================
      NOSOTROS
      ====================================================== -->
@@ -167,15 +171,13 @@
 
     <div class="about-grid">
 
-      <!-- Imagen -->
       <div class="about-img-wrapper" data-anim="fade-right">
-        <img src="assets/img/MIS.jpg" alt="Historia de Ajal Lol" loading="lazy">
+        <img src="{{ asset('assets2.0/img/MIS.jpg') }}" alt="Historia de Ajal Lol" loading="lazy">
         <div class="about-img-badge">
           <i class="bi bi-calendar3"></i>&nbsp; Fundada en el año 2000
         </div>
       </div>
 
-      <!-- Contenido -->
       <div class="about-content" data-anim="fade-left">
         <span class="eyebrow">Nuestra historia</span>
         <h3>Así comenzó Ajal Lol</h3>
@@ -253,14 +255,14 @@
 
   <div class="marquee-wrapper">
     <div class="marquee-track" role="list">
-      <img src="assets/logos/Days.png"                      alt="Days"              role="listitem" loading="lazy">
-      <img src="assets/logos/image_2024_7_31_201.png"       alt="Aliado"            role="listitem" loading="lazy">
-      <img src="assets/logos/DIFY.png"                      alt="DIFY"              role="listitem" loading="lazy">
-      <img src="assets/logos/logo-kekenv3.png"              alt="Keken"             role="listitem" loading="lazy">
-      <img src="assets/logos/marinaTri.png"                 alt="Mariana Trinitaria"role="listitem" loading="lazy">
-      <img src="assets/logos/mentors.png"                   alt="Mentors"           role="listitem" loading="lazy">
-      <img src="assets/logos/oxxo.png"                      alt="OXXO"              role="listitem" loading="lazy">
-      <img src="assets/logos/imagews-removebg-preview.png"  alt="Aliado"            role="listitem" loading="lazy">
+      <img src="{{ asset('assets2.0/logos/Days.png') }}"                     alt="Days"               role="listitem" loading="lazy">
+      <img src="{{ asset('assets2.0/logos/image_2024_7_31_201.png') }}"      alt="Aliado"             role="listitem" loading="lazy">
+      <img src="{{ asset('assets2.0/logos/DIFY.png') }}"                     alt="DIFY"               role="listitem" loading="lazy">
+      <img src="{{ asset('assets2.0/logos/logo-kekenv3.png') }}"             alt="Keken"              role="listitem" loading="lazy">
+      <img src="{{ asset('assets2.0/logos/marinaTri.png') }}"                alt="Mariana Trinitaria" role="listitem" loading="lazy">
+      <img src="{{ asset('assets2.0/logos/mentors.png') }}"                  alt="Mentors"            role="listitem" loading="lazy">
+      <img src="{{ asset('assets2.0/logos/oxxo.png') }}"                     alt="OXXO"               role="listitem" loading="lazy">
+      <img src="{{ asset('assets2.0/logos/imagews-removebg-preview.png') }}" alt="Aliado"             role="listitem" loading="lazy">
     </div>
   </div>
 
@@ -279,42 +281,36 @@
 
     <div class="activities-grid">
 
-      <!-- Jornada dental -->
       <div class="activity-card" data-anim="fade-up" data-delay="0">
         <div class="icon"><i class="fas fa-tooth"></i></div>
         <h3>Jornada dental</h3>
         <p>Por segundo año consecutivo, se realizaron jornadas de servicios dentales con el apoyo de la Fundación Smile y Global Dental. Un equipo de 35 dentistas brindó servicios gratuitos, atendiendo a 159 pacientes de varios municipios.</p>
       </div>
 
-      <!-- Jornada de salud -->
       <div class="activity-card" data-anim="fade-up" data-delay="80">
         <div class="icon"><i class="bi bi-heart-pulse-fill"></i></div>
         <h3>Jornada de salud</h3>
         <p>Realizamos 2 jornadas de salud en Hoctún con detección gratuita de niveles de azúcar, presión arterial, peso, talla, vista y orientación psicológica, beneficiando a 300 personas.</p>
       </div>
 
-      <!-- Talleres de capacitación -->
       <div class="activity-card" data-anim="fade-up" data-delay="160">
         <div class="icon"><i class="bi bi-easel"></i></div>
         <h3>Talleres de capacitación</h3>
         <p>Con el apoyo de Mentors International, se realizaron cursos de administración básica para pequeños emprendedores en varios municipios, beneficiando a 150 personas.</p>
       </div>
 
-      <!-- Reforestación -->
       <div class="activity-card" data-anim="fade-up" data-delay="0">
         <div class="icon"><i class="bi bi-tree"></i></div>
         <h3>Reforestación</h3>
         <p>El Ayuntamiento de Mérida donó 1,666 plantas forestales y maderables a 11 localidades para reforestar predios de producción y traspatio.</p>
       </div>
 
-      <!-- Cría de pavos -->
       <div class="activity-card" data-anim="fade-up" data-delay="80">
         <div class="icon"><i class="bi bi-feather"></i></div>
         <h3>Cría de pavos de engorda</h3>
         <p>Como seguimiento al proyecto iniciado en 2022 con donativos de OXXO que benefició a 350 familias, en 2023 se pudo continuar con el programa de engorda de pavos de traspatio.</p>
       </div>
 
-      <!-- Entrega de tinacos -->
       <div class="activity-card" data-anim="fade-up" data-delay="160">
         <div class="icon"><i class="bi bi-droplet-half"></i></div>
         <h3>Entrega de tinacos</h3>
@@ -337,20 +333,18 @@
       <p class="sub">Nuestros <span>proyectos 2024</span></p>
     </div>
 
-    <!-- Filtros -->
     <div class="portfolio-filters" role="tablist" data-anim="fade-up">
-      <button class="active" data-filter="*" role="tab" aria-selected="true">Todo</button>
-      <button data-filter=".filter-dental">Jornadas dentales</button>
-      <button data-filter=".filter-mayo">Jornadas de salud</button>
-      <button data-filter=".filter-pavo">Proyectos productivos</button>
-      <button data-filter=".filter-adulto">Adulto Mayor</button>
+      <button class="active" data-filter="*"             role="tab" aria-selected="true">Todo</button>
+      <button data-filter=".filter-dental"               role="tab">Jornadas dentales</button>
+      <button data-filter=".filter-mayo"                 role="tab">Jornadas de salud</button>
+      <button data-filter=".filter-pavo"                 role="tab">Proyectos productivos</button>
+      <button data-filter=".filter-adulto"               role="tab">Adulto Mayor</button>
     </div>
 
-    <!-- Galería -->
     <div class="portfolio-grid" data-anim="fade-up" data-delay="100">
 
       <div class="portfolio-item filter-dental">
-        <img src="assets/img/img_proy/dental1.jpg" alt="Jornada dental" loading="lazy">
+        <img src="{{ asset('assets2.0/img/img_proy/dental1.jpg') }}" alt="Jornada dental" loading="lazy">
         <div class="portfolio-info">
           <h4>Jornada dental</h4>
           <button class="zoom-btn" aria-label="Ver imagen"><i class="bi bi-zoom-in"></i></button>
@@ -358,7 +352,7 @@
       </div>
 
       <div class="portfolio-item filter-dental">
-        <img src="assets/img/img_proy/dental2.jpg" alt="Jornada dental" loading="lazy">
+        <img src="{{ asset('assets2.0/img/img_proy/dental2.jpg') }}" alt="Jornada dental" loading="lazy">
         <div class="portfolio-info">
           <h4>Jornada dental</h4>
           <button class="zoom-btn" aria-label="Ver imagen"><i class="bi bi-zoom-in"></i></button>
@@ -366,7 +360,7 @@
       </div>
 
       <div class="portfolio-item filter-mayo">
-        <img src="assets/img/img_proy/may1.jpg" alt="Celebración 10 de mayo" loading="lazy">
+        <img src="{{ asset('assets2.0/img/img_proy/may1.jpg') }}" alt="Celebración 10 de mayo" loading="lazy">
         <div class="portfolio-info">
           <h4>Celebración del 10 de mayo</h4>
           <button class="zoom-btn" aria-label="Ver imagen"><i class="bi bi-zoom-in"></i></button>
@@ -374,7 +368,7 @@
       </div>
 
       <div class="portfolio-item filter-mayo">
-        <img src="assets/img/img_proy/may2.jpg" alt="Celebración 10 de mayo" loading="lazy">
+        <img src="{{ asset('assets2.0/img/img_proy/may2.jpg') }}" alt="Celebración 10 de mayo" loading="lazy">
         <div class="portfolio-info">
           <h4>Celebración del 10 de mayo</h4>
           <button class="zoom-btn" aria-label="Ver imagen"><i class="bi bi-zoom-in"></i></button>
@@ -382,7 +376,7 @@
       </div>
 
       <div class="portfolio-item filter-pavo">
-        <img src="assets/img/img_proy/pavo1.jpg" alt="Engorda de pavo" loading="lazy">
+        <img src="{{ asset('assets2.0/img/img_proy/pavo1.jpg') }}" alt="Engorda de pavo" loading="lazy">
         <div class="portfolio-info">
           <h4>Engorda de pavo</h4>
           <p>Programa en 15 localidades del Estado de Yucatán</p>
@@ -391,7 +385,7 @@
       </div>
 
       <div class="portfolio-item filter-pavo">
-        <img src="assets/img/img_proy/pavo2.jpg" alt="Engorda de pavo" loading="lazy">
+        <img src="{{ asset('assets2.0/img/img_proy/pavo2.jpg') }}" alt="Engorda de pavo" loading="lazy">
         <div class="portfolio-info">
           <h4>Engorda de pavo</h4>
           <p>Programa en 15 localidades del Estado de Yucatán</p>
@@ -400,7 +394,7 @@
       </div>
 
       <div class="portfolio-item filter-pavo">
-        <img src="assets/img/img_proy/pavo4.jpg" alt="Engorda de pavo" loading="lazy">
+        <img src="{{ asset('assets2.0/img/img_proy/pavo4.jpg') }}" alt="Engorda de pavo" loading="lazy">
         <div class="portfolio-info">
           <h4>Engorda de pavo</h4>
           <p>Programa en 15 localidades del Estado de Yucatán</p>
@@ -409,7 +403,7 @@
       </div>
 
       <div class="portfolio-item filter-adulto">
-        <img src="assets/img/img_proy/act1.jpg" alt="Día del Adulto Mayor" loading="lazy">
+        <img src="{{ asset('assets2.0/img/img_proy/act1.jpg') }}" alt="Día del Adulto Mayor" loading="lazy">
         <div class="portfolio-info">
           <h4>Día del Adulto Mayor</h4>
           <button class="zoom-btn" aria-label="Ver imagen"><i class="bi bi-zoom-in"></i></button>
@@ -417,7 +411,7 @@
       </div>
 
       <div class="portfolio-item filter-adulto">
-        <img src="assets/img/img_proy/act2.jpg" alt="Día del Adulto Mayor" loading="lazy">
+        <img src="{{ asset('assets2.0/img/img_proy/act2.jpg') }}" alt="Día del Adulto Mayor" loading="lazy">
         <div class="portfolio-info">
           <h4>Día del Adulto Mayor</h4>
           <p>Activación física — 27 de agosto</p>
@@ -453,7 +447,7 @@
 
       <div class="team-card" data-anim="zoom-in" data-delay="0">
         <div class="member-img">
-          <img src="assets/img/team/1.png" alt="LEG. Jenevy Ríos Pech" loading="lazy">
+          <img src="{{ asset('assets2.0/img/team/1.png') }}" alt="LEG. Jenevy Ríos Pech" loading="lazy">
         </div>
         <div class="member-info">
           <h4>LEG. Jenevy Ríos Pech</h4>
@@ -463,7 +457,7 @@
 
       <div class="team-card" data-anim="zoom-in" data-delay="100">
         <div class="member-img">
-          <img src="assets/img/team/4.png" alt="Br. Mirna El Pech" loading="lazy">
+          <img src="{{ asset('assets2.0/img/team/4.png') }}" alt="Br. Mirna El Pech" loading="lazy">
         </div>
         <div class="member-info">
           <h4>Br. Mirna El Pech</h4>
@@ -473,7 +467,7 @@
 
       <div class="team-card" data-anim="zoom-in" data-delay="200">
         <div class="member-img">
-          <img src="assets/img/team/3.png" alt="Ing. Paula Guadalupe Pech Puc" loading="lazy">
+          <img src="{{ asset('assets2.0/img/team/3.png') }}" alt="Ing. Paula Guadalupe Pech Puc" loading="lazy">
         </div>
         <div class="member-info">
           <h4>Ing. Paula Guadalupe Pech Puc</h4>
@@ -641,8 +635,7 @@
       <div class="contact-form-card" data-anim="fade-left">
         <h3>Envíanos un mensaje</h3>
 
-        <form id="contact-form" action="/contacto" method="POST" novalidate>
-          <!-- Token CSRF de Laravel: @csrf -->
+        <form id="contact-form" novalidate>
 
           <div class="form-row">
             <div class="form-group">
@@ -656,7 +649,9 @@
           </div>
 
           <div class="form-group">
-            <label for="phone-field">Teléfono <span style="font-weight:400;color:var(--text-light)">(opcional)</span></label>
+            <label for="phone-field">
+              Teléfono <span style="font-weight:400;color:var(--text-light)">(opcional)</span>
+            </label>
             <input type="tel" id="phone-field" name="phone" placeholder="+52 999 000 0000">
           </div>
 
@@ -674,7 +669,7 @@
             <i class="bi bi-send"></i> Enviar mensaje
           </button>
 
-          <p class="form-status"></p>
+          <p class="form-status" id="js-form-status"></p>
         </form>
       </div>
 
@@ -690,7 +685,6 @@
      ====================================================== -->
 <footer id="footer" class="footer">
 
-  <!-- Donaciones -->
   <div class="footer-donate">
     <div class="container">
       <h4>¡Tu apoyo transforma vidas!</h4>
@@ -703,7 +697,6 @@
     </div>
   </div>
 
-  <!-- Footer principal -->
   <div class="container footer-main">
 
     <div class="footer-about">
@@ -753,7 +746,7 @@
 
   <div class="footer-bottom">
     <div class="container">
-      <p>©2026 <span>Ajal-lol A.C.</span> — Todos los derechos reservados</p>
+      <p>©{{ date('Y') }} <span>Ajal-lol A.C.</span> — Todos los derechos reservados</p>
     </div>
   </div>
 
@@ -766,13 +759,11 @@
   <i class="bi bi-arrow-up-short"></i>
 </a>
 
-<!-- ======================================================
-     JS — Bootstrap 5.3 (solo bundle, sin Popper separado)
-     ====================================================== -->
+<!-- ── Bootstrap 5.3 JS ── -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- JS propio (todo lo demás está aquí) -->
-<script src="assets/js/main.js"></script>
+<!-- ── JS propio ── -->
+<script src="{{ asset('assets2.0/js/visualpage.js') }}"></script>
 
 </body>
 </html>

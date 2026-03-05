@@ -12,6 +12,9 @@ use App\Http\Controllers\NotificationController;
 /* Página pública */
 Route::get('/', fn() => view('index'));
 
+/* Página pública visual */
+Route::get('/pagina', fn() => view('visualpage'));
+
 /* Login */
 Route::get('/login', fn() => view('login'))->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');

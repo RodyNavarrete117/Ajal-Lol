@@ -274,19 +274,32 @@ function updateStats() {
 // ========================================
 // ANIMAR NÚMEROS CON EFECTO DE CONTEO
 // ========================================
+const statAnimations = {};
+
 function animateValue(id, start, end, duration) {
+
     const element = document.getElementById(id);
+    if (!element) return;
+
+    if (statAnimations[id]) {
+        clearInterval(statAnimations[id]);
+    }
+
     const range = end - start;
     const increment = range / (duration / 16);
     let current = start;
-    
-    const timer = setInterval(() => {
+
+    statAnimations[id] = setInterval(() => {
+
         current += increment;
+
         if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
             current = end;
-            clearInterval(timer);
+            clearInterval(statAnimations[id]);
         }
+
         element.textContent = Math.round(current);
+
     }, 16);
 }
 

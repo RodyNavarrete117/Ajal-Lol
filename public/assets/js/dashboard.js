@@ -153,6 +153,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Update badge count
     window.updateNotificationCount = function (count) {
+        // Guardar en localStorage para persistir entre páginas
+        localStorage.setItem('notifCount', count);
+        
         document.querySelectorAll('.notification-badge').forEach(badge => {
             if (count > 0) {
                 badge.textContent = count > 99 ? '99+' : count;
@@ -326,6 +329,10 @@ document.addEventListener('DOMContentLoaded', function () {
             if (d.success) { fetchNotificationsDetails(); fetchNotifications(); }
         }).catch(() => {});
     });
+
+    // Restaurar conteo guardado antes del fetch
+    const savedCount = parseInt(localStorage.getItem('notifCount') || '0');
+    if (savedCount > 0) updateNotificationCount(savedCount);
 
     fetchNotifications();
     setInterval(fetchNotifications, 30000);

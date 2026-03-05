@@ -119,7 +119,9 @@ html { overflow-y: scroll; }
 
 .notification-badge {
     position: absolute;
-    top: 8px; right: 8px;
+    top: 3px;
+    left: 33px;
+    right: auto;
     background: #ff4444;
     color: white;
     font-size: 0.7rem;
@@ -137,7 +139,18 @@ html { overflow-y: scroll; }
     50%       { transform: scale(1.1); }
 }
 
-.sidebar.collapsed .notification-badge { top: 4px; right: 4px; font-size: 0.65rem; padding: 2px 5px; }
+.sidebar.collapsed .menu-bottom .notification-trigger .notification-badge {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: absolute !important;
+    top: 4px !important;
+    left: 55% !important;
+    right: auto !important;
+    z-index: 9999 !important;
+    font-size: 0.65rem;
+    padding: 2px 5px;
+}
 
 /* ==================== NOTIFICATIONS PANEL ==================== */
 /*
@@ -828,7 +841,7 @@ body.reduce-animations *::after {
     .menu a i    { font-size: 1.7rem; min-width: auto; margin: 0; }
     .menu a span { opacity: 1; visibility: visible; position: relative; font-size: 0.85rem; font-weight: 500; width: auto; }
 
-    .notification-badge { top: -4px; right: -4px; font-size: 0.65rem; padding: 2px 5px; }
+    .notification-badge { top: -4px; right: -4px; left: auto; font-size: 0.65rem; padding: 2px 5px; }
 
     .mobile-notification-btn {
         display: flex;

@@ -4,6 +4,247 @@
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
 // ========================================
+// HELPER PARA BLOQUEAR SCROLL EN SWEETALERT
+// ========================================
+const swalScrollFix = {
+    didOpen: () => {
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+    },
+    didClose: () => {
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+    }
+};
+
+// ========================================
+// TOAST NOTIFICATIONS
+// ========================================
+
+function showErrorAlert(title, message) {
+    Swal.fire({
+        title: title,
+        html: `<div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+            <div style="width:52px;height:52px;border-radius:50%;background:#fee2e2;display:flex;align-items:center;justify-content:center;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <p style="margin:0;font-size:14px;opacity:0.85">${message}</p>
+        </div>`,
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#7d3f6a',
+        customClass: { popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-confirm-btn' },
+        buttonsStyling: true,
+        ...swalScrollFix // <--- Bloqueo de scroll inyectado
+    });
+}
+
+function showToast(type, title, message) {
+    let container = document.querySelector('.toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const icons = {
+        success: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        error:   `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    };
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-icon">${icons[type]}</div>
+        <div class="toast-body">
+            <div class="toast-title">${title}</div>
+            ${message ? `<div class="toast-message">${message}</div>` : ''}
+        </div>
+        <button class="toast-close" onclick="dismissToast(this.parentElement)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <div class="toast-progress"></div>
+    `;
+
+    container.appendChild(toast);
+
+    setTimeout(() => dismissToast(toast), 3000);
+}
+
+function dismissToast(toast) {
+    if (!toast || toast.classList.contains('toast-hide')) return;
+    toast.classList.add('toast-hide');
+    setTimeout(() => toast.remove(), 300);
+}
+
+
+
+// ========================================
+// CUSTOM SELECT
+// ========================================
+function initCustomSelect() {
+    const realSelect = document.getElementById('userRole');
+    if (!realSelect) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'custom-select-wrapper';
+    wrapper.id = 'customRoleSelect';
+    realSelect.parentNode.insertBefore(wrapper, realSelect);
+    realSelect.style.display = 'none';
+    wrapper.appendChild(realSelect);
+
+    const trigger = document.createElement('div');
+    trigger.className = 'custom-select-trigger placeholder';
+    trigger.innerHTML = `<span class="trigger-text">Seleccione un rol</span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    wrapper.appendChild(trigger);
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'custom-select-dropdown';
+    dropdown.style.display = 'none';
+    dropdown.style.position = 'fixed';
+    dropdown.style.zIndex = '99999';
+    document.body.appendChild(dropdown);
+
+    const options = [
+        { value: '',              label: 'Seleccione un rol', disabled: true },
+        { value: 'administrador', label: 'Administrador' },
+        { value: 'editor',        label: 'Editor' },
+    ];
+
+    options.forEach(opt => {
+        const div = document.createElement('div');
+        div.className = 'custom-select-option' + (opt.disabled ? ' disabled' : '');
+        div.textContent = opt.label;
+        div.dataset.value = opt.value;
+        if (!opt.disabled) {
+            div.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                realSelect.value = opt.value;
+                trigger.querySelector('.trigger-text').textContent = opt.label;
+                trigger.classList.remove('placeholder');
+                dropdown.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
+                div.classList.add('selected');
+                closeDropdown();
+            });
+        }
+        dropdown.appendChild(div);
+    });
+
+    function openDropdown() {
+        const rect = trigger.getBoundingClientRect();
+        dropdown.style.display = 'block';
+        dropdown.style.top   = rect.bottom + window.scrollY + 'px';
+        dropdown.style.left  = rect.left + window.scrollX + 'px';
+        dropdown.style.width = rect.width + 'px';
+        wrapper.classList.add('open');
+    }
+
+    function closeDropdown() {
+        dropdown.classList.add('closing');
+        wrapper.classList.remove('open');
+        setTimeout(() => {
+            dropdown.style.display = 'none';
+            dropdown.classList.remove('closing');
+        }, 150);
+    }
+
+    trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        wrapper.classList.contains('open') ? closeDropdown() : openDropdown();
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!wrapper.contains(e.target) && !dropdown.contains(e.target)) {
+            closeDropdown();
+        }
+    });
+}
+
+function setCustomSelectValue(value) {
+    const wrapper = document.getElementById('customRoleSelect');
+    if (!wrapper) return;
+    const trigger = wrapper.querySelector('.custom-select-trigger');
+    const options = wrapper.querySelectorAll('.custom-select-option');
+    options.forEach(opt => {
+        opt.classList.remove('selected');
+        if (opt.dataset.value === value) {
+            opt.classList.add('selected');
+            trigger.querySelector('.trigger-text').textContent = opt.textContent;
+            trigger.classList.remove('placeholder');
+        }
+    });
+    if (!value) {
+        trigger.querySelector('.trigger-text').textContent = 'Seleccione un rol';
+        trigger.classList.add('placeholder');
+    }
+    document.getElementById('userRole').value = value;
+}
+
+function resetCustomSelect() {
+    setCustomSelectValue('');
+}
+
+// ========================================
+// DOM HELPERS — actualizar sin recargar
+// ========================================
+function updateUserRow(userId, name, email, role) {
+    const row = document.querySelector(`tr[data-user-id="${userId}"]`);
+    if (!row) return;
+    row.querySelector('.user-name').textContent  = name;
+    row.querySelector('.user-email').textContent = email;
+    const badge = row.querySelector('.user-role');
+    const isAdmin = role.toLowerCase() === 'administrador';
+    badge.textContent = role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+    badge.className   = `badge ${isAdmin ? 'badge-admin' : 'badge-user'} user-role`;
+    row.style.animation = 'none';
+    row.offsetHeight;
+    row.style.animation = 'fadeInUp 0.4s ease-out';
+}
+
+function addUserRow(usuario) {
+    const tbody = document.getElementById('usersTableBody');
+    const rowCount = tbody.querySelectorAll('.user-row').length + 1;
+    const isAdmin  = usuario.cargo_usuario?.toLowerCase() === 'administrador';
+    const role     = usuario.cargo_usuario ? usuario.cargo_usuario.charAt(0).toUpperCase() + usuario.cargo_usuario.slice(1).toLowerCase() : 'Sin rol';
+    const tr = document.createElement('tr');
+    tr.className = 'user-row';
+    tr.dataset.userId = usuario.id_usuario;
+    tr.style.animation = 'fadeInUp 0.4s ease-out';
+    tr.innerHTML = `
+        <td data-label="Número" class="user-number">${rowCount}</td>
+        <td data-label="Nombre" class="user-name">${usuario.nombre_usuario}</td>
+        <td data-label="Correo" class="user-email">${usuario.correo_usuario}</td>
+        <td data-label="Asignación"><span class="badge ${isAdmin ? 'badge-admin' : 'badge-user'} user-role">${role}</span></td>
+        <td data-label="Contraseña"><span class="password-text">******</span></td>
+        <td data-label="Acciones">
+            <div class="action-buttons">
+                <button class="btn-action btn-edit" onclick="editUser(${usuario.id_usuario})">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M11.3333 2.00004C11.5084 1.82494 11.716 1.68605 11.9438 1.59129C12.1716 1.49653 12.4151 1.44775 12.6609 1.44775C12.9068 1.44775 13.1502 1.49653 13.3781 1.59129C13.6059 1.68605 13.8135 1.82494 13.9886 2.00004C14.1637 2.17513 14.3026 2.38274 14.3973 2.61057C14.4921 2.83839 14.5409 3.08185 14.5409 3.32771C14.5409 3.57357 14.4921 3.81703 14.3973 4.04485C14.3026 4.27268 14.1637 4.48029 13.9886 4.65538L5.16663 13.4774L1.33329 14.6667L2.52263 10.8334L11.3333 2.00004Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>Editar</span>
+                </button>
+                <button class="btn-action btn-delete" onclick="deleteUser(${usuario.id_usuario})">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4H3.33333H14M5.33333 4V2.66667C5.33333 2.31304 5.47381 1.97391 5.72386 1.72386C5.97391 1.47381 6.31304 1.33333 6.66667 1.33333H9.33333C9.68696 1.33333 10.0261 1.47381 10.2761 1.72386C10.5262 1.97391 10.6667 2.31304 10.6667 2.66667V4M12.6667 4V13.3333C12.6667 13.687 12.5262 14.0261 12.2761 14.2761C12.0261 14.5262 11.687 14.6667 11.3333 14.6667H4.66667C4.31304 14.6667 3.97391 14.5262 3.72386 14.2761C3.47381 14.0261 3.33333 13.687 3.33333 13.3333V4H12.6667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>Borrar</span>
+                </button>
+            </div>
+        </td>`;
+    tbody.appendChild(tr);
+
+    // Hide empty state if visible
+    const noResults    = document.getElementById('noResults');
+    const tableWrapper = document.querySelector('.table-wrapper');
+    if (noResults)    noResults.style.display    = 'none';
+    if (tableWrapper) tableWrapper.style.display = 'block';
+}
+
+function renumberRows() {
+    document.querySelectorAll('.user-row').forEach((row, i) => {
+        const cell = row.querySelector('.user-number');
+        if (cell) cell.textContent = i + 1;
+    });
+}
+
+// ========================================
 // ACTUALIZAR ESTADÍSTICAS
 // ========================================
 function updateStats() {
@@ -16,29 +257,18 @@ function updateStats() {
         const roleElement = row.querySelector('.user-role');
         if (roleElement) {
             const role = roleElement.textContent.trim().toLowerCase();
-            
-            if (role === 'administrador') {
-                adminCount++;
-            } else if (role === 'editor') {
-                regularCount++;
-            }
+            if (role === 'administrador') adminCount++;
+            else if (role === 'editor') regularCount++;
         }
     });
     
-    // Animar los números con efecto de conteo
-    const totalElement = document.getElementById('totalUsers');
-    const adminElement = document.getElementById('adminUsers');
+    const totalElement  = document.getElementById('totalUsers');
+    const adminElement  = document.getElementById('adminUsers');
     const regularElement = document.getElementById('regularUsers');
     
-    if (totalElement) {
-        animateValue('totalUsers', parseInt(totalElement.textContent) || 0, totalUsers, 500);
-    }
-    if (adminElement) {
-        animateValue('adminUsers', parseInt(adminElement.textContent) || 0, adminCount, 500);
-    }
-    if (regularElement) {
-        animateValue('regularUsers', parseInt(regularElement.textContent) || 0, regularCount, 500);
-    }
+    if (totalElement)   animateValue('totalUsers',   parseInt(totalElement.textContent)   || 0, totalUsers,   500);
+    if (adminElement)   animateValue('adminUsers',   parseInt(adminElement.textContent)   || 0, adminCount,   500);
+    if (regularElement) animateValue('regularUsers', parseInt(regularElement.textContent) || 0, regularCount, 500);
 }
 
 // ========================================
@@ -71,17 +301,16 @@ if (searchInput) {
         let visibleCount = 0;
         
         rows.forEach(row => {
-            const nameElement = row.querySelector('.user-name');
+            const nameElement  = row.querySelector('.user-name');
             const emailElement = row.querySelector('.user-email');
             
             if (nameElement && emailElement) {
-                const name = nameElement.textContent.toLowerCase();
+                const name  = nameElement.textContent.toLowerCase();
                 const email = emailElement.textContent.toLowerCase();
                 
                 if (name.includes(searchTerm) || email.includes(searchTerm)) {
                     row.style.display = '';
                     visibleCount++;
-                    // Agregar animación de fade in
                     row.style.animation = 'fadeInUp 0.3s ease-out';
                 } else {
                     row.style.display = 'none';
@@ -89,8 +318,7 @@ if (searchInput) {
             }
         });
         
-        // Mostrar mensaje si no hay resultados
-        const noResults = document.getElementById('noResults');
+        const noResults   = document.getElementById('noResults');
         const tableWrapper = document.querySelector('.table-wrapper');
         
         if (noResults && tableWrapper) {
@@ -114,7 +342,7 @@ function openAddUserModal() {
     document.getElementById('isEditing').value = 'false';
     document.getElementById('userName').value = '';
     document.getElementById('userEmail').value = '';
-    document.getElementById('userRole').value = '';
+    resetCustomSelect();
     document.getElementById('userPassword').value = '';
     document.getElementById('userPassword').required = true;
     document.getElementById('userPassword').placeholder = 'Ingrese la contraseña';
@@ -122,7 +350,11 @@ function openAddUserModal() {
     document.getElementById('passwordHint').textContent = 'Mínimo 6 caracteres';
     document.getElementById('submitBtn').textContent = 'Crear usuario';
     document.getElementById('userModal').classList.add('active');
+    document.documentElement.classList.add('modal-open');
+    
+    // --- BLOQUEAR SCROLL ---
     document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
 }
 
 // ========================================
@@ -130,7 +362,6 @@ function openAddUserModal() {
 // ========================================
 async function editUser(id) {
     try {
-        // Obtener datos del usuario desde el backend
         const response = await fetch(`/admin/users/${id}`, {
             method: 'GET',
             headers: {
@@ -144,13 +375,12 @@ async function editUser(id) {
         
         if (data.success) {
             const usuario = data.data;
-            
             document.getElementById('modalTitle').textContent = 'Editar Usuario';
             document.getElementById('userId').value = usuario.id_usuario;
             document.getElementById('isEditing').value = 'true';
             document.getElementById('userName').value = usuario.nombre_usuario;
             document.getElementById('userEmail').value = usuario.correo_usuario;
-            document.getElementById('userRole').value = usuario.cargo_usuario;
+            setCustomSelectValue(usuario.cargo_usuario);
             document.getElementById('userPassword').value = '';
             document.getElementById('userPassword').required = false;
             document.getElementById('userPassword').placeholder = 'Dejar en blanco para mantener actual';
@@ -158,23 +388,16 @@ async function editUser(id) {
             document.getElementById('passwordHint').textContent = 'Dejar en blanco para mantener la contraseña actual';
             document.getElementById('submitBtn').textContent = 'Guardar cambios';
             document.getElementById('userModal').classList.add('active');
+            
+            // --- BLOQUEAR SCROLL ---
             document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
         } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: data.message || 'No se pudo cargar la información del usuario',
-                confirmButtonColor: '#7d3f6a'
-            });
+            Swal.fire({ icon: 'error', title: 'Error', text: data.message || 'No se pudo cargar la información del usuario', confirmButtonColor: '#7d3f6a', ...swalScrollFix });
         }
     } catch (error) {
         console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudo cargar la información del usuario',
-            confirmButtonColor: '#7d3f6a'
-        });
+        Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo cargar la información del usuario', confirmButtonColor: '#7d3f6a', ...swalScrollFix });
     }
 }
 
@@ -182,8 +405,16 @@ async function editUser(id) {
 // FUNCIÓN PARA CERRAR MODAL
 // ========================================
 function closeModal() {
-    document.getElementById('userModal').classList.remove('active');
-    document.body.style.overflow = 'auto';
+    const modal = document.getElementById('userModal');
+    modal.classList.add('closing');
+    setTimeout(() => {
+        modal.classList.remove('active', 'closing');
+        document.documentElement.classList.remove('modal-open');
+        
+        // --- RESTAURAR SCROLL ---
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+    }, 250);
 }
 
 // ========================================
@@ -215,107 +446,67 @@ function togglePassword() {
 async function saveUser(event) {
     event.preventDefault();
     
-    const userId = document.getElementById('userId').value;
-    const isEditing = document.getElementById('isEditing').value === 'true';
-    const userName = document.getElementById('userName').value.trim();
-    const userEmail = document.getElementById('userEmail').value.trim();
-    const userRole = document.getElementById('userRole').value;
+    const userId      = document.getElementById('userId').value;
+    const isEditing   = document.getElementById('isEditing').value === 'true';
+    const userName    = document.getElementById('userName').value.trim();
+    const userEmail   = document.getElementById('userEmail').value.trim();
+    const userRole    = document.getElementById('userRole').value;
     const userPassword = document.getElementById('userPassword').value;
 
-    // Validaciones
     if (!userName || !userEmail || !userRole) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Campos incompletos',
-            text: 'Por favor complete todos los campos requeridos',
-            confirmButtonColor: '#7d3f6a'
-        });
+        showErrorAlert('Campos incompletos', 'Por favor complete todos los campos requeridos');
         return;
     }
 
     if (!isEditing && !userPassword) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Contraseña requerida',
-            text: 'Debe ingresar una contraseña para el nuevo usuario',
-            confirmButtonColor: '#7d3f6a'
-        });
+        showErrorAlert('Contraseña requerida', 'Debe ingresar una contraseña para el nuevo usuario');
         return;
     }
 
     if (userPassword && userPassword.length < 6) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Contraseña muy corta',
-            text: 'La contraseña debe tener al menos 6 caracteres',
-            confirmButtonColor: '#7d3f6a'
-        });
+        showErrorAlert('Contraseña muy corta', 'La contraseña debe tener al menos 6 caracteres');
         return;
     }
 
-    // Preparar datos
     const formData = {
-        nombre_usuario: userName,
-        correo_usuario: userEmail,
-        cargo_usuario: userRole,
-        contraseña_usuario: userPassword
+        nombre_usuario:      userName,
+        correo_usuario:      userEmail,
+        cargo_usuario:       userRole,
+        contraseña_usuario:  userPassword
     };
 
     try {
-        let url, method;
-        
-        if (isEditing) {
-            url = `/admin/users/${userId}`;
-            method = 'PUT';
-        } else {
-            url = '/admin/users';
-            method = 'POST';
-        }
+        const url    = isEditing ? `/admin/users/${userId}` : '/admin/users';
+        const method = isEditing ? 'PUT' : 'POST';
         
         const response = await fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json'
-            },
+            method,
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
             body: JSON.stringify(formData)
         });
         
         const data = await response.json();
         
         if (data.success) {
-            Swal.fire({
-                icon: 'success',
-                title: isEditing ? 'Usuario actualizado' : 'Usuario creado',
-                text: data.message,
-                confirmButtonColor: '#7d3f6a',
-                confirmButtonText: 'Aceptar',
-                showClass: {
-                    popup: 'animate__animated animate__fadeInDown'
+            closeModal();
+            showToast('success', isEditing ? 'Usuario actualizado' : 'Usuario creado', data.message);
+            if (isEditing) {
+                updateUserRow(userId, userName, userEmail, userRole);
+            } else {
+                if (data.data && data.data.id_usuario) {
+                    addUserRow(data.data);
+                } else {
+                    setTimeout(() => window.location.reload(), 800);
                 }
-            }).then(() => {
-                closeModal();
-                // Recargar la página para mostrar los cambios
-                window.location.reload();
-            });
+            }
+            updateStats();
         } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: data.message || 'Ocurrió un error al procesar la solicitud',
-                confirmButtonColor: '#7d3f6a'
-            });
+            showErrorAlert('Error', data.message || 'Ocurrió un error al procesar la solicitud');
         }
         
     } catch (error) {
         console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error al procesar la solicitud',
-            confirmButtonColor: '#7d3f6a'
-        });
+        showErrorAlert('Error', 'Ocurrió un error al procesar la solicitud');
     }
 }
 
@@ -326,12 +517,7 @@ async function deleteUser(id) {
     const row = document.querySelector(`tr[data-user-id="${id}"]`);
     
     if (!row) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudo encontrar el usuario',
-            confirmButtonColor: '#7d3f6a'
-        });
+        showErrorAlert('Error', 'No se pudo encontrar el usuario');
         return;
     }
     
@@ -339,93 +525,69 @@ async function deleteUser(id) {
     const name = nameElement ? nameElement.textContent : 'este usuario';
     
     const result = await Swal.fire({
-        title: '¿Estás seguro?',
-        text: `¿Deseas eliminar al usuario "${name}"? Esta acción no se puede deshacer.`,
-        icon: 'warning',
+        title: 'Eliminar usuario',
+        html: `<div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+            <div style="width:56px;height:56px;border-radius:50%;background:#fee2e2;display:flex;align-items:center;justify-content:center;">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <p style="margin:0;font-size:15px;color:var(--swal2-html-container-color)">¿Eliminar a <strong>${name}</strong>?<br><span style="font-size:13px;opacity:0.7">Esta acción no se puede deshacer.</span></p>
+        </div>`,
         showCancelButton: true,
-        confirmButtonColor: '#dc2626',
-        cancelButtonColor: '#6b7280',
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar',
-        showClass: {
-            popup: 'animate__animated animate__fadeInDown'
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        customClass: {
+            popup: 'swal-custom-popup',
+            title: 'swal-custom-title',
+            confirmButton: 'swal-confirm-btn',
+            cancelButton: 'swal-cancel-btn',
         },
-        hideClass: {
-            popup: 'animate__animated animate__fadeOutUp'
-        }
+        buttonsStyling: true,
+        focusCancel: true,
+        ...swalScrollFix // <--- Bloqueo de scroll inyectado
     });
     
     if (result.isConfirmed) {
         try {
             const response = await fetch(`/admin/users/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' }
             });
             
             const data = await response.json();
             
             if (data.success) {
-                // Animación de salida antes de eliminar
-                row.style.animation = 'fadeInUp 0.3s ease-out reverse';
-                
+                row.style.transition = 'all 0.3s ease';
+                row.style.opacity = '0';
+                row.style.transform = 'translateX(20px)';
                 setTimeout(() => {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Usuario eliminado',
-                        text: data.message,
-                        confirmButtonColor: '#7d3f6a',
-                        confirmButtonText: 'Aceptar',
-                        timer: 2000,
-                        showClass: {
-                            popup: 'animate__animated animate__fadeInDown'
-                        }
-                    }).then(() => {
-                        // Recargar la página para actualizar la lista
-                        window.location.reload();
-                    });
+                    row.remove();
+                    renumberRows();
+                    updateStats();
+                    showToast('success', 'Usuario eliminado', data.message);
                 }, 300);
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.message || 'No se pudo eliminar el usuario',
-                    confirmButtonColor: '#7d3f6a'
-                });
+                Swal.fire({ icon: 'error', title: 'Error', text: data.message || 'No se pudo eliminar el usuario', confirmButtonColor: '#7d3f6a', ...swalScrollFix });
             }
             
         } catch (error) {
             console.error('Error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'No se pudo eliminar el usuario',
-                confirmButtonColor: '#7d3f6a'
-            });
+            showErrorAlert('Error', 'No se pudo eliminar el usuario');
         }
     }
 }
 
 // ========================================
-// CERRAR MODAL AL HACER CLIC FUERA
+// CERRAR MODAL AL HACER CLIC FUERA / ESC
 // ========================================
 window.onclick = function(event) {
     const modal = document.getElementById('userModal');
-    if (event.target === modal) {
-        closeModal();
-    }
+    if (event.target === modal) closeModal();
 }
 
-// ========================================
-// CERRAR MODAL CON TECLA ESC
-// ========================================
 document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        closeModal();
-    }
+    if (event.key === 'Escape') closeModal();
 });
 
 // ========================================
@@ -433,4 +595,5 @@ document.addEventListener('keydown', function(event) {
 // ========================================
 document.addEventListener('DOMContentLoaded', function() {
     updateStats();
+    initCustomSelect();
 });

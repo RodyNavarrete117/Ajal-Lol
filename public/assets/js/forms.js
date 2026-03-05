@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initModalEvents();
 });
 
-
 // ============================================
 // 1. LÓGICA DE FILTROS, BÚSQUEDA Y ORDENAMIENTO
 // ============================================
@@ -117,7 +116,6 @@ function updateFooterCount() {
         footerInfo.innerHTML = `Mostrando <strong>${showing > 0 ? '1-' + showing : '0'}</strong> de <strong>${total}</strong> registros`;
     }
 }
-
 
 // ============================================
 // 2. LÓGICA DE SELECCIÓN DE FILAS Y AVATARES
@@ -252,7 +250,6 @@ function initSelectionLogic() {
     }
 }
 
-
 // ============================================
 // 3. EXPORTAR A PDF
 // ============================================
@@ -302,7 +299,6 @@ async function exportForms() {
     }
 }
 
-
 // ============================================
 // 4. LÓGICA DEL MODAL PERSONALIZADO (VIEW FORM)
 // ============================================
@@ -341,13 +337,19 @@ function initModalEvents() {
 function openModal() { 
     const overlay = document.getElementById('formModalOverlay');
     if(overlay) overlay.classList.add('is-open');    
+    
+    // Bloqueamos el scroll tanto en body como en html
     document.body.style.overflow = 'hidden'; 
+    document.documentElement.style.overflow = 'hidden'; 
 }
 
 function closeModal() { 
     const overlay = document.getElementById('formModalOverlay');
     if(overlay) overlay.classList.remove('is-open'); 
+    
+    // Restauramos el scroll
     document.body.style.overflow = ''; 
+    document.documentElement.style.overflow = ''; 
     currentModalId = null; 
 }
 
@@ -408,7 +410,6 @@ window.viewForm = async function(id) {
         Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo cargar el formulario', confirmButtonColor: '#7c3f69' });
     }
 };
-
 
 // ============================================
 // 5. ELIMINAR FORMULARIO (Global)

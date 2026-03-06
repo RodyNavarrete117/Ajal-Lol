@@ -140,7 +140,6 @@ html { overflow-y: scroll; }
 }
 
 .sidebar.collapsed .menu-bottom .notification-trigger .notification-badge {
-    display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
     position: absolute !important;

@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initSelectionLogic();
     initExportLogic();
     initModalEvents();
+    renderPage(); 
 });
 
 // ============================================
@@ -23,71 +24,32 @@ function initTableFilters() {
     if (!tbody) return;
 
     const searchInput = document.getElementById('searchInput');
-    const dateFilter = document.getElementById('dateFilter');
+    const dateFilter  = document.getElementById('dateFilter');
     const sortDateBtn = document.getElementById('sortDate');
-    let currentOrder = 'desc'; 
+    let currentOrder  = 'desc';
 
-    // Búsqueda en tiempo real
     if (searchInput) {
         searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase().trim();
-            const rows = tbody.querySelectorAll('tr:not(.empty-state)');
-
-            rows.forEach(row => {
-                const name = row.querySelector('.user-name')?.textContent.toLowerCase() || '';
-                const email = row.querySelector('.email-link')?.textContent.toLowerCase() || '';
-                const subject = row.querySelector('.subject-text')?.textContent.toLowerCase() || '';
-
-                if (name.includes(searchTerm) || email.includes(searchTerm) || subject.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-            updateFooterCount();
+            filterTerm  = this.value.toLowerCase().trim();
+            currentPage = 1;
+            renderPage();
         });
     }
 
-    // Filtro por Fecha
     if (dateFilter) {
         dateFilter.addEventListener('change', function() {
-            const filter = this.value;
-            const rows = tbody.querySelectorAll('tr:not(.empty-state)');
-            const now = new Date();
-
-            rows.forEach(row => {
-                const dateStr = row.dataset.date;
-                if (!dateStr) return;
-
-                const rowDate = new Date(dateStr);
-                let show = true;
-
-                if (filter === 'today') {
-                    show = rowDate.toDateString() === now.toDateString();
-                } else if (filter === 'week') {
-                    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                    show = rowDate >= weekAgo;
-                } else if (filter === 'month') {
-                    const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-                    show = rowDate >= monthAgo;
-                }
-
-                row.style.display = show ? '' : 'none';
-            });
-            updateFooterCount();
+            filterDate  = this.value;
+            currentPage = 1;
+            renderPage();
         });
     }
 
-    // Ordenar por Fecha
     if (sortDateBtn) {
         sortDateBtn.addEventListener('click', function() {
             currentOrder = currentOrder === 'desc' ? 'asc' : 'desc';
             this.dataset.order = currentOrder;
-            
             const span = this.querySelector('span');
-            if (span) {
-                span.textContent = currentOrder === 'desc' ? 'Más reciente' : 'Más antiguo';
-            }
+            if (span) span.textContent = currentOrder === 'desc' ? 'Más reciente' : 'Más antiguo';
 
             const rows = Array.from(tbody.querySelectorAll('tr:not(.empty-state)'));
             rows.sort((a, b) => {
@@ -95,25 +57,16 @@ function initTableFilters() {
                 const dateB = new Date(b.dataset.date);
                 return currentOrder === 'desc' ? dateB - dateA : dateA - dateB;
             });
-
             rows.forEach(row => tbody.appendChild(row));
+            renderPage();
         });
     }
-
-    updateFooterCount();
 }
 
-function updateFooterCount() {
-    const tbody = document.querySelector('#formsTable tbody');
-    if (!tbody) return;
-    
-    const visibleRows = tbody.querySelectorAll('tr:not(.empty-state):not([style*="display: none"])');
-    const total = tbody.querySelectorAll('tr:not(.empty-state)').length;
+function updateFooterCount(showing, total) {
     const footerInfo = document.querySelector('.footer-info');
-    
     if (footerInfo) {
-        const showing = visibleRows.length;
-        footerInfo.innerHTML = `Mostrando <strong>${showing > 0 ? '1-' + showing : '0'}</strong> de <strong>${total}</strong> registros`;
+        footerInfo.innerHTML = `Mostrando <strong>${showing > 0 ? showing : '0'}</strong> de <strong>${total}</strong> registros`;
     }
 }
 
@@ -459,3 +412,86 @@ window.deleteForm = async function(id) {
         }
     }
 };
+
+// ============================================
+// 6. PAGINACIÓN
+// ============================================
+const ROWS_PER_PAGE = 5;
+let currentPage = 1;
+let filterTerm  = '';
+let filterDate  = '';
+
+function getAllFormRows() {
+    return Array.from(document.querySelectorAll('#formsTable tbody tr:not(.empty-state)'));
+}
+
+function getFilteredFormRows() {
+    const now = new Date();
+    return getAllFormRows().filter(row => {
+        const name    = row.querySelector('.user-name')?.textContent.toLowerCase()    || '';
+        const email   = row.querySelector('.email-link')?.textContent.toLowerCase()   || '';
+        const subject = row.querySelector('.subject-text')?.textContent.toLowerCase() || '';
+        const matchSearch = !filterTerm || name.includes(filterTerm) || email.includes(filterTerm) || subject.includes(filterTerm);
+
+        let matchDate = true;
+        if (filterDate && row.dataset.date) {
+            const rowDate = new Date(row.dataset.date);
+            if (filterDate === 'today') {
+                matchDate = rowDate.toDateString() === now.toDateString();
+            } else if (filterDate === 'week') {
+                matchDate = rowDate >= new Date(now - 7 * 86400000);
+            } else if (filterDate === 'month') {
+                matchDate = rowDate >= new Date(now - 30 * 86400000);
+            }
+        }
+
+        return matchSearch && matchDate;
+    });
+}
+
+function renderPage() {
+    const filtered   = getFilteredFormRows();
+    const totalPages = Math.max(1, Math.ceil(filtered.length / ROWS_PER_PAGE));
+
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    const start = (currentPage - 1) * ROWS_PER_PAGE;
+    const end   = start + ROWS_PER_PAGE;
+
+    getAllFormRows().forEach(row => row.style.display = 'none');
+    filtered.forEach((row, i) => {
+        row.style.display = (i >= start && i < end) ? '' : 'none';
+    });
+
+    const showing = filtered.slice(start, end).length;
+    updateFooterCount(showing, getAllFormRows().length);
+
+    // Rebuild paginación
+    const pagination = document.querySelector('.table-footer .pagination');
+    if (!pagination) return;
+
+    const btnPrev = pagination.querySelector('.page-btn:first-child');
+    const btnNext = pagination.querySelector('.page-btn:last-child');
+
+    if (btnPrev) btnPrev.disabled = currentPage <= 1;
+    if (btnNext) btnNext.disabled = currentPage >= totalPages;
+
+    pagination.querySelectorAll('.page-btn:not(:first-child):not(:last-child)').forEach(el => el.remove());
+
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage   = Math.min(totalPages, startPage + 4);
+    if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+
+    for (let i = startPage; i <= endPage; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+        btn.textContent = i;
+        btn.addEventListener('click', () => { currentPage = i; renderPage(); });
+        pagination.insertBefore(btn, btnNext);
+    }
+}
+
+document.querySelector('.table-footer .pagination .page-btn:first-child')
+    ?.addEventListener('click', () => { currentPage--; renderPage(); });
+document.querySelector('.table-footer .pagination .page-btn:last-child')
+    ?.addEventListener('click', () => { currentPage++; renderPage(); });

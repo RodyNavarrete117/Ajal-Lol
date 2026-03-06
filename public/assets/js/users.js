@@ -303,48 +303,7 @@ function animateValue(id, start, end, duration) {
     }, 16);
 }
 
-// ========================================
-// BÚSQUEDA EN TIEMPO REAL
-// ========================================
-const searchInput = document.getElementById('searchInput');
-if (searchInput) {
-    searchInput.addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase().trim();
-        const rows = document.querySelectorAll('.user-row');
-        let visibleCount = 0;
-        
-        rows.forEach(row => {
-            const nameElement  = row.querySelector('.user-name');
-            const emailElement = row.querySelector('.user-email');
-            
-            if (nameElement && emailElement) {
-                const name  = nameElement.textContent.toLowerCase();
-                const email = emailElement.textContent.toLowerCase();
-                
-                if (name.includes(searchTerm) || email.includes(searchTerm)) {
-                    row.style.display = '';
-                    visibleCount++;
-                    row.style.animation = 'fadeInUp 0.3s ease-out';
-                } else {
-                    row.style.display = 'none';
-                }
-            }
-        });
-        
-        const noResults   = document.getElementById('noResults');
-        const tableWrapper = document.querySelector('.table-wrapper');
-        
-        if (noResults && tableWrapper) {
-            if (visibleCount === 0 && searchTerm !== '') {
-                noResults.style.display = 'flex';
-                tableWrapper.style.display = 'none';
-            } else {
-                noResults.style.display = 'none';
-                tableWrapper.style.display = 'block';
-            }
-        }
-    });
-}
+
 
 // ========================================
 // FUNCIÓN PARA ABRIR MODAL DE AGREGAR
@@ -635,9 +594,99 @@ document.addEventListener('keydown', function(event) {
 });
 
 // ========================================
-// INICIALIZAR ESTADÍSTICAS AL CARGAR
+// PAGINACIÓN + BÚSQUEDA
+// ========================================
+const ROWS_PER_PAGE = 5;
+let currentPage = 1;
+let searchTerm = '';
+
+function getAllRows() {
+    return Array.from(document.querySelectorAll('.user-row'));
+}
+
+function getFilteredRows() {
+    return getAllRows().filter(row => {
+        const name  = row.querySelector('.user-name')?.textContent.toLowerCase() || '';
+        const email = row.querySelector('.user-email')?.textContent.toLowerCase() || '';
+        return name.includes(searchTerm) || email.includes(searchTerm);
+    });
+}
+
+function renderPage() {
+    const filtered   = getFilteredRows();
+    const totalPages = Math.max(1, Math.ceil(filtered.length / ROWS_PER_PAGE));
+
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    const start = (currentPage - 1) * ROWS_PER_PAGE;
+    const end   = start + ROWS_PER_PAGE;
+
+    getAllRows().forEach(row => row.style.display = 'none');
+    filtered.forEach((row, i) => {
+        row.style.display = (i >= start && i < end) ? '' : 'none';
+    });
+
+    // No results
+    const noResults    = document.getElementById('noResults');
+    const tableWrapper = document.querySelector('.table-wrapper');
+    if (filtered.length === 0 && searchTerm !== '') {
+        noResults.style.display    = 'flex';
+        tableWrapper.style.display = 'none';
+    } else {
+        noResults.style.display    = 'none';
+        tableWrapper.style.display = 'block';
+    }
+
+    // Rebuild pagination
+    const pagination = document.querySelector('.pagination');
+    if (!pagination) return;
+
+    const btnPrev = pagination.querySelector('.btn-pagination:first-child');
+    const btnNext = pagination.querySelector('.btn-pagination:last-child');
+
+    if (btnPrev) btnPrev.disabled = currentPage <= 1;
+    if (btnNext) btnNext.disabled = currentPage >= totalPages;
+
+    // Eliminar números anteriores
+    pagination.querySelectorAll('.page-number').forEach(el => el.remove());
+
+    // Calcular rango de páginas (máx 5 botones)
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage   = Math.min(totalPages, startPage + 4);
+    if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+
+    // Insertar números antes del botón Siguiente
+    for (let i = startPage; i <= endPage; i++) {
+        const span = document.createElement('span');
+        span.className = 'page-number' + (i === currentPage ? ' active' : '');
+        span.textContent = i;
+        span.style.cursor = 'pointer';
+        span.addEventListener('click', () => { currentPage = i; renderPage(); });
+        pagination.insertBefore(span, btnNext);
+    }
+}
+
+// Búsqueda — filtra en todas las páginas
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+    searchInput.addEventListener('input', function() {
+        searchTerm  = this.value.toLowerCase().trim();
+        currentPage = 1;
+        renderPage();
+    });
+}
+
+// Botones de paginación
+document.querySelector('.pagination .btn-pagination:first-child')
+    ?.addEventListener('click', () => { currentPage--; renderPage(); });
+document.querySelector('.pagination .btn-pagination:last-child')
+    ?.addEventListener('click', () => { currentPage++; renderPage(); });
+
+// ========================================
+// INICIALIZAR AL CARGAR
 // ========================================
 document.addEventListener('DOMContentLoaded', function() {
     updateStats();
     initCustomSelect();
+    renderPage();
 });

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Notificacion;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -14,7 +14,7 @@ class NotificationController extends Controller
         $userId = session('user_id');
         if (!$userId) return response()->json(['count' => 0]);
 
-        $count = Notificacion::where('id_usuario', $userId)
+        $count = Notification::where('id_usuario', $userId)
                               ->where('leido', 0)
                               ->count();
 
@@ -27,7 +27,7 @@ class NotificationController extends Controller
         $userId = session('user_id');
         if (!$userId) return response()->json(['notifications' => []]);
 
-        $notificaciones = Notificacion::where('id_usuario', $userId)
+        $notificaciones = Notification::where('id_usuario', $userId)
             ->orderByRaw('`leido` ASC')
             ->orderBy('created_at', 'desc')
             ->limit(30)
@@ -54,7 +54,7 @@ class NotificationController extends Controller
         $userId = session('user_id');
         if (!$userId) return response()->json(['success' => false]);
 
-        $updated = Notificacion::where('id_notificacion', $id)
+        $updated = Notification::where('id_notificacion', $id)
                                 ->where('id_usuario', $userId)
                                 ->update(['leido' => 1]);
 
@@ -67,7 +67,7 @@ class NotificationController extends Controller
         $userId = session('user_id');
         if (!$userId) return response()->json(['success' => false]);
 
-        Notificacion::where('id_usuario', $userId)
+        Notification::where('id_usuario', $userId)
                     ->where('leido', 0)
                     ->update(['leido' => 1]);
 
@@ -80,7 +80,7 @@ class NotificationController extends Controller
         $userId = session('user_id');
         if (!$userId) return response()->json(['success' => false]);
 
-        Notificacion::where('id_usuario', $userId)->delete();
+        Notification::where('id_usuario', $userId)->delete();
 
         return response()->json(['success' => true]);
     }

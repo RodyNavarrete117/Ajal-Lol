@@ -621,6 +621,12 @@ function renderPage() {
     const start = (currentPage - 1) * ROWS_PER_PAGE;
     const end   = start + ROWS_PER_PAGE;
 
+    // Actualizar contador
+    const showingEl = document.getElementById('showingCount');
+    const totalEl   = document.getElementById('totalCount');
+    if (showingEl) showingEl.textContent = filtered.slice(start, end).length;
+    if (totalEl)   totalEl.textContent   = getAllRows().length;
+
     getAllRows().forEach(row => row.style.display = 'none');
     filtered.forEach((row, i) => {
         row.style.display = (i >= start && i < end) ? '' : 'none';

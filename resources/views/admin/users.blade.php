@@ -150,10 +150,15 @@
         </div>
     </div>
 
-    <div class="pagination">
-        <button class="btn-pagination" disabled>Anterior</button>
-        <span class="page-number active">1</span>
-        <button class="btn-pagination">Siguiente</button>
+    <div class="pagination-wrapper">
+        <div class="footer-info">
+            Mostrando <strong id="showingCount">0</strong> de <strong id="totalCount">0</strong> registros
+        </div>
+        <div class="pagination">
+            <button class="btn-pagination" disabled>Anterior</button>
+            <span class="page-number active">1</span>
+            <button class="btn-pagination">Siguiente</button>
+        </div>
     </div>
 
     <!-- Modal para Editar/Agregar Usuario -->

@@ -612,13 +612,38 @@ body.reduce-animations .modal {
 /* PAGINACIÓN */
 .pagination {
     display: flex;
-    justify-content: center;
     align-items: center;
     gap: 8px;
-    margin-top: 25px;
-    padding: 20px 0;
     flex-wrap: wrap;
+    margin-top: 0;
+    padding: 0;
     animation: fadeInUp 0.5s ease-out 0.6s both;
+}
+
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 20px 0;
+    animation: fadeInUp 0.5s ease-out 0.7s both;
+}
+
+.footer-info {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.footer-info strong {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+[data-theme="dark"] .footer-info strong {
+    color: #d4a0c4;
 }
 
 .btn-pagination {

@@ -17,7 +17,7 @@ class BlankPdfService
             'margin_right' => 18,
         ]);
 
-        $mpdf->SetTitle('Formato de Informe - Ajal-Lol A.C.');
+        $mpdf->SetTitle('Formato de Asistencia - Ajal-Lol A.C.');
 
         /* HEADER */
 
@@ -32,7 +32,7 @@ class BlankPdfService
                         Ajal-Lol A.C.
                     </div>
                     <div style="font-size:8px;color:#777;margin-top:2px;text-transform:uppercase;">
-                        Sistema Administrativo · Informe de Evento / Actividad
+                        Sistema Administrativo · Registro de Asistencia
                     </div>
                 </td>
             </tr>
@@ -142,7 +142,7 @@ class BlankPdfService
         <table class="meta-box">
             <tr>
                 <td class="meta-label">Documento</td>
-                <td>Informe de Evento / Actividad</td>
+                <td>Registro de Asistencia</td>
                 <td class="meta-label">Número de documento</td>
                 <td>'.$blank.'</td>
             </tr>
@@ -161,21 +161,20 @@ class BlankPdfService
             <tr>
                 <td class="meta-label">Teléfono</td>
                 <td>'.$blank.'</td>
-                <td class="meta-label">Total beneficiarios</td>
+                <td class="meta-label">Total asistentes</td>
                 <td>'.$blank.'</td>
             </tr>
         </table>
 
-        <div class="section-header">Registro de personas beneficiarias</div>
+        <div class="section-header">Registro de asistencia</div>
 
         <table class="ben-table">
             <thead>
                 <tr>
                     <th style="width:26px;">No.</th>
                     <th>Nombre completo</th>
-                    <th style="width:200px;">CURP</th>
-                    <th style="width:55px;">Edad</th>
-                    <th style="width:110px;">Firma</th>
+                    <th style="width:60px;">Edad</th>
+                    <th style="width:160px;">Asistencia</th>
                 </tr>
             </thead>
             <tbody>';
@@ -187,7 +186,6 @@ class BlankPdfService
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
             </tr>';
         }
 
@@ -195,6 +193,6 @@ class BlankPdfService
 
         $mpdf->WriteHTML($html);
 
-        return $mpdf->Output('formato_informe_ajal_lol.pdf', 'S');
+        return $mpdf->Output('formato_asistencia_ajal_lol.pdf', 'S');
     }
 }

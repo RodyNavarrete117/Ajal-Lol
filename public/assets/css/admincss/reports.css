@@ -131,7 +131,7 @@
     padding: 0.4rem 2.1rem 0.4rem 0.75rem;
     border: 1.5px solid var(--rpt-accent); border-radius: 8px;
     font-size: 0.85rem; background: var(--rpt-bg); color: var(--rpt-text);
-    outline: none; width: 200px; transition: all 0.25s;
+    outline: none; width: 140px; transition: all 0.25s;
 }
 .header-fecha .input-with-icon input {
     padding: 0.4rem 2.1rem 0.4rem 0.75rem;
@@ -154,6 +154,50 @@
 .header-fecha .btn-edit-input svg { width: 12px; height: 12px; }
 
 .header-actions { display: flex; gap: 0.75rem; margin-left: auto; }
+
+.header-tipo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+.header-tipo label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--rpt-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+}
+.tipo-pills {
+    display: flex;
+    gap: 0.4rem;
+}
+.tipo-pill {
+    padding: 0.38rem 0.85rem;
+    border: 1.5px solid var(--rpt-border);
+    border-radius: 20px;
+    background: var(--rpt-bg-soft);
+    color: var(--rpt-text-sub);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s, box-shadow 0.2s;
+    white-space: nowrap;
+    font-family: inherit;
+}
+.tipo-pill:hover {
+    border-color: var(--rpt-accent);
+    color: var(--rpt-accent);
+    box-shadow: 0 3px 8px rgba(120, 61, 102, 0.15);
+}
+.tipo-pill.active {
+    background: var(--rpt-accent);
+    border-color: var(--rpt-accent);
+    color: white;
+    box-shadow: 0 4px 12px rgba(120, 61, 102, 0.3);
+}
+
 .btn-action {
     padding: 0.75rem 1.25rem; border: none; border-radius: 10px;
     font-weight: 600; font-size: 0.9rem; cursor: pointer;
@@ -490,15 +534,47 @@
 .table-cell.row-num { font-size: 0.75rem; font-weight: 700; color: var(--rpt-text-muted); }
 .table-cell input { width: 100%; padding: 0.35rem 0.55rem; border: 1.5px solid var(--rpt-border); border-radius: 6px; font-size: 0.83rem; transition: all 0.2s; background: var(--rpt-bg); color: var(--rpt-text); }
 .table-cell input:focus { outline: none; border-color: var(--rpt-accent); box-shadow: 0 0 0 2px rgba(120,61,102,0.1); }
-.table-footer-actions { display: flex; gap: 0.75rem; padding: 0.65rem 0.9rem; background: var(--rpt-bg); border-top: 1px solid var(--rpt-border); justify-content: center; }
+.table-footer-actions {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.65rem 0.9rem;
+    background: var(--rpt-bg);
+    border-top: 1px solid var(--rpt-border);
+    justify-content: center;
+}
 [data-theme="dark"] .table-footer-actions { border-top-color: var(--rpt-border); }
-.btn-table-action { flex: 1; padding: 0.55rem 1rem; border: none; border-radius: 7px; cursor: pointer; font-weight: 600; font-size: 0.82rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; transition: all 0.25s ease; }
+.btn-table-action {
+    flex: 0 0 auto;
+    width: auto;
+    padding: 0.55rem 1.5rem;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.82rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    transition: all 0.25s ease;
+}
 .btn-table-action.add { background: rgba(120, 61, 102, 0.1); color: var(--rpt-accent); }
 [data-theme="dark"] .btn-table-action.add { background: rgba(196, 122, 170, 0.15); color: #c47aaa; }
 .btn-table-action.add:hover { background: var(--rpt-accent); color: white; transform: translateY(-1px); box-shadow: 0 3px 8px rgba(120,61,102,0.2); }
 .btn-table-action.remove { background: rgba(229, 62, 62, 0.1); color: #e53e3e; }
 [data-theme="dark"] .btn-table-action.remove { background: rgba(229, 62, 62, 0.15); }
 .btn-table-action.remove:hover { background: #e53e3e; color: white; transform: translateY(-1px); box-shadow: 0 3px 8px rgba(229,62,62,0.2); }
+
+/* Quitar flechas de inputs de edad */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
 
 /* ── 9. BOTONES FORMULARIO ───────────────────────────────── */
 .form-actions { display: flex; gap: 0.45rem; margin-top: 1rem; justify-content: flex-end; max-width: 100%; flex-wrap: wrap; }
@@ -659,6 +735,24 @@ body.reduce-animations .view-section { animation: none !important; }
     .desktop-only { display: none !important; }
     .mobile-only { display: flex !important; }
     .filters-divider.mobile-only { display: block !important; }
+
+    .header-tipo {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .header-tipo label {
+        display: none;
+    }
+    
+    .tipo-pill {
+        padding: 0.32rem 0.7rem;
+        font-size: 0.75rem;
+    }
+
+    .table-cell {
+        width: 100%;
+    }
 
     .reports-container { padding: 0.9rem; }
 

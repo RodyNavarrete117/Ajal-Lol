@@ -91,6 +91,20 @@
             </button>
             <h2>Nuevo informe</h2>
 
+            <div class="header-tipo">
+                <label>Tipo</label>
+                <div class="tipo-pills">
+                    <button type="button" class="tipo-pill active" data-tipo="asistencia">
+                        Asistencia
+                    </button>
+                    <button type="button" class="tipo-pill" data-tipo="reporte">
+                        Reporte
+                    </button>
+                </div>
+                <!-- Campo oculto que se envía con el form -->
+                <input type="hidden" name="tipo_informe" id="tipo_informe" value="asistencia">
+            </div>
+
             {{-- Organización en header (desktop) --}}
             <div class="header-org">
                 <label for="nombre_organizacion_header">Organización</label>

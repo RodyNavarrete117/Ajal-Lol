@@ -82,19 +82,40 @@ let rowCount = document.querySelectorAll('#beneficiaries-table .table-row').leng
 
 function addRow() {
     const table = document.getElementById('beneficiaries-table');
+    const tipo  = document.querySelector('.tipo-pill.active')?.dataset.tipo || 'asistencia';
     const idx   = rowCount++;
     const row   = document.createElement('div');
     row.className = 'table-row';
     row.id = `row-${idx}`;
-    row.innerHTML = `
-        <div class="table-cell row-num">${idx + 1}</div>
-        <div class="table-cell">
-            <input type="text" name="beneficiarios[${idx}][nombre]" placeholder="Nombre completo">
-        </div>
-        <div class="table-cell">
-            <input type="text" name="beneficiarios[${idx}][curp]" placeholder="CURP"
-                   maxlength="18" style="text-transform:uppercase">
-        </div>`;
+
+    if (tipo === 'asistencia') {
+        row.style.gridTemplateColumns = '44px 1fr 1fr';
+        row.innerHTML = `
+            <div class="table-cell row-num">${idx + 1}</div>
+            <div class="table-cell">
+                <input type="text" name="beneficiarios[${idx}][nombre]" placeholder="Nombre completo">
+            </div>
+            <div class="table-cell">
+                <input type="number" name="beneficiarios[${idx}][edad]"
+                       placeholder="Edad" min="0" max="120">
+            </div>`;
+    } else {
+        row.style.gridTemplateColumns = '44px 1fr 1fr 1fr';
+        row.innerHTML = `
+            <div class="table-cell row-num">${idx + 1}</div>
+            <div class="table-cell">
+                <input type="text" name="beneficiarios[${idx}][nombre]" placeholder="Nombre completo">
+            </div>
+            <div class="table-cell">
+                <input type="text" name="beneficiarios[${idx}][curp]"
+                       placeholder="CURP" maxlength="18" style="text-transform:uppercase">
+            </div>
+            <div class="table-cell">
+                <input type="number" name="beneficiarios[${idx}][edad]"
+                       placeholder="Edad" min="0" max="120">
+            </div>`;
+    }
+
     table.appendChild(row);
     renumberRows();
     toggleRemoveButton();
@@ -126,6 +147,131 @@ function toggleRemoveButton() {
     if (btnRemove) {
         btnRemove.style.display = rowLength > 6 ? 'flex' : 'none';
     }
+}
+
+// ============================================
+// TIPO DE INFORME — PILLS
+// ============================================
+function initTipoInforme() {
+    const pills = document.querySelectorAll('.tipo-pill');
+    if (!pills.length) return;
+
+    pills.forEach(pill => {
+        pill.addEventListener('click', () => {
+            pills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+
+            const tipo = pill.dataset.tipo;
+            const hidden = document.getElementById('tipo_informe');
+            if (hidden) hidden.value = tipo;
+
+            aplicarTipoInforme(tipo);
+        });
+    });
+
+    const tipoInicial = document.querySelector('.tipo-pill.active')?.dataset.tipo || 'asistencia';
+    aplicarTipoInforme(tipoInicial);
+}
+
+function aplicarTipoInforme(tipo) {
+    const tableHeader = document.querySelector('.table-header');
+    const tableBody   = document.getElementById('beneficiaries-table');
+    if (!tableHeader || !tableBody) return;
+
+    const esAsistencia = tipo === 'asistencia';
+
+    // Cabeceras
+    if (esAsistencia) {
+        tableHeader.innerHTML = `
+            <div class="table-col">Nº</div>
+            <div class="table-col">Persona beneficiaria</div>
+            <div class="table-col">Edad</div>`;
+        tableHeader.style.gridTemplateColumns = '44px 1fr 1fr';
+    } else {
+        tableHeader.innerHTML = `
+            <div class="table-col">Nº</div>
+            <div class="table-col">Persona beneficiaria</div>
+            <div class="table-col">CURP</div>
+            <div class="table-col">Edad</div>`;
+        tableHeader.style.gridTemplateColumns = '44px 1fr 1fr 1fr';
+    }
+
+    // Filas conservando valores
+    tableBody.querySelectorAll('.table-row').forEach((row, i) => {
+        const nombreVal = row.querySelector('input[name*="[nombre]"]')?.value || '';
+        const curpVal   = row.querySelector('input[name*="[curp]"]')?.value   || '';
+        const edadVal   = row.querySelector('input[name*="[edad]"]')?.value   || '';
+
+        row.style.gridTemplateColumns = esAsistencia ? '44px 1fr 1fr' : '44px 1fr 1fr 1fr';
+
+        if (esAsistencia) {
+            row.innerHTML = `
+                <div class="table-cell row-num">${i + 1}</div>
+                <div class="table-cell">
+                    <input type="text" name="beneficiarios[${i}][nombre]"
+                           placeholder="Nombre completo" value="${nombreVal}">
+                </div>
+                <div class="table-cell">
+                    <input type="number" name="beneficiarios[${i}][edad]"
+                           placeholder="Edad" min="0" max="120" value="${edadVal}">
+                </div>`;
+        } else {
+            row.innerHTML = `
+                <div class="table-cell row-num">${i + 1}</div>
+                <div class="table-cell">
+                    <input type="text" name="beneficiarios[${i}][nombre]"
+                           placeholder="Nombre completo" value="${nombreVal}">
+                </div>
+                <div class="table-cell">
+                    <input type="text" name="beneficiarios[${i}][curp]"
+                           placeholder="CURP" maxlength="18"
+                           style="text-transform:uppercase" value="${curpVal}">
+                </div>
+                <div class="table-cell">
+                    <input type="number" name="beneficiarios[${i}][edad]"
+                           placeholder="Edad" min="0" max="120" value="${edadVal}">
+                </div>`;
+        }
+
+            // 👇 AQUÍ, justo después del if/else del innerHTML
+    if (!document.body.classList.contains('performance-mode')) {
+        row.style.opacity = '0';
+        row.style.transform = 'translateY(10px)';
+        row.style.transition = 'none';
+        
+        setTimeout(() => {
+            row.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+            row.style.transitionDelay = `${i * 50}ms`;
+            row.style.opacity = '1';
+            row.style.transform = 'translateY(0)';
+        }, 10);
+    }
+    });
+
+// Labels móvil dinámicos
+let styleEl = document.getElementById('dynamic-cell-labels');
+if (!styleEl) {
+    styleEl = document.createElement('style');
+    styleEl.id = 'dynamic-cell-labels';
+    document.head.appendChild(styleEl);
+}
+if (esAsistencia) {
+    styleEl.textContent = `
+        @media (max-width: 768px) {
+            .table-cell:nth-child(2)::before { content: 'Persona beneficiaria' !important; }
+            .table-cell:nth-child(3)::before { content: 'Edad' !important; }
+            .table-cell:nth-child(4)::before { display: none !important; }
+        }
+    `;
+} else {
+    styleEl.textContent = `
+        @media (max-width: 768px) {
+            .table-cell:nth-child(2)::before { content: 'Persona beneficiaria' !important; }
+            .table-cell:nth-child(3)::before { content: 'CURP' !important; }
+            .table-cell:nth-child(4)::before { content: 'Edad' !important; display: block !important; }
+        }
+    `;
+}
 }
 
 // ============================================
@@ -747,6 +893,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initFilters();
     initSearch();
     initAllAutocompletes();
+    initTipoInforme();
 
     const btnAdd = document.getElementById('btn-add-row');
     if (btnAdd) btnAdd.addEventListener('click', addRow);

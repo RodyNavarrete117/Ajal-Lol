@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Report;
 use Mpdf\Mpdf;
 
-class ReportPdfService
+class AttendancePdfService
 {
     public function generate(Report $report)
     {
@@ -18,21 +18,21 @@ class ReportPdfService
             'margin_right'  => 20,
         ]);
 
-        $mpdf->SetTitle('Reporte - ' . $report->evento);
+        $mpdf->SetTitle('Asistencia - ' . $report->evento);
 
         // ── Encabezado ────────────────────────────────────────────────────────
         $mpdf->SetHTMLHeader('
-            <table width="100%" style="border-bottom: 3px solid #783d66; padding-bottom: 10px; font-family: Arial, sans-serif;">
+            <table width="100%" style="border-bottom: 3px solid #2d6a8a; padding-bottom: 10px; font-family: Arial, sans-serif;">
                 <tr>
                     <td width="12%" style="vertical-align: middle;">
                         <img src="' . public_path('assets/img/logo_ajal_lol.png') . '" style="height: 50px;">
                     </td>
                     <td width="88%" style="vertical-align: middle; padding-left: 14px; text-align: center;">
-                        <div style="font-size: 17px; font-weight: bold; color: #5a2d4d; letter-spacing: 2px; text-transform: uppercase;">
+                        <div style="font-size: 17px; font-weight: bold; color: #1a4a63; letter-spacing: 2px; text-transform: uppercase;">
                             Ajal-Lol A.C.
                         </div>
                         <div style="font-size: 9px; color: #777; margin-top: 3px; letter-spacing: 1px; text-transform: uppercase;">
-                            Sistema Administrativo &nbsp;·&nbsp; Reporte de Beneficiarios
+                            Sistema Administrativo &nbsp;·&nbsp; Lista de Asistencia
                         </div>
                     </td>
                 </tr>
@@ -41,9 +41,9 @@ class ReportPdfService
 
         // ── Pie de página ─────────────────────────────────────────────────────
         $mpdf->SetHTMLFooter('
-            <table width="100%" style="border-top: 1.5px solid #e0c8d8; padding-top: 7px; font-family: Arial, sans-serif; font-size: 8px; color: #999;">
+            <table width="100%" style="border-top: 1.5px solid #c8dde8; padding-top: 7px; font-family: Arial, sans-serif; font-size: 8px; color: #999;">
                 <tr>
-                    <td>Ajal-Lol A.C. &nbsp;·&nbsp; Documento de uso interno &nbsp;·&nbsp; Folio: REP-' . str_pad($report->id_informe, 5, '0', STR_PAD_LEFT) . '</td>
+                    <td>Ajal-Lol A.C. &nbsp;·&nbsp; Documento de uso interno &nbsp;·&nbsp; Folio: ASI-' . str_pad($report->id_informe, 5, '0', STR_PAD_LEFT) . '</td>
                     <td style="text-align: right;">Generado el ' . now()->format('d/m/Y') . ' a las ' . now()->format('H:i') . ' hrs &nbsp;|&nbsp; Página {PAGENO} de {nb}</td>
                 </tr>
             </table>
@@ -59,30 +59,30 @@ class ReportPdfService
                 width: 100%;
                 border-collapse: collapse;
                 margin-bottom: 22px;
-                border: 1.5px solid #e0c8d8;
-                border-top: 4px solid #783d66;
+                border: 1.5px solid #c8dde8;
+                border-top: 4px solid #2d6a8a;
             }
             .meta-box td {
                 padding: 6px 12px;
                 font-size: 12px;
                 color: #333;
-                border-bottom: 1px solid #f0e0ea;
+                border-bottom: 1px solid #e0eff5;
                 vertical-align: middle;
             }
             .meta-box tr:last-child td { border-bottom: none; }
             .meta-label {
                 font-weight: bold;
-                color: #783d66;
+                color: #2d6a8a;
                 width: 150px;
                 font-size: 11px;
                 text-transform: uppercase;
                 letter-spacing: 0.4px;
-                background-color: #fdf5fa;
+                background-color: #f3f8fb;
             }
             .meta-value { background-color: #fff; }
 
             .section-header {
-                background-color: #783d66;
+                background-color: #2d6a8a;
                 color: #fff;
                 font-size: 11px;
                 font-weight: bold;
@@ -97,62 +97,56 @@ class ReportPdfService
                 border-collapse: collapse;
                 font-size: 12px;
             }
-            table.ben-table thead tr { background-color: #f7edf4; }
+            table.ben-table thead tr { background-color: #edf4f8; }
             table.ben-table th {
-                color: #5a2d4d;
+                color: #1a4a63;
                 font-size: 10px;
                 font-weight: bold;
                 padding: 9px 11px;
                 text-transform: uppercase;
                 letter-spacing: 0.8px;
-                border: 1.5px solid #e0c8d8;
+                border: 1.5px solid #c8dde8;
                 text-align: left;
             }
             table.ben-table th.center { text-align: center; }
             table.ben-table td {
                 padding: 10px 11px;
-                border: 1px solid #eedde8;
+                border: 1px solid #d8eaf2;
                 vertical-align: middle;
                 font-size: 12px;
                 color: #2d2d2d;
             }
             table.ben-table tbody tr:nth-child(odd)  { background-color: #ffffff; }
-            table.ben-table tbody tr:nth-child(even) { background-color: #fdf5fa; }
-            table.ben-table tbody tr:last-child td   { border-bottom: 2px solid #783d66; }
+            table.ben-table tbody tr:nth-child(even) { background-color: #f3f8fb; }
+            table.ben-table tbody tr:last-child td   { border-bottom: 2px solid #2d6a8a; }
 
             td.num-cell {
                 text-align: center;
                 font-weight: bold;
-                color: #783d66;
-                background-color: #fdf0f7;
+                color: #2d6a8a;
+                background-color: #eaf3f8;
                 width: 36px;
-            }
-            td.curp-cell {
-                font-family: "Courier New", Courier, monospace;
-                font-size: 11px;
-                letter-spacing: 1px;
-                color: #444;
             }
             td.age-cell { text-align: center; color: #555; }
             td.sign-cell {
-                background-color: #fffbfe;
-                border-bottom: 1.5px dashed #c9a8c0;
+                background-color: #fafcfe;
+                border-bottom: 1.5px dashed #a8c8d8;
             }
         </style>
         ';
 
         // ── Datos ─────────────────────────────────────────────────────────────
-        $personas   = $report->beneficiaries;
-        $totalBenef = $personas->count();
+        $personas   = $report->attendances;
+        $totalAsist = $personas->count();
         $fecha      = \Carbon\Carbon::parse($report->fecha)->locale('es')->isoFormat('D [de] MMMM [de] YYYY');
-        $folio      = 'REP-' . str_pad($report->id_informe, 5, '0', STR_PAD_LEFT);
+        $folio      = 'ASI-' . str_pad($report->id_informe, 5, '0', STR_PAD_LEFT);
 
         $html = $style . '
 
         <table class="meta-box">
             <tr>
                 <td class="meta-label">Documento</td>
-                <td class="meta-value">Reporte de Beneficiarios</td>
+                <td class="meta-value">Lista de Asistencia</td>
                 <td class="meta-label">Folio</td>
                 <td class="meta-value"><strong>' . $folio . '</strong></td>
             </tr>
@@ -172,25 +166,24 @@ class ReportPdfService
             <tr>
                 <td class="meta-label">Teléfono</td>
                 <td class="meta-value">' . htmlspecialchars($report->numero_telefonico) . '</td>
-                <td class="meta-label">Total beneficiarios</td>
-                <td class="meta-value"><strong style="font-size:14px; color:#783d66;">' . $totalBenef . '</strong></td>
+                <td class="meta-label">Total asistentes</td>
+                <td class="meta-value"><strong style="font-size:14px; color:#2d6a8a;">' . $totalAsist . '</strong></td>
             </tr>' : '
             <tr>
-                <td class="meta-label">Total beneficiarios</td>
-                <td class="meta-value" colspan="3"><strong style="font-size:14px; color:#783d66;">' . $totalBenef . '</strong></td>
+                <td class="meta-label">Total asistentes</td>
+                <td class="meta-value" colspan="3"><strong style="font-size:14px; color:#2d6a8a;">' . $totalAsist . '</strong></td>
             </tr>') . '
         </table>
 
-        <div class="section-header">Registro de personas beneficiarias</div>
+        <div class="section-header">Lista de asistencia</div>
 
         <table class="ben-table">
             <thead>
                 <tr>
                     <th class="center" style="width: 36px;">No.</th>
-                    <th style="width: 32%;">Nombre completo</th>
-                    <th style="width: 22%;">CURP</th>
-                    <th class="center" style="width: 8%;">Edad</th>
-                    <th style="width: 30%;">Firma de recibido</th>
+                    <th style="width: 52%;">Nombre completo</th>
+                    <th class="center" style="width: 10%;">Edad</th>
+                    <th style="width: 30%;">Firma de asistencia</th>
                 </tr>
             </thead>
             <tbody>';
@@ -199,9 +192,8 @@ class ReportPdfService
             $html .= '
                 <tr>
                     <td class="num-cell">' . ($i + 1) . '</td>
-                    <td>' . htmlspecialchars($p->reportenombrebeneficiario) . '</td>
-                    <td class="curp-cell">' . htmlspecialchars($p->reportecurpbeneficiario) . '</td>
-                    <td class="age-cell">' . ($p->reporteedadbeneficiario ?? '—') . '</td>
+                    <td>' . htmlspecialchars($p->asistencianombrebeneficiario) . '</td>
+                    <td class="age-cell">' . ($p->asistenciaedadbeneficiario ?? '—') . '</td>
                     <td class="sign-cell"></td>
                 </tr>';
         }
@@ -212,6 +204,6 @@ class ReportPdfService
 
         $mpdf->WriteHTML($html);
 
-        return $mpdf->Output('reporte_' . $report->id_informe . '.pdf', 'S');
+        return $mpdf->Output('asistencia_' . $report->id_informe . '.pdf', 'S');
     }
 }

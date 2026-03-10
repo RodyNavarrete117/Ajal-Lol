@@ -1,7 +1,7 @@
 // ============================================
 // FECHA SELECCIONADA EN CALENDARIO
 // ============================================
-let calendarSelectedDate = null; // null = usar fecha de hoy
+let calendarSelectedDate = null;
 
 // ============================================
 // NAVEGACIÓN
@@ -16,8 +16,6 @@ function showCreateView() {
     document.getElementById('calendar-view').classList.remove('active');
     document.getElementById('create-view').classList.add('active');
     document.getElementById('history-view').classList.remove('active');
-
-    // Usar fecha seleccionada en calendario, o hoy si no hay ninguna
     applyDateToForm(calendarSelectedDate);
 }
 
@@ -37,7 +35,7 @@ function applyDateToForm(dateStr) {
     const d = String(today.getDate()).padStart(2, '0');
     const fechaToUse = dateStr || `${y}-${m}-${d}`;
 
-    const h = document.getElementById('fecha_header');
+    const h   = document.getElementById('fecha_header');
     const mob = document.getElementById('fecha_mobile');
     const hid = document.getElementById('fecha');
 
@@ -69,20 +67,26 @@ function initHeaderInputs() {
 }
 
 function setTodayDate() {
-    // Si hay old('fecha') en el servidor (formulario con errores), respetar ese valor
     const hid = document.getElementById('fecha');
-    if (hid && hid.value) return; // ya viene con valor del servidor
+    if (hid && hid.value) return;
     applyDateToForm(calendarSelectedDate);
 }
 
 // ============================================
 // TABLA — BENEFICIARIOS
+// Nombres de campos según tipo activo:
+//   asistencia → asistencias[i][asistencianombrebeneficiario] / asistencias[i][asistenciaedadbeneficiario]
+//   reporte    → beneficiarios[i][reportenombrebeneficiario] / beneficiarios[i][reportecurpbeneficiario] / beneficiarios[i][reporteedadbeneficiario]
 // ============================================
 let rowCount = document.querySelectorAll('#beneficiaries-table .table-row').length;
 
+function getTipoActivo() {
+    return document.querySelector('.tipo-pill.active')?.dataset.tipo || 'asistencia';
+}
+
 function addRow() {
     const table = document.getElementById('beneficiaries-table');
-    const tipo  = document.querySelector('.tipo-pill.active')?.dataset.tipo || 'asistencia';
+    const tipo  = getTipoActivo();
     const idx   = rowCount++;
     const row   = document.createElement('div');
     row.className = 'table-row';
@@ -93,10 +97,10 @@ function addRow() {
         row.innerHTML = `
             <div class="table-cell row-num">${idx + 1}</div>
             <div class="table-cell">
-                <input type="text" name="beneficiarios[${idx}][nombre]" placeholder="Nombre completo">
+                <input type="text" name="asistencias[${idx}][asistencianombrebeneficiario]" placeholder="Nombre completo">
             </div>
             <div class="table-cell">
-                <input type="number" name="beneficiarios[${idx}][edad]"
+                <input type="number" name="asistencias[${idx}][asistenciaedadbeneficiario]"
                        placeholder="Edad" min="0" max="120">
             </div>`;
     } else {
@@ -104,14 +108,14 @@ function addRow() {
         row.innerHTML = `
             <div class="table-cell row-num">${idx + 1}</div>
             <div class="table-cell">
-                <input type="text" name="beneficiarios[${idx}][nombre]" placeholder="Nombre completo">
+                <input type="text" name="beneficiarios[${idx}][reportenombrebeneficiario]" placeholder="Nombre completo">
             </div>
             <div class="table-cell">
-                <input type="text" name="beneficiarios[${idx}][curp]"
+                <input type="text" name="beneficiarios[${idx}][reportecurpbeneficiario]"
                        placeholder="CURP" maxlength="18" style="text-transform:uppercase">
             </div>
             <div class="table-cell">
-                <input type="number" name="beneficiarios[${idx}][edad]"
+                <input type="number" name="beneficiarios[${idx}][reporteedadbeneficiario]"
                        placeholder="Edad" min="0" max="120">
             </div>`;
     }
@@ -132,12 +136,20 @@ function removeLastRow() {
 }
 
 function renumberRows() {
+    const tipo = getTipoActivo();
     document.querySelectorAll('#beneficiaries-table .table-row').forEach((row, i) => {
         const cell = row.querySelector('.row-num');
         if (cell) cell.textContent = i + 1;
-        row.querySelectorAll('input[name]').forEach(input => {
-            input.name = input.name.replace(/\[\d+\]/, `[${i}]`);
-        });
+
+        if (tipo === 'asistencia') {
+            row.querySelectorAll('input[name*="asistencias["]').forEach(input => {
+                input.name = input.name.replace(/asistencias\[\d+\]/, `asistencias[${i}]`);
+            });
+        } else {
+            row.querySelectorAll('input[name*="beneficiarios["]').forEach(input => {
+                input.name = input.name.replace(/beneficiarios\[\d+\]/, `beneficiarios[${i}]`);
+            });
+        }
     });
 }
 
@@ -162,8 +174,12 @@ function initTipoInforme() {
             pill.classList.add('active');
 
             const tipo = pill.dataset.tipo;
-            const hidden = document.getElementById('tipo_informe');
-            if (hidden) hidden.value = tipo;
+
+            // Sincronizar ambos hidden de tipo (header y form)
+            const hiddenHeader = document.getElementById('tipo_informe');
+            const hiddenForm   = document.getElementById('tipo_informe_form');
+            if (hiddenHeader) hiddenHeader.value = tipo;
+            if (hiddenForm)   hiddenForm.value   = tipo;
 
             aplicarTipoInforme(tipo);
         });
@@ -196,11 +212,12 @@ function aplicarTipoInforme(tipo) {
         tableHeader.style.gridTemplateColumns = '44px 1fr 1fr 1fr';
     }
 
-    // Filas conservando valores
+    // Filas: conservar valores y cambiar nombres de campos
     tableBody.querySelectorAll('.table-row').forEach((row, i) => {
-        const nombreVal = row.querySelector('input[name*="[nombre]"]')?.value || '';
-        const curpVal   = row.querySelector('input[name*="[curp]"]')?.value   || '';
-        const edadVal   = row.querySelector('input[name*="[edad]"]')?.value   || '';
+        // Leer valores actuales (sin importar el nombre que tengan ahora)
+        const nombreVal = row.querySelector('input[name*="[asistencianombrebeneficiario]"], input[name*="[reportenombrebeneficiario]"]')?.value || '';
+        const curpVal   = row.querySelector('input[name*="[reportecurpbeneficiario]"]')?.value   || '';
+        const edadVal   = row.querySelector('input[name*="[asistenciaedadbeneficiario]"], input[name*="[reporteedadbeneficiario]"]')?.value || '';
 
         row.style.gridTemplateColumns = esAsistencia ? '44px 1fr 1fr' : '44px 1fr 1fr 1fr';
 
@@ -208,70 +225,69 @@ function aplicarTipoInforme(tipo) {
             row.innerHTML = `
                 <div class="table-cell row-num">${i + 1}</div>
                 <div class="table-cell">
-                    <input type="text" name="beneficiarios[${i}][nombre]"
+                    <input type="text" name="asistencias[${i}][asistencianombrebeneficiario]"
                            placeholder="Nombre completo" value="${nombreVal}">
                 </div>
                 <div class="table-cell">
-                    <input type="number" name="beneficiarios[${i}][edad]"
+                    <input type="number" name="asistencias[${i}][asistenciaedadbeneficiario]"
                            placeholder="Edad" min="0" max="120" value="${edadVal}">
                 </div>`;
         } else {
             row.innerHTML = `
                 <div class="table-cell row-num">${i + 1}</div>
                 <div class="table-cell">
-                    <input type="text" name="beneficiarios[${i}][nombre]"
+                    <input type="text" name="beneficiarios[${i}][reportenombrebeneficiario]"
                            placeholder="Nombre completo" value="${nombreVal}">
                 </div>
                 <div class="table-cell">
-                    <input type="text" name="beneficiarios[${i}][curp]"
+                    <input type="text" name="beneficiarios[${i}][reportecurpbeneficiario]"
                            placeholder="CURP" maxlength="18"
                            style="text-transform:uppercase" value="${curpVal}">
                 </div>
                 <div class="table-cell">
-                    <input type="number" name="beneficiarios[${i}][edad]"
+                    <input type="number" name="beneficiarios[${i}][reporteedadbeneficiario]"
                            placeholder="Edad" min="0" max="120" value="${edadVal}">
                 </div>`;
         }
 
-            // 👇 AQUÍ, justo después del if/else del innerHTML
-    if (!document.body.classList.contains('performance-mode')) {
-        row.style.opacity = '0';
-        row.style.transform = 'translateY(10px)';
-        row.style.transition = 'none';
-        
-        setTimeout(() => {
-            row.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
-            row.style.transitionDelay = `${i * 50}ms`;
-            row.style.opacity = '1';
-            row.style.transform = 'translateY(0)';
-        }, 10);
-    }
+        // Animación de filas
+        if (!document.body.classList.contains('performance-mode')) {
+            row.style.opacity = '0';
+            row.style.transform = 'translateY(10px)';
+            row.style.transition = 'none';
+            setTimeout(() => {
+                row.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+                row.style.transitionDelay = `${i * 50}ms`;
+                row.style.opacity = '1';
+                row.style.transform = 'translateY(0)';
+            }, 10);
+        }
     });
 
-// Labels móvil dinámicos
-let styleEl = document.getElementById('dynamic-cell-labels');
-if (!styleEl) {
-    styleEl = document.createElement('style');
-    styleEl.id = 'dynamic-cell-labels';
-    document.head.appendChild(styleEl);
-}
-if (esAsistencia) {
-    styleEl.textContent = `
-        @media (max-width: 768px) {
-            .table-cell:nth-child(2)::before { content: 'Persona beneficiaria' !important; }
-            .table-cell:nth-child(3)::before { content: 'Edad' !important; }
-            .table-cell:nth-child(4)::before { display: none !important; }
-        }
-    `;
-} else {
-    styleEl.textContent = `
-        @media (max-width: 768px) {
-            .table-cell:nth-child(2)::before { content: 'Persona beneficiaria' !important; }
-            .table-cell:nth-child(3)::before { content: 'CURP' !important; }
-            .table-cell:nth-child(4)::before { content: 'Edad' !important; display: block !important; }
-        }
-    `;
-}
+    // Labels móvil dinámicos
+    let styleEl = document.getElementById('dynamic-cell-labels');
+    if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'dynamic-cell-labels';
+        document.head.appendChild(styleEl);
+    }
+    if (esAsistencia) {
+        styleEl.textContent = `
+            @media (max-width: 768px) {
+                .table-cell:nth-child(2)::before { content: 'Persona beneficiaria' !important; }
+                .table-cell:nth-child(3)::before { content: 'Edad' !important; }
+                .table-cell:nth-child(4)::before { display: none !important; }
+            }
+        `;
+    } else {
+        styleEl.textContent = `
+            @media (max-width: 768px) {
+                .table-cell:nth-child(2)::before { content: 'Persona beneficiaria' !important; }
+                .table-cell:nth-child(3)::before { content: 'CURP' !important; }
+                .table-cell:nth-child(4)::before { content: 'Edad' !important; display: block !important; }
+            }
+        `;
+    }
 }
 
 // ============================================
@@ -281,7 +297,6 @@ let currentReportId = null;
 
 function openEventModal(id, title, date, lugar) {
     currentReportId = id;
-
     const fechaFormateada = formatDate(date);
 
     document.getElementById('event-modal-title').textContent    = title;
@@ -357,12 +372,9 @@ function createDayCell(day, isOther) {
     if (!isOther) {
         const key = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
 
-        // Marcar día actual
         const now = new Date();
         const todayKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
         if (key === todayKey) div.classList.add('today');
-
-        // Marcar fecha seleccionada si coincide con este día
         if (calendarSelectedDate === key) div.classList.add('selected');
 
         if (typeof eventsFromDB !== 'undefined' && eventsFromDB[key]) {
@@ -370,12 +382,10 @@ function createDayCell(day, isOther) {
             div.classList.add('has-event');
             div.title = evt.title;
 
-        div.addEventListener('click', () => {
-                // Si la fecha clickeada es la que YA estaba seleccionada, abrimos el modal
+            div.addEventListener('click', () => {
                 if (calendarSelectedDate === key) {
                     openEventModal(evt.id, evt.title, key, evt.lugar);
                 } else {
-                    // Si es el primer clic, la marcamos como seleccionada y actualizamos las notas
                     calendarSelectedDate = key;
                     markSelectedDay(div);
                     updateCalendarNotes(evt.title, key, evt.lugar);
@@ -393,12 +403,8 @@ function createDayCell(day, isOther) {
     return div;
 }
 
-// Quita .selected de todos y marca el actual
 function markSelectedDay(activeDiv) {
-    document.querySelectorAll('.calendar-date.selected').forEach(el => {
-        // Mantener .today si aplica
-        el.classList.remove('selected');
-    });
+    document.querySelectorAll('.calendar-date.selected').forEach(el => el.classList.remove('selected'));
     activeDiv.classList.add('selected');
 }
 
@@ -751,8 +757,7 @@ function initAutocomplete(inputId, dropdownId, getDbSuggestions, includeMunicipi
     let currentItems = [];
 
     function normalize(str) {
-        return str.toLowerCase()
-            .normalize('NFD').replace(/[̀-ͯ]/g, '');
+        return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     }
 
     function buildList(query) {
@@ -781,7 +786,6 @@ function initAutocomplete(inputId, dropdownId, getDbSuggestions, includeMunicipi
             lbl.className = 'ac-section-label';
             lbl.textContent = 'Registrados';
             dropdown.appendChild(lbl);
-
             dbItems.forEach(text => {
                 currentItems.push(text);
                 dropdown.appendChild(buildItem(text, 'db'));
@@ -793,7 +797,6 @@ function initAutocomplete(inputId, dropdownId, getDbSuggestions, includeMunicipi
             lbl.className = 'ac-section-label';
             lbl.textContent = 'Municipios de Yucatán';
             dropdown.appendChild(lbl);
-
             munItems.forEach(text => {
                 currentItems.push(text);
                 dropdown.appendChild(buildItem(text, 'mun'));
@@ -810,10 +813,7 @@ function initAutocomplete(inputId, dropdownId, getDbSuggestions, includeMunicipi
             ? '<span class="ac-item-badge badge-db">BD</span>'
             : '<span class="ac-item-badge badge-mun">Mun</span>';
         li.innerHTML = `${badge}<span class="ac-item-text">${text}</span>`;
-        li.addEventListener('mousedown', e => {
-            e.preventDefault();
-            selectItem(text);
-        });
+        li.addEventListener('mousedown', e => { e.preventDefault(); selectItem(text); });
         return li;
     }
 
@@ -837,7 +837,7 @@ function initAutocomplete(inputId, dropdownId, getDbSuggestions, includeMunicipi
 
     input.addEventListener('input', () => buildList(input.value));
     input.addEventListener('focus', () => { if (input.value) buildList(input.value); });
-    input.addEventListener('blur', () => setTimeout(closeDropdown, 150));
+    input.addEventListener('blur',  () => setTimeout(closeDropdown, 150));
 
     input.addEventListener('keydown', e => {
         const items = dropdown.querySelectorAll('.ac-item');
@@ -861,14 +861,11 @@ function initAutocomplete(inputId, dropdownId, getDbSuggestions, includeMunicipi
 }
 
 function initAllAutocompletes() {
-    // Evento: solo sugerencias de BD
     initAutocomplete(
         'input-evento', 'ac-evento',
         () => (typeof DB_EVENTOS !== 'undefined' ? DB_EVENTOS : []),
         false
     );
-
-    // Lugar: BD + municipios de Yucatán
     initAutocomplete(
         'input-lugar', 'ac-lugar',
         () => (typeof DB_LUGARES !== 'undefined' ? DB_LUGARES : []),
@@ -895,9 +892,9 @@ document.addEventListener('DOMContentLoaded', function () {
     initAllAutocompletes();
     initTipoInforme();
 
-    const btnAdd = document.getElementById('btn-add-row');
-    if (btnAdd) btnAdd.addEventListener('click', addRow);
+    const btnAdd    = document.getElementById('btn-add-row');
     const btnRemove = document.getElementById('btn-remove-row');
+    if (btnAdd)    btnAdd.addEventListener('click', addRow);
     if (btnRemove) btnRemove.addEventListener('click', removeLastRow);
 
     const btnDelete = document.getElementById('btn-modal-delete');
@@ -916,6 +913,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     const form = document.getElementById('create-report-form');
+
+    // Botones Exportar e Imprimir — generan PDF sin guardar en BD
     document.querySelectorAll('.btn-form[data-action="pdf_download"], .btn-form[data-action="pdf_print"]').forEach(btn => {
         btn.addEventListener('click', function () {
             if (!form || !validarCamposObligatorios(form)) return;
@@ -923,19 +922,30 @@ document.addEventListener('DOMContentLoaded', function () {
             const formData = new FormData(form);
             formData.set('_action', action);
 
-            fetch(ROUTE_PREVIEW_PDF, { method: 'POST', body: formData, headers: { 'X-CSRF-TOKEN': CSRF_TOKEN } })
+            fetch(ROUTE_PREVIEW_PDF, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-CSRF-TOKEN': CSRF_TOKEN }
+            })
                 .then(res => { if (!res.ok) throw new Error(); return res.blob(); })
                 .then(blob => {
                     const url = URL.createObjectURL(blob);
                     if (action === 'pdf_download') {
-                        const a = document.createElement('a'); a.href = url; a.download = 'informe.pdf';
-                        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-                    } else { window.open(url, '_blank'); }
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'informe.pdf';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    } else {
+                        window.open(url, '_blank');
+                    }
                 })
                 .catch(() => alert('No se pudo generar el PDF. Intenta de nuevo.'));
         });
     });
 
+    // Botón Guardar
     if (form) {
         form.addEventListener('submit', () => {
             const actionInput = document.getElementById('form-action');

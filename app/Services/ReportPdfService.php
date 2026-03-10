@@ -52,19 +52,10 @@ class ReportPdfService
         // ── Estilos ───────────────────────────────────────────────────────────
         $style = '
         <style>
-            * {
-                box-sizing: border-box;
-                margin: 0;
-                padding: 0;
-            }
-            body {
-                font-family: Arial, sans-serif;
-                font-size: 12px;
-                color: #222;
-                line-height: 1.6;
-            }
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body { font-family: Arial, sans-serif; font-size: 12px; color: #222; line-height: 1.6; }
 
-            /* ─ Bloque de metadatos ─────────────────── */
+            /* ─ Metadatos ───────────────────────────── */
             .meta-box {
                 width: 100%;
                 border-collapse: collapse;
@@ -109,9 +100,7 @@ class ReportPdfService
                 border-collapse: collapse;
                 font-size: 12px;
             }
-            table.ben-table thead tr {
-                background-color: #f7edf4;
-            }
+            table.ben-table thead tr { background-color: #f7edf4; }
             table.ben-table th {
                 color: #5a2d4d;
                 font-size: 10px;
@@ -123,7 +112,6 @@ class ReportPdfService
                 text-align: left;
             }
             table.ben-table th.center { text-align: center; }
-
             table.ben-table td {
                 padding: 10px 11px;
                 border: 1px solid #eedde8;
@@ -147,6 +135,10 @@ class ReportPdfService
                 font-size: 11px;
                 letter-spacing: 1px;
                 color: #444;
+            }
+            td.age-cell {
+                text-align: center;
+                color: #555;
             }
             td.sign-cell {
                 width: 32%;
@@ -187,10 +179,24 @@ class ReportPdfService
         </style>
         ';
 
+        // ── Detectar tipo: si tiene beneficiarios en reportebeneficiarios → reporte, si no → asistencia
+        $esReporte     = $report->beneficiaries->isNotEmpty();
+        $esAsistencia  = !$esReporte && $report->attendances->isNotEmpty();
+
+        // Seleccionar la colección correcta y contar
+        if ($esReporte) {
+            $personas   = $report->beneficiaries;
+            $totalBenef = $personas->count();
+            $tipoLabel  = 'Reporte';
+        } else {
+            $personas   = $report->attendances;
+            $totalBenef = $personas->count();
+            $tipoLabel  = 'Asistencia';
+        }
+
         // ── Datos del informe ─────────────────────────────────────────────────
         $fecha        = \Carbon\Carbon::parse($report->fecha)->locale('es')->isoFormat('D [de] MMMM [de] YYYY');
         $folio        = 'INF-' . str_pad($report->id_informe, 5, '0', STR_PAD_LEFT);
-        $totalBenef   = $report->beneficiaries->count();
         $emisionFecha = now()->format('d/m/Y H:i');
 
         $html = $style . '
@@ -199,7 +205,7 @@ class ReportPdfService
         <table class="meta-box">
             <tr>
                 <td class="meta-label">Documento</td>
-                <td class="meta-value">Informe de Evento / Actividad</td>
+                <td class="meta-value">Informe de Evento / Actividad &nbsp;·&nbsp; <strong>' . $tipoLabel . '</strong></td>
                 <td class="meta-label">Folio</td>
                 <td class="meta-value"><strong>' . $folio . '</strong></td>
             </tr>
@@ -234,29 +240,50 @@ class ReportPdfService
         <table class="ben-table">
             <thead>
                 <tr>
-                    <th class="center" style="width: 36px;">No.</th>
-                    <th style="width: 38%;">Nombre completo</th>
-                    <th style="width: 26%;">CURP</th>
-                    <th style="width: 32%;">Firma de recibido</th>
+                    <th class="center" style="width: 36px;">No.</th>';
+
+        if ($esReporte) {
+            // Reporte: Nombre · CURP · Edad · Firma
+            $html .= '
+                    <th style="width: 32%;">Nombre completo</th>
+                    <th style="width: 22%;">CURP</th>
+                    <th class="center" style="width: 8%;">Edad</th>
+                    <th style="width: 30%;">Firma de recibido</th>';
+        } else {
+            // Asistencia: Nombre · Edad · Firma
+            $html .= '
+                    <th style="width: 46%;">Nombre completo</th>
+                    <th class="center" style="width: 10%;">Edad</th>
+                    <th style="width: 36%;">Firma de recibido</th>';
+        }
+
+        $html .= '
                 </tr>
             </thead>
             <tbody>';
 
-        foreach ($report->beneficiaries as $i => $b) {
-            $html .= '
-                <tr>
-                    <td class="num-cell">' . ($i + 1) . '</td>
-                    <td>' . htmlspecialchars($b->nombre) . '</td>
-                    <td class="curp-cell">' . htmlspecialchars($b->curp) . '</td>
-                    <td class="sign-cell"></td>
-                </tr>';
+        foreach ($personas as $i => $p) {
+            $html .= '<tr><td class="num-cell">' . ($i + 1) . '</td>';
+
+            if ($esReporte) {
+                $html .= '
+                    <td>' . htmlspecialchars($p->reportenombrebeneficiario) . '</td>
+                    <td class="curp-cell">' . htmlspecialchars($p->reportecurpbeneficiario) . '</td>
+                    <td class="age-cell">' . ($p->reporteedadbeneficiario ?? '—') . '</td>
+                    <td class="sign-cell"></td>';
+            } else {
+                $html .= '
+                    <td>' . htmlspecialchars($p->asistencianombrebeneficiario) . '</td>
+                    <td class="age-cell">' . ($p->asistenciaedadbeneficiario ?? '—') . '</td>
+                    <td class="sign-cell"></td>';
+            }
+
+            $html .= '</tr>';
         }
 
         $html .= '
             </tbody>
-        </table>
-
-        ';
+        </table>';
 
         $mpdf->WriteHTML($html);
 

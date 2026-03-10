@@ -81,7 +81,6 @@
     ════════════════════════════════════════ --}}
     <div id="create-view" class="view-section">
 
-        {{-- HEADER: Volver + Título + Organización a la derecha (solo desktop) --}}
         <div class="reports-header">
             <button class="btn-back" onclick="showCalendarView()">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -94,15 +93,15 @@
             <div class="header-tipo">
                 <label>Tipo</label>
                 <div class="tipo-pills">
-                    <button type="button" class="tipo-pill active" data-tipo="asistencia">
+                    {{-- Tipo inicial: si hay old('tipo_informe') lo respetamos, si no, 'asistencia' --}}
+                    <button type="button" class="tipo-pill {{ old('tipo_informe', 'asistencia') === 'asistencia' ? 'active' : '' }}" data-tipo="asistencia">
                         Asistencia
                     </button>
-                    <button type="button" class="tipo-pill" data-tipo="reporte">
+                    <button type="button" class="tipo-pill {{ old('tipo_informe') === 'reporte' ? 'active' : '' }}" data-tipo="reporte">
                         Reporte
                     </button>
                 </div>
-                <!-- Campo oculto que se envía con el form -->
-                <input type="hidden" name="tipo_informe" id="tipo_informe" value="asistencia">
+                <input type="hidden" name="tipo_informe" id="tipo_informe" value="{{ old('tipo_informe', 'asistencia') }}">
             </div>
 
             {{-- Organización en header (desktop) --}}
@@ -151,13 +150,13 @@
         <form action="{{ route('admin.reports.store') }}" method="POST" id="create-report-form">
             @csrf
             <input type="hidden" name="_action" id="form-action" value="save">
-            {{-- Campo oculto que sincroniza con el input del header --}}
             <input type="hidden" name="nombre_organizacion" id="nombre_organizacion"
                    value="{{ old('nombre_organizacion', 'Ajal-lol AC') }}">
+            <input type="hidden" name="tipo_informe" id="tipo_informe_form" value="{{ old('tipo_informe', 'asistencia') }}">
 
             <div class="create-form">
 
-                {{-- Organización visible solo en móvil (dentro del form) --}}
+                {{-- Organización visible solo en móvil --}}
                 <div class="form-group form-org-mobile" style="display:none; margin-bottom:0.9rem;">
                     <label>Nombre de la organización</label>
                     <div class="input-with-icon">
@@ -174,10 +173,10 @@
                     </div>
                 </div>
 
-                {{-- Campo hidden fecha (sincronizado con header) --}}
+                {{-- Campo hidden fecha --}}
                 <input type="hidden" name="fecha" id="fecha" value="{{ old('fecha') }}">
 
-                {{-- Fila única: Evento + Lugar (fecha está en el header en desktop, abajo en móvil) --}}
+                {{-- Evento + Lugar --}}
                 <div class="form-row-single">
                     <div class="form-group">
                         <label>Evento</label>
@@ -216,28 +215,77 @@
                     </div>
                 </div>
 
-                {{-- Tabla de beneficiarios (sin columna de eliminar) --}}
+                {{-- Tabla de beneficiarios --}}
+                {{--
+                    TIPO asistencia → inputs: asistencias[i][asistencianombrebeneficiario] + asistencias[i][asistenciaedadbeneficiario]
+                    TIPO reporte    → inputs: beneficiarios[i][reportenombrebeneficiario] + beneficiarios[i][reportecurpbeneficiario] + beneficiarios[i][reporteedadbeneficiario]
+                    El JS se encarga de renderizar los nombres correctos según el tipo activo.
+                    Aquí solo generamos las filas iniciales con los nombres correctos según old() o tipo por defecto.
+                --}}
+                @php
+                    $tipoInicial = old('tipo_informe', 'asistencia');
+                    if ($tipoInicial === 'reporte') {
+                        $oldBenef = old('beneficiarios', array_fill(0, 6, ['reportenombrebeneficiario'=>'','reportecurpbeneficiario'=>'','reporteedadbeneficiario'=>'']));
+                    } else {
+                        $oldBenef = old('asistencias', array_fill(0, 6, ['asistencianombrebeneficiario'=>'','asistenciaedadbeneficiario'=>'']));
+                    }
+                @endphp
+
                 <div class="table-section">
+                    {{-- Cabeceras generadas dinámicamente por JS según tipo --}}
                     <div class="table-header">
-                        <div class="table-col">Nº</div>
-                        <div class="table-col">Persona beneficiaria</div>
-                        <div class="table-col">CURP</div>
+                        @if($tipoInicial === 'reporte')
+                            <div class="table-col" style="grid-column: span 1;">Nº</div>
+                            <div class="table-col">Persona beneficiaria</div>
+                            <div class="table-col">CURP</div>
+                            <div class="table-col">Edad</div>
+                        @else
+                            <div class="table-col">Nº</div>
+                            <div class="table-col">Persona beneficiaria</div>
+                            <div class="table-col">Edad</div>
+                        @endif
                     </div>
                     <div class="table-body" id="beneficiaries-table">
-                        @php $oldBenef = old('beneficiarios', array_fill(0, 6, ['nombre'=>'','curp'=>''])); @endphp
                         @foreach($oldBenef as $i => $b)
-                        <div class="table-row" id="row-{{ $i }}">
-                            <div class="table-cell row-num">{{ $i + 1 }}</div>
-                            <div class="table-cell">
-                                <input type="text" name="beneficiarios[{{ $i }}][nombre]"
-                                       placeholder="Nombre completo" value="{{ $b['nombre'] ?? '' }}">
+                            <div class="table-row" id="row-{{ $i }}"
+                                 style="grid-template-columns: {{ $tipoInicial === 'reporte' ? '44px 1fr 1fr 1fr' : '44px 1fr 1fr' }}">
+                                <div class="table-cell row-num">{{ $i + 1 }}</div>
+                                <div class="table-cell">
+                                    @if($tipoInicial === 'reporte')
+                                        <input type="text"
+                                               name="beneficiarios[{{ $i }}][reportenombrebeneficiario]"
+                                               placeholder="Nombre completo"
+                                               value="{{ $b['reportenombrebeneficiario'] ?? '' }}">
+                                    @else
+                                        <input type="text"
+                                               name="asistencias[{{ $i }}][asistencianombrebeneficiario]"
+                                               placeholder="Nombre completo"
+                                               value="{{ $b['asistencianombrebeneficiario'] ?? '' }}">
+                                    @endif
+                                </div>
+                                @if($tipoInicial === 'reporte')
+                                    <div class="table-cell">
+                                        <input type="text"
+                                               name="beneficiarios[{{ $i }}][reportecurpbeneficiario]"
+                                               placeholder="CURP" maxlength="18"
+                                               style="text-transform:uppercase"
+                                               value="{{ $b['reportecurpbeneficiario'] ?? '' }}">
+                                    </div>
+                                    <div class="table-cell">
+                                        <input type="number"
+                                               name="beneficiarios[{{ $i }}][reporteedadbeneficiario]"
+                                               placeholder="Edad" min="0" max="120"
+                                               value="{{ $b['reporteedadbeneficiario'] ?? '' }}">
+                                    </div>
+                                @else
+                                    <div class="table-cell">
+                                        <input type="number"
+                                               name="asistencias[{{ $i }}][asistenciaedadbeneficiario]"
+                                               placeholder="Edad" min="0" max="120"
+                                               value="{{ $b['asistenciaedadbeneficiario'] ?? '' }}">
+                                    </div>
+                                @endif
                             </div>
-                            <div class="table-cell">
-                                <input type="text" name="beneficiarios[{{ $i }}][curp]"
-                                       placeholder="CURP" value="{{ $b['curp'] ?? '' }}"
-                                       maxlength="18" style="text-transform:uppercase">
-                            </div>
-                        </div>
                         @endforeach
                     </div>
                     <div class="table-footer-actions">
@@ -594,9 +642,9 @@
         if (flash) setTimeout(() => { flash.style.transition = 'opacity .5s'; flash.style.opacity = '0'; }, 3000);
 
         // Sincronizar organización
-        const headerOrgInput  = document.getElementById('nombre_organizacion_header');
-        const mobileOrgInput  = document.getElementById('nombre_organizacion_mobile');
-        const hiddenOrgInput  = document.getElementById('nombre_organizacion');
+        const headerOrgInput = document.getElementById('nombre_organizacion_header');
+        const mobileOrgInput = document.getElementById('nombre_organizacion_mobile');
+        const hiddenOrgInput = document.getElementById('nombre_organizacion');
 
         function syncOrg(val) {
             if (hiddenOrgInput) hiddenOrgInput.value = val;
@@ -616,7 +664,6 @@
             if (headerFechaInput) headerFechaInput.value = val;
             if (mobileFechaInput) mobileFechaInput.value = val;
         }
-        // Si no hay valor (no hay old('fecha')), usar fecha de hoy
         const today = new Date().toISOString().split('T')[0];
         if (headerFechaInput && !headerFechaInput.value) headerFechaInput.value = today;
         if (mobileFechaInput && !mobileFechaInput.value) mobileFechaInput.value = today;
@@ -625,9 +672,9 @@
         if (headerFechaInput) headerFechaInput.addEventListener('change', () => syncFecha(headerFechaInput.value));
         if (mobileFechaInput) mobileFechaInput.addEventListener('change', () => syncFecha(mobileFechaInput.value));
 
-        // Mostrar campos móvil según tamaño de pantalla
+        // Mostrar campos móvil según pantalla
         function applyMobileFields() {
-            const isMobile = window.innerWidth <= 768;
+            const isMobile    = window.innerWidth <= 768;
             const orgMobile   = document.getElementById('nombre_organizacion_mobile');
             const fechaMobile = document.querySelector('.form-fecha-mobile');
             const headerOrg   = document.querySelector('.header-org');
@@ -641,7 +688,6 @@
         window.addEventListener('resize', applyMobileFields);
     });
 
-    // Función para editar por id y sincronizar con campo hidden
     function toggleEditById(inputId, hiddenId) {
         const input = document.getElementById(inputId);
         if (!input) return;
@@ -653,7 +699,6 @@
             input.setAttribute('readonly', true);
             const hidden = document.getElementById(hiddenId);
             if (hidden) hidden.value = input.value;
-            // Sincronizar campos relacionados
             if (hiddenId === 'nombre_organizacion') {
                 const h = document.getElementById('nombre_organizacion_header');
                 const m = document.getElementById('nombre_organizacion_mobile');

@@ -4,19 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Beneficiary extends Model
+class Attendance extends Model
 {
-    protected $table = 'reportebeneficiarios';
+    protected $table = 'asistenciabeneficiarios';
 
-    protected $primaryKey = 'id_reportebeneficiario';
+    protected $primaryKey = 'id_asistenciabeneficiario';
 
     public $timestamps = false;
 
     protected $fillable = [
         'id_informe',
-        'reportenombrebeneficiario',
-        'reportecurpbeneficiario',
-        'reporteedadbeneficiario',
+        'asistencianombrebeneficiario',
+        'asistenciaedadbeneficiario',
     ];
 
     public function report()

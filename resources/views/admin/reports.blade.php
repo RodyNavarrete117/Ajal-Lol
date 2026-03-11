@@ -564,32 +564,8 @@
         <div class="modal-info-card">
             <div class="modal-info-icon">
                 <svg viewBox="0 0 24 24" fill="none">
-                    <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
-                    <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-            </div>
-            <div class="modal-info-text">
-                <div class="modal-info-label">Fecha del evento</div>
-                <div class="modal-info-value" id="modal-info-fecha">—</div>
-            </div>
-        </div>
-        <div class="modal-info-card">
-            <div class="modal-info-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M2 20h20M4 20V10l5-4 5 4v10M14 20v-6h4v6M9 12h2M9 16h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </div>
-            <div class="modal-info-text">
-                <div class="modal-info-label">Lugar</div>
-                <div class="modal-info-value" id="modal-info-lugar">—</div>
-            </div>
-        </div>
-        <div class="modal-info-card">
-            <div class="modal-info-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M3 21h18M3 7l9-4 9 4M4 7v14M20 7v14M9 21v-4a3 3 0 0 1 6 0v4M9 11h1M14 11h1M9 15h1M14 15h1" 
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
             <div class="modal-info-text">
@@ -597,10 +573,23 @@
                 <div class="modal-info-value" id="modal-info-org">Ajal-lol AC</div>
             </div>
         </div>
+        <div class="modal-info-card">
+           <div class="modal-info-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="modal-info-text">
+                <div class="modal-info-label">Beneficiarios</div>
+                <div class="modal-info-value" id="modal-info-beneficiarios">—</div>
+            </div>
+        </div>
     </div>
 
     <div class="event-modal-actions">
-        <a id="btn-modal-view" href="#" class="btn-modal btn-modal-view" target="_blank">
+        <a id="btn-modal-view" href="#" class="btn-modal btn-modal-print" target="_blank">
             <svg viewBox="0 0 24 24" fill="none">
                 <path d="M2 12C2 12 5 5 12 5C19 5 22 12 22 12C22 12 19 19 12 19C5 19 2 12 2 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
@@ -614,6 +603,12 @@
                 <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2"/>
             </svg>
             Imprimir PDF
+        </a>
+        <a id="btn-modal-edit-report" href="#" class="btn-modal btn-modal-print" target="_blank">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Editar informe
         </a>
         <button class="btn-modal btn-modal-edit" id="btn-modal-delete">
             <svg viewBox="0 0 24 24" fill="none">

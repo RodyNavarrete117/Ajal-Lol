@@ -302,13 +302,17 @@ function openEventModal(id, title, date, lugar) {
     document.getElementById('event-modal-title').textContent    = title;
     document.getElementById('event-modal-subtitle').textContent = fechaFormateada;
     document.getElementById('event-modal-lugar').textContent    = lugar || 'Sin especificar';
-    document.getElementById('modal-info-fecha').textContent     = fechaFormateada;
-    document.getElementById('modal-info-lugar').textContent     = lugar || 'Sin especificar';
 
     const btnView = document.getElementById('btn-modal-view');
     const btnPdf  = document.getElementById('btn-modal-pdf');
+    const btnEditReport = document.getElementById('btn-modal-edit-report');
+    const count = (typeof eventsFromDB !== 'undefined' && eventsFromDB[date])
+    ? eventsFromDB[date].beneficiaries_count : null;
+    document.getElementById('modal-info-beneficiarios').textContent =
+    count !== null ? `${count} personas` : '—';
     if (btnView) { btnView.href = `${ROUTE_BASE}/${id}/pdf`; btnView.target = '_blank'; }
     if (btnPdf)  { btnPdf.href  = `${ROUTE_BASE}/${id}/pdf`; btnPdf.target  = '_blank'; }
+    if (btnEditReport) btnEditReport.href = `${ROUTE_BASE}/${id}/edit`;
 
     document.getElementById('event-modal').classList.add('active');
     document.getElementById('event-overlay').classList.add('active');

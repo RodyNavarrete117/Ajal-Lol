@@ -29,6 +29,7 @@ class ReportsController extends Controller
                     'id'    => $report->id_informe,
                     'title' => $report->evento,
                     'lugar' => $report->lugar,
+                    'beneficiaries_count' => $report->beneficiaries_count,
                 ]
             ];
         });

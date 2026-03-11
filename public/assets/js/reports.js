@@ -962,6 +962,44 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Botón "Solo formato" — genera PDF en blanco con metadatos del formulario (sin beneficiarios)
+    const btnBlank = document.getElementById('btn-blank');
+    if (btnBlank) {
+        btnBlank.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Solo necesitamos los campos base — no los beneficiarios
+            const tipo = document.getElementById('tipo_informe_form')?.value || 'asistencia';
+            const org  = document.getElementById('nombre_organizacion')?.value || '';
+            const evt  = document.getElementById('input-evento')?.value        || '';
+            const lug  = document.getElementById('input-lugar')?.value         || '';
+            const fec  = document.getElementById('fecha')?.value               || '';
+            const tel  = form?.querySelector('[name="numero_telefonico"]')?.value || '';
+
+            const formData = new FormData();
+            formData.set('_token',               CSRF_TOKEN);
+            formData.set('_action',              'blank_pdf');
+            formData.set('tipo_informe',         tipo);
+            formData.set('nombre_organizacion',  org);
+            formData.set('evento',               evt);
+            formData.set('lugar',                lug);
+            formData.set('fecha',                fec || new Date().toISOString().split('T')[0]);
+            formData.set('numero_telefonico',    tel);
+
+            fetch(ROUTE_PREVIEW_PDF, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-CSRF-TOKEN': CSRF_TOKEN }
+            })
+                .then(res => { if (!res.ok) throw new Error(); return res.blob(); })
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    window.open(url, '_blank');
+                })
+                .catch(() => alert('No se pudo generar el formato. Intenta de nuevo.'));
+        });
+    }
+
     // Botón Guardar
     if (form) {
         form.addEventListener('submit', () => {

@@ -130,8 +130,8 @@ class ReportsController extends Controller
         // ── Validación base ───────────────────────────────────────────────────
         $request->validate([
             'nombre_organizacion' => 'required|string|max:150',
-            'evento'              => 'required|string|max:150',
-            'lugar'               => 'required|string|max:150',
+            'evento'              => 'nullable|string|max:150',
+            'lugar'               => 'nullable|string|max:150',
             'fecha'               => 'required|date',
             'numero_telefonico'   => 'nullable|string|max:50',
         ]);
@@ -141,6 +141,23 @@ class ReportsController extends Controller
             'nombre_organizacion', 'evento', 'lugar', 'fecha', 'numero_telefonico',
         ]));
         $report->id_informe = 0;
+
+        // ── Acción: Solo formato (tabla vacía con metadatos) ──────────────────
+        if ($request->input('_action') === 'blank_pdf') {
+            if ($tipo === 'reporte') {
+                $report->setRelation('beneficiaries', collect());
+                $content  = $this->blankReportService->generateWithMeta($report);
+                $filename = 'formato_reporte.pdf';
+            } else {
+                $report->setRelation('attendances', collect());
+                $content  = $this->blankAttendanceService->generateWithMeta($report);
+                $filename = 'formato_asistencia.pdf';
+            }
+            return response($content, 200, [
+                'Content-Type'        => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            ]);
+        }
 
         $disposition = $request->input('_action') === 'pdf_download' ? 'attachment' : 'inline';
 

@@ -4,14 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Report;
 use App\Services\ReportPdfService;
-use App\Services\BlankPdfService;
+use App\Services\AttendancePdfService;
+use App\Services\BlankReportPdfService;
+use App\Services\BlankAttendancePdfService;
 use Illuminate\Http\Request;
 
 class ReportsController extends Controller
 {
     public function __construct(
-        protected ReportPdfService $pdfService,
-        protected BlankPdfService  $blankService,
+        protected ReportPdfService         $pdfService,
+        protected AttendancePdfService     $attendancePdfService,
+        protected BlankReportPdfService    $blankReportService,
+        protected BlankAttendancePdfService $blankAttendanceService,
     ) {}
 
     // =============================================
@@ -19,17 +23,23 @@ class ReportsController extends Controller
     // =============================================
     public function index()
     {
-        $reports = Report::withCount('beneficiaries')
+        // Traemos ambos conteos para poder mostrar el total real en el modal
+        $reports = Report::withCount(['beneficiaries', 'attendances'])
             ->latest('fecha')
             ->get();
 
         $events = $reports->mapWithKeys(function ($report) {
+            // El total visible es el que aplique según el tipo guardado
+            $total = $report->beneficiaries_count > 0
+                ? $report->beneficiaries_count
+                : $report->attendances_count;
+
             return [
                 $report->fecha => [
-                    'id'    => $report->id_informe,
-                    'title' => $report->evento,
-                    'lugar' => $report->lugar,
-                    'beneficiaries_count' => $report->beneficiaries_count,
+                    'id'                  => $report->id_informe,
+                    'title'               => $report->evento,
+                    'lugar'               => $report->lugar,
+                    'beneficiaries_count' => $total,
                 ]
             ];
         });
@@ -38,29 +48,38 @@ class ReportsController extends Controller
     }
 
     // =============================================
-    // CREAR INFORME (solo guarda — botón Guardar)
+    // CREAR INFORME (botón Guardar)
     // =============================================
     public function store(Request $request)
     {
+        $tipo = $request->input('tipo_informe', 'asistencia');
+
+        // ── Validación base (siempre requerida) ──────────────────────────────
         $request->validate([
-            'nombre_organizacion'                          => 'required|string|max:150',
-            'evento'                                       => 'required|string|max:150',
-            'lugar'                                        => 'required|string|max:150',
-            'fecha'                                        => 'required|date',
-            'numero_telefonico'                            => 'nullable|string|max:50',
-
-            // Beneficiarios (reportebeneficiarios)
-            'beneficiarios'                                => 'required|array|min:1',
-            'beneficiarios.*.reportenombrebeneficiario'    => 'required|string|max:150',
-            'beneficiarios.*.reportecurpbeneficiario'      => 'required|string|max:18',
-            'beneficiarios.*.reporteedadbeneficiario'      => 'nullable|integer|min:0|max:120',
-
-            // Asistencia (asistenciabeneficiarios) — opcional
-            'asistencias'                                          => 'nullable|array',
-            'asistencias.*.asistencianombrebeneficiario'           => 'required|string|max:150',
-            'asistencias.*.asistenciaedadbeneficiario'             => 'nullable|integer|min:0|max:120',
+            'nombre_organizacion' => 'required|string|max:150',
+            'evento'              => 'required|string|max:150',
+            'lugar'               => 'required|string|max:150',
+            'fecha'               => 'required|date',
+            'numero_telefonico'   => 'nullable|string|max:50',
         ]);
 
+        // ── Validación específica según tipo ─────────────────────────────────
+        if ($tipo === 'reporte') {
+            $request->validate([
+                'beneficiarios'                                 => 'required|array|min:1',
+                'beneficiarios.*.reportenombrebeneficiario'     => 'required|string|max:150',
+                'beneficiarios.*.reportecurpbeneficiario'       => 'required|string|max:18',
+                'beneficiarios.*.reporteedadbeneficiario'       => 'nullable|integer|min:0|max:120',
+            ]);
+        } else {
+            $request->validate([
+                'asistencias'                                   => 'required|array|min:1',
+                'asistencias.*.asistencianombrebeneficiario'    => 'required|string|max:150',
+                'asistencias.*.asistenciaedadbeneficiario'      => 'nullable|integer|min:0|max:120',
+            ]);
+        }
+
+        // ── Crear informe ─────────────────────────────────────────────────────
         $report = Report::create($request->only([
             'nombre_organizacion',
             'evento',
@@ -69,31 +88,32 @@ class ReportsController extends Controller
             'numero_telefonico',
         ]));
 
-        // Guardar beneficiarios
-        collect($request->beneficiarios)
-            ->filter(fn ($b) =>
-                !empty(trim($b['reportenombrebeneficiario'] ?? '')) &&
-                !empty(trim($b['reportecurpbeneficiario'] ?? ''))
-            )
-            ->each(fn ($b) =>
-                $report->beneficiaries()->create([
-                    'reportenombrebeneficiario' => trim($b['reportenombrebeneficiario']),
-                    'reportecurpbeneficiario'   => strtoupper(trim($b['reportecurpbeneficiario'])),
-                    'reporteedadbeneficiario'   => $b['reporteedadbeneficiario'] ?? null,
-                ])
-            );
-
-        // Guardar asistencias (si las hay)
-        collect($request->asistencias ?? [])
-            ->filter(fn ($a) =>
-                !empty(trim($a['asistencianombrebeneficiario'] ?? ''))
-            )
-            ->each(fn ($a) =>
-                $report->attendances()->create([
-                    'asistencianombrebeneficiario' => trim($a['asistencianombrebeneficiario']),
-                    'asistenciaedadbeneficiario'   => $a['asistenciaedadbeneficiario'] ?? null,
-                ])
-            );
+        // ── Guardar personas según tipo ───────────────────────────────────────
+        if ($tipo === 'reporte') {
+            collect($request->beneficiarios)
+                ->filter(fn ($b) =>
+                    !empty(trim($b['reportenombrebeneficiario'] ?? '')) &&
+                    !empty(trim($b['reportecurpbeneficiario']   ?? ''))
+                )
+                ->each(fn ($b) =>
+                    $report->beneficiaries()->create([
+                        'reportenombrebeneficiario' => trim($b['reportenombrebeneficiario']),
+                        'reportecurpbeneficiario'   => strtoupper(trim($b['reportecurpbeneficiario'])),
+                        'reporteedadbeneficiario'   => $b['reporteedadbeneficiario'] ?? null,
+                    ])
+                );
+        } else {
+            collect($request->asistencias)
+                ->filter(fn ($a) =>
+                    !empty(trim($a['asistencianombrebeneficiario'] ?? ''))
+                )
+                ->each(fn ($a) =>
+                    $report->attendances()->create([
+                        'asistencianombrebeneficiario' => trim($a['asistencianombrebeneficiario']),
+                        'asistenciaedadbeneficiario'   => $a['asistenciaedadbeneficiario'] ?? null,
+                    ])
+                );
+        }
 
         return redirect()
             ->route('admin.reports')
@@ -105,44 +125,72 @@ class ReportsController extends Controller
     // =============================================
     public function previewPdf(Request $request)
     {
+        $tipo = $request->input('tipo_informe', 'asistencia');
+
+        // ── Validación base ───────────────────────────────────────────────────
         $request->validate([
-            'nombre_organizacion'                       => 'required|string|max:150',
-            'evento'                                    => 'required|string|max:150',
-            'lugar'                                     => 'required|string|max:150',
-            'fecha'                                     => 'required|date',
-            'numero_telefonico'                         => 'nullable|string|max:50',
-            'beneficiarios'                             => 'nullable|array',
-            'beneficiarios.*.reportenombrebeneficiario' => 'nullable|string|max:150',
-            'beneficiarios.*.reportecurpbeneficiario'   => 'nullable|string|max:18',
-            'beneficiarios.*.reporteedadbeneficiario'   => 'nullable|integer|min:0|max:120',
+            'nombre_organizacion' => 'required|string|max:150',
+            'evento'              => 'required|string|max:150',
+            'lugar'               => 'required|string|max:150',
+            'fecha'               => 'required|date',
+            'numero_telefonico'   => 'nullable|string|max:50',
         ]);
 
-        // Objeto temporal, nunca se persiste en BD
+        // ── Objeto temporal (nunca se persiste) ───────────────────────────────
         $report = new Report($request->only([
             'nombre_organizacion', 'evento', 'lugar', 'fecha', 'numero_telefonico',
         ]));
         $report->id_informe = 0;
 
-        $beneficiarios = collect($request->beneficiarios ?? [])
-            ->filter(fn ($b) =>
-                !empty(trim($b['reportenombrebeneficiario'] ?? '')) &&
-                !empty(trim($b['reportecurpbeneficiario'] ?? ''))
-            )
-            ->map(fn ($b) => (object) [
-                'reportenombrebeneficiario' => trim($b['reportenombrebeneficiario']),
-                'reportecurpbeneficiario'   => strtoupper(trim($b['reportecurpbeneficiario'])),
-                'reporteedadbeneficiario'   => $b['reporteedadbeneficiario'] ?? null,
-            ]);
-
-        $report->setRelation('beneficiaries', $beneficiarios);
-
         $disposition = $request->input('_action') === 'pdf_download' ? 'attachment' : 'inline';
 
-        $content = $this->pdfService->generate($report);
+        if ($tipo === 'reporte') {
+            $request->validate([
+                'beneficiarios'                                 => 'nullable|array',
+                'beneficiarios.*.reportenombrebeneficiario'     => 'nullable|string|max:150',
+                'beneficiarios.*.reportecurpbeneficiario'       => 'nullable|string|max:18',
+                'beneficiarios.*.reporteedadbeneficiario'       => 'nullable|integer|min:0|max:120',
+            ]);
+
+            $personas = collect($request->beneficiarios ?? [])
+                ->filter(fn ($b) =>
+                    !empty(trim($b['reportenombrebeneficiario'] ?? '')) &&
+                    !empty(trim($b['reportecurpbeneficiario']   ?? ''))
+                )
+                ->map(fn ($b) => (object) [
+                    'reportenombrebeneficiario' => trim($b['reportenombrebeneficiario']),
+                    'reportecurpbeneficiario'   => strtoupper(trim($b['reportecurpbeneficiario'])),
+                    'reporteedadbeneficiario'   => $b['reporteedadbeneficiario'] ?? null,
+                ]);
+
+            $report->setRelation('beneficiaries', $personas);
+            $content  = $this->pdfService->generate($report);
+            $filename = 'reporte_preview.pdf';
+
+        } else {
+            $request->validate([
+                'asistencias'                                   => 'nullable|array',
+                'asistencias.*.asistencianombrebeneficiario'    => 'nullable|string|max:150',
+                'asistencias.*.asistenciaedadbeneficiario'      => 'nullable|integer|min:0|max:120',
+            ]);
+
+            $personas = collect($request->asistencias ?? [])
+                ->filter(fn ($a) =>
+                    !empty(trim($a['asistencianombrebeneficiario'] ?? ''))
+                )
+                ->map(fn ($a) => (object) [
+                    'asistencianombrebeneficiario' => trim($a['asistencianombrebeneficiario']),
+                    'asistenciaedadbeneficiario'   => $a['asistenciaedadbeneficiario'] ?? null,
+                ]);
+
+            $report->setRelation('attendances', $personas);
+            $content  = $this->attendancePdfService->generate($report);
+            $filename = 'asistencia_preview.pdf';
+        }
 
         return response($content, 200, [
             'Content-Type'        => 'application/pdf',
-            'Content-Disposition' => $disposition . '; filename="informe_preview.pdf"',
+            'Content-Disposition' => $disposition . '; filename="' . $filename . '"',
         ]);
     }
 
@@ -151,23 +199,32 @@ class ReportsController extends Controller
     // =============================================
     public function update(Request $request, $id)
     {
+        $tipo = $request->input('tipo_informe', 'asistencia');
+
+        // ── Validación base ───────────────────────────────────────────────────
         $request->validate([
-            'nombre_organizacion'                          => 'required|string|max:150',
-            'evento'                                       => 'required|string|max:150',
-            'lugar'                                        => 'required|string|max:150',
-            'fecha'                                        => 'required|date',
-
-            // Beneficiarios
-            'beneficiarios'                                => 'required|array|min:1',
-            'beneficiarios.*.reportenombrebeneficiario'    => 'required|string|max:150',
-            'beneficiarios.*.reportecurpbeneficiario'      => 'required|string|max:18',
-            'beneficiarios.*.reporteedadbeneficiario'      => 'nullable|integer|min:0|max:120',
-
-            // Asistencias
-            'asistencias'                                          => 'nullable|array',
-            'asistencias.*.asistencianombrebeneficiario'           => 'required|string|max:150',
-            'asistencias.*.asistenciaedadbeneficiario'             => 'nullable|integer|min:0|max:120',
+            'nombre_organizacion' => 'required|string|max:150',
+            'evento'              => 'required|string|max:150',
+            'lugar'               => 'required|string|max:150',
+            'fecha'               => 'required|date',
+            'numero_telefonico'   => 'nullable|string|max:50',
         ]);
+
+        // ── Validación específica ─────────────────────────────────────────────
+        if ($tipo === 'reporte') {
+            $request->validate([
+                'beneficiarios'                                 => 'required|array|min:1',
+                'beneficiarios.*.reportenombrebeneficiario'     => 'required|string|max:150',
+                'beneficiarios.*.reportecurpbeneficiario'       => 'required|string|max:18',
+                'beneficiarios.*.reporteedadbeneficiario'       => 'nullable|integer|min:0|max:120',
+            ]);
+        } else {
+            $request->validate([
+                'asistencias'                                   => 'required|array|min:1',
+                'asistencias.*.asistencianombrebeneficiario'    => 'required|string|max:150',
+                'asistencias.*.asistenciaedadbeneficiario'      => 'nullable|integer|min:0|max:120',
+            ]);
+        }
 
         $report = Report::findOrFail($id);
 
@@ -179,35 +236,40 @@ class ReportsController extends Controller
             'numero_telefonico',
         ]));
 
-        // Reemplazar beneficiarios
-        $report->beneficiaries()->delete();
+        // ── Reemplazar personas según tipo ────────────────────────────────────
+        if ($tipo === 'reporte') {
+            // Limpiar asistencias anteriores si las hubiera y guardar beneficiarios
+            $report->attendances()->delete();
+            $report->beneficiaries()->delete();
 
-        collect($request->beneficiarios)
-            ->filter(fn ($b) =>
-                !empty(trim($b['reportenombrebeneficiario'] ?? '')) &&
-                !empty(trim($b['reportecurpbeneficiario'] ?? ''))
-            )
-            ->each(fn ($b) =>
-                $report->beneficiaries()->create([
-                    'reportenombrebeneficiario' => trim($b['reportenombrebeneficiario']),
-                    'reportecurpbeneficiario'   => strtoupper(trim($b['reportecurpbeneficiario'])),
-                    'reporteedadbeneficiario'   => $b['reporteedadbeneficiario'] ?? null,
-                ])
-            );
+            collect($request->beneficiarios)
+                ->filter(fn ($b) =>
+                    !empty(trim($b['reportenombrebeneficiario'] ?? '')) &&
+                    !empty(trim($b['reportecurpbeneficiario']   ?? ''))
+                )
+                ->each(fn ($b) =>
+                    $report->beneficiaries()->create([
+                        'reportenombrebeneficiario' => trim($b['reportenombrebeneficiario']),
+                        'reportecurpbeneficiario'   => strtoupper(trim($b['reportecurpbeneficiario'])),
+                        'reporteedadbeneficiario'   => $b['reporteedadbeneficiario'] ?? null,
+                    ])
+                );
+        } else {
+            // Limpiar beneficiarios anteriores si los hubiera y guardar asistencias
+            $report->beneficiaries()->delete();
+            $report->attendances()->delete();
 
-        // Reemplazar asistencias
-        $report->attendances()->delete();
-
-        collect($request->asistencias ?? [])
-            ->filter(fn ($a) =>
-                !empty(trim($a['asistencianombrebeneficiario'] ?? ''))
-            )
-            ->each(fn ($a) =>
-                $report->attendances()->create([
-                    'asistencianombrebeneficiario' => trim($a['asistencianombrebeneficiario']),
-                    'asistenciaedadbeneficiario'   => $a['asistenciaedadbeneficiario'] ?? null,
-                ])
-            );
+            collect($request->asistencias)
+                ->filter(fn ($a) =>
+                    !empty(trim($a['asistencianombrebeneficiario'] ?? ''))
+                )
+                ->each(fn ($a) =>
+                    $report->attendances()->create([
+                        'asistencianombrebeneficiario' => trim($a['asistencianombrebeneficiario']),
+                        'asistenciaedadbeneficiario'   => $a['asistenciaedadbeneficiario'] ?? null,
+                    ])
+                );
+        }
 
         return redirect()
             ->route('admin.reports')
@@ -226,29 +288,49 @@ class ReportsController extends Controller
 
     // =============================================
     // PDF DESDE HISTORIAL
+    // Detecta el tipo por qué tabla tiene datos
     // =============================================
     public function pdf($id)
     {
-        $report = Report::with('beneficiaries')->findOrFail($id);
+        $report = Report::with(['beneficiaries', 'attendances'])->findOrFail($id);
 
-        $content = $this->pdfService->generate($report);
+        if ($report->beneficiaries->isNotEmpty()) {
+            $content  = $this->pdfService->generate($report);
+            $filename = 'reporte_' . $report->id_informe . '.pdf';
+        } else {
+            $content  = $this->attendancePdfService->generate($report);
+            $filename = 'asistencia_' . $report->id_informe . '.pdf';
+        }
 
         return response($content, 200, [
             'Content-Type'        => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="informe_' . $report->id_informe . '.pdf"',
+            'Content-Disposition' => 'inline; filename="' . $filename . '"',
         ]);
     }
 
     // =============================================
-    // FORMATO EN BLANCO
+    // FORMATO EN BLANCO — REPORTE (con CURP)
     // =============================================
-    public function blankPdf()
+    public function blankReportPdf()
     {
-        $content = $this->blankService->generate();
+        $content = $this->blankReportService->generate();
 
         return response($content, 200, [
             'Content-Type'        => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="formato_informe_ajal_lol.pdf"',
+        ]);
+    }
+
+    // =============================================
+    // FORMATO EN BLANCO — ASISTENCIA (sin CURP)
+    // =============================================
+    public function blankAttendancePdf()
+    {
+        $content = $this->blankAttendanceService->generate();
+
+        return response($content, 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="formato_asistencia_ajal_lol.pdf"',
         ]);
     }
 

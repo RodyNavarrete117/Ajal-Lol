@@ -181,11 +181,28 @@ function initTipoInforme() {
             if (hiddenHeader) hiddenHeader.value = tipo;
             if (hiddenForm)   hiddenForm.value   = tipo;
 
+            // Actualizar href del botón "Solo formato"
+            const btnBlank = document.getElementById('btn-blank');
+            if (btnBlank) {
+                btnBlank.href = tipo === 'reporte'
+                    ? (typeof ROUTE_BLANK_REPORT     !== 'undefined' ? ROUTE_BLANK_REPORT     : '#')
+                    : (typeof ROUTE_BLANK_ATTENDANCE !== 'undefined' ? ROUTE_BLANK_ATTENDANCE : '#');
+            }
+
             aplicarTipoInforme(tipo);
         });
     });
 
     const tipoInicial = document.querySelector('.tipo-pill.active')?.dataset.tipo || 'asistencia';
+
+    // Ajustar href inicial del botón "Solo formato"
+    const btnBlankInit = document.getElementById('btn-blank');
+    if (btnBlankInit) {
+        btnBlankInit.href = tipoInicial === 'reporte'
+            ? (typeof ROUTE_BLANK_REPORT     !== 'undefined' ? ROUTE_BLANK_REPORT     : '#')
+            : (typeof ROUTE_BLANK_ATTENDANCE !== 'undefined' ? ROUTE_BLANK_ATTENDANCE : '#');
+    }
+
     aplicarTipoInforme(tipoInicial);
 }
 
@@ -302,17 +319,13 @@ function openEventModal(id, title, date, lugar) {
     document.getElementById('event-modal-title').textContent    = title;
     document.getElementById('event-modal-subtitle').textContent = fechaFormateada;
     document.getElementById('event-modal-lugar').textContent    = lugar || 'Sin especificar';
+    document.getElementById('modal-info-fecha').textContent     = fechaFormateada;
+    document.getElementById('modal-info-lugar').textContent     = lugar || 'Sin especificar';
 
     const btnView = document.getElementById('btn-modal-view');
     const btnPdf  = document.getElementById('btn-modal-pdf');
-    const btnEditReport = document.getElementById('btn-modal-edit-report');
-    const count = (typeof eventsFromDB !== 'undefined' && eventsFromDB[date])
-    ? eventsFromDB[date].beneficiaries_count : null;
-    document.getElementById('modal-info-beneficiarios').textContent =
-    count !== null ? `${count} personas` : '—';
     if (btnView) { btnView.href = `${ROUTE_BASE}/${id}/pdf`; btnView.target = '_blank'; }
     if (btnPdf)  { btnPdf.href  = `${ROUTE_BASE}/${id}/pdf`; btnPdf.target  = '_blank'; }
-    if (btnEditReport) btnEditReport.href = `${ROUTE_BASE}/${id}/edit`;
 
     document.getElementById('event-modal').classList.add('active');
     document.getElementById('event-overlay').classList.add('active');

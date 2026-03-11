@@ -15,6 +15,7 @@ Route::get('/', fn() => view('index'));
 /* Página pública visual */
 Route::get('/pagina', fn() => view('visualpage'));
 
+
 /* Login */
 Route::get('/login', fn() => view('login'))->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
@@ -35,8 +36,11 @@ Route::prefix('admin')->group(function () {
     Route::post('/report', [ReportsController::class, 'store'])
         ->name('admin.reports.store');
 
-    Route::get('/report/blank', [ReportsController::class, 'blankPdf'])
-        ->name('admin.reports.blank');
+    Route::get('/report/blank/report', [ReportsController::class, 'blankReportPdf'])
+        ->name('admin.reports.blankReport');
+
+    Route::get('/report/blank/attendance', [ReportsController::class, 'blankAttendancePdf'])
+        ->name('admin.reports.blankAttendance');
 
     Route::post('/report/preview-pdf', [ReportsController::class, 'previewPdf'])
         ->name('admin.reports.previewPdf');

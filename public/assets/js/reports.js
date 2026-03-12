@@ -931,7 +931,6 @@ function openEditView(id, from = 'history') {
         const form = document.getElementById('edit-report-form');
         form.action = `${ROUTE_BASE}/${id}`;
 
-        // 👇 Guardar el origen
         document.getElementById('edit-view').dataset.from = from;
 
         renderEditTable(tipo, data.beneficiaries || [], data.attendances || []);
@@ -940,6 +939,8 @@ function openEditView(id, from = 'history') {
         document.getElementById('create-view').classList.remove('active');
         document.getElementById('history-view').classList.remove('active');
         document.getElementById('edit-view').classList.add('active');
+
+        document.querySelector('.reports-container').style.padding = '0.5rem';
     })
     .catch(() => alert('No se pudo cargar el informe. Intenta de nuevo.'));
 }
@@ -948,6 +949,8 @@ function closeEditView() {
     const editView = document.getElementById('edit-view');
     const from = editView.dataset.from || 'history';
     editView.classList.remove('active');
+
+    document.querySelector('.reports-container').style.padding = '';
 
     if (from === 'calendar') {
         document.getElementById('calendar-view').classList.add('active');
@@ -1079,14 +1082,16 @@ function showToast(message) {
     const toast = document.createElement('div');
     toast.className = 'toast';
     toast.innerHTML = `
-        <div class="toast-content">
+        <div class="toast-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                 <path d="M22 4L12 14.01l-3-3"/>
             </svg>
-            <span>${message}</span>
         </div>
-        <div class="toast-bar"></div>`;
+        <div class="toast-content">
+            <span class="toast-text">${message}</span>
+        </div>
+        <div class="toast-progress"></div>`;
 
     document.body.appendChild(toast);
     requestAnimationFrame(() => toast.classList.add('show'));

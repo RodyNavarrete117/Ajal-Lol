@@ -910,7 +910,7 @@ function initAllAutocompletes() {
 // ============================================
 let editRowCount = 0;
 
-function openEditView(id) {
+function openEditView(id, from = 'history') {
     closeEventModal();
 
     fetch(`${ROUTE_API_REPORT}/${id}`, {
@@ -918,27 +918,24 @@ function openEditView(id) {
     })
     .then(res => res.json())
     .then(data => {
-        // Rellenar campos de referencia
-        document.getElementById('edit-org-display').value   = data.nombre_organizacion || '';
-        document.getElementById('edit-fecha-display').value = data.fecha || '';
+        document.getElementById('edit-org-display').value    = data.nombre_organizacion || '';
+        document.getElementById('edit-fecha-display').value  = data.fecha || '';
         document.getElementById('edit-evento-display').value = data.evento || '';
         document.getElementById('edit-lugar-display').value  = data.lugar || '';
+        document.getElementById('edit-nombre-org').value     = data.nombre_organizacion || '';
+        document.getElementById('edit-fecha-hidden').value   = data.fecha || '';
 
-        document.getElementById('edit-nombre-org').value   = data.nombre_organizacion || '';
-        document.getElementById('edit-fecha-hidden').value = data.fecha || '';
-
-        // Detectar tipo
         const tipo = (data.beneficiaries && data.beneficiaries.length > 0) ? 'reporte' : 'asistencia';
         document.getElementById('edit-tipo').value = tipo;
 
-        // Configurar acción del form
         const form = document.getElementById('edit-report-form');
         form.action = `${ROUTE_BASE}/${id}`;
 
-        // Renderizar tabla
+        // 👇 Guardar el origen
+        document.getElementById('edit-view').dataset.from = from;
+
         renderEditTable(tipo, data.beneficiaries || [], data.attendances || []);
 
-        // Mostrar vista
         document.getElementById('calendar-view').classList.remove('active');
         document.getElementById('create-view').classList.remove('active');
         document.getElementById('history-view').classList.remove('active');
@@ -948,8 +945,15 @@ function openEditView(id) {
 }
 
 function closeEditView() {
-    document.getElementById('edit-view').classList.remove('active');
-    document.getElementById('history-view').classList.add('active');
+    const editView = document.getElementById('edit-view');
+    const from = editView.dataset.from || 'history';
+    editView.classList.remove('active');
+
+    if (from === 'calendar') {
+        document.getElementById('calendar-view').classList.add('active');
+    } else {
+        document.getElementById('history-view').classList.add('active');
+    }
 }
 
 function renderEditTable(tipo, beneficiaries, attendances) {
@@ -1218,11 +1222,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (editBtnRemove) editBtnRemove.addEventListener('click', removeLastEditRow);
 
     // Botón editar del modal
-    const btnEditReport = document.getElementById('btn-modal-edit-report');
+  const btnEditReport = document.getElementById('btn-modal-edit-report');
     if (btnEditReport) {
         btnEditReport.addEventListener('click', (e) => {
             e.preventDefault();
-            if (currentReportId) openEditView(currentReportId);
+            if (currentReportId) {
+                const fromCalendar = document.getElementById('calendar-view').classList.contains('active');
+                openEditView(currentReportId, fromCalendar ? 'calendar' : 'history');
+            }
         });
     }
 });

@@ -689,7 +689,7 @@
     <div class="container">
       <h4>¡Tu apoyo transforma vidas!</h4>
       <p>Te invitamos a hacer una donación a través de PayPal para ayudarnos a continuar con nuestra labor. Cada aporte, por pequeño que sea, nos acerca más a lograr nuestros objetivos.</p>
-      <a href="https://youtu.be/hPr-Yc92qaY?si=MI_Uwro92RhtAPxH"
+      <a href=""
          class="btn-paypal" target="_blank" rel="noopener">
         <i class="bi bi-paypal"></i> Donar con PayPal
       </a>

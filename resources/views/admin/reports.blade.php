@@ -9,12 +9,9 @@
 @section('content')
 <div class="reports-container">
 
-    @if(session('success'))
-        <div id="flash-msg"
-             style="background:#d1fae5;color:#065f46;padding:0.85rem 1.25rem;border-radius:10px;margin-bottom:1.25rem;font-weight:600;font-size:0.9rem;">
-            {{ session('success') }}
-        </div>
-    @endif
+@if(session('success'))
+    <div id="flash-toast" data-message="{{ session('success') }}"></div>
+@endif
 
     {{-- ════════════════════════════════════════
          VISTA 1: Calendario
@@ -526,7 +523,100 @@
             @endforelse
         </div>
     </div>
+</div>
 
+{{-- ════════════════════════════════════════
+     VISTA 4: Editar Informe
+════════════════════════════════════════ --}}
+<div id="edit-view" class="view-section">
+
+    <div class="reports-header">
+        <button class="btn-back" onclick="closeEditView()">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Volver</span>
+        </button>
+        <h2>Editar informe</h2>
+
+        <div class="header-org">
+            <label>Organización</label>
+            <div class="input-with-icon">
+                <input type="text" id="edit-org-display" readonly>
+            </div>
+        </div>
+        <div class="header-fecha">
+            <label>Fecha</label>
+            <div class="input-with-icon">
+                <input type="date" id="edit-fecha-display" readonly>
+            </div>
+        </div>
+    </div>
+
+    <form id="edit-report-form" method="POST">
+        @csrf
+        @method('PUT')
+        <input type="hidden" id="edit-tipo" name="tipo_informe" value="asistencia">
+        <input type="hidden" id="edit-nombre-org" name="nombre_organizacion" value=""> 
+        <input type="hidden" id="edit-fecha-hidden" name="fecha" value="">            
+            <div class="create-form">
+
+            {{-- Evento + Lugar --}}
+            <div class="form-row-single">
+                <div class="form-group">
+                    <label>Evento</label>
+                    <div class="input-with-icon">
+                        <input type="text" name="evento" id="edit-evento-display"
+                            placeholder="Nombre del evento" autocomplete="off" readonly>
+                        <button type="button" class="btn-edit-input"
+                                onclick="toggleEditById('edit-evento-display', null)"
+                                title="Editar">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Lugar</label>
+                    <div class="input-with-icon">
+                        <input type="text" name="lugar" id="edit-lugar-display"
+                            placeholder="Ciudad, Estado" autocomplete="off" readonly>
+                        <button type="button" class="btn-edit-input"
+                                onclick="toggleEditById('edit-lugar-display', null)"
+                                title="Editar">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17 3C17.2626 2.73735 17.5744 2.52901 17.9176 2.38687C18.2608 2.24473 18.6286 2.17157 19 2.17157C19.3714 2.17157 19.7392 2.24473 20.0824 2.38687C20.4256 2.52901 20.7374 2.73735 21 3C21.2626 3.26264 21.471 3.57444 21.6131 3.9176C21.7553 4.26077 21.8284 4.62856 21.8284 5C21.8284 5.37143 21.7553 5.73923 21.6131 6.08239C21.471 6.42555 21.2626 6.73735 21 7L7.5 20.5L2 22L3.5 16.5L17 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-section">
+                <div class="table-header" id="edit-table-header"></div>
+                <div class="table-body" id="edit-beneficiaries-table"></div>
+                <div class="table-footer-actions">
+                    <button type="button" id="edit-btn-add-row" class="btn-table-action add">
+                        + Agregar beneficiario
+                    </button>
+                    <button type="button" id="edit-btn-remove-row" class="btn-table-action remove">
+                        − Quitar último
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-form btn-save">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16L21 8V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M17 21V13H7V21M7 3V8H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Guardar cambios
+                </button>
+            </div>
+        </div>
+    </form>
 </div>
 
 <!-- MODAL -->
@@ -632,14 +722,18 @@
     const ROUTE_PREVIEW_PDF        = "{{ route('admin.reports.previewPdf') }}";
     const ROUTE_BLANK_REPORT       = "{{ route('admin.reports.blankReport') }}";
     const ROUTE_BLANK_ATTENDANCE   = "{{ route('admin.reports.blankAttendance') }}";
+    const ROUTE_API_REPORT = "{{ url('admin/api/report') }}";
 
     @if($errors->any())
         document.addEventListener('DOMContentLoaded', () => showCreateView());
     @endif
 
     document.addEventListener('DOMContentLoaded', () => {
-        const flash = document.getElementById('flash-msg');
-        if (flash) setTimeout(() => { flash.style.transition = 'opacity .5s'; flash.style.opacity = '0'; }, 3000);
+        const flashToast = document.getElementById('flash-toast');
+        if (flashToast) {
+            showToast(flashToast.dataset.message);
+            flashToast.remove();
+        }
 
         // Sincronizar organización
         const headerOrgInput = document.getElementById('nombre_organizacion_header');

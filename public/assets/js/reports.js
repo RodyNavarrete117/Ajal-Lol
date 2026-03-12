@@ -893,6 +893,204 @@ function initAllAutocompletes() {
         () => (typeof DB_LUGARES !== 'undefined' ? DB_LUGARES : []),
         true
     );
+     initAutocomplete(
+        'edit-evento-display', 'edit-ac-evento',
+        () => (typeof DB_EVENTOS !== 'undefined' ? DB_EVENTOS : []),
+        false
+    );
+    initAutocomplete(
+        'edit-lugar-display', 'edit-ac-lugar',
+        () => (typeof DB_LUGARES !== 'undefined' ? DB_LUGARES : []),
+        true
+    );
+}
+
+// ============================================
+// VISTA EDITAR
+// ============================================
+let editRowCount = 0;
+
+function openEditView(id) {
+    closeEventModal();
+
+    fetch(`${ROUTE_API_REPORT}/${id}`, {
+        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN }
+    })
+    .then(res => res.json())
+    .then(data => {
+        // Rellenar campos de referencia
+        document.getElementById('edit-org-display').value   = data.nombre_organizacion || '';
+        document.getElementById('edit-fecha-display').value = data.fecha || '';
+        document.getElementById('edit-evento-display').value = data.evento || '';
+        document.getElementById('edit-lugar-display').value  = data.lugar || '';
+
+        document.getElementById('edit-nombre-org').value   = data.nombre_organizacion || '';
+        document.getElementById('edit-fecha-hidden').value = data.fecha || '';
+
+        // Detectar tipo
+        const tipo = (data.beneficiaries && data.beneficiaries.length > 0) ? 'reporte' : 'asistencia';
+        document.getElementById('edit-tipo').value = tipo;
+
+        // Configurar acción del form
+        const form = document.getElementById('edit-report-form');
+        form.action = `${ROUTE_BASE}/${id}`;
+
+        // Renderizar tabla
+        renderEditTable(tipo, data.beneficiaries || [], data.attendances || []);
+
+        // Mostrar vista
+        document.getElementById('calendar-view').classList.remove('active');
+        document.getElementById('create-view').classList.remove('active');
+        document.getElementById('history-view').classList.remove('active');
+        document.getElementById('edit-view').classList.add('active');
+    })
+    .catch(() => alert('No se pudo cargar el informe. Intenta de nuevo.'));
+}
+
+function closeEditView() {
+    document.getElementById('edit-view').classList.remove('active');
+    document.getElementById('history-view').classList.add('active');
+}
+
+function renderEditTable(tipo, beneficiaries, attendances) {
+    const header = document.getElementById('edit-table-header');
+    const body   = document.getElementById('edit-beneficiaries-table');
+    const esAsistencia = tipo === 'asistencia';
+
+    // Cabeceras
+    if (esAsistencia) {
+        header.style.gridTemplateColumns = '44px 1fr 1fr';
+        header.innerHTML = `
+            <div class="table-col">Nº</div>
+            <div class="table-col">Persona beneficiaria</div>
+            <div class="table-col">Edad</div>`;
+    } else {
+        header.style.gridTemplateColumns = '44px 1fr 1fr 1fr';
+        header.innerHTML = `
+            <div class="table-col">Nº</div>
+            <div class="table-col">Persona beneficiaria</div>
+            <div class="table-col">CURP</div>
+            <div class="table-col">Edad</div>`;
+    }
+
+    // Filas
+    body.innerHTML = '';
+    const personas = esAsistencia ? attendances : beneficiaries;
+    const minFilas = Math.max(personas.length, 6);
+    editRowCount   = minFilas;
+
+    for (let i = 0; i < minFilas; i++) {
+        const p = personas[i] || {};
+        body.appendChild(buildEditRow(i, tipo, p));
+    }
+
+    toggleEditRemoveButton();
+}
+
+function buildEditRow(i, tipo, data = {}) {
+    const row = document.createElement('div');
+    row.className = 'table-row';
+    row.id = `edit-row-${i}`;
+
+    if (tipo === 'asistencia') {
+        row.style.gridTemplateColumns = '44px 1fr 1fr';
+        row.innerHTML = `
+            <div class="table-cell row-num">${i + 1}</div>
+            <div class="table-cell">
+                <input type="text" name="asistencias[${i}][asistencianombrebeneficiario]"
+                       placeholder="Nombre completo"
+                       value="${data.asistencianombrebeneficiario || ''}">
+            </div>
+            <div class="table-cell">
+                <input type="number" name="asistencias[${i}][asistenciaedadbeneficiario]"
+                       placeholder="Edad" min="0" max="120"
+                       value="${data.asistenciaedadbeneficiario || ''}">
+            </div>`;
+    } else {
+        row.style.gridTemplateColumns = '44px 1fr 1fr 1fr';
+        row.innerHTML = `
+            <div class="table-cell row-num">${i + 1}</div>
+            <div class="table-cell">
+                <input type="text" name="beneficiarios[${i}][reportenombrebeneficiario]"
+                       placeholder="Nombre completo"
+                       value="${data.reportenombrebeneficiario || ''}">
+            </div>
+            <div class="table-cell">
+                <input type="text" name="beneficiarios[${i}][reportecurpbeneficiario]"
+                       placeholder="CURP" maxlength="18" style="text-transform:uppercase"
+                       value="${data.reportecurpbeneficiario || ''}">
+            </div>
+            <div class="table-cell">
+                <input type="number" name="beneficiarios[${i}][reporteedadbeneficiario]"
+                       placeholder="Edad" min="0" max="120"
+                       value="${data.reporteedadbeneficiario || ''}">
+            </div>`;
+    }
+    return row;
+}
+
+function addEditRow() {
+    const body = document.getElementById('edit-beneficiaries-table');
+    const tipo = document.getElementById('edit-tipo').value;
+    body.appendChild(buildEditRow(editRowCount++, tipo));
+    renumberEditRows();
+    toggleEditRemoveButton();
+}
+
+function removeLastEditRow() {
+    const body = document.getElementById('edit-beneficiaries-table');
+    const rows = body.querySelectorAll('.table-row');
+    if (rows.length <= 6) return;
+    rows[rows.length - 1].remove();
+    editRowCount = body.querySelectorAll('.table-row').length;
+    renumberEditRows();
+    toggleEditRemoveButton();
+}
+
+function renumberEditRows() {
+    document.querySelectorAll('#edit-beneficiaries-table .table-row').forEach((row, i) => {
+        const cell = row.querySelector('.row-num');
+        if (cell) cell.textContent = i + 1;
+        row.querySelectorAll('input').forEach(input => {
+            input.name = input.name
+                .replace(/asistencias\[\d+\]/, `asistencias[${i}]`)
+                .replace(/beneficiarios\[\d+\]/, `beneficiarios[${i}]`);
+        });
+    });
+}
+
+function toggleEditRemoveButton() {
+    const btn = document.getElementById('edit-btn-remove-row');
+    const rows = document.querySelectorAll('#edit-beneficiaries-table .table-row').length;
+    if (btn) btn.style.display = rows > 6 ? 'flex' : 'none';
+}
+
+// ============================================
+// TOAST
+// ============================================
+function showToast(message) {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `
+        <div class="toast-content">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <path d="M22 4L12 14.01l-3-3"/>
+            </svg>
+            <span>${message}</span>
+        </div>
+        <div class="toast-bar"></div>`;
+
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3500);
 }
 
 // ============================================
@@ -1010,6 +1208,21 @@ document.addEventListener('DOMContentLoaded', function () {
         form.addEventListener('submit', () => {
             const actionInput = document.getElementById('form-action');
             if (actionInput) actionInput.value = 'save';
+        });
+    }
+
+    // Botones tabla edición
+    const editBtnAdd    = document.getElementById('edit-btn-add-row');
+    const editBtnRemove = document.getElementById('edit-btn-remove-row');
+    if (editBtnAdd)    editBtnAdd.addEventListener('click', addEditRow);
+    if (editBtnRemove) editBtnRemove.addEventListener('click', removeLastEditRow);
+
+    // Botón editar del modal
+    const btnEditReport = document.getElementById('btn-modal-edit-report');
+    if (btnEditReport) {
+        btnEditReport.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentReportId) openEditView(currentReportId);
         });
     }
 });

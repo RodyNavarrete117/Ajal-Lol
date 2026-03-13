@@ -478,6 +478,9 @@ function initSort() {
 function sortHistoryList(order) {
     const list = document.getElementById('history-list');
     if (!list) return;
+
+    list.dataset.sorting = 'true'; // ← agregar esto
+
     const groups = Array.from(list.querySelectorAll('.history-group'));
 
     groups.sort((a, b) => {
@@ -497,6 +500,8 @@ function sortHistoryList(order) {
             item.classList.add(index % 2 === 0 ? 'highlight' : 'accent');
         }
     });
+
+    delete list.dataset.sorting; // ← agregar esto al final
 
     updateCountBadge();
 }
@@ -1209,14 +1214,14 @@ function renderPagination() {
     // Llamar al inicio
     renderPagination();
 
-    // Re-llamar cada vez que cambien los filtros
-    const observer = new MutationObserver(() => {
-        // Restaurar display de todos antes de recalcular
-        list.querySelectorAll('.history-group').forEach(g => {
-            if (!g.classList.contains('hidden')) g.style.display = '';
-        });
-        renderPagination();
+const observer = new MutationObserver(() => {
+    if (list.dataset.sorting) return; // ← ignorar durante reordenamiento
+    
+    list.querySelectorAll('.history-group:not(.hidden)').forEach(g => {
+        g.style.display = '';
     });
+    renderPagination();
+});
 
     observer.observe(list, { subtree: true, attributeFilter: ['class'] });
 }

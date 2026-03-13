@@ -90,7 +90,6 @@
                         <th>Nombre del usuario</th>
                         <th>Correo electrónico</th>
                         <th>Asignación</th>
-                        <th>Contraseña</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -109,7 +108,6 @@
                                 <span class="badge badge-user user-role">Sin rol</span>
                             @endif
                         </td>
-                        <td data-label="Contraseña"><span class="password-text">******</span></td>
                         <td data-label="Acciones">
                             <div class="action-buttons">
                                 <button class="btn-action btn-edit" onclick='editUser({{ $usuario->id_usuario }})'>

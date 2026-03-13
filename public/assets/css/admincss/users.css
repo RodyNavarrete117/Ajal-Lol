@@ -126,6 +126,15 @@ body.reduce-animations .modal {
     box-shadow: 0 4px 20px rgba(0,0,0,0.4); 
 }
 
+.table-container,
+.users-header,
+.page-header,
+.pagination-wrapper {
+    max-width:1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .page-header-content { 
     display: flex; 
     align-items: center;

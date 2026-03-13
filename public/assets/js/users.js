@@ -215,7 +215,6 @@ function addUserRow(usuario) {
         <td data-label="Nombre" class="user-name">${usuario.nombre_usuario}</td>
         <td data-label="Correo" class="user-email">${usuario.correo_usuario}</td>
         <td data-label="Asignación"><span class="badge ${isAdmin ? 'badge-admin' : 'badge-user'} user-role">${role}</span></td>
-        <td data-label="Contraseña"><span class="password-text">******</span></td>
         <td data-label="Acciones">
             <div class="action-buttons">
                 <button class="btn-action btn-edit" onclick="editUser(${usuario.id_usuario || usuario.id})">

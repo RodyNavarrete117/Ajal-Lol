@@ -334,13 +334,15 @@ function openEventModal(id, title, date, lugar) {
 
     document.getElementById('event-modal').classList.add('active');
     document.getElementById('event-overlay').classList.add('active');
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('modal-open');
+    document.documentElement.style.overflow = 'hidden'; 
 }
 
 function closeEventModal() {
     document.getElementById('event-modal').classList.remove('active');
     document.getElementById('event-overlay').classList.remove('active');
-    document.body.style.overflow = '';
+    document.body.classList.remove('modal-open');
+    document.documentElement.style.overflow = ''; 
     currentReportId = null;
 }
 

@@ -268,6 +268,10 @@
     -webkit-backdrop-filter: blur(6px);
 }
 
+body.modal-open #history-view {
+    overflow: hidden;
+}
+
 .event-modal {
     position: fixed; top: 0; right: -100%; width: 100%; max-width: 380px;
     height: 100vh; background: var(--rpt-modal-bg);

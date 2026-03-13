@@ -86,6 +86,7 @@
     padding: 1rem;
     margin: 0 auto;
     box-sizing: border-box;
+    max-width: 1200px;
 }
 
 .view-section { display: none; animation: fadeIn 0.35s ease-out; }
@@ -212,7 +213,7 @@
 .btn-history:hover { background: var(--rpt-accent); color: white; transform: translateY(-2px); }
 
 /* ── 5. VISTA CALENDARIO ─────────────────────────────────── */
-#calendar-view.active { display: grid; grid-template-columns: 1fr 260px; grid-template-rows: auto; gap: 1.5rem; align-items: start; }
+#calendar-view.active { display: grid; grid-template-columns: 1fr 260px; grid-template-rows: auto; gap: 1.5rem; align-items: start; max-width: 1100px;}
 .calendar-wrapper { grid-column: 1; grid-row: 1 / 3; background: var(--rpt-bg); border-radius: 18px; padding: 1.75rem; box-shadow: var(--rpt-shadow); border: 1px solid var(--rpt-border); transition: background 0.3s, border-color 0.3s; }
 .calendar-right-col { grid-column: 2; grid-row: 1; display: flex; flex-direction: column; gap: 1rem; }
 .calendar-right-col .btn-action { width: 100%; justify-content: flex-start; }
@@ -796,10 +797,31 @@ body.reduce-animations .view-section { animation: none !important; }
         width: 100%;
     }
 
+    .search-bar {
+        flex-wrap: wrap;
+    }
+    .search-bar input {
+        flex: 1 1 100%;
+        order: 1;
+    }
+    .search-bar > svg {
+        top: 1.1rem; /* ajustar al nuevo layout wrapeado */
+    }
+    .search-bar .controls-right {
+        order: 2;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+    #btn-sort-date, #btn-toggle-filters {
+        width: 100%;
+    }
+    
     .reports-container { padding: 0.9rem; }
 
     /* Header móvil: volver + título en una línea, org abajo en el form */
-    .reports-header { gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .reports-header { gap: 0.75rem; margin-bottom: 0; flex-wrap: wrap; }
     .reports-header h2 { font-size: 1.25rem; white-space: normal; }
     .header-org { display: none; } /* En móvil se oculta del header */
     .header-fecha { display: none; } /* En móvil se oculta del header */

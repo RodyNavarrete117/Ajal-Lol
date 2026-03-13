@@ -367,25 +367,33 @@
                     <button class="filter-tag active" data-filter="year">Este año</button>
                     <button class="filter-tag" data-filter="all">Todos</button>
                 </div>
-                <div class="controls-right">
-                    <button class="filter-btn" id="btn-sort-date" data-order="desc" title="Ordenar por fecha">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
-                            <path class="sort-desc" d="M4 6h16M4 12h10M4 18h4"/>
-                            <path class="sort-asc"  d="M4 18h16M4 12h10M4 6h4"/>
-                        </svg>
-                        <span id="sort-text">Recientes</span>
-                    </button>
-                    <button class="filter-btn" id="btn-toggle-filters" title="Mostrar opciones de filtrado">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
-                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-                        </svg>
-                        <span>Filtros</span>
-                    </button>
-                </div>
             </div>
         </div>
 
-        {{-- Panel filtros --}}
+        {{-- Barra de búsqueda --}}
+       <div class="search-bar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <input type="text" id="search-input" placeholder="Buscar evento o lugar…">
+            <div class="controls-right">
+                <button class="filter-btn" id="btn-sort-date" data-order="desc" title="Ordenar por fecha">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+                        <path class="sort-desc" d="M4 6h16M4 12h10M4 18h4"/>
+                        <path class="sort-asc"  d="M4 18h16M4 12h10M4 6h4"/>
+                    </svg>
+                    <span id="sort-text">Recientes</span>
+                </button>
+                <button class="filter-btn" id="btn-toggle-filters" title="Mostrar opciones de filtrado">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                    </svg>
+                    <span>Filtros</span>
+                </button>
+            </div>
+        </div>
+
+                {{-- Panel filtros --}}
         <div class="filters-panel" id="filters-panel">
             <div class="filters-panel-inner-wrap">
                 <div class="filters-panel-inner">
@@ -435,14 +443,6 @@
 
                 </div>
             </div>
-        </div>
-
-        {{-- Barra de búsqueda --}}
-        <div class="search-bar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-            </svg>
-            <input type="text" id="search-input" placeholder="Buscar evento o lugar…">
         </div>
 
         {{-- Lista --}}

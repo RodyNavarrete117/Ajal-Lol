@@ -10,7 +10,9 @@
 <div class="reports-container">
 
 @if(session('success'))
-    <div id="flash-toast" data-message="{{ session('success') }}"></div>
+    <div id="flash-toast"
+         data-message="{{ session('success') }}"
+         data-type="{{ session('toast_type', 'success') }}"></div>
 @endif
 
     {{-- ════════════════════════════════════════
@@ -717,6 +719,10 @@
 
     @if($errors->any())
         document.addEventListener('DOMContentLoaded', () => showCreateView());
+    @endif
+
+    @if(session('view') === 'history')
+        document.addEventListener('DOMContentLoaded', () => showHistoryView());
     @endif
 </script>
 <script src="{{ asset('assets/js/reports.js') }}"></script>

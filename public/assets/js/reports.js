@@ -2,8 +2,22 @@
  document.addEventListener('DOMContentLoaded', () => {
         const flashToast = document.getElementById('flash-toast');
         if (flashToast) {
-            showToast(flashToast.dataset.message);
+            showToast(flashToast.dataset.message, flashToast.dataset.type || 'success');
             flashToast.remove();
+        }
+
+        const sessionMsg  = sessionStorage.getItem('toast_message');
+        const sessionType = sessionStorage.getItem('toast_type') || 'success';
+        const returnView  = sessionStorage.getItem('return_view');
+
+        if (returnView) {
+            if (returnView === 'history') showHistoryView();
+            sessionStorage.removeItem('return_view');
+        }
+        if (sessionMsg) {
+            showToast(sessionMsg, sessionType);
+            sessionStorage.removeItem('toast_message');
+            sessionStorage.removeItem('toast_type');
         }
 
         // Sincronizar organización
@@ -428,17 +442,72 @@ function closeEventModal() {
     currentReportId = null;
 }
 
+function showConfirm(message, onConfirm) {
+    // Crear overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'confirm-overlay';
+    overlay.innerHTML = `
+        <div class="confirm-box">
+            <div class="confirm-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6H21M8 6V4H16V6M19 6L18 20H6L5 6"/>
+                </svg>
+            </div>
+            <p class="confirm-title">¿Eliminar informe?</p>
+            <p class="confirm-sub">${message}</p>
+            <div class="confirm-actions">
+                <button class="confirm-btn confirm-btn-cancel">Cancelar</button>
+                <button class="confirm-btn confirm-btn-danger">Eliminar</button>
+            </div>
+        </div>`;
+
+    document.body.appendChild(overlay);
+    requestAnimationFrame(() => overlay.classList.add('active'));
+
+    overlay.querySelector('.confirm-btn-cancel').addEventListener('click', () => {
+        overlay.classList.remove('active');
+        setTimeout(() => overlay.remove(), 250);
+    });
+
+    overlay.querySelector('.confirm-btn-danger').addEventListener('click', () => {
+        overlay.classList.remove('active');
+        setTimeout(() => overlay.remove(), 250);
+        onConfirm();
+    });
+
+    // Cerrar con Escape
+    const onKey = (e) => {
+        if (e.key === 'Escape') {
+            overlay.classList.remove('active');
+            setTimeout(() => overlay.remove(), 250);
+            document.removeEventListener('keydown', onKey);
+        }
+    };
+    document.addEventListener('keydown', onKey);
+}
+
 async function deleteReport(id) {
     if (!id) return;
-    if (!confirm('¿Eliminar este informe? Esta acción no se puede deshacer.')) return;
-    try {
-        const res = await fetch(`${ROUTE_BASE}/${id}`, {
-            method: 'DELETE',
-            headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }
-        });
-        if (res.ok) { closeEventModal(); window.location.reload(); }
-        else alert('No se pudo eliminar el informe. Intenta de nuevo.');
-    } catch (e) { console.error(e); alert('Error de conexión al intentar eliminar.'); }
+    showConfirm('Esta acción no se puede deshacer.', async () => {
+        try {
+            const res = await fetch(`${ROUTE_BASE}/${id}`, {
+                method: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }
+            });
+            if (res.ok) {
+                closeEventModal();
+                sessionStorage.setItem('toast_message', 'Informe eliminado correctamente.');
+                sessionStorage.setItem('toast_type', 'delete');
+                // Solo regresar al historial si venía del historial
+                const fromHistory = document.getElementById('history-view').classList.contains('active');
+                if (fromHistory) {
+                    sessionStorage.setItem('return_view', 'history');
+                }
+                window.location.reload();
+            }
+            else alert('No se pudo eliminar el informe. Intenta de nuevo.');
+        } catch (e) { console.error(e); alert('Error de conexión al intentar eliminar.'); }
+    });
 }
 
 // ============================================
@@ -1055,6 +1124,17 @@ function openEditView(id, from = 'history') {
 
         document.getElementById('edit-view').dataset.from = from;
 
+         // Agregar campo hidden con el origen
+        let fromInput = document.getElementById('edit-from');
+        if (!fromInput) {
+            fromInput = document.createElement('input');
+            fromInput.type = 'hidden';
+            fromInput.id = 'edit-from';
+            fromInput.name = '_from';
+            form.appendChild(fromInput);
+        }
+        fromInput.value = from;
+
         renderEditTable(tipo, data.beneficiaries || [], data.attendances || []);
 
         document.getElementById('calendar-view').classList.remove('active');
@@ -1197,23 +1277,51 @@ function toggleEditRemoveButton() {
 // ============================================
 // TOAST
 // ============================================
-function showToast(message) {
+function showToast(message, type = 'success') {
     const existing = document.querySelector('.toast');
     if (existing) existing.remove();
 
+    const isDark = document.documentElement.dataset.theme === 'dark';
+
+    const config = {
+        success: {
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+            bg:       isDark ? 'rgba(16,185,129,0.15)'  : '#d1fae5',
+            color:    isDark ? '#34d399'                 : '#059669',
+            border:   isDark ? 'rgba(16,185,129,0.3)'   : '#d1fae5',
+            progress: isDark ? '#34d399'                 : '#10b981',
+        },
+        delete: {
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6H21M8 6V4H16V6M19 6L18 20H6L5 6"/></svg>`,
+            bg:       isDark ? 'rgba(229,62,62,0.15)'   : '#fee2e2',
+            color:    isDark ? '#fc8181'                 : '#e53e3e',
+            border:   isDark ? 'rgba(229,62,62,0.3)'    : '#fecaca',
+            progress: isDark ? '#fc8181'                 : '#e53e3e',
+        },
+        edit: {
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>`,
+            bg:       isDark ? 'rgba(59,130,246,0.15)'  : '#dbeafe',
+            color:    isDark ? '#93c5fd'                 : '#3b82f6',
+            border:   isDark ? 'rgba(59,130,246,0.3)'   : '#bfdbfe',
+            progress: isDark ? '#93c5fd'                 : '#3b82f6',
+        },
+    };
+
+    const c = config[type] || config.success;
+
     const toast = document.createElement('div');
     toast.className = 'toast';
+    toast.style.borderColor = c.border;
     toast.innerHTML = `
-        <div class="toast-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                <path d="M22 4L12 14.01l-3-3"/>
+        <div class="toast-icon" style="background:${c.bg};">
+            <svg viewBox="0 0 24 24" fill="none" stroke="${c.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;">
+                ${c.icon.replace(/<svg[^>]*>/, '').replace('</svg>', '')}
             </svg>
         </div>
         <div class="toast-content">
             <span class="toast-text">${message}</span>
         </div>
-        <div class="toast-progress"></div>`;
+        <div class="toast-progress" style="background:${c.progress};"></div>`;
 
     document.body.appendChild(toast);
     requestAnimationFrame(() => toast.classList.add('show'));

@@ -117,7 +117,8 @@ class ReportsController extends Controller
 
         return redirect()
             ->route('admin.reports')
-            ->with('success', 'Informe creado correctamente.');
+            ->with('success', 'Informe creado correctamente.')
+            ->with('toast_type', 'success');
     }
 
     // =============================================
@@ -288,9 +289,20 @@ class ReportsController extends Controller
                 );
         }
 
+        $from = $request->input('_from', 'calendar');
+
+        if ($from === 'history') {
+            return redirect()
+                ->route('admin.reports')
+                ->with('success', 'Informe actualizado correctamente.')
+                ->with('toast_type', 'edit')
+                ->with('view', 'history');
+        }
+
         return redirect()
             ->route('admin.reports')
-            ->with('success', 'Informe actualizado correctamente.');
+            ->with('success', 'Informe actualizado correctamente.')
+            ->with('toast_type', 'edit');
     }
 
     // =============================================

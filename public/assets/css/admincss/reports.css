@@ -997,3 +997,54 @@ body.reduce-animations .history-group { transition: none !important; }
     }
 }
 
+/* ── PAGINACIÓN HISTORIAL ── */
+#hist-pagination {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+.hist-pagination {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 0.25rem 0;
+}
+.hist-page-btn {
+    width: 36px;
+    height: 36px;
+    border: 1.5px solid var(--rpt-border);
+    border-radius: 9px;
+    background: var(--rpt-bg-soft);
+    color: var(--rpt-text-sub);
+    font-size: 0.83rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.hist-page-btn:hover {
+    border-color: var(--rpt-accent);
+    color: var(--rpt-accent);
+    background: rgba(120, 61, 102, 0.07);
+}
+.hist-page-btn.active {
+    background: var(--rpt-accent);
+    border-color: var(--rpt-accent);
+    color: white;
+    box-shadow: 0 3px 8px rgba(120, 61, 102, 0.3);
+}
+
+.hist-page-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.hist-page-nav svg {
+    width: 14px;
+    height: 14px;
+}

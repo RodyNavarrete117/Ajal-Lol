@@ -1103,6 +1103,125 @@ function showToast(message) {
 }
 
 // ============================================
+// PAGINACIÓN HISTORIAL
+// ============================================
+function initHistorialLimit() {
+    const list = document.getElementById('history-list');
+    if (!list) return;
+
+function renderPagination() {
+    const oldPag = document.getElementById('hist-pagination');
+    if (oldPag) oldPag.remove();
+
+    const groups = Array.from(list.querySelectorAll('.history-group:not(.hidden)'));
+    const total = groups.length;
+
+    // Mostrar todos si son 10 o menos
+    groups.forEach(g => g.style.display = '');
+
+    const wrapper = document.createElement('div');
+    wrapper.id = 'hist-pagination';
+
+    // Contador — siempre visible
+    const counter = document.createElement('div');
+    counter.className = 'history-meta';
+    counter.innerHTML = `
+        <div class="history-meta-line"></div>
+        <div class="history-count">
+            <span>Mostrando</span>
+            <span class="count-badge" id="pag-count-badge">${total}</span>
+            <span>informes</span>
+        </div>
+        <div class="history-meta-line"></div>`;
+
+    wrapper.appendChild(counter);
+
+    // Botones solo si hay más de 10
+    if (total > 10) {
+        groups.forEach((g, i) => {
+            g.style.display = i < 10 ? '' : 'none';
+        });
+
+        counter.querySelector('.history-count').innerHTML = `
+            <span>Mostrando</span>
+            <span class="count-badge" id="pag-count-badge">${Math.min(10, total)}</span>
+            <span>de ${total} informes</span>`;
+
+        const totalPages = Math.ceil(total / 10);
+        let currentPage = 1;
+
+        const btnGroup = document.createElement('div');
+        btnGroup.className = 'hist-pagination';
+
+        function updateButtons() {
+            btnGroup.querySelectorAll('.hist-page-btn[data-page]').forEach(b => {
+                b.classList.toggle('active', parseInt(b.dataset.page) === currentPage);
+            });
+            btnPrev.disabled = currentPage === 1;
+            btnNext.disabled = currentPage === totalPages;
+        }
+
+        function goToPage(i) {
+            currentPage = i;
+            const from = (i - 1) * 10;
+            const to   = i * 10;
+            groups.forEach((g, idx) => {
+                g.style.display = (idx >= from && idx < to) ? '' : 'none';
+            });
+            const badge = document.getElementById('pag-count-badge');
+            if (badge) badge.textContent = Math.min(to, total) - from;
+            updateButtons();
+            list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Botón Anterior
+        const btnPrev = document.createElement('button');
+        btnPrev.className = 'hist-page-btn hist-page-nav';
+        btnPrev.disabled = true;
+        btnPrev.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18L9 12L15 6"/></svg>`;
+        btnPrev.addEventListener('click', () => { if (currentPage > 1) goToPage(currentPage - 1); });
+        btnGroup.appendChild(btnPrev);
+
+        // Botones numerados
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'hist-page-btn' + (i === 1 ? ' active' : '');
+            btn.dataset.page = i;
+            btn.textContent = i;
+            btn.addEventListener('click', () => goToPage(i));
+            btnGroup.appendChild(btn);
+        }
+
+        // Botón Siguiente
+        const btnNext = document.createElement('button');
+        btnNext.className = 'hist-page-btn hist-page-nav';
+        btnNext.disabled = totalPages === 1;
+        btnNext.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18L15 12L9 6"/></svg>`;
+        btnNext.addEventListener('click', () => { if (currentPage < totalPages) goToPage(currentPage + 1); });
+        btnGroup.appendChild(btnNext);
+
+        wrapper.appendChild(btnGroup);
+    }
+
+    list.after(wrapper);
+}
+
+    // Llamar al inicio
+    renderPagination();
+
+    // Re-llamar cada vez que cambien los filtros
+    const observer = new MutationObserver(() => {
+        // Restaurar display de todos antes de recalcular
+        list.querySelectorAll('.history-group').forEach(g => {
+            if (!g.classList.contains('hidden')) g.style.display = '';
+        });
+        renderPagination();
+    });
+
+    observer.observe(list, { subtree: true, attributeFilter: ['class'] });
+}
+
+// ============================================
 // INIT PRINCIPAL
 // ============================================
 document.addEventListener('DOMContentLoaded', function () {
@@ -1120,6 +1239,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initSearch();
     initAllAutocompletes();
     initTipoInforme();
+    initHistorialLimit();
 
     const btnAdd    = document.getElementById('btn-add-row');
     const btnRemove = document.getElementById('btn-remove-row');

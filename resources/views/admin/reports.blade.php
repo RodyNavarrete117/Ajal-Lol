@@ -445,17 +445,6 @@
             <input type="text" id="search-input" placeholder="Buscar evento o lugar…">
         </div>
 
-        {{-- Separador con contador --}}
-        <div class="history-meta">
-            <div class="history-meta-line"></div>
-            <div class="history-count">
-                <span>Mostrando</span>
-                <span class="count-badge" id="count-badge">{{ $reports->count() }}</span>
-                <span>informes</span>
-            </div>
-            <div class="history-meta-line"></div>
-        </div>
-
         {{-- Lista --}}
         <div class="history-list" id="history-list">
             @forelse($reports as $index => $report)

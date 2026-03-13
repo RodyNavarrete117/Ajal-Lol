@@ -30,21 +30,21 @@
     document.body.append(dot, ring);
 
     let mx = 0, my = 0, rx = 0, ry = 0;
-    let raf;
 
     document.addEventListener('mousemove', e => {
       mx = e.clientX; my = e.clientY;
-      dot.style.left  = mx + 'px';
-      dot.style.top   = my + 'px';
+      // El dot sigue inmediatamente al puntero
+      dot.style.left = mx + 'px';
+      dot.style.top  = my + 'px';
     });
 
-    // Ring sigue con inercia suave
+    // Ring sigue con una inercia mínima y suave (.35 = rápido, casi instantáneo)
     function animateRing() {
-      rx += (mx - rx) * .14;
-      ry += (my - ry) * .14;
+      rx += (mx - rx) * .35;
+      ry += (my - ry) * .35;
       ring.style.left = rx + 'px';
       ring.style.top  = ry + 'px';
-      raf = requestAnimationFrame(animateRing);
+      requestAnimationFrame(animateRing);
     }
     animateRing();
 
@@ -69,7 +69,6 @@
     const loader = $('#preloader');
     if (!loader) return;
 
-    // Reemplazar inner con logo animado
     loader.innerHTML = `
       <div class="preloader-logo">Ajal Lol</div>
       <div class="preloader-bar"></div>
@@ -96,10 +95,10 @@
     const sections = $$('section[id], #hero');
 
     on(window, 'scroll', () => {
-      // Shrink
+      // Shrink al hacer scroll
       header?.classList.toggle('scrolled', window.scrollY > 60);
 
-      // Active link
+      // Resaltar enlace activo según sección visible
       let current = '';
       sections.forEach(sec => {
         if (window.scrollY >= sec.offsetTop - 140) current = sec.id;
@@ -121,12 +120,14 @@
     const open  = () => {
       nav?.classList.add('open');
       overlay?.classList.add('open');
+      toggle?.setAttribute('aria-expanded', 'true');
       toggle?.classList.replace('bi-list', 'bi-x-lg');
       document.body.style.overflow = 'hidden';
     };
     const close = () => {
       nav?.classList.remove('open');
       overlay?.classList.remove('open');
+      toggle?.setAttribute('aria-expanded', 'false');
       toggle?.classList.replace('bi-x-lg', 'bi-list');
       document.body.style.overflow = '';
     };
@@ -134,6 +135,9 @@
     on(toggle,  'click', () => nav?.classList.contains('open') ? close() : open());
     on(overlay, 'click', close);
     $$('.navmenu a').forEach(a => on(a, 'click', close));
+
+    // Cerrar con Escape
+    on(document, 'keydown', e => { if (e.key === 'Escape') close(); });
   }
 
   /* ═══════════════════════════════════════════════
@@ -240,15 +244,24 @@
     const items = $$('.portfolio-item');
     if (!btns.length) return;
 
+    // Inicializar transición CSS en items
+    items.forEach(item => {
+      item.style.transition = 'opacity .3s ease';
+    });
+
     btns.forEach(btn => {
       on(btn, 'click', () => {
-        btns.forEach(b => b.classList.remove('active'));
+        // Actualizar estado activo y ARIA
+        btns.forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
         btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
 
         const filter = btn.dataset.filter;
         items.forEach(item => {
           const show = filter === '*' || item.classList.contains(filter.replace('.', ''));
-          // Animación de salida/entrada
           if (show) {
             item.style.display = '';
             requestAnimationFrame(() => item.style.opacity = '1');
@@ -258,11 +271,6 @@
           }
         });
       });
-    });
-
-    // Inicializar transición CSS en items
-    items.forEach(item => {
-      item.style.transition = 'opacity .3s ease';
     });
   }
 
@@ -275,17 +283,15 @@
     const lbClose = $('#lightbox-close');
     if (!lb || !lbImg) return;
 
-    let currentSrc = '';
-
     on(document, 'click', e => {
       const btn = e.target.closest('.zoom-btn');
       if (!btn) return;
       const src = btn.closest('.portfolio-item')?.querySelector('img')?.src;
       if (!src) return;
-      currentSrc = src;
       lbImg.src = src;
       lb.classList.add('open');
       document.body.style.overflow = 'hidden';
+      lbClose?.focus();
     });
 
     const close = () => {
@@ -296,7 +302,7 @@
 
     on(lbClose, 'click', close);
     on(lb, 'click', e => { if (e.target === lb) close(); });
-    on(document, 'keydown', e => { if (e.key === 'Escape') close(); });
+    on(document, 'keydown', e => { if (e.key === 'Escape' && lb.classList.contains('open')) close(); });
 
     // Swipe para cerrar en móvil
     let touchStartY = 0;
@@ -325,14 +331,21 @@
 
       on(btn, 'click', () => {
         const isOpen = item.classList.contains('open');
-        items.forEach(i => i.classList.remove('open'));
-        if (!isOpen) item.classList.add('open');
+        // Cerrar todos antes de abrir el actual
+        items.forEach(i => {
+          i.classList.remove('open');
+          i.querySelector('.faq-question')?.setAttribute('aria-expanded', 'false');
+        });
+        if (!isOpen) {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
       });
     });
   }
 
   /* ═══════════════════════════════════════════════
-     FORMULARIO DE CONTACTO (sin backend aún)
+     FORMULARIO DE CONTACTO
   ═══════════════════════════════════════════════ */
   function initContactForm() {
     const form   = $('#contact-form');
@@ -343,16 +356,15 @@
       e.preventDefault();
 
       const btn = form.querySelector('.form-submit');
-      const originalContent = btn.innerHTML;
+      const originalHTML = btn.innerHTML;
 
-      // Estado de carga
       btn.disabled = true;
       btn.innerHTML = `<span><i class="bi bi-hourglass-split"></i> Enviando…</span>`;
 
-      // Simulación (reemplazar con fetch real cuando haya backend)
+      // Simulación — reemplazar con fetch real cuando haya backend
       setTimeout(() => {
         btn.disabled = false;
-        btn.innerHTML = originalContent;
+        btn.innerHTML = originalHTML;
 
         if (status) {
           status.textContent = '✓ ¡Mensaje recibido! Nos pondremos en contacto pronto.';
@@ -366,8 +378,7 @@
     // Validación visual en tiempo real
     $$('input[required], textarea[required]', form).forEach(input => {
       on(input, 'blur', () => {
-        const valid = input.checkValidity();
-        input.style.borderColor = valid ? '' : 'var(--rose-soft)';
+        input.style.borderColor = input.checkValidity() ? '' : 'var(--rose-soft)';
       });
       on(input, 'input', () => {
         if (input.value) input.style.borderColor = '';
@@ -390,8 +401,10 @@
         const ripple = document.createElement('span');
         ripple.className = 'ripple';
         Object.assign(ripple.style, {
-          width: size + 'px', height: size + 'px',
-          left: x + 'px',    top: y + 'px',
+          width:  size + 'px',
+          height: size + 'px',
+          left:   x + 'px',
+          top:    y + 'px',
         });
         btn.appendChild(ripple);
         setTimeout(() => ripple.remove(), 650);
@@ -414,13 +427,12 @@
       const pct = y / window.innerHeight;
 
       circles.forEach((c, i) => {
-        const speed = (i + 1) * 0.12;
-        c.style.transform = `translateY(${y * speed}px)`;
+        c.style.transform = `translateY(${y * (i + 1) * 0.12}px)`;
       });
 
       if (content) {
         content.style.transform = `translateY(${y * 0.18}px)`;
-        content.style.opacity   = 1 - pct * 1.4;
+        content.style.opacity   = String(1 - pct * 1.4);
       }
     }, { passive: true });
   }
@@ -431,22 +443,12 @@
   function initStatCards() {
     $$('.stat-item').forEach(item => {
       on(item, 'mouseenter', () => {
-        $$('.stat-item').forEach(i => i.style.opacity = i === item ? '1' : '.5');
+        $$('.stat-item').forEach(i => i.style.opacity = i === item ? '1' : '.45');
       });
       on(item, 'mouseleave', () => {
         $$('.stat-item').forEach(i => i.style.opacity = '');
       });
     });
-  }
-
-  /* ═══════════════════════════════════════════════
-     TYPING EFFECT en hero (opcional, sutil)
-  ═══════════════════════════════════════════════ */
-  function initHeroTyping() {
-    const el = $('.hero-eyebrow');
-    if (!el) return;
-    // Ya tiene texto estático — solo añadir eyebrow si no existe
-    if (!$('#hero .hero-eyebrow')) return;
   }
 
   /* ═══════════════════════════════════════════════
@@ -471,7 +473,6 @@
     initStatCards();
   }
 
-  // Esperar DOM
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

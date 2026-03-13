@@ -1,12 +1,12 @@
 /* ============================================================
    AJAL LOL — visualpage.css
    Paleta: Rosa profundo + Oro champagne + Crema cálida
-   Tipografía: Cormorant Garamond (display) + Outfit (body)
+   Tipografía: Playfair Display (display) + Inter (body)
    Estética: Luxury editorial · Soft femininity · Refined warmth
    ============================================================ */
 
 /* ─── Google Fonts import ─── */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@300;400;500;600;700&display=swap');
 
 /* ─── Variables ─── */
 :root {
@@ -45,8 +45,8 @@
   --transition:   .4s cubic-bezier(.25,.46,.45,.94);
   --spring:       .5s cubic-bezier(.34,1.56,.64,1);
 
-  --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-body:    'Outfit', sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'Inter', system-ui, -apple-system, sans-serif;
 }
 
 /* ─── Reset ─── */
@@ -56,9 +56,12 @@ body {
   font-family: var(--font-body);
   background: var(--cream);
   color: var(--text-dark);
-  line-height: 1.7;
+  line-height: 1.75;
   overflow-x: hidden;
-  cursor: none; /* custom cursor activo */
+  cursor: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 img  { display: block; max-width: 100%; height: auto; }
 a    { text-decoration: none; color: inherit; }
@@ -86,8 +89,9 @@ ul   { list-style: none; }
 #cursor-ring {
   width: 36px; height: 36px;
   border: 1.5px solid var(--rose-mid);
-  transition: width .3s var(--transition), height .3s var(--transition),
-              border-color .3s, opacity .3s;
+  /* Solo transicionar tamaño y color, NO posición — el JS la maneja vía rAF */
+  transition: width .25s ease, height .25s ease,
+              border-color .25s, background .25s, opacity .3s;
 }
 body.cursor-hover #cursor-ring {
   width: 56px; height: 56px;
@@ -117,7 +121,7 @@ body.cursor-hover #cursor-ring {
 .section-title h2 {
   font-family: var(--font-display);
   font-size: clamp(2.2rem, 5vw, 3.6rem);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--rose-deep);
   line-height: 1.15;
   letter-spacing: -.3px;
@@ -137,8 +141,8 @@ body.cursor-hover #cursor-ring {
   margin-top: 1.2rem;
   font-size: 1rem;
   color: var(--text-light);
-  font-weight: 300;
-  letter-spacing: .3px;
+  font-weight: 400;
+  letter-spacing: .2px;
 }
 .section-title .sub span {
   color: var(--rose-mid);
@@ -246,9 +250,9 @@ body.cursor-hover #cursor-ring {
 /* Nav */
 .navmenu ul { display: flex; gap: 2.2rem; align-items: center; }
 .navmenu a {
-  font-size: .88rem;
+  font-size: .82rem;
   font-weight: 500;
-  letter-spacing: .5px;
+  letter-spacing: .6px;
   text-transform: uppercase;
   color: var(--text-mid);
   padding: .3rem 0;
@@ -325,7 +329,6 @@ body.cursor-hover #cursor-ring {
   overflow: hidden;
 }
 
-/* Patrón de fondo sutil */
 #hero::before {
   content: '';
   position: absolute; inset: 0;
@@ -334,7 +337,6 @@ body.cursor-hover #cursor-ring {
   background-size: 36px 36px;
 }
 
-/* Círculos decorativos flotantes */
 .hero-circle {
   position: absolute;
   border-radius: 50%;
@@ -376,7 +378,7 @@ body.cursor-hover #cursor-ring {
   backdrop-filter: blur(8px);
   padding: .4rem 1.1rem;
   border-radius: 99px;
-  font-size: .78rem;
+  font-size: .75rem;
   font-weight: 500;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -397,7 +399,7 @@ body.cursor-hover #cursor-ring {
   font-family: var(--font-display);
   font-size: clamp(2.6rem, 6vw, 4.4rem);
   line-height: 1.1;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 1.4rem;
   animation: heroFadeIn .9s .1s ease both;
 }
@@ -408,8 +410,8 @@ body.cursor-hover #cursor-ring {
 }
 .hero-content p {
   font-size: 1.05rem;
-  color: rgba(255,255,255,.8);
-  font-weight: 300;
+  color: rgba(255,255,255,.85);
+  font-weight: 400;
   max-width: 500px;
   margin-bottom: 2.5rem;
   line-height: 1.8;
@@ -531,9 +533,9 @@ body.cursor-hover #cursor-ring {
   display: inline-flex; align-items: center; gap: .5rem;
   background: var(--rose-blush);
   color: var(--rose-mid);
-  font-size: .75rem;
+  font-size: .72rem;
   font-weight: 600;
-  letter-spacing: 2px;
+  letter-spacing: 1.8px;
   text-transform: uppercase;
   padding: .35rem 1rem;
   border-radius: 99px;
@@ -546,15 +548,21 @@ body.cursor-hover #cursor-ring {
   color: var(--rose-deep);
   margin-bottom: 1.2rem;
   line-height: 1.25;
-  font-weight: 600;
+  font-weight: 700;
 }
-.about-content p { color: var(--text-mid); margin-bottom: 1.1rem; font-weight: 300; font-size: .97rem; }
+.about-content p {
+  color: var(--text-mid);
+  margin-bottom: 1.1rem;
+  font-weight: 400;
+  font-size: .97rem;
+  line-height: 1.8;
+}
 .about-content p.intro {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: 1.15rem;
+  font-size: 1.12rem;
   color: var(--text-dark);
-  line-height: 1.7;
+  line-height: 1.75;
   border-left: 3px solid var(--rose-soft);
   padding-left: 1.2rem;
 }
@@ -602,7 +610,7 @@ body.cursor-hover #cursor-ring {
 .stat-item .num {
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 5vw, 3.8rem);
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1;
   display: block;
   background: linear-gradient(135deg, var(--white), var(--rose-pale));
@@ -611,12 +619,12 @@ body.cursor-hover #cursor-ring {
   background-clip: text;
 }
 .stat-item p {
-  font-size: .83rem;
-  color: rgba(255,255,255,.6);
+  font-size: .8rem;
+  color: rgba(255,255,255,.65);
   margin-top: .6rem;
   letter-spacing: .5px;
   text-transform: uppercase;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 @media (max-width: 768px) {
@@ -702,17 +710,17 @@ body.cursor-hover #cursor-ring {
 .activity-card:hover .icon { background: var(--rose-deep); color: var(--white); transform: rotate(-5deg) scale(1.05); }
 .activity-card h3 {
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: 1.18rem;
   color: var(--rose-deep);
   margin-bottom: .7rem;
-  font-weight: 600;
+  font-weight: 700;
   position: relative; z-index: 1;
 }
 .activity-card p {
-  font-size: .88rem;
+  font-size: .9rem;
   color: var(--text-mid);
-  line-height: 1.7;
-  font-weight: 300;
+  line-height: 1.75;
+  font-weight: 400;
   position: relative; z-index: 1;
 }
 @media (max-width: 960px)  { .activities-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -732,7 +740,7 @@ body.cursor-hover #cursor-ring {
   font-family: var(--font-body);
   font-size: .82rem;
   font-weight: 500;
-  letter-spacing: .5px;
+  letter-spacing: .4px;
   color: var(--text-mid);
   cursor: none;
   transition: var(--transition);
@@ -789,13 +797,13 @@ body.cursor-hover #cursor-ring {
   color: var(--white);
   font-family: var(--font-display);
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 .portfolio-info p {
   color: var(--rose-pale);
   font-size: .8rem;
   margin-top: .3rem;
-  font-weight: 300;
+  font-weight: 400;
 }
 .zoom-btn {
   position: absolute; top: 1rem; right: 1rem;
@@ -886,19 +894,20 @@ body.cursor-hover #cursor-ring {
   text-align: center;
   border-top: 2px solid var(--rose-blush);
 }
-.team-card h4 {
+.team-card h3 {
   font-family: var(--font-display);
   font-size: 1.05rem;
   color: var(--rose-deep);
-  font-weight: 600;
+  font-weight: 700;
 }
 .team-card span {
-  font-size: .8rem;
+  font-size: .78rem;
   color: var(--text-light);
   letter-spacing: 1px;
   text-transform: uppercase;
   display: block;
-  margin-top: .3rem;
+  margin-top: .35rem;
+  font-weight: 500;
 }
 
 @media (max-width: 768px) { .team-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -918,7 +927,7 @@ body.cursor-hover #cursor-ring {
 }
 #pricing .section-title h2 { color: var(--rose-pale); }
 #pricing .section-title h2::after { background: linear-gradient(90deg, var(--rose-pale), var(--gold)); }
-#pricing .section-title .sub { color: rgba(255,255,255,.5); }
+#pricing .section-title .sub { color: rgba(255,255,255,.55); }
 #pricing .section-title .sub span { color: var(--gold-light); }
 
 .mvov-grid {
@@ -947,8 +956,9 @@ body.cursor-hover #cursor-ring {
 .mvov-card:hover { transform: translateY(-6px); border-color: rgba(245,198,212,.35); }
 .mvov-card:hover::before { opacity: 1; }
 .mvov-card h3 {
-  font-family: var(--font-display);
-  font-size: .95rem;
+  font-family: var(--font-body);
+  font-size: .8rem;
+  font-weight: 600;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--rose-pale);
@@ -959,12 +969,12 @@ body.cursor-hover #cursor-ring {
 .mvov-card h3 i { color: var(--gold-light); font-size: 1rem; }
 .mvov-card ul { display: flex; flex-direction: column; gap: .8rem; position: relative; }
 .mvov-card li {
-  font-size: .88rem;
-  color: rgba(255,255,255,.75);
-  line-height: 1.65;
+  font-size: .9rem;
+  color: rgba(255,255,255,.8);
+  line-height: 1.7;
   padding-left: 1.1rem;
   position: relative;
-  font-weight: 300;
+  font-weight: 400;
 }
 .mvov-card li::before {
   content: '◆';
@@ -973,7 +983,7 @@ body.cursor-hover #cursor-ring {
   font-size: .45rem;
   top: .5rem;
 }
-.mvov-card li strong { color: var(--rose-pale); font-weight: 500; }
+.mvov-card li strong { color: var(--rose-pale); font-weight: 600; }
 
 @media (max-width: 1024px) { .mvov-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px)  { .mvov-grid { grid-template-columns: 1fr; } }
@@ -996,6 +1006,7 @@ body.cursor-hover #cursor-ring {
   color: var(--rose-deep);
   gap: 1.2rem;
   transition: color var(--transition);
+  line-height: 1.5;
 }
 .faq-question:hover { color: var(--rose-mid); }
 .faq-toggle {
@@ -1022,9 +1033,9 @@ body.cursor-hover #cursor-ring {
 .faq-item.open .faq-answer { max-height: 500px; padding-bottom: 1.4rem; }
 .faq-answer p {
   color: var(--text-mid);
-  font-size: .92rem;
-  line-height: 1.75;
-  font-weight: 300;
+  font-size: .93rem;
+  line-height: 1.8;
+  font-weight: 400;
   padding-left: 1rem;
   border-left: 2px solid var(--rose-pale);
 }
@@ -1052,7 +1063,7 @@ body.cursor-hover #cursor-ring {
 }
 .contact-info-card h3 {
   font-family: var(--font-display);
-  font-size: 1.7rem;
+  font-size: 1.65rem;
   margin-bottom: 2rem;
   color: var(--rose-pale);
   font-style: italic;
@@ -1074,8 +1085,16 @@ body.cursor-hover #cursor-ring {
   border-radius: var(--radius-sm);
   display: flex; align-items: center; justify-content: center;
 }
-.info-item strong { display: block; font-size: .78rem; color: var(--rose-pale); margin-bottom: .25rem; letter-spacing: 1px; text-transform: uppercase; }
-.info-item p { font-size: .88rem; color: rgba(255,255,255,.7); font-weight: 300; }
+.info-item strong {
+  display: block;
+  font-size: .73rem;
+  color: var(--rose-pale);
+  margin-bottom: .25rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.info-item p { font-size: .9rem; color: rgba(255,255,255,.75); font-weight: 400; }
 .info-item a { color: inherit; transition: color var(--transition); }
 .info-item a:hover { color: var(--gold-light); }
 .contact-map { border-radius: var(--radius-sm); overflow: hidden; margin-top: 2rem; border: 1px solid rgba(255,255,255,.1); }
@@ -1090,16 +1109,16 @@ body.cursor-hover #cursor-ring {
 }
 .contact-form-card h3 {
   font-family: var(--font-display);
-  font-size: 1.7rem;
+  font-size: 1.65rem;
   color: var(--rose-deep);
   margin-bottom: 2rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
 .form-group { margin-bottom: 1.3rem; }
 .form-group label {
   display: block;
-  font-size: .8rem;
+  font-size: .74rem;
   font-weight: 600;
   letter-spacing: .8px;
   text-transform: uppercase;
@@ -1113,7 +1132,7 @@ body.cursor-hover #cursor-ring {
   border: 1.5px solid var(--rose-pale);
   border-radius: var(--radius-sm);
   font-family: var(--font-body);
-  font-size: .93rem;
+  font-size: .95rem;
   color: var(--text-dark);
   background: var(--cream);
   outline: none;
@@ -1135,7 +1154,7 @@ body.cursor-hover #cursor-ring {
   font-family: var(--font-body);
   font-size: .95rem;
   font-weight: 600;
-  letter-spacing: .5px;
+  letter-spacing: .4px;
   cursor: none;
   transition: var(--transition);
   display: flex; align-items: center; justify-content: center; gap: .6rem;
@@ -1183,11 +1202,11 @@ body.cursor-hover #cursor-ring {
   position: relative;
 }
 .footer-donate p {
-  color: rgba(255,255,255,.8);
+  color: rgba(255,255,255,.85);
   max-width: 520px;
   margin-inline: auto;
   margin-bottom: 1.8rem;
-  font-weight: 300;
+  font-weight: 400;
   font-size: .95rem;
   position: relative;
 }
@@ -1224,11 +1243,11 @@ body.cursor-hover #cursor-ring {
   margin-bottom: 1.1rem;
   font-style: italic;
 }
-.footer-about p { font-size: .87rem; line-height: 1.8; font-weight: 300; }
+.footer-about p { font-size: .88rem; line-height: 1.8; font-weight: 400; }
 .footer-links h4,
 .footer-social h4 {
   color: var(--white);
-  font-size: .82rem;
+  font-size: .75rem;
   font-weight: 600;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -1236,7 +1255,7 @@ body.cursor-hover #cursor-ring {
 }
 .footer-links ul { display: flex; flex-direction: column; gap: .6rem; }
 .footer-links a {
-  font-size: .87rem;
+  font-size: .88rem;
   color: rgba(255,255,255,.5);
   transition: color var(--transition), padding-left var(--transition);
   display: flex; align-items: center; gap: .45rem;

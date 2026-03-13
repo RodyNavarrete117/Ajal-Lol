@@ -127,7 +127,7 @@ INSERT INTO `asistenciabeneficiarios` (`id_asistenciabeneficiario`, `id_informe`
 (59, 54, 'Miriam Cauich Balam', 31, '2026-05-20 16:15:00'),
 (60, 57, 'Valentina Uc Cen', 27, '2026-06-05 14:00:00'),
 (61, 57, 'Javier Baalam Cohuo', 42, '2026-06-05 14:05:00'),
-(62, 57, 'José Rodolfo Navarrete Morales', 35, '2026-06-05 14:10:00'),
+(62, 57, 'José Alejandro Uc Morales', 35, '2026-06-05 14:10:00'),
 (63, 58, 'Consuelo Poot Mis', 35, '2026-09-20 15:00:00'),
 (64, 58, 'Bernardo Xiu Cohuó', 51, '2026-09-20 15:05:00'),
 (65, 58, 'Alicia Tun Canché', 24, '2026-09-20 15:10:00'),

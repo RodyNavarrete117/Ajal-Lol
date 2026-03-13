@@ -1,3 +1,85 @@
+// ESTO FORMABA PARTE DEL ARCHIVO BLADE PERO LO VOY MOVER AQUÍ
+ document.addEventListener('DOMContentLoaded', () => {
+        const flashToast = document.getElementById('flash-toast');
+        if (flashToast) {
+            showToast(flashToast.dataset.message);
+            flashToast.remove();
+        }
+
+        // Sincronizar organización
+        const headerOrgInput = document.getElementById('nombre_organizacion_header');
+        const mobileOrgInput = document.getElementById('nombre_organizacion_mobile');
+        const hiddenOrgInput = document.getElementById('nombre_organizacion');
+
+        function syncOrg(val) {
+            if (hiddenOrgInput) hiddenOrgInput.value = val;
+            if (headerOrgInput) headerOrgInput.value = val;
+            if (mobileOrgInput) mobileOrgInput.value = val;
+        }
+        if (headerOrgInput) headerOrgInput.addEventListener('input', () => syncOrg(headerOrgInput.value));
+        if (mobileOrgInput) mobileOrgInput.addEventListener('input', () => syncOrg(mobileOrgInput.value));
+
+        // Sincronizar fecha
+        const headerFechaInput = document.getElementById('fecha_header');
+        const mobileFechaInput = document.getElementById('fecha_mobile');
+        const hiddenFechaInput = document.getElementById('fecha');
+
+        function syncFecha(val) {
+            if (hiddenFechaInput) hiddenFechaInput.value = val;
+            if (headerFechaInput) headerFechaInput.value = val;
+            if (mobileFechaInput) mobileFechaInput.value = val;
+        }
+        const today = new Date().toISOString().split('T')[0];
+        if (headerFechaInput && !headerFechaInput.value) headerFechaInput.value = today;
+        if (mobileFechaInput && !mobileFechaInput.value) mobileFechaInput.value = today;
+        if (hiddenFechaInput && !hiddenFechaInput.value) hiddenFechaInput.value = today;
+
+        if (headerFechaInput) headerFechaInput.addEventListener('change', () => syncFecha(headerFechaInput.value));
+        if (mobileFechaInput) mobileFechaInput.addEventListener('change', () => syncFecha(mobileFechaInput.value));
+
+        // Mostrar campos móvil según pantalla
+        function applyMobileFields() {
+            const isMobile    = window.innerWidth <= 768;
+            const orgMobile   = document.getElementById('nombre_organizacion_mobile');
+            const fechaMobile = document.querySelector('.form-fecha-mobile');
+            const headerOrg   = document.querySelector('.header-org');
+            const headerFecha = document.querySelector('.header-fecha');
+            if (orgMobile)   orgMobile.closest('.form-org-mobile').style.display   = isMobile ? 'flex' : 'none';
+            if (fechaMobile) fechaMobile.style.display = isMobile ? 'flex' : 'none';
+            if (headerOrg)   headerOrg.style.display   = isMobile ? 'none' : 'flex';
+            if (headerFecha) headerFecha.style.display  = isMobile ? 'none' : 'flex';
+        }
+        applyMobileFields();
+        window.addEventListener('resize', applyMobileFields);
+    });
+
+    function toggleEditById(inputId, hiddenId) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        const isReadonly = input.hasAttribute('readonly');
+        if (isReadonly) {
+            input.removeAttribute('readonly');
+            input.focus();
+        } else {
+            input.setAttribute('readonly', true);
+            const hidden = document.getElementById(hiddenId);
+            if (hidden) hidden.value = input.value;
+            if (hiddenId === 'nombre_organizacion') {
+                const h = document.getElementById('nombre_organizacion_header');
+                const m = document.getElementById('nombre_organizacion_mobile');
+                if (h) h.value = input.value;
+                if (m) m.value = input.value;
+            }
+            if (hiddenId === 'fecha') {
+                const h = document.getElementById('fecha_header');
+                const m = document.getElementById('fecha_mobile');
+                if (h) h.value = input.value;
+                if (m) m.value = input.value;
+            }
+        }
+    }
+// AQUÍ TERMINA LA PARTE QUE MOVI DE BLADE PARA UNIFICARLO EN UN SOLO JS
+
 // ============================================
 // FECHA SELECCIONADA EN CALENDARIO
 // ============================================
@@ -646,10 +728,21 @@ function applyFilterLogic(mode) {
         if (mode === 'all') {
             show = true;
         } else if (mode === 'week') {
+            // Lunes de la semana actual
             const sw = new Date(now);
-            sw.setDate(now.getDate() - now.getDay());
+            const dayOfWeek = now.getDay() === 0 ? 6 : now.getDay() - 1;
+            sw.setDate(now.getDate() - dayOfWeek);
             sw.setHours(0, 0, 0, 0);
-            show = (fecha >= sw);
+            // Domingo de la semana actual
+            const ew = new Date(sw);
+            ew.setDate(sw.getDate() + 6);
+            ew.setHours(23, 59, 59, 999);
+            show = (fecha >= sw && fecha <= ew);
+        } else if (mode === 'future') {
+            const tomorrow = new Date(now);
+            tomorrow.setHours(0, 0, 0, 0);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            show = (fecha >= tomorrow);
         } else if (mode === 'month') {
             show = (fecha.getMonth() === now.getMonth() && fecha.getFullYear() === now.getFullYear());
         } else if (mode === 'year') {
@@ -696,27 +789,49 @@ function initSearch() {
 // ============================================
 function updateCountBadge() {
     const badge = document.getElementById('count-badge');
-    if (!badge) return;
     const visible = document.querySelectorAll('#history-list .history-group:not(.hidden)').length;
-    badge.textContent = visible;
+    if (badge) badge.textContent = visible;
 
     const list = document.getElementById('history-list');
     if (!list) return;
     let emptyState = list.querySelector('.empty-state');
 
     if (visible === 0) {
+        const activeTag = document.querySelector('.filter-tag.active');
+        const mode = activeTag ? activeTag.dataset.filter : 'all';
+        const search = (document.getElementById('search-input')?.value || '').trim();
+
+        const messages = {
+            week:   { icon: 'calendar-week',   title: 'Sin eventos esta semana',  sub: 'No hay registros para la semana actual.' },
+            future: { icon: 'calendar-future', title: 'Sin eventos futuros',      sub: 'No hay programados más allá del día de hoy.' },
+            month:  { icon: 'calendar-month',  title: 'Sin eventos este mes',     sub: 'No hay registrados del mes.' },
+            year:   { icon: 'calendar-year',   title: 'Sin eventos este año',     sub: 'Aún no hay registros para este año.' },
+            all:    { icon: 'folder',           title: 'Sin eventos registrados',  sub: 'Aún no se ha creado nada.' },
+        };
+
+        const ctx = search
+            ? { icon: 'search', title: 'Sin resultados', sub: `No se encontraron eventos para "${search}".` }
+            : (messages[mode] || messages.all);
+
+        const icons = {
+            'calendar-week': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>`,
+            'calendar-future': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M12 14v4m0 0l-2-2m2 2l2-2"/></svg>`,
+            'calendar-month': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="12" cy="16" r="2"/></svg>`,
+            'calendar-year':  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 15l2 2 4-4"/></svg>`,
+            'folder': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>`,
+            'search': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M8 11h6M11 8v6" opacity="0.5"/></svg>`,
+        };
+
         if (!emptyState) {
             emptyState = document.createElement('div');
-            emptyState.className = 'empty-state';
-            emptyState.innerHTML = `
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                     stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
-                </svg>
-                <p>No se encontraron informes</p>`;
+            emptyState.className = 'empty-state empty-state--contextual';
             list.appendChild(emptyState);
         }
+        emptyState.innerHTML = `
+            <div class="empty-state-icon">${icons[ctx.icon] || icons.folder}</div>
+            <p class="empty-state-title">${ctx.title}</p>
+            <p class="empty-state-sub">${ctx.sub}</p>`;
+
     } else if (emptyState) {
         emptyState.remove();
     }
@@ -1129,7 +1244,8 @@ function renderPagination() {
     const wrapper = document.createElement('div');
     wrapper.id = 'hist-pagination';
 
-    // Contador — siempre visible
+    // Contador — solo visible si hay resultados
+    if (total === 0) { list.after(wrapper); return; }
     const counter = document.createElement('div');
     counter.className = 'history-meta';
     counter.innerHTML = `
@@ -1137,7 +1253,7 @@ function renderPagination() {
         <div class="history-count">
             <span>Mostrando</span>
             <span class="count-badge" id="pag-count-badge">${total}</span>
-            <span>informes</span>
+            <span>eventos</span>
         </div>
         <div class="history-meta-line"></div>`;
 
@@ -1152,7 +1268,7 @@ function renderPagination() {
         counter.querySelector('.history-count').innerHTML = `
             <span>Mostrando</span>
             <span class="count-badge" id="pag-count-badge">${Math.min(10, total)}</span>
-            <span>de ${total} informes</span>`;
+            <span>de ${total} eventos</span>`;
 
         const totalPages = Math.ceil(total / 10);
         let currentPage = 1;
@@ -1365,3 +1481,4 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+

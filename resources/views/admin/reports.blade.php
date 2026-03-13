@@ -362,6 +362,7 @@
 
             <div class="history-controls">
                 <div class="quick-filters desktop-only">
+                    <button class="filter-tag" data-filter="future">Eventos futuros</button>
                     <button class="filter-tag" data-filter="week">Esta semana</button>
                     <button class="filter-tag" data-filter="month">Este mes</button>
                     <button class="filter-tag active" data-filter="year">Este año</button>
@@ -404,6 +405,7 @@
                             <button class="filter-tag" data-filter="week">Esta semana</button>
                             <button class="filter-tag" data-filter="month">Este mes</button>
                             <button class="filter-tag active" data-filter="year">Este año</button>
+                            <button class="filter-tag" data-filter="future">Eventos futuros</button>
                             <button class="filter-tag" data-filter="all">Todos</button>
                         </div>
                     </div>
@@ -716,86 +718,6 @@
     @if($errors->any())
         document.addEventListener('DOMContentLoaded', () => showCreateView());
     @endif
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const flashToast = document.getElementById('flash-toast');
-        if (flashToast) {
-            showToast(flashToast.dataset.message);
-            flashToast.remove();
-        }
-
-        // Sincronizar organización
-        const headerOrgInput = document.getElementById('nombre_organizacion_header');
-        const mobileOrgInput = document.getElementById('nombre_organizacion_mobile');
-        const hiddenOrgInput = document.getElementById('nombre_organizacion');
-
-        function syncOrg(val) {
-            if (hiddenOrgInput) hiddenOrgInput.value = val;
-            if (headerOrgInput) headerOrgInput.value = val;
-            if (mobileOrgInput) mobileOrgInput.value = val;
-        }
-        if (headerOrgInput) headerOrgInput.addEventListener('input', () => syncOrg(headerOrgInput.value));
-        if (mobileOrgInput) mobileOrgInput.addEventListener('input', () => syncOrg(mobileOrgInput.value));
-
-        // Sincronizar fecha
-        const headerFechaInput = document.getElementById('fecha_header');
-        const mobileFechaInput = document.getElementById('fecha_mobile');
-        const hiddenFechaInput = document.getElementById('fecha');
-
-        function syncFecha(val) {
-            if (hiddenFechaInput) hiddenFechaInput.value = val;
-            if (headerFechaInput) headerFechaInput.value = val;
-            if (mobileFechaInput) mobileFechaInput.value = val;
-        }
-        const today = new Date().toISOString().split('T')[0];
-        if (headerFechaInput && !headerFechaInput.value) headerFechaInput.value = today;
-        if (mobileFechaInput && !mobileFechaInput.value) mobileFechaInput.value = today;
-        if (hiddenFechaInput && !hiddenFechaInput.value) hiddenFechaInput.value = today;
-
-        if (headerFechaInput) headerFechaInput.addEventListener('change', () => syncFecha(headerFechaInput.value));
-        if (mobileFechaInput) mobileFechaInput.addEventListener('change', () => syncFecha(mobileFechaInput.value));
-
-        // Mostrar campos móvil según pantalla
-        function applyMobileFields() {
-            const isMobile    = window.innerWidth <= 768;
-            const orgMobile   = document.getElementById('nombre_organizacion_mobile');
-            const fechaMobile = document.querySelector('.form-fecha-mobile');
-            const headerOrg   = document.querySelector('.header-org');
-            const headerFecha = document.querySelector('.header-fecha');
-            if (orgMobile)   orgMobile.closest('.form-org-mobile').style.display   = isMobile ? 'flex' : 'none';
-            if (fechaMobile) fechaMobile.style.display = isMobile ? 'flex' : 'none';
-            if (headerOrg)   headerOrg.style.display   = isMobile ? 'none' : 'flex';
-            if (headerFecha) headerFecha.style.display  = isMobile ? 'none' : 'flex';
-        }
-        applyMobileFields();
-        window.addEventListener('resize', applyMobileFields);
-    });
-
-    function toggleEditById(inputId, hiddenId) {
-        const input = document.getElementById(inputId);
-        if (!input) return;
-        const isReadonly = input.hasAttribute('readonly');
-        if (isReadonly) {
-            input.removeAttribute('readonly');
-            input.focus();
-        } else {
-            input.setAttribute('readonly', true);
-            const hidden = document.getElementById(hiddenId);
-            if (hidden) hidden.value = input.value;
-            if (hiddenId === 'nombre_organizacion') {
-                const h = document.getElementById('nombre_organizacion_header');
-                const m = document.getElementById('nombre_organizacion_mobile');
-                if (h) h.value = input.value;
-                if (m) m.value = input.value;
-            }
-            if (hiddenId === 'fecha') {
-                const h = document.getElementById('fecha_header');
-                const m = document.getElementById('fecha_mobile');
-                if (h) h.value = input.value;
-                if (m) m.value = input.value;
-            }
-        }
-    }
 </script>
 <script src="{{ asset('assets/js/reports.js') }}"></script>
 @endsection

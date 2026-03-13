@@ -628,6 +628,17 @@ input[type="number"] {
 .filter-tag { padding: 0.38rem 0.85rem; border: 1.5px solid var(--rpt-border); border-radius: 20px; background: var(--rpt-bg-soft); color: var(--rpt-text-sub); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s, box-shadow 0.2s; white-space: nowrap; }
 .filter-tag:hover { border-color: var(--rpt-accent); color: var(--rpt-accent); transform: translateY(-1px); box-shadow: 0 3px 8px rgba(120,61,102,0.15); }
 .filter-tag.active { background: var(--rpt-accent); border-color: var(--rpt-accent); color: white; box-shadow: 0 4px 12px rgba(120,61,102,0.3); }
+/* Botón futuros — acento verde */
+.filter-tag[data-filter="future"].active {
+    background: #2f855a;
+    border-color: #2f855a;
+    box-shadow: 0 4px 12px rgba(47, 133, 90, 0.3);
+}
+.filter-tag[data-filter="future"]:hover:not(.active) {
+    border-color: #2f855a;
+    color: #2f855a;
+    box-shadow: 0 3px 8px rgba(47, 133, 90, 0.15);
+}
 
 .filters-divider { height: 1px; width: 100%; background: var(--rpt-border); }
 .custom-filters { display: flex; gap: 0.75rem; flex-wrap: wrap; flex: 1; }
@@ -694,7 +705,7 @@ input[type="number"] {
     stroke: currentColor;
 }
 
-.history-list { display: flex; flex-direction: column; gap: 0.45rem; width: 100%; max-width: 100%; position: relative; z-index: 10; }
+.history-list { display: flex; flex-direction: column; gap: 0.45rem; width: 100%; max-width: 100%; position: relative; }
 
 .history-group { width: 100%; transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease, transform 0.4s ease, margin 0.4s ease; overflow: hidden; opacity: 1; transform: scale(1); max-height: 200px; margin-bottom: 0; }
 .history-group.hidden { 
@@ -987,7 +998,7 @@ body.reduce-animations .history-group { transition: none !important; }
     gap: 12px;
     padding: 14px 18px;
     border-radius: 12px;
-    background: var(--bg-white);
+    background: var(--rpt-bg);
     border: 1px solid #d1fae5;
     min-width: 280px;
     max-width: 360px;
@@ -1115,4 +1126,48 @@ body.reduce-animations .history-group { transition: none !important; }
 .hist-page-nav svg {
     width: 14px;
     height: 14px;
+}
+
+/* ── EMPTY STATE CONTEXTUAL ── */
+.empty-state--contextual {
+    padding: 3.5rem 1.5rem;
+    gap: 0;
+}
+.empty-state-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    background: rgba(120, 61, 102, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.1rem;
+    transition: background 0.3s;
+}
+[data-theme="dark"] .empty-state-icon {
+    background: rgba(196, 122, 170, 0.12);
+}
+.empty-state-icon svg {
+    width: 34px;
+    height: 34px;
+    opacity: 1;
+    color: var(--rpt-accent);
+    stroke: currentColor;
+}
+[data-theme="dark"] .empty-state-icon svg {
+    color: #c47aaa;
+}
+.empty-state-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--rpt-text);
+    margin: 0 0 0.4rem;
+}
+.empty-state-sub {
+    font-size: 0.82rem;
+    color: var(--rpt-text-muted);
+    margin: 0;
+    max-width: 260px;
+    line-height: 1.55;
+    text-align: center;
 }

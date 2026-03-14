@@ -1142,7 +1142,90 @@ function openEditView(id, from = 'history') {
         document.getElementById('history-view').classList.remove('active');
         document.getElementById('edit-view').classList.add('active');
 
-        document.querySelector('.reports-container').style.padding = '0.5rem';
+        // Deshabilitar botón guardar hasta que haya cambios
+       const saveBtn = document.querySelector('#edit-report-form .btn-save');
+        if (saveBtn) {
+            saveBtn.disabled = true;
+            saveBtn.style.opacity = '0.5';
+            saveBtn.style.cursor = 'default';
+        }
+
+        // Snapshot del estado inicial
+        const snapEvento = data.evento || '';
+        const snapLugar  = data.lugar  || '';
+        const snapTipo   = (data.beneficiaries && data.beneficiaries.length > 0) ? 'reporte' : 'asistencia';
+
+        // Snapshot del estado inicial de beneficiarios
+    const snapPersonas = snapTipo === 'asistencia'
+        ? (data.attendances || []).map(p => ({
+            nombre: p.asistencianombrebeneficiario || '',
+            edad:   String(p.asistenciaedadbeneficiario || '')
+        }))
+        : (data.beneficiaries || []).map(p => ({
+            nombre: p.reportenombrebeneficiario || '',
+            curp:   p.reportecurpbeneficiario   || '',
+            edad:   String(p.reporteedadbeneficiario || '')
+        }));
+
+    function checkChanges() {
+        if (!saveBtn) return;
+
+        const eventoActual = document.getElementById('edit-evento-display').value;
+        const lugarActual  = document.getElementById('edit-lugar-display').value;
+        const tipoActual   = document.getElementById('edit-tipo').value;
+
+        // Cambio en evento o lugar
+        if (eventoActual !== snapEvento || lugarActual !== snapLugar) {
+            saveBtn.disabled = false;
+            saveBtn.style.opacity = '';
+            return;
+        }
+
+        // Leer filas actuales — solo las que tengan nombre completo
+        const rows = document.querySelectorAll('#edit-beneficiaries-table .table-row');
+        const personasActuales = [];
+
+        for (const row of rows) {
+            if (tipoActual === 'asistencia') {
+                const nombre = row.querySelector('input[name*="asistencianombrebeneficiario"]')?.value.trim() || '';
+                const edad   = row.querySelector('input[name*="asistenciaedadbeneficiario"]')?.value.trim()   || '';
+                if (nombre) personasActuales.push({ nombre, edad });
+            } else {
+                const nombre = row.querySelector('input[name*="reportenombrebeneficiario"]')?.value.trim() || '';
+                const curp   = row.querySelector('input[name*="reportecurpbeneficiario"]')?.value.trim()   || '';
+                const edad   = row.querySelector('input[name*="reporteedadbeneficiario"]')?.value.trim()   || '';
+                if (nombre && curp && edad) personasActuales.push({ nombre, curp, edad });
+            }
+        }
+
+        // Comparar con snapshot
+        if (personasActuales.length !== snapPersonas.length) {
+            // Solo habilitar si hay más personas que antes (no menos o igual vacías)
+            if (personasActuales.length !== snapPersonas.length) {
+                saveBtn.disabled = false;
+                saveBtn.style.opacity = '';
+                return;
+            }
+        }
+
+        // Mismo número — verificar si algún dato cambió
+        const hayDiferencia = personasActuales.some((p, i) => {
+            const s = snapPersonas[i];
+            if (tipoActual === 'asistencia') return p.nombre !== s.nombre || p.edad !== s.edad;
+            return p.nombre !== s.nombre || p.curp !== s.curp || p.edad !== s.edad;
+        });
+
+        saveBtn.disabled = !hayDiferencia;
+        saveBtn.style.opacity = hayDiferencia ? '' : '0.5';
+    }
+
+    document.getElementById('edit-evento-display').addEventListener('input', checkChanges);
+    document.getElementById('edit-lugar-display').addEventListener('input', checkChanges);
+    document.getElementById('edit-beneficiaries-table').addEventListener('input', checkChanges);
+    document.getElementById('edit-btn-add-row').addEventListener('click', () => setTimeout(checkChanges, 50));
+    document.getElementById('edit-btn-remove-row').addEventListener('click', () => setTimeout(checkChanges, 50));
+
+    document.querySelector('.reports-container').style.padding = '0.5rem';
     })
     .catch(() => alert('No se pudo cargar el informe. Intenta de nuevo.'));
 }

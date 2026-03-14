@@ -1251,3 +1251,11 @@ body.reduce-animations .confirm-box {
     transform: none !important;
     transition: none !important;
 }
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px var(--rpt-bg) inset !important;
+    -webkit-text-fill-color: var(--rpt-text) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}

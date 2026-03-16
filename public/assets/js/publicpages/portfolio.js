@@ -504,3 +504,71 @@
   }
 
 })();
+
+/* ═══════════════════════════════════════════════
+   NAV DROPDOWN
+═══════════════════════════════════════════════ */
+(function initNavDropdown() {
+  const dropdowns = document.querySelectorAll('.nav-dropdown');
+  const isMobile  = () => window.innerWidth <= 1100;
+
+  dropdowns.forEach(dd => {
+    const toggle = dd.querySelector('.nav-dropdown-toggle');
+
+    // Desktop: hover ya funciona con CSS.
+    // Mobile: toggle al hacer click en el enlace padre.
+    toggle?.addEventListener('click', e => {
+      if (!isMobile()) return;
+      e.preventDefault();
+      const isOpen = dd.classList.contains('open');
+      // Cerrar todos los demás
+      dropdowns.forEach(d => d.classList.remove('open'));
+      if (!isOpen) dd.classList.add('open');
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    // Links del submenú con data-year: navegar y activar el tab del año
+    dd.querySelectorAll('.nav-dropdown-menu a[data-year]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const year   = link.dataset.year;
+        const target = document.querySelector('#portfolio');
+        if (!target) return;
+
+        // Scroll suave a la sección
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Activar el tab de año correspondiente tras el scroll
+        setTimeout(() => {
+          const yearBtn = document.querySelector(`.year-tab[data-year="${year}"]`);
+          yearBtn?.click();
+        }, 600);
+
+        // Cerrar menú móvil si está abierto
+        document.querySelector('.navmenu')?.classList.remove('open');
+        document.querySelector('#nav-overlay')?.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+  });
+
+  // Cerrar dropdowns al hacer click fuera (desktop)
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.nav-dropdown')) {
+      dropdowns.forEach(d => {
+        d.classList.remove('open');
+        d.querySelector('.nav-dropdown-toggle')?.setAttribute('aria-expanded', 'false');
+      });
+    }
+  });
+
+  // Cerrar con Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      dropdowns.forEach(d => {
+        d.classList.remove('open');
+        d.querySelector('.nav-dropdown-toggle')?.setAttribute('aria-expanded', 'false');
+      });
+    }
+  });
+})();

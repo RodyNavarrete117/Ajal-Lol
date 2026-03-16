@@ -22,21 +22,22 @@
   <link rel="icon"             href="{{ asset('assets/img/logo.webp') }}">
   <link rel="apple-touch-icon" href="{{ asset('assets/img/logo.webp') }}">
 
-  <!-- ── Preconnect para fuentes ── -->
+  <!-- ── Preconnect para fuentes (cargadas en el CSS) ── -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <!-- ── Bootstrap Icons ── -->
+  <!-- ── Bootstrap Icons 1.11 ── -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-  <!-- ── Font Awesome ── -->
+  <!-- ── Font Awesome 6 ── -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-  <!-- ── Bootstrap 5 ── -->
+  <!-- ── Bootstrap 5.3 ── -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
   <!-- ── CSS propio ── -->
   <link href="{{ asset('assets/css/index.css') }}" rel="stylesheet">
+  <link href="{{ asset('assets/css/admincss/publicpages/portfolio.css') }}" rel="stylesheet">
 
 </head>
 
@@ -53,10 +54,9 @@
 
   <main id="main" class="main">
 
-    {{-- Secciones --}}
     @include('sections.hero')
     @include('sections.about')
-    {{-- @include('sections.stats') --}} {{-- activar solo si existe --}}
+    @include('sections.stats')
     @include('sections.clients')
     @include('sections.services')
     @include('sections.portfolio')
@@ -75,11 +75,11 @@
     <i class="bi bi-arrow-up-short" aria-hidden="true"></i>
   </a>
 
-  <!-- ── Bootstrap JS ── -->
+  <!-- ── Bootstrap 5.3 JS ── -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- ── JS propio ── -->
-  <script src="{{ asset('assets/js/editpage/index.js') }}"></script>
+  <script src="{{ asset('assets/js/publicpages/portfolio.js') }}"></script>
 
 </body>
 </html>

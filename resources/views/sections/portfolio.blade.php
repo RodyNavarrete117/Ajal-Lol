@@ -1,99 +1,245 @@
 <section id="portfolio" class="section light-bg">
 
   <div class="container">
+
     <div class="section-title" data-anim="fade-up">
       <h2>Proyectos</h2>
-      <p class="sub">Nuestros <span>proyectos 2024</span></p>
+      <p class="sub">Nuestro <span>trabajo año con año</span></p>
     </div>
 
-    <div class="portfolio-filters" role="tablist" aria-label="Filtrar proyectos" data-anim="fade-up">
-      <button class="active" data-filter="*"         role="tab" aria-selected="true">Todo</button>
-      <button data-filter=".filter-dental"           role="tab" aria-selected="false">Jornadas dentales</button>
-      <button data-filter=".filter-mayo"             role="tab" aria-selected="false">Jornadas de salud</button>
-      <button data-filter=".filter-pavo"             role="tab" aria-selected="false">Proyectos productivos</button>
-      <button data-filter=".filter-adulto"           role="tab" aria-selected="false">Adulto Mayor</button>
+    {{-- ══════════════════════════════════════
+         TABS DE AÑO (nivel 1)
+    ══════════════════════════════════════ --}}
+    <div class="year-tabs" role="tablist" aria-label="Seleccionar año" data-anim="fade-up">
+      <button class="year-tab active" data-year="general"
+              role="tab" aria-selected="true" aria-controls="panel-general">
+        <i class="bi bi-grid-3x3-gap-fill"></i>
+        General
+      </button>
+      <button class="year-tab" data-year="2023"
+              role="tab" aria-selected="false" aria-controls="panel-2023">
+        2023
+      </button>
+      <button class="year-tab" data-year="2024"
+              role="tab" aria-selected="false" aria-controls="panel-2024">
+        2024
+      </button>
+      {{-- Para agregar más años duplica la línea de arriba cambiando data-year y aria-controls --}}
     </div>
 
-    <div class="portfolio-grid" data-anim="fade-up" data-delay="100" role="list">
+    {{-- ══════════════════════════════════════
+         PANEL: GENERAL
+    ══════════════════════════════════════ --}}
+    <div id="panel-general" class="year-panel active" role="tabpanel">
 
-      <div class="portfolio-item filter-dental" role="listitem">
-        <img src="{{ asset('assets/img/img_proy/dental1.jpg') }}" alt="Jornada dental — atención a paciente" loading="lazy">
-        <div class="portfolio-info">
-          <h3 style="color:var(--white);font-family:var(--font-display);font-size:1.05rem;font-weight:700">Jornada dental</h3>
-          <button class="zoom-btn" aria-label="Ampliar imagen de jornada dental"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
-        </div>
+      <div class="general-intro" data-anim="fade-up">
+        <p>Desde el año 2000, Ajal Lol A.C. trabaja en comunidades mayas de Yucatán con programas
+           de salud, capacitación, medio ambiente y proyectos productivos. Aquí un resumen de
+           nuestro impacto acumulado.</p>
       </div>
 
-      <div class="portfolio-item filter-dental" role="listitem">
-        <img src="{{ asset('assets/img/img_proy/dental2.jpg') }}" alt="Jornada dental — equipo de voluntarios" loading="lazy">
-        <div class="portfolio-info">
-          <h3 style="color:var(--white);font-family:var(--font-display);font-size:1.05rem;font-weight:700">Jornada dental</h3>
-          <button class="zoom-btn" aria-label="Ampliar imagen de jornada dental"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
-        </div>
-      </div>
+      <div class="general-grid" data-anim="fade-up" data-delay="80">
 
-      <div class="portfolio-item filter-mayo" role="listitem">
-        <img src="{{ asset('assets/img/img_proy/may1.jpg') }}" alt="Celebración 10 de mayo con madres de familia" loading="lazy">
-        <div class="portfolio-info">
-          <h3 style="color:var(--white);font-family:var(--font-display);font-size:1.05rem;font-weight:700">Celebración del 10 de mayo</h3>
-          <button class="zoom-btn" aria-label="Ampliar imagen del 10 de mayo"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+        <div class="general-card">
+          <div class="general-card-icon"><i class="fas fa-tooth"></i></div>
+          <h3>Salud dental</h3>
+          <p class="general-card-stat">318+ pacientes</p>
+          <p>Jornadas dentales gratuitas en coordinación con Fundación Smile y Global Dental, con equipos de hasta 35 dentistas voluntarios.</p>
         </div>
-      </div>
 
-      <div class="portfolio-item filter-mayo" role="listitem">
-        <img src="{{ asset('assets/img/img_proy/may2.jpg') }}" alt="Celebración 10 de mayo — actividades" loading="lazy">
-        <div class="portfolio-info">
-          <h3 style="color:var(--white);font-family:var(--font-display);font-size:1.05rem;font-weight:700">Celebración del 10 de mayo</h3>
-          <button class="zoom-btn" aria-label="Ampliar imagen del 10 de mayo"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+        <div class="general-card">
+          <div class="general-card-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+          <h3>Jornadas de salud</h3>
+          <p class="general-card-stat">600+ personas</p>
+          <p>Detección de diabetes, hipertensión, problemas visuales y orientación psicológica en Hoctún y comunidades cercanas.</p>
         </div>
-      </div>
 
-      <div class="portfolio-item filter-pavo" role="listitem">
-        <img src="{{ asset('assets/img/img_proy/pavo1.jpg') }}" alt="Programa de engorda de pavo en comunidad maya" loading="lazy">
-        <div class="portfolio-info">
-          <h3 style="color:var(--white);font-family:var(--font-display);font-size:1.05rem;font-weight:700">Engorda de pavo</h3>
-          <p>Programa en 15 localidades del Estado de Yucatán</p>
-          <button class="zoom-btn" aria-label="Ampliar imagen de engorda de pavo"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+        <div class="general-card">
+          <div class="general-card-icon"><i class="bi bi-easel"></i></div>
+          <h3>Capacitación</h3>
+          <p class="general-card-stat">150+ emprendedores</p>
+          <p>Talleres de administración básica para pequeños negocios con apoyo de Mentors International en varios municipios.</p>
         </div>
-      </div>
 
-      <div class="portfolio-item filter-pavo" role="listitem">
-        <img src="{{ asset('assets/img/img_proy/pavo2.jpg') }}" alt="Familias beneficiadas por programa de engorda de pavo" loading="lazy">
-        <div class="portfolio-info">
-          <h3 style="color:var(--white);font-family:var(--font-display);font-size:1.05rem;font-weight:700">Engorda de pavo</h3>
-          <p>Programa en 15 localidades del Estado de Yucatán</p>
-          <button class="zoom-btn" aria-label="Ampliar imagen de engorda de pavo"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+        <div class="general-card">
+          <div class="general-card-icon"><i class="bi bi-feather"></i></div>
+          <h3>Proyectos productivos</h3>
+          <p class="general-card-stat">700+ familias</p>
+          <p>Programas de cría de pavo de traspatio en 15 localidades del estado, con apoyo de OXXO y otras organizaciones aliadas.</p>
         </div>
-      </div>
 
-      <div class="portfolio-item filter-pavo" role="listitem">
-        <img src="{{ asset('assets/img/img_proy/pavo4.jpg') }}" alt="Entrega de aves en localidades de Yucatán" loading="lazy">
-        <div class="portfolio-info">
-          <h3 style="color:var(--white);font-family:var(--font-display);font-size:1.05rem;font-weight:700">Engorda de pavo</h3>
-          <p>Programa en 15 localidades del Estado de Yucatán</p>
-          <button class="zoom-btn" aria-label="Ampliar imagen de engorda de pavo"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+        <div class="general-card">
+          <div class="general-card-icon"><i class="bi bi-tree"></i></div>
+          <h3>Medio ambiente</h3>
+          <p class="general-card-stat">1,666 plantas</p>
+          <p>Reforestación en 11 localidades con plantas forestales y maderables donadas por el Ayuntamiento de Mérida.</p>
         </div>
-      </div>
 
-      <div class="portfolio-item filter-adulto" role="listitem">
-        <img src="{{ asset('assets/img/img_proy/act1.jpg') }}" alt="Día del Adulto Mayor — celebración" loading="lazy">
-        <div class="portfolio-info">
-          <h3 style="color:var(--white);font-family:var(--font-display);font-size:1.05rem;font-weight:700">Día del Adulto Mayor</h3>
-          <button class="zoom-btn" aria-label="Ampliar imagen del Día del Adulto Mayor"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+        <div class="general-card">
+          <div class="general-card-icon"><i class="bi bi-droplet-half"></i></div>
+          <h3>Agua y saneamiento</h3>
+          <p class="general-card-stat">400+ familias</p>
+          <p>Entrega de tinacos y programas de abastecimiento de agua en comunidades con acceso limitado, junto con Mariana Trinitaria.</p>
         </div>
-      </div>
 
-      <div class="portfolio-item filter-adulto" role="listitem">
-        <img src="{{ asset('assets/img/img_proy/act2.jpg') }}" alt="Activación física para adultos mayores — 27 de agosto" loading="lazy">
-        <div class="portfolio-info">
-          <h3 style="color:var(--white);font-family:var(--font-display);font-size:1.05rem;font-weight:700">Día del Adulto Mayor</h3>
-          <p>Activación física — 27 de agosto</p>
-          <button class="zoom-btn" aria-label="Ampliar imagen de activación física"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
-        </div>
       </div>
-
     </div>
-  </div>
+
+    {{-- ══════════════════════════════════════
+         PANEL: 2023
+    ══════════════════════════════════════ --}}
+    <div id="panel-2023" class="year-panel" role="tabpanel">
+
+      <div class="portfolio-filters" role="tablist" aria-label="Filtrar proyectos 2023" data-anim="fade-up">
+        <button class="active" data-filter="*"          role="tab" aria-selected="true">Todo</button>
+        <button data-filter=".y2023-dental"             role="tab" aria-selected="false">Jornadas dentales</button>
+        <button data-filter=".y2023-salud"              role="tab" aria-selected="false">Jornadas de salud</button>
+        <button data-filter=".y2023-productivo"         role="tab" aria-selected="false">Proyectos productivos</button>
+        <button data-filter=".y2023-adulto"             role="tab" aria-selected="false">Adulto Mayor</button>
+      </div>
+
+      <div class="portfolio-grid" data-anim="fade-up" data-delay="100" role="list">
+
+        <div class="portfolio-item y2023-dental" role="listitem">
+          <img src="{{ asset('assets/img/img_proy/dental1.jpg') }}" alt="Jornada dental 2023" loading="lazy">
+          <div class="portfolio-info">
+            <h3>Jornada dental</h3>
+            <p>2023</p>
+            <button class="zoom-btn" aria-label="Ampliar imagen"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <div class="portfolio-item y2023-dental" role="listitem">
+          <img src="{{ asset('assets/img/img_proy/dental2.jpg') }}" alt="Jornada dental 2023 — voluntarios" loading="lazy">
+          <div class="portfolio-info">
+            <h3>Jornada dental</h3>
+            <p>2023</p>
+            <button class="zoom-btn" aria-label="Ampliar imagen"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <div class="portfolio-item y2023-salud" role="listitem">
+          <img src="{{ asset('assets/img/img_proy/may1.jpg') }}" alt="Celebración 10 de mayo 2023" loading="lazy">
+          <div class="portfolio-info">
+            <h3>Celebración del 10 de mayo</h3>
+            <p>2023</p>
+            <button class="zoom-btn" aria-label="Ampliar imagen"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <div class="portfolio-item y2023-salud" role="listitem">
+          <img src="{{ asset('assets/img/img_proy/may2.jpg') }}" alt="10 de mayo 2023 — actividades" loading="lazy">
+          <div class="portfolio-info">
+            <h3>Celebración del 10 de mayo</h3>
+            <p>2023</p>
+            <button class="zoom-btn" aria-label="Ampliar imagen"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <div class="portfolio-item y2023-productivo" role="listitem">
+          <img src="{{ asset('assets/img/img_proy/pavo1.jpg') }}" alt="Engorda de pavo 2023" loading="lazy">
+          <div class="portfolio-info">
+            <h3>Engorda de pavo</h3>
+            <p>15 localidades · 2023</p>
+            <button class="zoom-btn" aria-label="Ampliar imagen"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <div class="portfolio-item y2023-productivo" role="listitem">
+          <img src="{{ asset('assets/img/img_proy/pavo2.jpg') }}" alt="Pavo 2023 — familias beneficiadas" loading="lazy">
+          <div class="portfolio-info">
+            <h3>Engorda de pavo</h3>
+            <p>15 localidades · 2023</p>
+            <button class="zoom-btn" aria-label="Ampliar imagen"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <div class="portfolio-item y2023-productivo" role="listitem">
+          <img src="{{ asset('assets/img/img_proy/pavo4.jpg') }}" alt="Pavo 2023 — entrega" loading="lazy">
+          <div class="portfolio-info">
+            <h3>Engorda de pavo</h3>
+            <p>15 localidades · 2023</p>
+            <button class="zoom-btn" aria-label="Ampliar imagen"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <div class="portfolio-item y2023-adulto" role="listitem">
+          <img src="{{ asset('assets/img/img_proy/act1.jpg') }}" alt="Adulto Mayor 2023" loading="lazy">
+          <div class="portfolio-info">
+            <h3>Día del Adulto Mayor</h3>
+            <p>2023</p>
+            <button class="zoom-btn" aria-label="Ampliar imagen"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <div class="portfolio-item y2023-adulto" role="listitem">
+          <img src="{{ asset('assets/img/img_proy/act2.jpg') }}" alt="Activación física adultos mayores 2023" loading="lazy">
+          <div class="portfolio-info">
+            <h3>Día del Adulto Mayor</h3>
+            <p>Activación física · 2023</p>
+            <button class="zoom-btn" aria-label="Ampliar imagen"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    {{-- ══════════════════════════════════════
+         PANEL: 2024
+    ══════════════════════════════════════ --}}
+    <div id="panel-2024" class="year-panel" role="tabpanel">
+
+      <div class="portfolio-filters" role="tablist" aria-label="Filtrar proyectos 2024" data-anim="fade-up">
+        <button class="active" data-filter="*"          role="tab" aria-selected="true">Todo</button>
+        <button data-filter=".y2024-dental"             role="tab" aria-selected="false">Jornadas dentales</button>
+        <button data-filter=".y2024-salud"              role="tab" aria-selected="false">Jornadas de salud</button>
+        <button data-filter=".y2024-productivo"         role="tab" aria-selected="false">Proyectos productivos</button>
+        <button data-filter=".y2024-adulto"             role="tab" aria-selected="false">Adulto Mayor</button>
+      </div>
+
+      <div class="portfolio-grid" data-anim="fade-up" data-delay="100" role="list">
+
+        {{-- ↓ Reemplaza estas imágenes con las reales del año 2024 --}}
+        <div class="portfolio-item y2024-dental" role="listitem">
+          <img src="{{ asset('assets/img/img_proy/dental1.jpg') }}" alt="Jornada dental 2024" loading="lazy">
+          <div class="portfolio-info">
+            <h3>Jornada dental</h3>
+            <p>2024</p>
+            <button class="zoom-btn" aria-label="Ampliar imagen"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <div class="portfolio-item y2024-salud" role="listitem">
+          <img src="{{ asset('assets/img/img_proy/may1.jpg') }}" alt="Jornada de salud 2024" loading="lazy">
+          <div class="portfolio-info">
+            <h3>Jornada de salud</h3>
+            <p>2024</p>
+            <button class="zoom-btn" aria-label="Ampliar imagen"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <div class="portfolio-item y2024-productivo" role="listitem">
+          <img src="{{ asset('assets/img/img_proy/pavo1.jpg') }}" alt="Proyecto productivo 2024" loading="lazy">
+          <div class="portfolio-info">
+            <h3>Proyecto productivo</h3>
+            <p>2024</p>
+            <button class="zoom-btn" aria-label="Ampliar imagen"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <div class="portfolio-item y2024-adulto" role="listitem">
+          <img src="{{ asset('assets/img/img_proy/act1.jpg') }}" alt="Adulto Mayor 2024" loading="lazy">
+          <div class="portfolio-info">
+            <h3>Adulto Mayor</h3>
+            <p>2024</p>
+            <button class="zoom-btn" aria-label="Ampliar imagen"><i class="bi bi-zoom-in" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>{{-- /container --}}
 
   {{-- Lightbox --}}
   <div id="lightbox" class="lightbox-overlay"

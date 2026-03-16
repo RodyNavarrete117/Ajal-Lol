@@ -1,0 +1,348 @@
+/* ============================================================
+   AJAL LOL — portfolio.css
+   Ruta: assets/css/publicpages/portfolio.css
+   Estilos exclusivos de la sección #portfolio:
+   year-tabs · year-panels · general-grid · portfolio-grid
+   filtros de categoría · lightbox
+   ============================================================ */
+
+/* ─── YEAR TABS (selector de año, nivel 1) ─── */
+.year-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.year-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .6rem 1.6rem;
+  border-radius: 99px;
+  border: 1.5px solid var(--rose-pale);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: .88rem;
+  font-weight: 600;
+  letter-spacing: .5px;
+  color: var(--text-mid);
+  cursor: none;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.year-tab i {
+  font-size: .9rem;
+  transition: transform var(--transition);
+  position: relative;
+  z-index: 1;
+}
+
+/* Fondo gradiente que aparece al activar */
+.year-tab::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--rose-deep), var(--rose-mid));
+  opacity: 0;
+  transition: opacity var(--transition);
+  border-radius: inherit;
+}
+
+.year-tab:hover {
+  border-color: var(--rose-soft);
+  color: var(--rose-deep);
+}
+
+.year-tab.active {
+  border-color: transparent;
+  color: var(--white);
+  box-shadow: 0 4px 20px rgba(139,34,82,.28);
+}
+
+.year-tab.active::before { opacity: 1; }
+.year-tab.active i       { transform: scale(1.1); }
+
+/* ─── YEAR PANELS ─── */
+.year-panel        { display: none; animation: panelFadeIn .4s ease both; }
+.year-panel.active { display: block; }
+
+@keyframes panelFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ─── PANEL GENERAL ─── */
+.general-intro {
+  max-width: 720px;
+  margin-inline: auto;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.general-intro p {
+  font-size: 1rem;
+  color: var(--text-mid);
+  line-height: 1.8;
+  font-weight: 400;
+}
+
+.general-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.6rem;
+}
+
+.general-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 2rem 1.8rem;
+  border: 1px solid var(--rose-pale);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  cursor: none;
+}
+
+.general-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--rose-mid), var(--gold));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition);
+}
+
+.general-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--rose-soft);
+}
+
+.general-card:hover::after { transform: scaleX(1); }
+
+.general-card-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--rose-blush);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--rose-mid);
+  margin-bottom: 1.1rem;
+  transition: var(--transition);
+}
+
+.general-card:hover .general-card-icon {
+  background: var(--rose-deep);
+  color: var(--white);
+  transform: rotate(-4deg) scale(1.06);
+}
+
+.general-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--rose-deep);
+  font-weight: 700;
+  margin-bottom: .3rem;
+}
+
+.general-card-stat {
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--rose-mid);
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  margin-bottom: .7rem;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.general-card-stat::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--rose-mid), var(--gold));
+  border-radius: 99px;
+  flex-shrink: 0;
+}
+
+.general-card p {
+  font-size: .88rem;
+  color: var(--text-mid);
+  line-height: 1.75;
+  font-weight: 400;
+}
+
+/* ─── FILTROS DE CATEGORÍA (dentro de cada panel de año) ─── */
+.portfolio-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .7rem;
+  justify-content: center;
+  margin-top: .5rem;
+  margin-bottom: 2.5rem;
+}
+
+.portfolio-filters button {
+  padding: .5rem 1.4rem;
+  border-radius: 99px;
+  border: 1.5px solid var(--rose-pale);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: .82rem;
+  font-weight: 500;
+  letter-spacing: .4px;
+  color: var(--text-mid);
+  cursor: none;
+  transition: var(--transition);
+}
+
+.portfolio-filters button.active,
+.portfolio-filters button:hover {
+  background: linear-gradient(135deg, var(--rose-deep), var(--rose-mid));
+  border-color: transparent;
+  color: var(--white);
+  box-shadow: 0 4px 16px rgba(139,34,82,.25);
+}
+
+/* ─── GRID DE IMÁGENES ─── */
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.portfolio-item {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 4/3;
+  cursor: none;
+}
+
+.portfolio-item::before {
+  content: '';
+  position: absolute; inset: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  z-index: 2;
+  transition: border-color var(--transition);
+}
+
+.portfolio-item:hover::before { border-color: rgba(245,198,212,.5); }
+
+.portfolio-item img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .6s ease;
+}
+
+.portfolio-item:hover img { transform: scale(1.08); }
+
+.portfolio-info {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(139,34,82,.9) 0%,
+    rgba(92,20,56,.5)  40%,
+    transparent        70%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.5rem;
+  opacity: 0;
+  transition: opacity var(--transition);
+  z-index: 1;
+}
+
+.portfolio-item:hover .portfolio-info { opacity: 1; }
+
+.portfolio-info h3 {
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.portfolio-info p {
+  color: var(--rose-pale);
+  font-size: .8rem;
+  margin-top: .3rem;
+  font-weight: 400;
+}
+
+.zoom-btn {
+  position: absolute;
+  top: 1rem; right: 1rem;
+  width: 38px; height: 38px;
+  background: rgba(255,255,255,.15);
+  backdrop-filter: blur(8px);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--white);
+  font-size: 1rem;
+  border: 1px solid rgba(255,255,255,.25);
+  cursor: none;
+  transition: var(--transition);
+}
+
+.zoom-btn:hover {
+  background: var(--rose-mid);
+  border-color: transparent;
+  transform: scale(1.1);
+}
+
+/* ─── LIGHTBOX ─── */
+.lightbox-overlay {
+  position: fixed; inset: 0;
+  background: rgba(43,21,32,.96);
+  z-index: 2000;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--transition);
+  backdrop-filter: blur(8px);
+}
+
+.lightbox-overlay.open { opacity: 1; pointer-events: auto; }
+
+.lightbox-img {
+  max-width: 88vw; max-height: 82vh;
+  border-radius: var(--radius-md);
+  object-fit: contain;
+  transform: scale(.9);
+  transition: transform .4s var(--spring);
+  box-shadow: 0 30px 80px rgba(0,0,0,.5);
+  border: 1px solid rgba(245,198,212,.15);
+}
+
+.lightbox-overlay.open .lightbox-img { transform: scale(1); }
+
+.lightbox-close {
+  position: absolute; top: 1.5rem; right: 2rem;
+  color: rgba(255,255,255,.7); font-size: 1.8rem;
+  cursor: none; background: none; border: none;
+  transition: color var(--transition), transform var(--transition);
+  padding: .5rem;
+}
+
+.lightbox-close:hover { color: var(--rose-pale); transform: rotate(90deg) scale(1.1); }
+
+/* ─── Responsive ─── */
+@media (max-width: 960px) { .general-grid   { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) { .portfolio-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) {
+  .general-grid { grid-template-columns: 1fr; }
+  .year-tab     { font-size: .82rem; padding: .5rem 1.2rem; }
+}
+@media (max-width: 480px) { .portfolio-grid { grid-template-columns: 1fr; } }

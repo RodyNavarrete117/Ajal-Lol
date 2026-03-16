@@ -15,6 +15,21 @@ Route::get('/', fn() => view('index'));
 /* Página pública visual */
 Route::get('/pagina', fn() => view('visualpage'));
 
+/// Páginas de events por año
+// Acepta: 2023, 2024, 2025
+Route::get('/events/{year}', function ($year) {
+ 
+    $yearsAllowed = ['2023', '2024', '2025'];
+ 
+    if (!in_array($year, $yearsAllowed)) {
+        abort(404);
+    }
+ 
+    return view("events.{$year}");
+ 
+})->name('events.year')
+  ->where('year', '202[0-9]'); // Solo años que empiecen con 202
+  // Cuando se agregué la base de datos se realizarán cambios o de plano se eliminará estas rutas
 
 /* Login */
 Route::get('/login', fn() => view('login'))->name('login');

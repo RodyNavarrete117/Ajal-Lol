@@ -1325,3 +1325,504 @@ body.cursor-hover #cursor-ring {
   transform: translateY(100%);
   pointer-events: none;
 }
+
+/* ─── YEAR TABS (nivel 1 · selector de año) ─── */
+.year-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+.year-tab {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .6rem 1.6rem;
+  border-radius: 99px;
+  border: 2px solid var(--rose-pale);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: .88rem;
+  font-weight: 600;
+  letter-spacing: .5px;
+  color: var(--text-mid);
+  cursor: none;
+  transition: var(--transition);
+}
+.year-tab i { font-size: .9rem; }
+.year-tab:hover {
+  border-color: var(--rose-mid);
+  color: var(--rose-deep);
+}
+.year-tab.active {
+  background: linear-gradient(135deg, var(--rose-deep), var(--rose-mid));
+  border-color: transparent;
+  color: var(--white);
+  box-shadow: 0 4px 20px rgba(139,34,82,.28);
+}
+
+/* ─── YEAR PANELS ─── */
+.year-panel {
+  display: none;
+  animation: panelFadeIn .4s ease both;
+}
+.year-panel.active { display: block; }
+@keyframes panelFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ─── GENERAL PANEL ─── */
+.general-intro {
+  max-width: 720px;
+  margin-inline: auto;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+.general-intro p {
+  font-size: 1rem;
+  color: var(--text-mid);
+  line-height: 1.8;
+  font-weight: 400;
+}
+.general-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.6rem;
+}
+.general-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 2rem 1.8rem;
+  border: 1px solid var(--rose-pale);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.general-card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--rose-mid), var(--gold));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition);
+}
+.general-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--rose-soft);
+}
+.general-card:hover::after { transform: scaleX(1); }
+.general-card-icon {
+  width: 48px; height: 48px;
+  background: var(--rose-blush);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  color: var(--rose-mid);
+  margin-bottom: 1.1rem;
+  transition: var(--transition);
+}
+.general-card:hover .general-card-icon {
+  background: var(--rose-deep);
+  color: var(--white);
+}
+.general-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--rose-deep);
+  font-weight: 700;
+  margin-bottom: .3rem;
+}
+.general-card-stat {
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--rose-mid);
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  margin-bottom: .7rem !important;
+}
+.general-card p {
+  font-size: .88rem;
+  color: var(--text-mid);
+  line-height: 1.75;
+}
+
+@media (max-width: 960px) { .general-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .general-grid { grid-template-columns: 1fr; } }
+
+/* Separador visual entre year-tabs y category-filters dentro de un panel */
+.year-panel .portfolio-filters { margin-top: .5rem; margin-bottom: 2.5rem; }
+
+/* ═══════════════════════════════════════════════════════════
+   PROYECTOS — Year tabs + General panel
+   Agregar al final de assets/css/index.css
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Tabs de año (nivel 1) ── */
+.year-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  justify-content: center;
+  margin-bottom: 2.2rem;
+}
+
+.year-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .6rem 1.6rem;
+  border-radius: 99px;
+  border: 1.5px solid var(--rose-pale);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: .88rem;
+  font-weight: 500;
+  color: var(--text-mid);
+  cursor: none;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.year-tab i {
+  font-size: .9rem;
+  transition: transform var(--transition);
+}
+
+.year-tab::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--rose-deep), var(--rose-mid));
+  opacity: 0;
+  transition: opacity var(--transition);
+  border-radius: inherit;
+}
+
+.year-tab span,
+.year-tab i {
+  position: relative;
+  z-index: 1;
+}
+
+.year-tab:hover {
+  border-color: var(--rose-soft);
+  color: var(--rose-deep);
+}
+
+.year-tab.active {
+  border-color: transparent;
+  color: var(--white);
+  box-shadow: 0 4px 18px rgba(139,34,82,.28);
+}
+
+.year-tab.active::before {
+  opacity: 1;
+}
+
+.year-tab.active i {
+  transform: scale(1.1);
+}
+
+/* ── Paneles de año ── */
+.year-panel {
+  display: none;
+  animation: panelFadeIn .4s ease both;
+}
+
+.year-panel.active {
+  display: block;
+}
+
+@keyframes panelFadeIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── Panel General ── */
+.general-intro {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 2.8rem;
+}
+
+.general-intro p {
+  font-size: 1rem;
+  color: var(--text-mid);
+  line-height: 1.8;
+  font-weight: 400;
+}
+
+.general-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.6rem;
+}
+
+.general-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 2rem 1.8rem;
+  border: 1px solid var(--rose-pale);
+  transition: var(--transition);
+  cursor: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.general-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--rose-mid), var(--gold));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition);
+}
+
+.general-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--rose-soft);
+}
+
+.general-card:hover::after {
+  transform: scaleX(1);
+}
+
+.general-card-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--rose-blush);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  color: var(--rose-mid);
+  margin-bottom: 1.1rem;
+  transition: var(--transition);
+}
+
+.general-card:hover .general-card-icon {
+  background: var(--rose-deep);
+  color: var(--white);
+  transform: rotate(-4deg) scale(1.06);
+}
+
+.general-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--rose-deep);
+  font-weight: 700;
+  margin-bottom: .35rem;
+}
+
+.general-card-stat {
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--rose-mid);
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  margin-bottom: .7rem;
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+}
+
+.general-card-stat::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--rose-mid), var(--gold));
+  border-radius: 99px;
+}
+
+.general-card p:last-child {
+  font-size: .88rem;
+  color: var(--text-mid);
+  line-height: 1.75;
+  font-weight: 400;
+}
+
+/* ── Divisor entre year-tabs y portfolio-filters ── */
+.panel-year-label {
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 1.2rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 960px) {
+  .general-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 560px) {
+  .general-grid { grid-template-columns: 1fr; }
+  .year-tab { font-size: .82rem; padding: .5rem 1.2rem; }
+}
+
+/* ─── NAV DROPDOWN ─── */
+.nav-dropdown {
+  position: relative;
+}
+
+.nav-dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+}
+
+.nav-dropdown-arrow {
+  font-size: .65rem;
+  transition: transform var(--transition);
+  margin-top: 1px;
+}
+
+.nav-dropdown:hover .nav-dropdown-arrow,
+.nav-dropdown.open  .nav-dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+/* Puente invisible que cubre el gap entre toggle y menú */
+.nav-dropdown::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 1.2rem;
+  background: transparent;
+}
+
+/* Submenú — rompe el flex del nav padre */
+.nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + .4rem);
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  min-width: 170px;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--rose-pale);
+  padding: .4rem 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease, visibility .25s .1s;
+  z-index: 9000;
+  /* Anular herencia del ul flex del nav */
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  align-items: stretch !important;
+}
+
+/* Triángulo superior */
+.nav-dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px; height: 6px;
+  background: var(--white);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+/* Mostrar al hacer hover */
+.nav-dropdown:hover .nav-dropdown-menu,
+.nav-dropdown.open  .nav-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+  transition: opacity .2s ease, transform .2s ease, visibility 0s;
+}
+
+.nav-dropdown-menu li {
+  display: block !important;
+  border: none !important;
+}
+
+.nav-dropdown-menu li + li {
+  border-top: 1px solid var(--rose-blush) !important;
+}
+
+.nav-dropdown-menu a {
+  display: flex !important;
+  align-items: center;
+  gap: .5rem;
+  padding: .7rem 1.3rem;
+  font-size: .84rem;
+  font-weight: 500;
+  color: var(--text-mid);
+  letter-spacing: .2px;
+  text-transform: none !important;
+  transition: color var(--transition), background var(--transition), padding-left var(--transition);
+  white-space: nowrap;
+}
+
+.nav-dropdown-menu a i {
+  font-size: .82rem;
+  color: var(--rose-soft);
+  flex-shrink: 0;
+}
+
+.nav-dropdown-menu a::before { display: none !important; }
+
+.nav-dropdown-menu a:hover {
+  color: var(--rose-deep);
+  background: var(--rose-blush);
+  padding-left: 1.7rem;
+}
+
+.nav-dropdown-menu a:hover i { color: var(--rose-mid); }
+
+/* ── Mobile: se despliega verticalmente dentro del panel ── */
+@media (max-width: 1100px) {
+  .nav-dropdown-menu {
+    position: static !important;
+    transform: none !important;
+    box-shadow: none;
+    border: none !important;
+    border-top: 1px solid var(--rose-blush) !important;
+    border-radius: 0;
+    padding: 0;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    display: none !important;
+    background: var(--cream);
+    z-index: auto;
+  }
+
+  .nav-dropdown-menu::before { display: none; }
+
+  .nav-dropdown.open .nav-dropdown-menu {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .nav-dropdown-menu a {
+    padding: .75rem 1rem .75rem 2rem !important;
+    font-size: .9rem;
+    border-bottom: 1px solid var(--rose-blush);
+  }
+
+  .nav-dropdown-menu a:hover { padding-left: 2.4rem !important; }
+
+  .nav-dropdown-toggle {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

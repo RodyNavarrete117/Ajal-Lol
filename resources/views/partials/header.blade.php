@@ -15,18 +15,15 @@
 
       <div class="social-links" role="list" aria-label="Redes sociales">
         <a href="https://www.facebook.com/p/Ajal-Lol-AC-100064161455063/"
-           aria-label="Visitar Facebook de Ajal Lol" role="listitem"
-           target="_blank" rel="noopener noreferrer">
+           aria-label="Facebook" role="listitem" target="_blank" rel="noopener noreferrer">
           <i class="bi bi-facebook" aria-hidden="true"></i>
         </a>
         <a href="https://www.instagram.com/ajal_lol/?hl=es-la"
-           aria-label="Visitar Instagram de Ajal Lol" role="listitem"
-           target="_blank" rel="noopener noreferrer">
+           aria-label="Instagram" role="listitem" target="_blank" rel="noopener noreferrer">
           <i class="bi bi-instagram" aria-hidden="true"></i>
         </a>
         <a href="https://mx.linkedin.com/in/ajal-lol-a-c-103b811a0"
-           aria-label="Visitar LinkedIn de Ajal Lol" role="listitem"
-           target="_blank" rel="noopener noreferrer">
+           aria-label="LinkedIn" role="listitem" target="_blank" rel="noopener noreferrer">
           <i class="bi bi-linkedin" aria-hidden="true"></i>
         </a>
       </div>
@@ -38,18 +35,79 @@
   <div class="branding">
     <div class="container">
 
-      <a href="#hero" class="logo" aria-label="Ajal Lol A.C. — Ir al inicio">
+      <a href="{{ url('/') }}" class="logo" aria-label="Ajal Lol A.C. — Inicio">
         <img src="{{ asset('assets/img/logo.webp') }}" alt="Logotipo Ajal Lol" width="90" height="54">
       </a>
 
       <nav id="navmenu" class="navmenu" aria-label="Navegación principal">
         <ul role="menubar">
-          <li role="none"><a href="#hero"      class="active" role="menuitem">Inicio</a></li>
-          <li role="none"><a href="#about"                    role="menuitem">Nosotros</a></li>
-          <li role="none"><a href="#services"                 role="menuitem">Actividades</a></li>
-          <li role="none"><a href="#portfolio"                role="menuitem">Proyectos</a></li>
-          <li role="none"><a href="#team"                     role="menuitem">Comité</a></li>
-          <li role="none"><a href="#contact"                  role="menuitem">Contacto</a></li>
+
+          <li role="none">
+            <a href="{{ url('/') }}" role="menuitem"
+               class="{{ request()->is('/') ? 'active' : '' }}">
+              Inicio
+            </a>
+          </li>
+
+          {{-- Nosotros con dropdown --}}
+          <li class="nav-dropdown" role="none">
+            <a href="{{ url('/#about') }}" class="nav-dropdown-toggle" role="menuitem"
+               aria-haspopup="true" aria-expanded="false">
+              Nosotros
+              <i class="bi bi-chevron-down nav-dropdown-arrow" aria-hidden="true"></i>
+            </a>
+            <ul class="nav-dropdown-menu" role="menu">
+              <li role="none"><a href="{{ url('/#about') }}"   role="menuitem">Historia</a></li>
+              <li role="none"><a href="{{ url('/#team') }}"    role="menuitem">Directiva</a></li>
+              <li role="none"><a href="{{ url('/#pricing') }}" role="menuitem">Identidad</a></li>
+            </ul>
+          </li>
+
+          <li role="none">
+            <a href="{{ url('/#services') }}" role="menuitem">Actividades</a>
+          </li>
+
+          {{-- Proyectos con dropdown de años --}}
+          <li class="nav-dropdown" role="none">
+            <a href="{{ url('/#portfolio') }}" class="nav-dropdown-toggle" role="menuitem"
+               aria-haspopup="true" aria-expanded="false">
+              Proyectos
+              <i class="bi bi-chevron-down nav-dropdown-arrow" aria-hidden="true"></i>
+            </a>
+            <ul class="nav-dropdown-menu" role="menu">
+              <li role="none">
+                <a href="{{ url('/#portfolio') }}" role="menuitem">
+                  <i class="bi bi-grid-3x3-gap" aria-hidden="true"></i> General
+                </a>
+              </li>
+              <li role="none">
+                <a href="{{ route('events.year', ['year' => 2023]) }}" role="menuitem"
+                   class="{{ request()->is('events/2023') ? 'active' : '' }}">
+                  <i class="bi bi-calendar3" aria-hidden="true"></i> 2023
+                </a>
+              </li>
+              <li role="none">
+                <a href="{{ route('events.year', ['year' => 2024]) }}" role="menuitem"
+                   class="{{ request()->is('events/2024') ? 'active' : '' }}">
+                  <i class="bi bi-calendar3" aria-hidden="true"></i> 2024
+                </a>
+              </li>
+              <li role="none">
+                <a href="{{ route('events.year', ['year' => 2025]) }}" role="menuitem"
+                   class="{{ request()->is('events/2025') ? 'active' : '' }}">
+                  <i class="bi bi-calendar3" aria-hidden="true"></i> 2025
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li role="none">
+            <a href="{{ url('/#faq') }}" role="menuitem">FAQ</a>
+          </li>
+          <li role="none">
+            <a href="{{ url('/#contact') }}" role="menuitem">Contacto</a>
+          </li>
+
         </ul>
       </nav>
 

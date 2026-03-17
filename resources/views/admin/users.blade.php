@@ -86,8 +86,8 @@
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>Número</th>
-                        <th>Nombre del usuario</th>
+                        <th>#</th>
+                        <th>Nombre</th>
                         <th>Correo electrónico</th>
                         <th>Asignación</th>
                         <th>Acciones</th>

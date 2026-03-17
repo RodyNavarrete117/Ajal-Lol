@@ -22,22 +22,24 @@
   <link rel="icon"             href="{{ asset('assets/img/logo.webp') }}">
   <link rel="apple-touch-icon" href="{{ asset('assets/img/logo.webp') }}">
 
-  <!-- ── Preconnect para fuentes (cargadas en el CSS) ── -->
+  <!-- ── Preconnect fuentes ── -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <!-- ── Bootstrap Icons 1.11 ── -->
+  <!-- ── Librerías externas ── -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-  <!-- ── Font Awesome 6 ── -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <!-- ── Bootstrap 5.3 ── -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
-  <!-- ── CSS propio ── -->
-  <link href="{{ asset('assets/css/index.css') }}" rel="stylesheet">
-  <link href="{{ asset('assets/css/admincss/publicpages/portfolio.css') }}" rel="stylesheet">
+  <!-- ── CSS propio (dividido para ahorrar código) ── -->
+   <!-- <link href="{{ asset('assets/css/index.css') }}" rel="stylesheet">
+  <link href="{{ asset('assets/css/admincss/publicpages/portfolio.css') }}" rel="stylesheet"> -->
+  <link href="{{ asset('assets/css/admincss/publicpages/base.css') }}"     rel="stylesheet"> {{-- Variables, reset, utils, cursor, preloader --}}
+  <link href="{{ asset('assets/css/admincss/publicpages/header.css') }}"   rel="stylesheet"> {{-- Header, nav, dropdown --}}
+  <link href="{{ asset('assets/css/admincss/publicpages/sections.css') }}" rel="stylesheet"> {{-- Hero, about, stats, aliados, actividades, team, mvov, faq --}}
+  <link href="{{ asset('assets/css/admincss/publicpages/contact.css') }}"  rel="stylesheet"> {{-- Formulario de contacto --}}
+  <link href="{{ asset('assets/css/admincss/publicpages/footer.css') }}"   rel="stylesheet"> {{-- Footer --}}
+  <link href="{{ asset('assets/css/admincss/publicpages/portfolio.css') }}" rel="stylesheet"> {{-- Sección proyectos (year tabs, grid, lightbox) --}}
 
 </head>
 
@@ -78,8 +80,12 @@
   <!-- ── Bootstrap 5.3 JS ── -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- ── JS propio ── -->
-  <script src="{{ asset('assets/js/publicpages/portfolio.js') }}"></script>
+  <!-- ── JS propio (orden importante: utils primero) ── -->
+  <script src="{{ asset('assets/js/publicpages/utils.js') }}"></script>     {{-- Utilidades, cursor, preloader, animaciones --}}
+  <script src="{{ asset('assets/js/publicpages/header.js') }}"></script>    {{-- Header, nav, dropdown --}}
+  <script src="{{ asset('assets/js/publicpages/sections.js') }}"></script>  {{-- Contadores, marquee, FAQ --}}
+  <script src="{{ asset('assets/js/publicpages/portfolio.js') }}"></script> {{-- Year tabs, filtros, lightbox --}}
+  <script src="{{ asset('assets/js/publicpages/contact.js') }}"></script>   {{-- Formulario de contacto --}}
 
 </body>
 </html>

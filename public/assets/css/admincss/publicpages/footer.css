@@ -1,0 +1,85 @@
+/* ============================================================
+   AJAL LOL — footer.css
+   Ruta: assets/css/publicpages/footer.css
+   Contiene: Footer donate · Footer main · Footer bottom
+   Depende de: base.css (variables)
+   ============================================================ */
+
+#footer { background: var(--text-dark); color: rgba(255,255,255,.65); }
+
+/* ─── Donaciones ─── */
+.footer-donate {
+  background: linear-gradient(135deg, var(--rose-mid), var(--rose-deep));
+  padding: 4rem 0; text-align: center; position: relative; overflow: hidden;
+}
+.footer-donate::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 100%, rgba(245,198,212,.15), transparent 60%);
+}
+.footer-donate h4 {
+  font-family: var(--font-display); font-size: 2rem; color: var(--white);
+  margin-bottom: .8rem; font-style: italic; position: relative;
+}
+.footer-donate p {
+  color: rgba(255,255,255,.85); max-width: 520px; margin-inline: auto;
+  margin-bottom: 1.8rem; font-weight: 400; font-size: .95rem; position: relative;
+}
+.btn-paypal {
+  display: inline-flex; align-items: center; gap: .6rem;
+  background: var(--white); color: var(--rose-deep);
+  padding: .85rem 2.2rem; border-radius: 99px;
+  font-weight: 700; font-size: .93rem; transition: var(--transition);
+  position: relative; cursor: none;
+}
+.btn-paypal:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); background: var(--rose-blush); }
+.footer-donate .thanks { color: rgba(255,255,255,.55); font-size: .82rem; margin-top: 1rem; position: relative; }
+
+/* ─── Cuerpo ─── */
+.footer-main {
+  padding: 4rem 0 2.5rem;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1.4fr;
+  gap: 3.5rem;
+}
+.footer-about .sitename {
+  font-family: var(--font-display); font-size: 1.6rem; color: var(--white);
+  display: block; margin-bottom: 1.1rem; font-style: italic;
+}
+.footer-about p { font-size: .88rem; line-height: 1.8; font-weight: 400; }
+
+.footer-links h4,
+.footer-social h4 {
+  color: var(--white); font-size: .75rem; font-weight: 600;
+  letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 1.2rem;
+}
+.footer-links ul { display: flex; flex-direction: column; gap: .6rem; }
+.footer-links a {
+  font-size: .88rem; color: rgba(255,255,255,.5);
+  transition: color var(--transition), padding-left var(--transition);
+  display: flex; align-items: center; gap: .45rem;
+}
+.footer-links a i     { font-size: .7rem; color: var(--rose-soft); }
+.footer-links a:hover { color: var(--rose-pale); padding-left: .3rem; }
+
+.footer-social .social-row { display: flex; gap: .8rem; margin-top: .6rem; }
+.footer-social .social-row a {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.15);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,.6); font-size: 1rem;
+  transition: var(--transition); cursor: none;
+}
+.footer-social .social-row a:hover {
+  background: var(--rose-mid); border-color: var(--rose-mid); color: var(--white);
+  transform: translateY(-4px); box-shadow: 0 6px 20px rgba(192,84,122,.35);
+}
+
+/* ─── Bottom ─── */
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,.06);
+  padding: 1.6rem 0; text-align: center;
+  font-size: .8rem; color: rgba(255,255,255,.3);
+}
+.footer-bottom span { color: rgba(255,255,255,.5); }
+
+@media (max-width: 768px) { .footer-main { grid-template-columns: 1fr; gap: 2.5rem; } }

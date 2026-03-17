@@ -7,7 +7,7 @@
         ¡Tu apoyo transforma vidas!
       </h2>
       <p>Te invitamos a hacer una donación a través de PayPal para ayudarnos a continuar con nuestra labor. Cada aporte, por pequeño que sea, nos acerca más a lograr nuestros objetivos.</p>
-      <a href="https://youtu.be/hPr-Yc92qaY?si=MI_Uwro92RhtAPxH"
+      <a href=""
          class="btn-paypal" target="_blank" rel="noopener noreferrer"
          aria-label="Donar a Ajal Lol a través de PayPal">
         <i class="bi bi-paypal" aria-hidden="true"></i> Donar con PayPal

@@ -726,8 +726,11 @@ tr:hover .date-badge {
     color: #ffffff;
     position: fixed;
     bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
+    left: 250px;
+    right: 0;
+    margin: 0 auto;
+    width: max-content;
+    transform: translateY(20px);
     z-index: 100;
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(124, 63, 105, 0.40);
@@ -738,7 +741,11 @@ tr:hover .date-badge {
     transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.selection-bar.has-selection { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: all; }
+.selection-bar.has-selection { 
+    opacity: 1; 
+    transform: translateY(0); 
+    pointer-events: all; 
+}
 
 .selection-bar .sel-info { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
 .selection-bar .sel-count { background: rgba(255, 255, 255, 0.25); padding: 3px 12px; border-radius: 20px; font-weight: 700; font-size: 13px; }
@@ -1067,6 +1074,145 @@ tr:hover .date-badge {
     border-bottom: none !important;
 }
 
+.admin-table tbody tr.dynamic-empty:hover {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.admin-table tbody tr.dynamic-empty {
+    border-bottom: none !important;
+}
+
+.table-wrapper {
+    overflow-y: hidden;
+}
+
+/* ==================== EXPORT TOAST ==================== */
+
+#exportToast {
+    position: fixed;
+    bottom: 1.75rem;
+    right: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    background: var(--bg);
+    border: 1px solid #d1fae5;
+    min-width: 280px;
+    max-width: 360px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(80px);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+#exportToast.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+#exportToast.toast-error {
+    border-color: #fee2e2;
+}
+
+#exportToast .toast-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #d1fae5;
+    color: #059669;
+}
+
+#exportToast.toast-error .toast-icon {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+#exportToast.toast-loading .toast-icon {
+    background: var(--primary-bg);
+    color: var(--primary);
+}
+
+#exportToast .toast-body { flex: 1; }
+
+#exportToast .toast-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+}
+
+#exportToast .toast-msg {
+    font-size: 12px;
+    color: var(--text-sub);
+    line-height: 1.4;
+}
+
+#exportToast .toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(90deg, #059669, #34d399);
+    transform-origin: left;
+    animation: export-toast-shrink 2.8s linear forwards;
+}
+
+#exportToast.toast-error .toast-progress {
+    background: linear-gradient(90deg, #dc2626, #f87171);
+}
+
+#exportToast.toast-loading .toast-progress-indeterminate {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 40%;
+    background: var(--gradient);
+    border-radius: 0 4px 4px 0;
+    animation: export-toast-indeterminate 1.2s ease-in-out infinite;
+}
+
+@keyframes export-toast-shrink {
+    from { transform: scaleX(1); }
+    to   { transform: scaleX(0); }
+}
+
+@keyframes export-toast-indeterminate {
+    0%   { left: -40%; }
+    100% { left: 110%; }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+[data-theme="dark"] #exportToast {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+@media (max-width: 480px) {
+    #exportToast {
+        bottom: 1rem;
+        right: 0.75rem;
+        left: 0.75rem;
+        max-width: none;
+        min-width: 0;
+    }
+}
+
 /* ==================== TABLET (769px – 1024px) ==================== */
 
 @media (max-width: 1024px) and (min-width: 768px) {
@@ -1326,6 +1472,14 @@ tr:hover .date-badge {
         font-size: 13px;
         color: var(--text-muted);
         margin-top: 2px;
+    }
+
+    .selection-bar {
+        left: 8px !important;
+        right: 8px !important;
+        width: auto !important;
+        max-width: none !important;
+        margin: 0 !important;
     }
 }
 

@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initModalEvents();
     initCustomSelects();
     initMobileSearch(); 
+    updateSelectionBarPosition();
     renderPage(); 
 });
 
@@ -133,13 +134,27 @@ function initSelectionLogic() {
 
     function updateSelectionBar() {
         const count = getChecked().length;
-        if(selCountEl) selCountEl.textContent = count;
+        if (selCountEl) selCountEl.textContent = count;
         selectionBar.classList.toggle('has-selection', count > 0);
-        
-        // Sincronizar el checkbox de la cabecera
+
         if (selectAllHeaderCb) {
             const allBoxes = document.querySelectorAll('.row-checkbox').length;
             selectAllHeaderCb.checked = count === allBoxes && allBoxes > 0;
+        }
+
+        // Si hay seleccionados, mostrar todos sin paginación
+        if (count > 0) {
+            getAllFormRows().forEach(row => row.style.display = '');
+            // Ocultar paginación
+            const tableFooter = document.querySelector('.table-footer');
+            if (tableContainer) tableContainer.style.marginBottom = '80px';
+            if (tableFooter) tableFooter.style.display = 'none';
+        } else {
+            // Al limpiar selección, volver a la paginación normal
+            const tableFooter = document.querySelector('.table-footer');
+            if (tableContainer) tableContainer.style.marginBottom = '';
+            if (tableFooter) tableFooter.style.display = '';
+            renderPage();
         }
     }
 
@@ -260,12 +275,8 @@ function initExportLogic() {
 }
 
 async function exportForms() {
-    Swal.fire({
-        title: 'Exportando...',
-        text: 'Generando archivo PDF',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-    });
+    // Mostrar toast de carga
+    showExportToast('loading');
 
     try {
         const response = await fetch('/admin/forms/export/pdf', {
@@ -291,10 +302,77 @@ async function exportForms() {
         link.remove();
         window.URL.revokeObjectURL(url);
 
-        Swal.fire({ icon: 'success', title: '¡Listo!', text: 'PDF generado correctamente', confirmButtonColor: '#7c3f69' });
+        showExportToast('success');
+
     } catch (error) {
         console.error('Error exportando PDF:', error);
-        Swal.fire({ icon: 'error', title: 'Error', text: error.message, confirmButtonColor: '#ef4444' });
+        showExportToast('error', error.message);
+    }
+}
+
+function showExportToast(type, message = '') {
+    const existing = document.getElementById('exportToast');
+    if (existing) {
+        existing.classList.remove('show');
+        setTimeout(() => existing.remove(), 300);
+    }
+
+    const configs = {
+        loading: {
+            icon: `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" style="animation:spin 0.8s linear infinite">
+                <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+                <path d="M10 2a8 8 0 0 1 8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>`,
+            title: 'Generando PDF',
+            msg: 'Por favor espera...',
+            extraClass: 'toast-loading',
+            progress: `<div class="toast-progress-indeterminate"></div>`,
+            autohide: false,
+        },
+        success: {
+            icon: `<svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                <path d="M5 10l4 4 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>`,
+            title: '¡PDF listo!',
+            msg: 'Descarga completada',
+            extraClass: '',
+            progress: `<div class="toast-progress"></div>`,
+            autohide: true,
+        },
+        error: {
+            icon: `<svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                <path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>`,
+            title: 'Error al generar',
+            msg: message || 'Intenta de nuevo',
+            extraClass: 'toast-error',
+            progress: `<div class="toast-progress"></div>`,
+            autohide: true,
+        }
+    };
+
+    const c = configs[type];
+    const toast = document.createElement('div');
+    toast.id = 'exportToast';
+    toast.className = `${c.extraClass}`;
+
+    toast.innerHTML = `
+        <div class="toast-icon">${c.icon}</div>
+        <div class="toast-body">
+            <div class="toast-title">${c.title}</div>
+            <div class="toast-msg">${c.msg}</div>
+        </div>
+        ${c.progress}
+    `;
+
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+
+    if (c.autohide) {
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 350);
+        }, 2800);
     }
 }
 
@@ -468,10 +546,6 @@ let filterTerm  = '';
 let filterDate  = '';
 
 function getAllFormRows() {
-    return Array.from(document.querySelectorAll('#formsTable tbody tr:not(.empty-state)'));
-}
-
-function getAllFormRows() {
     return Array.from(document.querySelectorAll(
         '#formsTable tbody tr:not(.empty-state):not(.dynamic-empty)'
     ));
@@ -534,9 +608,17 @@ function updateEmptyState() {
     if (noData) {
         tableToolbar?.classList.add('only-filter');
         tableContainer?.classList.add('no-data');
+        // Bloquear scroll solo en móvil
+        if (window.innerWidth <= 767) {
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+        }
     } else {
         tableToolbar?.classList.remove('only-filter');
         tableContainer?.classList.remove('no-data');
+        // Restaurar scroll
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
     }
 
     if (noData && allRows.length > 0) {
@@ -666,6 +748,28 @@ function initCustomSelects() {
     document.addEventListener('click', () => {
         document.querySelectorAll('.custom-select-wrapper.is-open').forEach(w => w.classList.remove('is-open'));
     });
+}
+
+// ── Centrar selection-bar considerando el sidebar ──
+function updateSelectionBarPosition() {
+    const sidebar = document.querySelector('.sidebar') // cambia por el selector real de tu sidebar
+                 || document.querySelector('aside')
+                 || document.querySelector('nav.sidebar')
+                 || document.querySelector('[class*="sidebar"]');
+    
+    const bar = document.getElementById('selectionBar');
+    if (!bar) return;
+
+    if (sidebar && window.innerWidth > 767) {
+        const sidebarWidth = sidebar.getBoundingClientRect().width;
+        bar.style.left = sidebarWidth + 'px';
+        bar.style.right = '0';
+        bar.style.marginLeft = 'auto';
+        bar.style.marginRight = 'auto';
+    } else {
+        bar.style.left = '';
+        bar.style.right = '';
+    }
 }
 
 function renderPage() {

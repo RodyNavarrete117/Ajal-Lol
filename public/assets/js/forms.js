@@ -13,8 +13,54 @@ document.addEventListener('DOMContentLoaded', function() {
     initSelectionLogic();
     initExportLogic();
     initModalEvents();
+    initCustomSelects();
+    initMobileSearch(); 
     renderPage(); 
 });
+
+function initMobileSearch() {
+    const searchBox   = document.querySelector('.search-box');
+    const searchIcon  = document.querySelector('.search-icon');
+    const searchInput = document.getElementById('searchInput');
+    if (!searchBox || !searchIcon || !searchInput) return;
+
+    searchIcon.addEventListener('click', (e) => {
+        e.stopPropagation(); // evita que el click cierre inmediatamente
+        const expanded = searchBox.classList.toggle('is-expanded');
+        if (expanded) {
+            searchInput.focus();
+        } else {
+            searchInput.value = '';
+            filterTerm  = '';
+            currentPage = 1;
+            renderPage();
+        }
+    });
+
+    // Contraer al hacer click fuera
+    document.addEventListener('click', e => {
+        if (!searchBox.contains(e.target)) {
+            if (searchBox.classList.contains('is-expanded')) {
+                searchBox.classList.remove('is-expanded');
+                searchInput.value = '';
+                filterTerm  = '';
+                currentPage = 1;
+                renderPage();
+            }
+        }
+    });
+
+    // Contraer al presionar Escape
+    searchInput.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            searchBox.classList.remove('is-expanded');
+            searchInput.value = '';
+            filterTerm  = '';
+            currentPage = 1;
+            renderPage();
+        }
+    });
+}
 
 // ============================================
 // 1. LÓGICA DE FILTROS, BÚSQUEDA Y ORDENAMIENTO
@@ -425,6 +471,12 @@ function getAllFormRows() {
     return Array.from(document.querySelectorAll('#formsTable tbody tr:not(.empty-state)'));
 }
 
+function getAllFormRows() {
+    return Array.from(document.querySelectorAll(
+        '#formsTable tbody tr:not(.empty-state):not(.dynamic-empty)'
+    ));
+}
+
 function getFilteredFormRows() {
     const now = new Date();
     return getAllFormRows().filter(row => {
@@ -442,10 +494,177 @@ function getFilteredFormRows() {
                 matchDate = rowDate >= new Date(now - 7 * 86400000);
             } else if (filterDate === 'month') {
                 matchDate = rowDate >= new Date(now - 30 * 86400000);
+            } else if (filterDate === 'year') {
+                matchDate = rowDate.getFullYear() === now.getFullYear();
             }
         }
 
         return matchSearch && matchDate;
+    });
+}
+
+function updateEmptyState() {
+    const tbody       = document.querySelector('#formsTable tbody');
+    const tableFooter = document.querySelector('.table-footer');
+    const searchBox   = document.querySelector('.search-box');
+    const sortButton  = document.getElementById('sortDate');
+    const exportBtn   = document.querySelector('.export-button');
+    if (!tbody) return;
+
+    const existing = tbody.querySelector('.dynamic-empty');
+    if (existing) existing.remove();
+
+    const filtered = getFilteredFormRows();
+    const allRows  = getAllFormRows();
+
+    const thead       = document.querySelector('#formsTable thead');
+    const tableToolbar = document.querySelector('.table-toolbar');
+    const tableContainer = document.querySelector('.table-container');  
+    const noData = allRows.length === 0 || filtered.length === 0;
+
+    // Ocultar/mostrar: búsqueda, sort, export y columnas
+    [searchBox, sortButton, exportBtn, thead].forEach(el => {
+        if (el) el.style.display = noData ? 'none' : '';
+    });
+
+    // Ocultar/mostrar footer
+    if (tableFooter) tableFooter.style.display = noData ? 'none' : '';
+
+    // Centrar el toolbar cuando solo queda el select de fecha
+    if (noData) {
+        tableToolbar?.classList.add('only-filter');
+        tableContainer?.classList.add('no-data');
+    } else {
+        tableToolbar?.classList.remove('only-filter');
+        tableContainer?.classList.remove('no-data');
+    }
+
+    if (noData && allRows.length > 0) {
+        // Hay datos pero el filtro no devuelve nada — mostrar mensaje
+        const labels = {
+            '':      null,
+            'today': 'hoy',
+            'week':  'esta semana',
+            'month': 'este mes',
+            'year':  'este año',
+        };
+
+        const searchLabel = filterTerm
+            ? `"${filterTerm}"`
+            : (labels[filterDate] ? `para ${labels[filterDate]}` : null);
+
+        const mensaje = searchLabel
+            ? `No hay registros ${searchLabel}`
+            : 'No hay registros que coincidan';
+
+        const iconos = {
+            'today': `<svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                <circle cx="28" cy="28" r="26" stroke="#e5e7eb" stroke-width="3"/>
+                <path d="M20 28h16M28 20v16" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="28" cy="28" r="4" fill="#e5e7eb"/>
+              </svg>`,
+            'week':  `<svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                <rect x="10" y="14" width="36" height="32" rx="4" stroke="#e5e7eb" stroke-width="3"/>
+                <path d="M10 22h36M20 10v8M36 10v8" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M18 32h4m4 0h4m4 0h4" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round"/>
+              </svg>`,
+            'month': `<svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                <rect x="10" y="14" width="36" height="32" rx="4" stroke="#e5e7eb" stroke-width="3"/>
+                <path d="M10 22h36M20 10v8M36 10v8" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="28" cy="36" r="5" stroke="#e5e7eb" stroke-width="2"/>
+                <path d="M26 36l2 2 4-4" stroke="#9ca3af" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>`,
+            'year':  `<svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                <circle cx="28" cy="28" r="20" stroke="#e5e7eb" stroke-width="3"/>
+                <path d="M28 16v12l7 7" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M14 28h4M38 28h4M28 14v4M28 38v4" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round"/>
+              </svg>`,
+            '':      `<svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                <circle cx="28" cy="28" r="20" stroke="#e5e7eb" stroke-width="3"/>
+                <path d="M21 21l14 14M35 21L21 35" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>`,
+        };
+
+        const icono = iconos[filterDate] || iconos[''];
+
+        const tr = document.createElement('tr');
+        tr.className = 'dynamic-empty';
+        tr.innerHTML = `
+            <td colspan="8" class="empty-state">
+                <div class="empty-content">
+                    ${icono}
+                    <p>${mensaje}</p>
+                    <span class="empty-hint">Prueba con otro filtro o período</span>
+                </div>
+            </td>`;
+        tbody.appendChild(tr);
+    }
+}
+
+    // ============================================
+// 7. CUSTOM SELECT
+// ============================================
+function initCustomSelects() {
+    document.querySelectorAll('.filter-select').forEach(select => {
+        // Crear wrapper
+        const wrapper = document.createElement('div');
+        wrapper.className = 'custom-select-wrapper';
+        select.parentNode.insertBefore(wrapper, select);
+        wrapper.appendChild(select);
+
+        // Trigger (botón visible)
+        const trigger = document.createElement('div');
+        trigger.className = 'custom-select-trigger';
+        trigger.innerHTML = `
+            <span class="trigger-label">${select.options[select.selectedIndex]?.text || ''}</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        `;
+        wrapper.appendChild(trigger);
+
+        // Dropdown con opciones
+        const dropdown = document.createElement('div');
+        dropdown.className = 'custom-select-dropdown';
+
+        Array.from(select.options).forEach(opt => {
+            const item = document.createElement('div');
+            item.className = 'custom-select-option' + (opt.selected ? ' is-selected' : '');
+            item.textContent = opt.text;
+            item.dataset.value = opt.value;
+
+            item.addEventListener('click', () => {
+                // Actualizar select real (dispara los listeners existentes)
+                select.value = opt.value;
+                select.dispatchEvent(new Event('change'));
+
+                // Actualizar UI
+                dropdown.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('is-selected'));
+                item.classList.add('is-selected');
+                trigger.querySelector('.trigger-label').textContent = opt.text;
+
+                wrapper.classList.remove('is-open');
+            });
+
+            dropdown.appendChild(item);
+        });
+
+        wrapper.appendChild(dropdown);
+
+        // Abrir / cerrar
+        trigger.addEventListener('click', e => {
+            e.stopPropagation();
+            const isOpen = wrapper.classList.contains('is-open');
+            // Cerrar todos los demás
+            document.querySelectorAll('.custom-select-wrapper.is-open').forEach(w => w.classList.remove('is-open'));
+            if (!isOpen) wrapper.classList.add('is-open');
+        });
+    });
+
+    // Cerrar al hacer click fuera
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.custom-select-wrapper.is-open').forEach(w => w.classList.remove('is-open'));
     });
 }
 
@@ -489,6 +708,7 @@ function renderPage() {
         btn.addEventListener('click', () => { currentPage = i; renderPage(); });
         pagination.insertBefore(btn, btnNext);
     }
+    updateEmptyState();
 }
 
 document.querySelector('.table-footer .pagination .page-btn:first-child')

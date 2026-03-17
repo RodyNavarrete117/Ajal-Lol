@@ -74,11 +74,12 @@
                     <option value="today">Hoy</option>
                     <option value="week">Esta semana</option>
                     <option value="month">Este mes</option>
+                    <option value="year">Este año</option>
                 </select>
 
                 <button id="sortDate" class="sort-button" data-order="desc">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M6 9l4 4 4-4"
+                        <path d="M7 3v14M7 3L4 6m3-3l3 3M13 17V3m0 14l3-3m-3 3l-3-3"
                             stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>

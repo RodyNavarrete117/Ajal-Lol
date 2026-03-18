@@ -26,7 +26,7 @@ function initMobileSearch() {
     if (!searchBox || !searchIcon || !searchInput) return;
 
     searchIcon.addEventListener('click', (e) => {
-        e.stopPropagation(); // evita que el click cierre inmediatamente
+        e.stopPropagation();
         const expanded = searchBox.classList.toggle('is-expanded');
         if (expanded) {
             searchInput.focus();
@@ -38,7 +38,6 @@ function initMobileSearch() {
         }
     });
 
-    // Contraer al hacer click fuera
     document.addEventListener('click', e => {
         if (!searchBox.contains(e.target)) {
             if (searchBox.classList.contains('is-expanded')) {
@@ -51,7 +50,6 @@ function initMobileSearch() {
         }
     });
 
-    // Contraer al presionar Escape
     searchInput.addEventListener('keydown', e => {
         if (e.key === 'Escape') {
             searchBox.classList.remove('is-expanded');
@@ -121,10 +119,10 @@ function updateFooterCount(showing, total) {
 // 2. LÓGICA DE SELECCIÓN DE FILAS Y AVATARES
 // ============================================
 function initSelectionLogic() {
-    const selectionBar = document.getElementById('selectionBar');
-    const selCountEl = document.getElementById('selCount');
+    const selectionBar      = document.getElementById('selectionBar');
+    const selCountEl        = document.getElementById('selCount');
     const selectAllHeaderCb = document.getElementById('selectAll');
-    const tbody = document.querySelector('#formsTable tbody');
+    const tbody             = document.querySelector('#formsTable tbody');
 
     if (!tbody || !selectionBar) return;
 
@@ -133,7 +131,8 @@ function initSelectionLogic() {
     }
 
     function updateSelectionBar() {
-        const count = getChecked().length;
+        const checked = getChecked();
+        const count   = checked.length;
         if (selCountEl) selCountEl.textContent = count;
         selectionBar.classList.toggle('has-selection', count > 0);
 
@@ -142,25 +141,27 @@ function initSelectionLogic() {
             selectAllHeaderCb.checked = count === allBoxes && allBoxes > 0;
         }
 
-        // Si hay seleccionados, mostrar todos sin paginación
+        // ── Actualizar label/tooltip del botón exportar de la barra ──
+        updateExportSelBtnLabel(count);
+
         if (count > 0) {
             getAllFormRows().forEach(row => row.style.display = '');
-            // Ocultar paginación
             const tableFooter = document.querySelector('.table-footer');
+            const tableContainer = document.querySelector('.table-container');
             if (tableContainer) tableContainer.style.marginBottom = '80px';
-            if (tableFooter) tableFooter.style.display = 'none';
+            if (tableFooter)    tableFooter.style.display = 'none';
         } else {
-            // Al limpiar selección, volver a la paginación normal
-            const tableFooter = document.querySelector('.table-footer');
+            const tableFooter    = document.querySelector('.table-footer');
+            const tableContainer = document.querySelector('.table-container');
             if (tableContainer) tableContainer.style.marginBottom = '';
-            if (tableFooter) tableFooter.style.display = '';
+            if (tableFooter)    tableFooter.style.display = '';
             renderPage();
         }
     }
 
     function triggerSelectAnimation(tr, selected) {
         tr.classList.remove('row-selected', 'row-unselected');
-        void tr.offsetWidth; // fuerza reflow
+        void tr.offsetWidth;
         if (selected) {
             tr.classList.add('row-selected');
         } else {
@@ -168,7 +169,6 @@ function initSelectionLogic() {
         }
     }
 
-    // Inyectar hint visual a los avatares
     document.querySelectorAll('.user-avatar').forEach(avatar => {
         if (!avatar.querySelector('.avatar-cb-hint')) {
             const hint = document.createElement('span');
@@ -177,7 +177,6 @@ function initSelectionLogic() {
             avatar.appendChild(hint);
         }
 
-        // Click en el avatar para activar checkbox
         avatar.addEventListener('click', function (e) {
             if (e.target.classList.contains('row-checkbox')) return;
             const cb = this.querySelector('.row-checkbox');
@@ -188,7 +187,6 @@ function initSelectionLogic() {
         });
     });
 
-    // Escuchar cambios en los checkboxes
     document.querySelectorAll('.row-checkbox').forEach(cb => {
         cb.addEventListener('change', function () {
             triggerSelectAnimation(this.closest('tr'), this.checked);
@@ -196,7 +194,6 @@ function initSelectionLogic() {
         });
     });
 
-    // Botón "Seleccionar todos" (Barra Flotante)
     const selectAllBtn = document.getElementById('selectAllBtn');
     if (selectAllBtn) {
         selectAllBtn.addEventListener('click', () => {
@@ -210,7 +207,6 @@ function initSelectionLogic() {
         });
     }
 
-    // Checkbox "Seleccionar todos" (Cabecera de la tabla)
     if (selectAllHeaderCb) {
         selectAllHeaderCb.addEventListener('change', function() {
             const isChecked = this.checked;
@@ -224,7 +220,6 @@ function initSelectionLogic() {
         });
     }
 
-    // Botón "Limpiar selección"
     const clearSelBtn = document.getElementById('clearSelBtn');
     if (clearSelBtn) {
         clearSelBtn.addEventListener('click', () => {
@@ -238,16 +233,17 @@ function initSelectionLogic() {
         });
     }
 
+    // ── Exportar seleccionados ───────────────────────────────────────────
     const exportSelBtn = document.getElementById('exportSelBtn');
-        if (exportSelBtn) {
-            exportSelBtn.addEventListener('click', () => {
-                const ids = getChecked().map(cb => cb.value);
-                if (!ids.length) return;
-                exportSelectedForms(ids);
-            });
-        }
+    if (exportSelBtn) {
+        exportSelBtn.addEventListener('click', () => {
+            const ids = getChecked().map(cb => cb.value);
+            if (!ids.length) return;
+            exportSelectedForms(ids);
+        });
+    }
 
-    // Botón "Eliminar seleccionados"
+    // ── Eliminar seleccionados ───────────────────────────────────────────
     const deleteSelBtn = document.getElementById('deleteSelBtn');
     if (deleteSelBtn) {
         deleteSelBtn.addEventListener('click', () => {
@@ -266,15 +262,46 @@ function initSelectionLogic() {
             }).then(r => { 
                 if (r.isConfirmed) {
                     console.log('Falta implementar la ruta backend para eliminar múltiples. IDs:', ids);
-                    // Aquí iría tu fetch a deleteMultiple
                 } 
             });
         });
     }
 }
 
+// ── Actualiza el texto/tooltip del botón "Exportar" de la barra flotante ──
+function updateExportSelBtnLabel(count) {
+    const btn = document.getElementById('exportSelBtn');
+    if (!btn) return;
+
+    // Eliminar TODOS los nodos de texto sueltos para evitar duplicados
+    Array.from(btn.childNodes)
+        .filter(n => n.nodeType === Node.TEXT_NODE)
+        .forEach(n => n.remove());
+
+    // Reutilizar o crear el span dedicado al label
+    let labelSpan = btn.querySelector('.export-sel-label');
+    if (!labelSpan) {
+        labelSpan = document.createElement('span');
+        labelSpan.className = 'export-sel-label';
+        btn.appendChild(labelSpan);
+    }
+
+    if (count === 1) {
+        labelSpan.textContent = ' Exportar este';
+        btn.title = 'Exportar solo este registro';
+    } else if (count > 1) {
+        labelSpan.textContent = ` Exportar (${count})`;
+        btn.title = `Exportar ${count} registros seleccionados`;
+    } else {
+        labelSpan.textContent = ' Exportar';
+        btn.title = '';
+    }
+}
+
+// ── Exportar registros seleccionados (1 ó varios) ────────────────────────
 async function exportSelectedForms(ids) {
-    showExportToast('loading');
+    const esSolo = ids.length === 1;
+    showExportToast('loading', '', esSolo ? 'Preparando ficha del contacto…' : '');
 
     try {
         const params = ids.map(id => `ids[]=${id}`).join('&');
@@ -292,16 +319,20 @@ async function exportSelectedForms(ids) {
         }
 
         const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
+        const url  = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
-        link.href = url;
-        link.download = `formularios_seleccionados_${ids.length}.pdf`;
+        link.href  = url;
+        link.download = esSolo
+            ? `contacto_${ids[0]}.pdf`
+            : `formularios_seleccionados_${ids.length}.pdf`;
         document.body.appendChild(link);
         link.click();
         link.remove();
         window.URL.revokeObjectURL(url);
 
-        showExportToast('success');
+        showExportToast('success', '', esSolo
+            ? '¡Ficha del contacto descargada!'
+            : `¡${ids.length} registros exportados!`);
 
     } catch (error) {
         console.error('Error exportando PDF:', error);
@@ -310,7 +341,7 @@ async function exportSelectedForms(ids) {
 }
 
 // ============================================
-// 3. EXPORTAR A PDF
+// 3. EXPORTAR A PDF  (respeta el filtro de fecha activo)
 // ============================================
 function initExportLogic() {
     const exportButton = document.querySelector('.export-button');
@@ -320,11 +351,19 @@ function initExportLogic() {
 }
 
 async function exportForms() {
-    // Mostrar toast de carga
-    showExportToast('loading');
+    // Construir parámetros según el filtro de fecha activo
+    const params    = new URLSearchParams();
+    const dateLabel = getDateFilterLabel(); // "Esta semana", "Este mes", etc.
+
+    if (filterDate) {
+        params.set('date_filter', filterDate);
+    }
+
+    showExportToast('loading', '', dateLabel ? `Exportando: ${dateLabel}…` : '');
 
     try {
-        const response = await fetch('/admin/forms/export/pdf', {
+        const url = '/admin/forms/export/pdf' + (params.toString() ? '?' + params.toString() : '');
+        const response = await fetch(url, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -337,17 +376,29 @@ async function exportForms() {
             throw new Error(errorData?.message || 'Error al generar PDF');
         }
 
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'formularios_contacto.pdf';
+        const blob      = await response.blob();
+        const objectUrl = window.URL.createObjectURL(blob);
+        const link      = document.createElement('a');
+        link.href       = objectUrl;
+
+        // Nombre de archivo descriptivo según el filtro
+        const suffix = {
+            today: 'hoy',
+            week:  'esta_semana',
+            month: 'este_mes',
+            year:  'este_año',
+        }[filterDate] || 'todos';
+        link.download = `formularios_contacto_${suffix}.pdf`;
+
         document.body.appendChild(link);
         link.click();
         link.remove();
-        window.URL.revokeObjectURL(url);
+        window.URL.revokeObjectURL(objectUrl);
 
-        showExportToast('success');
+        const successMsg = dateLabel
+            ? `¡PDF de "${dateLabel}" descargado!`
+            : '¡Descarga completada!';
+        showExportToast('success', '', successMsg);
 
     } catch (error) {
         console.error('Error exportando PDF:', error);
@@ -355,7 +406,21 @@ async function exportForms() {
     }
 }
 
-function showExportToast(type, message = '') {
+// Devuelve el label legible del filtro de fecha activo
+function getDateFilterLabel() {
+    const labels = {
+        today: 'Hoy',
+        week:  'Esta semana',
+        month: 'Este mes',
+        year:  'Este año',
+    };
+    return labels[filterDate] || '';
+}
+
+// ============================================
+// TOAST DE EXPORTACIÓN
+// ============================================
+function showExportToast(type, message = '', customMsg = '') {
     const existing = document.getElementById('exportToast');
     if (existing) {
         existing.classList.remove('show');
@@ -369,7 +434,7 @@ function showExportToast(type, message = '') {
                 <path d="M10 2a8 8 0 0 1 8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>`,
             title: 'Generando PDF',
-            msg: 'Por favor espera...',
+            msg: customMsg || 'Por favor espera...',
             extraClass: 'toast-loading',
             progress: `<div class="toast-progress-indeterminate"></div>`,
             autohide: false,
@@ -379,7 +444,7 @@ function showExportToast(type, message = '') {
                 <path d="M5 10l4 4 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>`,
             title: '¡PDF listo!',
-            msg: 'Descarga completada',
+            msg: customMsg || 'Descarga completada',
             extraClass: '',
             progress: `<div class="toast-progress"></div>`,
             autohide: true,
@@ -396,9 +461,9 @@ function showExportToast(type, message = '') {
         }
     };
 
-    const c = configs[type];
+    const c     = configs[type];
     const toast = document.createElement('div');
-    toast.id = 'exportToast';
+    toast.id        = 'exportToast';
     toast.className = `${c.extraClass}`;
 
     toast.innerHTML = `
@@ -427,13 +492,13 @@ function showExportToast(type, message = '') {
 let currentModalId = null;
 
 function initModalEvents() {
-    const modalOverlay = document.getElementById('formModalOverlay');
-    const modalBtnDelete = document.getElementById('modalBtnDelete');
-    const modalCloseBtn = document.getElementById('modalClose');
+    const modalOverlay     = document.getElementById('formModalOverlay');
+    const modalBtnDelete   = document.getElementById('modalBtnDelete');
+    const modalCloseBtn    = document.getElementById('modalClose');
     const modalBtnCloseFooter = document.getElementById('modalBtnClose');
 
-    if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
-    if (modalBtnCloseFooter) modalBtnCloseFooter.addEventListener('click', closeModal);
+    if (modalCloseBtn)        modalCloseBtn.addEventListener('click', closeModal);
+    if (modalBtnCloseFooter)  modalBtnCloseFooter.addEventListener('click', closeModal);
     
     if (modalOverlay) {
         modalOverlay.addEventListener('click', e => { 
@@ -459,8 +524,6 @@ function initModalEvents() {
 function openModal() { 
     const overlay = document.getElementById('formModalOverlay');
     if(overlay) overlay.classList.add('is-open');    
-    
-    // Bloqueamos el scroll tanto en body como en html
     document.body.style.overflow = 'hidden'; 
     document.documentElement.style.overflow = 'hidden'; 
 }
@@ -468,38 +531,34 @@ function openModal() {
 function closeModal() { 
     const overlay = document.getElementById('formModalOverlay');
     if(overlay) overlay.classList.remove('is-open'); 
-    
-    // Restauramos el scroll
     document.body.style.overflow = ''; 
     document.documentElement.style.overflow = ''; 
     currentModalId = null; 
 }
 
-// Global para poder ser llamada desde los botones onclick="..." del HTML
 window.viewForm = async function(id) {
     currentModalId = id;
     
-    const modalAvatar = document.getElementById('modalAvatar');
-    const modalName = document.getElementById('modalName');
-    const modalAsunto = document.getElementById('modalAsunto');
-    const modalCorreo = document.getElementById('modalCorreo');
+    const modalAvatar   = document.getElementById('modalAvatar');
+    const modalName     = document.getElementById('modalName');
+    const modalAsunto   = document.getElementById('modalAsunto');
+    const modalCorreo   = document.getElementById('modalCorreo');
     const modalTelefono = document.getElementById('modalTelefono');
-    const modalFecha = document.getElementById('modalFecha');
-    const modalMensaje = document.getElementById('modalMensaje');
+    const modalFecha    = document.getElementById('modalFecha');
+    const modalMensaje  = document.getElementById('modalMensaje');
 
-    // Estado de carga
-    if(modalAvatar) modalAvatar.textContent = '…';
-    if(modalName) modalName.textContent = 'Cargando…';
-    if(modalAsunto) modalAsunto.textContent = '';
-    if(modalCorreo) modalCorreo.innerHTML = '—';
-    if(modalTelefono) modalTelefono.innerHTML = '—';
-    if(modalFecha) modalFecha.textContent = '—';
-    if(modalMensaje) modalMensaje.textContent = '—';
+    if(modalAvatar)   modalAvatar.textContent   = '…';
+    if(modalName)     modalName.textContent     = 'Cargando…';
+    if(modalAsunto)   modalAsunto.textContent   = '';
+    if(modalCorreo)   modalCorreo.innerHTML     = '—';
+    if(modalTelefono) modalTelefono.innerHTML   = '—';
+    if(modalFecha)    modalFecha.textContent    = '—';
+    if(modalMensaje)  modalMensaje.textContent  = '—';
     
     openModal();
 
     try {
-        const res = await fetch(`/admin/forms/${id}`, {
+        const res  = await fetch(`/admin/forms/${id}`, {
             headers: { 
                 'X-CSRF-TOKEN': csrfToken, 
                 'Accept': 'application/json' 
@@ -508,20 +567,20 @@ window.viewForm = async function(id) {
         const data = await res.json();
 
         if (data.success) {
-            const f = data.data;
+            const f     = data.data;
             const fecha = new Date(f.fecha_envio).toLocaleString('es-MX', {
                 year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
             });
 
-            if(modalAvatar) modalAvatar.textContent = f.nombre_completo.charAt(0).toUpperCase();
-            if(modalName) modalName.textContent = f.nombre_completo;
-            if(modalAsunto) modalAsunto.textContent = f.asunto || 'Sin asunto';
-            if(modalCorreo) modalCorreo.innerHTML = `<a href="mailto:${f.correo}">${f.correo}</a>`;
+            if(modalAvatar)   modalAvatar.textContent = f.nombre_completo.charAt(0).toUpperCase();
+            if(modalName)     modalName.textContent   = f.nombre_completo;
+            if(modalAsunto)   modalAsunto.textContent = f.asunto || 'Sin asunto';
+            if(modalCorreo)   modalCorreo.innerHTML   = `<a href="mailto:${f.correo}">${f.correo}</a>`;
             if(modalTelefono) modalTelefono.innerHTML = f.numero_telefonico 
                 ? `<a href="tel:${f.numero_telefonico}">${f.numero_telefonico}</a>` 
                 : `<span style="color:var(--text-muted)">No proporcionado</span>`;
-            if(modalFecha) modalFecha.textContent = fecha;
-            if(modalMensaje) modalMensaje.textContent = f.mensaje || 'Sin mensaje';
+            if(modalFecha)    modalFecha.textContent  = fecha;
+            if(modalMensaje)  modalMensaje.textContent = f.mensaje || 'Sin mensaje';
             
         } else {
             closeModal();
@@ -610,7 +669,7 @@ function getFilteredFormRows() {
             if (filterDate === 'today') {
                 matchDate = rowDate.toDateString() === now.toDateString();
             } else if (filterDate === 'week') {
-                const dayOfWeek = now.getDay(); // 0=domingo, 1=lunes...
+                const dayOfWeek = now.getDay();
                 const monday = new Date(now);
                 monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
                 monday.setHours(0, 0, 0, 0);
@@ -644,24 +703,20 @@ function updateEmptyState() {
     const filtered = getFilteredFormRows();
     const allRows  = getAllFormRows();
 
-    const thead       = document.querySelector('#formsTable thead');
-    const tableToolbar = document.querySelector('.table-toolbar');
+    const thead          = document.querySelector('#formsTable thead');
+    const tableToolbar   = document.querySelector('.table-toolbar');
     const tableContainer = document.querySelector('.table-container');  
     const noData = allRows.length === 0 || filtered.length === 0;
 
-    // Ocultar/mostrar: búsqueda, sort, export y columnas
     [searchBox, sortButton, exportBtn, thead].forEach(el => {
         if (el) el.style.display = noData ? 'none' : '';
     });
 
-    // Ocultar/mostrar footer
     if (tableFooter) tableFooter.style.display = noData ? 'none' : '';
 
-    // Centrar el toolbar cuando solo queda el select de fecha
     if (noData) {
         tableToolbar?.classList.add('only-filter');
         tableContainer?.classList.add('no-data');
-        // Bloquear scroll solo en móvil
         if (window.innerWidth <= 767) {
             document.body.style.overflow = 'hidden';
             document.documentElement.style.overflow = 'hidden';
@@ -669,13 +724,11 @@ function updateEmptyState() {
     } else {
         tableToolbar?.classList.remove('only-filter');
         tableContainer?.classList.remove('no-data');
-        // Restaurar scroll
         document.body.style.overflow = '';
         document.documentElement.style.overflow = '';
     }
 
     if (noData && allRows.length > 0) {
-        // Hay datos pero el filtro no devuelve nada — mostrar mensaje
         const labels = {
             '':      null,
             'today': 'hoy',
@@ -736,18 +789,16 @@ function updateEmptyState() {
     }
 }
 
-    // ============================================
+// ============================================
 // 7. CUSTOM SELECT
 // ============================================
 function initCustomSelects() {
     document.querySelectorAll('.filter-select').forEach(select => {
-        // Crear wrapper
         const wrapper = document.createElement('div');
         wrapper.className = 'custom-select-wrapper';
         select.parentNode.insertBefore(wrapper, select);
         wrapper.appendChild(select);
 
-        // Trigger (botón visible)
         const trigger = document.createElement('div');
         trigger.className = 'custom-select-trigger';
         trigger.innerHTML = `
@@ -759,7 +810,6 @@ function initCustomSelects() {
         `;
         wrapper.appendChild(trigger);
 
-        // Dropdown con opciones
         const dropdown = document.createElement('div');
         dropdown.className = 'custom-select-dropdown';
 
@@ -770,11 +820,9 @@ function initCustomSelects() {
             item.dataset.value = opt.value;
 
             item.addEventListener('click', () => {
-                // Actualizar select real (dispara los listeners existentes)
                 select.value = opt.value;
                 select.dispatchEvent(new Event('change'));
 
-                // Actualizar UI
                 dropdown.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('is-selected'));
                 item.classList.add('is-selected');
                 trigger.querySelector('.trigger-label').textContent = opt.text;
@@ -787,17 +835,14 @@ function initCustomSelects() {
 
         wrapper.appendChild(dropdown);
 
-        // Abrir / cerrar
         trigger.addEventListener('click', e => {
             e.stopPropagation();
             const isOpen = wrapper.classList.contains('is-open');
-            // Cerrar todos los demás
             document.querySelectorAll('.custom-select-wrapper.is-open').forEach(w => w.classList.remove('is-open'));
             if (!isOpen) wrapper.classList.add('is-open');
         });
     });
 
-    // Cerrar al hacer click fuera
     document.addEventListener('click', () => {
         document.querySelectorAll('.custom-select-wrapper.is-open').forEach(w => w.classList.remove('is-open'));
     });
@@ -805,7 +850,7 @@ function initCustomSelects() {
 
 // ── Centrar selection-bar considerando el sidebar ──
 function updateSelectionBarPosition() {
-    const sidebar = document.querySelector('.sidebar') // cambia por el selector real de tu sidebar
+    const sidebar = document.querySelector('.sidebar')
                  || document.querySelector('aside')
                  || document.querySelector('nav.sidebar')
                  || document.querySelector('[class*="sidebar"]');
@@ -815,12 +860,12 @@ function updateSelectionBarPosition() {
 
     if (sidebar && window.innerWidth > 767) {
         const sidebarWidth = sidebar.getBoundingClientRect().width;
-        bar.style.left = sidebarWidth + 'px';
-        bar.style.right = '0';
-        bar.style.marginLeft = 'auto';
+        bar.style.left        = sidebarWidth + 'px';
+        bar.style.right       = '0';
+        bar.style.marginLeft  = 'auto';
         bar.style.marginRight = 'auto';
     } else {
-        bar.style.left = '';
+        bar.style.left  = '';
         bar.style.right = '';
     }
 }
@@ -842,7 +887,6 @@ function renderPage() {
     const showing = filtered.slice(start, end).length;
     updateFooterCount(showing, getAllFormRows().length);
 
-    // Rebuild paginación
     const pagination = document.querySelector('.table-footer .pagination');
     if (!pagination) return;
 
@@ -859,8 +903,8 @@ function renderPage() {
     if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
 
     for (let i = startPage; i <= endPage; i++) {
-        const btn = document.createElement('button');
-        btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+        const btn       = document.createElement('button');
+        btn.className   = 'page-btn' + (i === currentPage ? ' active' : '');
         btn.textContent = i;
         btn.addEventListener('click', () => { currentPage = i; renderPage(); });
         pagination.insertBefore(btn, btnNext);

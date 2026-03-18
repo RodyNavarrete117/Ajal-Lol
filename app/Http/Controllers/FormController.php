@@ -212,20 +212,128 @@ class FormController extends Controller
         }
     }
 
-public function exportPdf(FormPdfService $pdfService)
-{
-    $forms = DB::table('formulario_contacto')
-        ->orderBy('fecha_envio', 'desc')
-        ->get();
+    /**
+     * Exportar formularios a PDF.
+     *
+     * Soporta dos modos de filtrado, ambos opcionales y combinables:
+     *
+     *  1. IDs específicos  → GET ?ids[]=1&ids[]=3
+     *     Exporta solo los registros cuyo id_formcontacto esté en la lista.
+     *     Se usa cuando el usuario selecciona uno o varios registros en la tabla.
+     *
+     *  2. Filtro de fecha  → GET ?date_filter=today|week|month|year
+     *     Exporta los registros del período indicado.
+     *     Se usa con el botón "Exportar todo" cuando hay un filtro de fecha activo.
+     *
+     * Si no se envía ningún parámetro se exportan todos los registros.
+     */
+    public function exportPdf(Request $request, FormPdfService $pdfService)
+    {
+        $query = DB::table('formulario_contacto')
+            ->orderBy('fecha_envio', 'desc');
 
-    if ($forms->isEmpty()) {
-        return back()->with('error', 'No hay formularios para exportar');
+        // ── 1. Filtrar por IDs seleccionados ─────────────────────────────
+        $ids = $request->input('ids', []);
+        if (!empty($ids)) {
+            // Sanitizar: solo enteros
+            $ids = array_filter(array_map('intval', $ids));
+            if (!empty($ids)) {
+                $query->whereIn('id_formcontacto', $ids);
+            }
+        }
+
+        // ── 2. Filtrar por rango de fecha ────────────────────────────────
+        //    Solo se aplica si NO se enviaron IDs (exportar todo con filtro)
+        if (empty($ids)) {
+            $dateFilter = $request->input('date_filter', '');
+
+            switch ($dateFilter) {
+                case 'today':
+                    $query->whereDate('fecha_envio', now()->toDateString());
+                    break;
+
+                case 'week':
+                    // Lunes 00:00 → Domingo 23:59 de la semana actual
+                    $monday = now()->startOfWeek(\Carbon\Carbon::MONDAY);
+                    $sunday = now()->endOfWeek(\Carbon\Carbon::SUNDAY);
+                    $query->whereBetween('fecha_envio', [$monday, $sunday]);
+                    break;
+
+                case 'month':
+                    $query->whereYear('fecha_envio', now()->year)
+                          ->whereMonth('fecha_envio', now()->month);
+                    break;
+
+                case 'year':
+                    $query->whereYear('fecha_envio', now()->year);
+                    break;
+
+                // Sin filtro de fecha → todos los registros
+                default:
+                    break;
+            }
+        }
+
+        $forms = $query->get();
+
+        if ($forms->isEmpty()) {
+            // Respuesta JSON para que el JS muestre el toast de error
+            return response()->json([
+                'success' => false,
+                'message' => 'No hay formularios para exportar en el período seleccionado'
+            ], 404);
+        }
+
+        // Pasar metadatos extra al servicio para que los refleje en el PDF
+        $meta = $this->buildPdfMeta($request, $ids, $forms);
+
+        $pdf = $pdfService->generate($forms, $meta);
+
+        // 'D' = forzar descarga en el navegador
+        $pdf->Output($meta['filename'], 'D');
+        exit;
     }
 
-    $pdf = $pdfService->generate($forms);
+    /**
+     * Construye el array de metadatos que se inyecta en el PDF
+     * (título del período, nombre del archivo, etc.)
+     */
+    private function buildPdfMeta(Request $request, array $ids, $forms): array
+    {
+        // ── Nombre de archivo y etiqueta de período ──────────────────────
+        if (!empty($ids)) {
+            $count    = count($ids);
+            $label    = $count === 1
+                ? 'Ficha individual de contacto'
+                : "Selección de {$count} registros";
+            $filename = $count === 1
+                ? "contacto_{$ids[0]}.pdf"
+                : "formularios_seleccionados_{$count}.pdf";
 
-    // Esto fuerza la descarga
-    $pdf->Output('formularios_contacto.pdf', 'D'); // 'D' = download
-    exit; // importante para que Laravel no agregue nada más
-}
+        } else {
+            $dateFilter = $request->input('date_filter', '');
+            $labelMap   = [
+                'today' => 'Registros de hoy',
+                'week'  => 'Registros de esta semana',
+                'month' => 'Registros de este mes',
+                'year'  => 'Registros de este año',
+                ''      => 'Todos los registros',
+            ];
+            $fileMap = [
+                'today' => 'formularios_hoy.pdf',
+                'week'  => 'formularios_esta_semana.pdf',
+                'month' => 'formularios_este_mes.pdf',
+                'year'  => 'formularios_este_año.pdf',
+                ''      => 'formularios_contacto.pdf',
+            ];
+            $label    = $labelMap[$dateFilter]  ?? 'Todos los registros';
+            $filename = $fileMap[$dateFilter]   ?? 'formularios_contacto.pdf';
+        }
+
+        return [
+            'label'    => $label,
+            'filename' => $filename,
+            'total'    => $forms->count(),
+        ];
+    }
 }

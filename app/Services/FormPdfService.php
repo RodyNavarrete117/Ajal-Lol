@@ -6,8 +6,21 @@ use Mpdf\Mpdf;
 
 class FormPdfService
 {
-    public function generate($forms)
+    /**
+     * Genera el PDF de formularios de contacto.
+     *
+     * @param  \Illuminate\Support\Collection  $forms  Registros a incluir.
+     * @param  array  $meta  Metadatos opcionales:
+     *                        - label    string  Etiqueta del período / selección
+     *                        - filename string  Nombre sugerido de archivo
+     *                        - total    int     Total de registros
+     */
+    public function generate($forms, array $meta = [])
     {
+        // ── Valores por defecto de metadatos ────────────────────────────
+        $periodLabel = $meta['label']    ?? 'Todos los registros';
+        $totalReg    = $meta['total']    ?? count($forms);
+
         $mpdf = new Mpdf([
             'margin_left'   => 18,
             'margin_right'  => 18,
@@ -16,7 +29,7 @@ class FormPdfService
             'format'        => 'A4',
         ]);
 
-        // ── Encabezado repetido en cada página ──────────────────────────────
+        // ── Encabezado repetido en cada página ──────────────────────────
         $mpdf->SetHTMLHeader('
             <table width="100%" style="border-bottom: 2px solid #b71c50; padding-bottom: 8px; margin-bottom: 0;">
                 <tr>
@@ -43,7 +56,7 @@ class FormPdfService
             </table>
         ');
 
-        // ── Pie de página ────────────────────────────────────────────────────
+        // ── Pie de página ────────────────────────────────────────────────
         $mpdf->SetHTMLFooter('
             <table width="100%" style="border-top: 1px solid #e0a0bb; padding-top: 6px; font-size:8px; color:#888;">
                 <tr>
@@ -55,7 +68,7 @@ class FormPdfService
             </table>
         ');
 
-        // ── Estilos ──────────────────────────────────────────────────────────
+        // ── Estilos ──────────────────────────────────────────────────────
         $style = '
         <style>
             * { box-sizing: border-box; }
@@ -90,6 +103,20 @@ class FormPdfService
                 font-weight: bold;
                 color: #b71c50;
                 width: 120px;
+            }
+
+            /* ── Etiqueta de período (badge) ── */
+            .period-badge {
+                display: inline-block;
+                background-color: #fdf3f7;
+                border: 1px solid #e8c0d0;
+                border-radius: 4px;
+                padding: 2px 10px;
+                font-size: 9.5px;
+                font-weight: bold;
+                color: #b71c50;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
             }
 
             /* ── Título de sección ── */
@@ -180,8 +207,7 @@ class FormPdfService
         </style>
         ';
 
-        // ── Cuerpo del documento ─────────────────────────────────────────────
-        $totalRegistros = count($forms);
+        // ── Cuerpo del documento ─────────────────────────────────────────
         $fechaGeneracion = date('d/m/Y H:i');
 
         $html = $style . '
@@ -199,19 +225,23 @@ class FormPdfService
                     <td class="meta-label">Folio:</td>
                     <td>RPT-' . date('Ymd-His') . '</td>
                     <td class="meta-label">Total de registros:</td>
-                    <td><strong>' . $totalRegistros . '</strong></td>
+                    <td><strong>' . $totalReg . '</strong></td>
+                </tr>
+                <tr>
+                    <td class="meta-label">Período / Selección:</td>
+                    <td><span class="period-badge">' . htmlspecialchars($periodLabel) . '</span></td>
+                    <td class="meta-label">Generado a las:</td>
+                    <td>' . date('H:i') . ' hrs</td>
                 </tr>
                 <tr>
                     <td class="meta-label">Fecha de emisión:</td>
-                    <td>' . date('d \d\e F \d\e Y', time()) . '</td>
-                    <td class="meta-label">Generado a las:</td>
-                    <td>' . date('H:i') . ' hrs</td>
+                    <td colspan="3">' . date('d \d\e F \d\e Y', time()) . '</td>
                 </tr>
             </table>
         </div>
 
         <!-- Título de sección -->
-        <div class="section-title">Listado de solicitudes recibidas</div>
+        <div class="section-title">Listado de solicitudes recibidas — ' . htmlspecialchars($periodLabel) . '</div>
 
         <!-- Tabla principal -->
         <table class="main-table">
@@ -249,15 +279,20 @@ class FormPdfService
             $counter++;
         }
 
+        // Rango de fechas para el resumen
+        $fechaMin = $forms->min('fecha_envio');
+        $fechaMax = $forms->max('fecha_envio');
+
         $html .= '
             </tbody>
         </table>
 
         <!-- Resumen -->
         <div class="summary-box">
-            Total de registros en este reporte: <strong>' . $totalRegistros . '</strong> &nbsp;|&nbsp;
-            Período: desde <strong>' . ($forms->min('fecha_envio') ? date('d/m/Y', strtotime($forms->min('fecha_envio'))) : '—') . '</strong>
-            hasta <strong>' . ($forms->max('fecha_envio') ? date('d/m/Y', strtotime($forms->max('fecha_envio'))) : '—') . '</strong> &nbsp;|&nbsp;
+            Período / Selección: <strong>' . htmlspecialchars($periodLabel) . '</strong> &nbsp;|&nbsp;
+            Total de registros: <strong>' . $totalReg . '</strong> &nbsp;|&nbsp;
+            Desde <strong>' . ($fechaMin ? date('d/m/Y', strtotime($fechaMin)) : '—') . '</strong>
+            hasta <strong>' . ($fechaMax ? date('d/m/Y', strtotime($fechaMax)) : '—') . '</strong> &nbsp;|&nbsp;
             Documento emitido el <strong>' . $fechaGeneracion . ' hrs</strong>
         </div>
         ';

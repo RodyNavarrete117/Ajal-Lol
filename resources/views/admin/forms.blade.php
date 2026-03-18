@@ -23,32 +23,20 @@
                 <span class="stat-label">Total</span>
             </div>
 
-            {{--
-                Tarjeta dinámica: busca el período más reciente con datos.
-                Cascada: semana → mes → 3 meses → 6 meses → año
-            --}}
             @php
-                $periods = [
-                    ['days' => 7,   'label' => 'Esta semana'],
-                    ['days' => 30,  'label' => 'Este mes'],
-                    ['days' => 90,  'label' => 'Últimos 3 meses'],
-                    ['days' => 180, 'label' => 'Últimos 6 meses'],
-                    ['days' => 365, 'label' => 'Este año'],
-                ];
-                $dynamicCount = 0;
-                $dynamicLabel = 'Este año';
-                foreach ($periods as $period) {
-                    $count = $forms->where('fecha_envio', '>=', now()->subDays($period['days']))->count();
-                    if ($count > 0) {
-                        $dynamicCount = $count;
-                        $dynamicLabel = $period['label'];
-                        break;
-                    }
-                }
+                $currentYear  = \Carbon\Carbon::now()->year;
+                $currentMonth = \Carbon\Carbon::now()->month;
+
+                $monthCount = $forms->filter(function ($form) use ($currentYear, $currentMonth) {
+                    $fecha = \Carbon\Carbon::parse($form->fecha_envio);
+                    return $fecha->year === $currentYear && $fecha->month === $currentMonth;
+                })->count();
+
             @endphp
+
             <div class="stat-card">
-                <span class="stat-number">{{ $dynamicCount }}</span>
-                <span class="stat-label">{{ $dynamicLabel }}</span>
+                <span class="stat-number">{{ $monthCount }}</span>
+                <span class="stat-label">Este mes</span>
             </div>
         </div>
     </div>

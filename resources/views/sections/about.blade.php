@@ -9,7 +9,7 @@
     <div class="about-grid">
 
       <div class="about-img-wrapper" data-anim="fade-right">
-        <img src="{{ asset('assets/img/MIS.jpg') }}"
+        <img src="https://ajal-lol.org/assets/img/MIS.jpg"
              alt="Integrantes de Ajal Lol A.C. en actividad comunitaria"
              loading="lazy" width="600" height="500">
         <div class="about-img-badge">

@@ -249,5 +249,4 @@
     </button>
     <img id="lightbox-img" class="lightbox-img" src="" alt="Imagen del proyecto ampliada">
   </div>
-
 </section>

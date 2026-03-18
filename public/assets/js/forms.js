@@ -610,9 +610,17 @@ function getFilteredFormRows() {
             if (filterDate === 'today') {
                 matchDate = rowDate.toDateString() === now.toDateString();
             } else if (filterDate === 'week') {
-                matchDate = rowDate >= new Date(now - 7 * 86400000);
+                const dayOfWeek = now.getDay(); // 0=domingo, 1=lunes...
+                const monday = new Date(now);
+                monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+                monday.setHours(0, 0, 0, 0);
+                const sunday = new Date(monday);
+                sunday.setDate(monday.getDate() + 6);
+                sunday.setHours(23, 59, 59, 999);
+                matchDate = rowDate >= monday && rowDate <= sunday;
             } else if (filterDate === 'month') {
-                matchDate = rowDate >= new Date(now - 30 * 86400000);
+                matchDate = rowDate.getMonth() === now.getMonth() && 
+                            rowDate.getFullYear() === now.getFullYear();
             } else if (filterDate === 'year') {
                 matchDate = rowDate.getFullYear() === now.getFullYear();
             }

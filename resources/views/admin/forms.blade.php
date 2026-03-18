@@ -5,6 +5,7 @@
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/admincss/forms.css') }}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 @endpush
 
@@ -88,10 +89,13 @@
 
                 <button type="button" class="export-button">
                     <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                        <path d="M3 17v-2a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2M10 3v12m0 0l-4-4m4 4l4-4"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M4 2h8l4 4v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" 
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M12 2v4h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <text x="5" y="15" font-size="5" font-weight="700" fill="currentColor" 
+                            font-family="sans-serif">PDF</text>
                     </svg>
-                    Exportar PDF
+                    Exportar todo
                 </button>
             </div>
 
@@ -329,9 +333,35 @@
             <span class="sel-count" id="selCount">0</span>
         </div>
         <div class="sel-actions">
-            <button class="sel-btn sel-btn-all" id="selectAllBtn">Seleccionar todos</button>
-            <button class="sel-btn sel-btn-clear" id="clearSelBtn">Limpiar selección</button>
-            <button class="sel-btn sel-btn-delete" id="deleteSelBtn">Eliminar seleccionados</button>
+           <button class="sel-btn sel-btn-all" id="selectAllBtn">
+                <i class="fa-regular fa-square-check"></i>
+                Marcar todo
+            </button>
+
+            <button class="sel-btn sel-btn-clear" id="clearSelBtn">
+                <i class="fa-regular fa-square-minus"></i>
+                Desmarcar todo
+            </button>
+
+            <button class="sel-btn sel-btn-export" id="exportSelBtn">
+                <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
+                    <path d="M4 2h8l4 4v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" 
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M12 2v4h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <text x="5" y="15" font-size="5" font-weight="700" fill="currentColor" 
+                        font-family="sans-serif">PDF</text>
+                </svg>
+                Exportar
+            </button>
+
+            <button class="sel-btn sel-btn-delete" id="deleteSelBtn">
+                <svg width="23" height="23" viewBox="0 0 20 20" fill="none">
+                    <path class="trash-lid" d="M3 5h14M8 5V3h4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M5 5v11a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M8 9v6M12 9v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Eliminar
+            </button>
         </div>
     </div>
 

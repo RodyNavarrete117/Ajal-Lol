@@ -729,7 +729,6 @@ tr:hover .date-badge {
     left: 250px;
     right: 0;
     margin: 0 auto;
-    width: max-content;
     transform: translateY(20px);
     z-index: 100;
     border-radius: 16px;
@@ -756,9 +755,30 @@ tr:hover .date-badge {
 .sel-btn-all:hover { background: rgba(255, 255, 255, 0.35); border-color: rgba(255, 255, 255, 0.7); }
 .sel-btn-clear { background: transparent; color: rgba(255, 255, 255, 0.85); }
 .sel-btn-clear:hover { background: rgba(255, 255, 255, 0.15); color: #ffffff; }
-.sel-btn-delete { background: rgba(239, 68, 68, 0.75); color: #ffffff; border-color: transparent; }
-.sel-btn-delete:hover { background: rgba(239, 68, 68, 1); }
+.sel-btn-delete { 
+    background: rgba(239, 68, 68, 0.75); 
+    color: #ffffff; 
+    border-color: transparent;      
+    padding: 8px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
+/* ── Animación tapa bote de basura ── */
+.sel-btn-delete svg {
+    width: 23px;
+    height: 23px;
+}
+
+.sel-btn-delete .trash-lid {
+    transform-origin: 8px 5px;
+    transition: transform 0.25s ease;
+}
+
+.sel-btn-delete:hover .trash-lid {
+    transform: rotate(-35deg) translateY(-1px);
+}
 
 /* ==================== MODAL DE DETALLE ==================== */
 
@@ -1087,6 +1107,64 @@ tr:hover .date-badge {
     overflow-y: hidden;
 }
 
+.sel-btn-all,
+.sel-btn-clear {
+    flex-direction: row;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+}
+
+.sel-btn-all i,
+.sel-btn-clear i {
+    font-size: 16px !important;
+}
+
+.sel-btn-export,
+.sel-btn-delete {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+}
+
+.sel-btn-clear {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sel-btn-export {
+    background: rgba(255, 255, 255, 0.20);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    gap: 0;
+}
+
+.sel-btn-export:hover {
+    background: rgba(255, 255, 255, 0.35);
+    border-color: rgba(255, 255, 255, 0.7);
+}
+
+.sel-btn-export svg {
+    width: 22px;
+    height: 22px;
+}
+
+/* En móvil ocultar texto, solo icono */
+@media (max-width: 600px) {
+    .sel-btn-export span { display: none; }
+}
+
 /* ==================== EXPORT TOAST ==================== */
 
 #exportToast {
@@ -1334,7 +1412,19 @@ tr:hover .date-badge {
     }
     .sort-button svg        { width: 22px; height: 22px; }
     .custom-select-dropdown { min-width: 180px; left: 0; }
-    .export-button          { order: 3; flex: 1 1 100%; width: 100% !important; justify-content: center; }
+        .export-button {
+        order: 3;
+        flex: 0 0 auto !important;
+        width: auto !important;
+        padding: 12px 24px;  /* ← más padding horizontal */
+        font-size: 0;
+        letter-spacing: 0;
+        gap: 0;
+    }
+        .export-button svg {
+        width: 24px;
+        height: 24px;
+    }
 
     /* ── Tabla cards ── */
     .table-container  { background: transparent !important; border: none !important; box-shadow: none !important; }
@@ -1400,23 +1490,6 @@ tr:hover .date-badge {
     .form-modal-header { padding: 20px 20px 16px; }
     .form-modal-body   { padding: 4px 20px; }
     .form-modal-footer { padding: 14px 20px 20px; flex-direction: column; }
-
-    /* Exportar: solo icono en móvil, mismo tamaño que los otros */
-    .export-button {
-        order: 3;
-        flex: 1;
-        min-width: 0;
-        width: auto !important;
-        padding: 12px;
-        gap: 0;
-    }
-
-    /* Ocultar el texto "Exportar PDF" */
-    .export-button span,
-    .export-button:not(:has(span)) {
-        font-size: 0;
-        letter-spacing: 0;
-    }
 
      .admin-table tr.dynamic-empty,
     .admin-table tr.empty-state-row {

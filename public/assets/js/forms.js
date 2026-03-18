@@ -238,6 +238,15 @@ function initSelectionLogic() {
         });
     }
 
+    const exportSelBtn = document.getElementById('exportSelBtn');
+        if (exportSelBtn) {
+            exportSelBtn.addEventListener('click', () => {
+                const ids = getChecked().map(cb => cb.value);
+                if (!ids.length) return;
+                exportSelectedForms(ids);
+            });
+        }
+
     // Botón "Eliminar seleccionados"
     const deleteSelBtn = document.getElementById('deleteSelBtn');
     if (deleteSelBtn) {
@@ -261,6 +270,42 @@ function initSelectionLogic() {
                 } 
             });
         });
+    }
+}
+
+async function exportSelectedForms(ids) {
+    showExportToast('loading');
+
+    try {
+        const params = ids.map(id => `ids[]=${id}`).join('&');
+        const response = await fetch(`/admin/forms/export/pdf?${params}`, {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/pdf'
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            throw new Error(errorData?.message || 'Error al generar PDF');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `formularios_seleccionados_${ids.length}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
+        showExportToast('success');
+
+    } catch (error) {
+        console.error('Error exportando PDF:', error);
+        showExportToast('error', error.message);
     }
 }
 

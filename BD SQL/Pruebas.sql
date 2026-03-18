@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 10-03-2026 a las 16:44:33
+-- Tiempo de generación: 18-03-2026 a las 16:16:41
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `prueba4`
+-- Base de datos: `prueba5`
 --
 
 -- --------------------------------------------------------
@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `actividades` (
   `id_actividad` int NOT NULL,
   `id_seccion` int NOT NULL,
-  `anio_actividad` int DEFAULT NULL,
+  `año_actividad` int DEFAULT NULL,
   `titulo_actividad` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `texto_actividad` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -66,13 +66,8 @@ CREATE TABLE `asistenciabeneficiarios` (
 --
 
 INSERT INTO `asistenciabeneficiarios` (`id_asistenciabeneficiario`, `id_informe`, `asistencianombrebeneficiario`, `asistenciaedadbeneficiario`, `created_at`) VALUES
-(1, 1, 'Pedro Rodolfo Navarrete Sosa', 40, '2026-01-14 15:00:00'),
-(2, 1, 'Sofía Dzul Canché', 33, '2026-01-14 15:05:00'),
-(3, 1, 'Ernesto Pech Tzuc', 47, '2026-01-14 15:10:00'),
-(4, 1, 'Mariana Caamal Chi', 28, '2026-01-14 15:15:00'),
-(5, 1, 'Tomás Ucan Moo', 52, '2026-01-14 15:20:00'),
 (6, 2, 'Margarita Balam Cocom', 36, '2026-01-16 16:00:00'),
-(7, 2, 'Ernesto Cauich Ek', 34, '2026-01-16 16:05:00'),
+(7, 2, 'Rafael Cauich Ek', 34, '2026-01-16 16:05:00'),
 (8, 2, 'Teresa Ucan May', 25, '2026-01-16 16:10:00'),
 (9, 2, 'Cirilo Tun Dzul', 61, '2026-01-16 16:15:00'),
 (10, 3, 'Armando Tun Poot', 42, '2026-01-15 14:30:00'),
@@ -127,7 +122,7 @@ INSERT INTO `asistenciabeneficiarios` (`id_asistenciabeneficiario`, `id_informe`
 (59, 54, 'Miriam Cauich Balam', 31, '2026-05-20 16:15:00'),
 (60, 57, 'Valentina Uc Cen', 27, '2026-06-05 14:00:00'),
 (61, 57, 'Javier Baalam Cohuo', 42, '2026-06-05 14:05:00'),
-(62, 57, 'José Alejandro Uc Morales', 35, '2026-06-05 14:10:00'),
+(62, 57, 'Ignacio Dzul Tun', 35, '2026-06-05 14:10:00'),
 (63, 58, 'Consuelo Poot Mis', 35, '2026-09-20 15:00:00'),
 (64, 58, 'Bernardo Xiu Cohuó', 51, '2026-09-20 15:05:00'),
 (65, 58, 'Alicia Tun Canché', 24, '2026-09-20 15:10:00'),
@@ -139,7 +134,20 @@ INSERT INTO `asistenciabeneficiarios` (`id_asistenciabeneficiario`, `id_informe`
 (71, 60, 'Patricia Dzul Cohuo', 22, '2026-03-03 14:05:00'),
 (72, 60, 'Andrés Cauich May', 43, '2026-03-03 14:10:00'),
 (73, 60, 'Gregorio Tun Balam', 54, '2026-03-03 14:15:00'),
-(74, 60, 'Esperanza Mis Xool', 39, '2026-03-03 14:20:00');
+(74, 60, 'Esperanza Mis Xool', 39, '2026-03-03 14:20:00'),
+(75, 62, 'Rodolfo Navarrete Ek', 21, '2026-03-11 15:57:38'),
+(76, 62, 'Alejandro Cab Can', 42, '2026-03-11 15:57:38'),
+(77, 62, 'Martina Lopéz', 23, '2026-03-11 15:57:38'),
+(78, 62, 'Mario Muñoz', 12, '2026-03-11 15:57:38'),
+(79, 62, 'Ignacio Montero', 43, '2026-03-11 15:57:38'),
+(80, 62, 'Alfredo Dorantes', 32, '2026-03-11 15:57:38'),
+(81, 65, 'Rodolfo Navarrete Ek', 21, '2026-03-12 15:45:11'),
+(82, 65, 'Alejandro Cab Can', 42, '2026-03-12 15:45:11'),
+(83, 65, 'Martina Lopéz', 53, '2026-03-12 15:45:11'),
+(84, 65, 'Mario Muñoz', 43, '2026-03-12 15:45:11'),
+(85, 65, 'Ignacio Montero', 32, '2026-03-12 15:45:11'),
+(86, 65, 'Alfredo Dorantes', 19, '2026-03-12 15:45:11'),
+(87, 65, 'Gustavo Pech', 20, '2026-03-12 15:45:11');
 
 -- --------------------------------------------------------
 
@@ -310,7 +318,6 @@ CREATE TABLE `informe` (
 --
 
 INSERT INTO `informe` (`id_informe`, `nombre_organizacion`, `evento`, `lugar`, `fecha`, `numero_telefonico`, `created_at`, `updated_at`) VALUES
-(1, 'Ajal-lol AC', 'Campaña de prevención de caries', 'Hoctún, Yucatán', '2026-01-14', '9991234567', '2026-02-20 18:06:10', '2026-02-20 18:06:10'),
 (2, 'Ajal-lol AC', 'Actividad recreativa de Año Nuevo', 'Izamal, Yucatán', '2026-01-16', '9997654321', '2026-02-20 18:06:10', '2026-02-20 18:06:10'),
 (3, 'Ajal-lol AC', 'Entrega de juguetes Día de Reyes', 'Tekit, Yucatán', '2026-01-15', '9998887777', '2026-02-20 18:06:10', '2026-02-20 18:06:10'),
 (7, 'Ajal-lol AC', 'Distribución de despensas alimentarias', 'Akil, Yucatán', '2026-02-20', NULL, '2026-02-26 23:10:08', '2026-02-26 23:10:08'),
@@ -329,7 +336,12 @@ INSERT INTO `informe` (`id_informe`, `nombre_organizacion`, `evento`, `lugar`, `
 (57, 'Ajal-lol AC', 'Jornada de reforestación comunitaria', 'Akil, Yucatán', '2026-06-05', NULL, '2026-03-03 00:53:34', '2026-03-03 00:53:34'),
 (58, 'Ajal-lol AC', 'Entrega de materiales de construcción', 'Akil, Yucatán', '2026-09-20', NULL, '2026-03-03 03:54:30', '2026-03-03 03:54:30'),
 (59, 'Ajal-lol AC', 'Programa de becas y apoyo educativo', 'Akil, Yucatán', '2026-07-20', NULL, '2026-03-03 04:09:53', '2026-03-03 04:09:53'),
-(60, 'Ajal-lol AC', 'Entrega de despensas y artículos del hogar', 'Akil, Yucatán', '2026-03-03', NULL, '2026-03-03 21:31:04', '2026-03-03 21:31:04');
+(60, 'Ajal-lol AC', 'Entrega de despensas y artículos del hogar', 'Akil, Yucatán', '2026-03-03', NULL, '2026-03-03 21:31:04', '2026-03-03 21:31:04'),
+(61, 'Ajal-lol AC', 'Brigada de Salud Integral \"Vida Sana\"', 'Izamal, Yucatán', '2026-03-10', NULL, '2026-03-11 00:05:21', '2026-03-11 00:05:21'),
+(62, 'Ajal-lol AC', 'Jornada de reforestación comunitaria', 'Akil, Yucatán', '2026-03-11', NULL, '2026-03-11 21:57:37', '2026-03-11 21:57:37'),
+(63, 'Ajal-lol AC', 'Jornada de reforestación comunitaria', 'Chikindzonot, Yucatán', '2026-03-11', NULL, '2026-03-11 22:50:10', '2026-03-11 22:50:10'),
+(64, 'Ajal-lol AC', 'Campaña de apoyo a adultos mayores', 'Acanceh, Yucatán', '2026-03-11', NULL, '2026-03-11 23:16:43', '2026-03-11 23:16:43'),
+(65, 'Ajal-lol AC', 'Taller de capacitación para el empleo', 'Abalá, Yucatán', '2026-03-20', NULL, '2026-03-12 21:45:11', '2026-03-12 21:45:11');
 
 -- --------------------------------------------------------
 
@@ -503,7 +515,7 @@ CREATE TABLE `proyectos` (
   `categoria` int NOT NULL,
   `titulo_proyecto` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `descripcion_proyecto` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `anio_proyecto` int DEFAULT NULL
+  `año_proyecto` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -538,9 +550,6 @@ CREATE TABLE `reportebeneficiarios` (
 --
 
 INSERT INTO `reportebeneficiarios` (`id_reportebeneficiario`, `id_informe`, `reportenombrebeneficiario`, `reportecurpbeneficiario`, `reporteedadbeneficiario`, `created_at`) VALUES
-(1, 1, 'Juan Pérez López', 'PELJ900101HYNLPN09', 35, '2026-02-20 18:06:10'),
-(2, 1, 'Ana María López Tun', 'LOTA920305MYNPNN03', 33, '2026-02-20 18:06:10'),
-(3, 1, 'Carlos Méndez Chi', 'MECC880712HYNCHS02', 37, '2026-02-20 18:06:10'),
 (4, 2, 'Luis Fernández Pech', 'FEPL930212HYNPRR07', 31, '2026-02-20 18:06:10'),
 (5, 2, 'María Gómez Pool', 'GOPM950610MYNPRL08', 29, '2026-02-20 18:06:10'),
 (6, 3, 'José Chan Yam', 'CHYJ870914HYNMJR05', 38, '2026-02-20 18:06:10'),
@@ -650,7 +659,44 @@ INSERT INTO `reportebeneficiarios` (`id_reportebeneficiario`, `id_informe`, `rep
 (265, 60, 'Daniel Aguilar Reyes', 'AGRD880912HDFGLN23', 37, '2026-03-03 15:31:04'),
 (266, 60, 'Erika Pacheco Luna', 'PALE970201MDFCHS24', 28, '2026-03-03 15:31:04'),
 (267, 60, 'Francisco Ríos Mendoza', 'RIMF850617HDFNSR25', 40, '2026-03-03 15:31:04'),
-(268, 60, 'Guadalupe Castro Mejía', 'CAMG920403MDFSTL26', 33, '2026-03-03 15:31:04');
+(268, 60, 'Guadalupe Castro Mejía', 'CAMG920403MDFSTL26', 33, '2026-03-03 15:31:04'),
+(269, 61, 'Alejandro García Torres', 'GATA850522HDFLRN03', 56, '2026-03-10 18:05:21'),
+(270, 61, 'María Elena López Ruiz', 'LORM920315MDFZRS08', 23, '2026-03-10 18:05:21'),
+(271, 61, 'Ricardo Méndez Castro', 'MECR781110HDFNNN01', 32, '2026-03-10 18:05:21'),
+(272, 61, 'Sofía Villalobos Sanz', 'VISS050720MDFLND05', 23, '2026-03-10 18:05:21'),
+(273, 61, 'Javier Ortiz Pineda', 'ORPJ600102HDFRRD09', 21, '2026-03-10 18:05:21'),
+(274, 61, 'Claudia Rivas Montes', 'RIMC951212MDFNTN02', 39, '2026-03-10 18:05:21'),
+(275, 63, 'Alejandro García Torres', 'GATA850522HDFLRN03', 21, '2026-03-11 16:50:10'),
+(276, 63, 'María Elena López Ruiz', 'LORM920315MDFZRS08', 43, '2026-03-11 16:50:10'),
+(277, 63, 'Ricardo Méndez Castro', 'MECR781110HDFNNN01', 43, '2026-03-11 16:50:10'),
+(278, 63, 'Sofía Villalobos Sanz', 'VISS050720MDFLND05', 43, '2026-03-11 16:50:10'),
+(279, 63, 'Javier Ortiz Pineda', 'ORPJ600102HDFRRD09', 12, '2026-03-11 16:50:10'),
+(280, 63, 'Claudia Rivas Montes', 'RIMC951212MDFNTN02', 42, '2026-03-11 16:50:10'),
+(281, 64, 'Juan Carlos Méndez López', 'MELJ900315HYNNDN01', 32, '2026-03-11 17:16:43'),
+(282, 64, 'María Elena López Ruiz', 'LORM920315MDFZRS08', 54, '2026-03-11 17:16:43'),
+(283, 64, 'Ricardo Méndez Castro', 'MECR781110HDFNNN01', 21, '2026-03-11 17:16:43'),
+(284, 64, 'Sofía Villalobos Sanz', 'VISS050720MDFLND05', 43, '2026-03-11 17:16:43'),
+(285, 64, 'Javier Ortiz Pineda', 'ORPJ600102HDFRRD09', 12, '2026-03-11 17:16:43'),
+(286, 64, 'Claudia Rivas Montes', 'RIMC951212MDFNTN02', 65, '2026-03-11 17:16:43'),
+(287, 64, 'María Fernanda Ruiz Gómez', 'RUGM920804MYNRRM02', 43, '2026-03-11 17:16:43'),
+(288, 64, 'Luis Alberto Chan Poot', 'CAPL880112HYNHST03', 31, '2026-03-11 17:16:43'),
+(289, 64, 'Ana Sofía Castillo Pérez', 'CAPA950623MYNSRN04', 67, '2026-03-11 17:16:43'),
+(290, 64, 'José Manuel Tun Canul', 'TUCM870909HYNMNL05', 90, '2026-03-11 17:16:43'),
+(291, 64, 'Daniela Guadalupe Ek Cauich', 'ECDG990214MYNCLK06', 21, '2026-03-11 17:16:43'),
+(292, 64, 'Pedro Antonio Puc May', 'PUMP910530HYNPCM07', 54, '2026-03-11 17:16:43'),
+(293, 64, 'Karla Beatriz Pech Dzib', 'PEDK960718MYNPBZ08', 34, '2026-03-11 17:16:43'),
+(294, 64, 'Miguel Ángel Cetz Canché', 'CACM890421HYNCTZ09', 43, '2026-03-11 17:16:43'),
+(295, 64, 'Laura Patricia Poot Chi', 'POCL940102MYNPRC10', 23, '2026-03-11 17:16:43'),
+(296, 64, 'Teresa del Carmen May Pech', 'MAPT850627MYNTRS12', 24, '2026-03-11 17:16:43'),
+(297, 64, 'Rosa María Ek Tun', 'ETRM910905MYNRST14', 54, '2026-03-11 17:16:43'),
+(298, 64, 'Andrés Felipe Dzib Chan', 'DCHA920210HYNFDR15', 65, '2026-03-11 17:16:43'),
+(299, 64, 'Gabriela Alejandra Puc Chi', 'PUCG980701MYNGBC16', 76, '2026-03-11 17:16:43'),
+(300, 64, 'Víctor Hugo Canché May', 'CAMV860418HYNVTR17', 34, '2026-03-11 17:16:43'),
+(301, 64, 'Ricardo Antonio Chan Tun', 'CHTR900806HYNRCN19', 31, '2026-03-11 17:16:43'),
+(302, 64, 'Jorge Alberto Pech Canul', 'PECJ910214HYNGRG21', 21, '2026-03-11 17:16:43'),
+(303, 64, 'Verónica del Carmen Chan Ek', 'CHEV940322MYNVRC22', 21, '2026-03-11 17:16:43'),
+(304, 64, 'Daniela Beatriz Canché Pech', 'CAPD960406MYNDNL26', 43, '2026-03-11 17:16:43'),
+(305, 64, 'Oscar Daniel Cetz Poot', 'CHDC980115MYNCLD30', 21, '2026-03-11 17:16:43');
 
 -- --------------------------------------------------------
 
@@ -689,14 +735,6 @@ CREATE TABLE `seccion` (
   `estado_seccion` tinyint(1) DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `seccion`
---
-
-INSERT INTO `seccion` (`id_seccion`, `id_rol_usuario`, `titulo_seccion`, `estado_seccion`) VALUES
-(1, 1, 'Panel Administrador', 1),
-(2, 2, 'Panel Editor', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -717,8 +755,9 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('8tQprrdRANzW0y88F5JnPBqR2qYdghPhcUlsjlB8', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiMlV4WHdqRWIwWk1KeWNqeUFPeE1OZHd0ckpCZGxkWldoSTd3bkFKbyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9ob21lIjtzOjU6InJvdXRlIjtzOjEwOiJhZG1pbi5ob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO30=', 1772561007),
-('bIPxwXZIOSucCE7xGN9b8OcVgLBdt2VI7TMTlSiH', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoicXdTaENTVkdFZXdiQjFZUjFqMWdJclpzYnR1MVRLUVExQnhGQ01UYiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hcGkvbm90aWZpY2F0aW9ucy9jb3VudCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO30=', 1772644859);
+('8MiYoqoafimQYO3ha8ZlCn2SHQWBaJLf4VOm6QTW', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiNXZZTEZCb3lLeXBLcndBc3Jmc05ZTEo0UjVPTnR1cEFjYnI1QzZlUyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hcGkvbm90aWZpY2F0aW9ucy9jb3VudCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO30=', 1773850587),
+('wUm8KirR40x0a72JMBpZk6MH0h1soAQP4tya2ljc', NULL, '127.0.0.1', 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/17.5 Mobile/15A5370a Safari/602.1', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiMDBOQjZFN0pQUXdRRzFuSHRsN2I0UHY0a1kxS0J1dWl3ODlHbjh5USI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hcGkvbm90aWZpY2F0aW9ucy9jb3VudCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO30=', 1773686743),
+('zF4gxUqVo0UIPrEWE6DN48qkF7g94ToLADdNMb7E', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoibXlhUTk2cG5PUGdSM09LNmZSMmpXcnJrQUs1ZnB5d3d2V1kyYU03cSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO30=', 1773769107);
 
 -- --------------------------------------------------------
 
@@ -1000,7 +1039,7 @@ ALTER TABLE `aliados`
 -- AUTO_INCREMENT de la tabla `asistenciabeneficiarios`
 --
 ALTER TABLE `asistenciabeneficiarios`
-  MODIFY `id_asistenciabeneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+  MODIFY `id_asistenciabeneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
 
 --
 -- AUTO_INCREMENT de la tabla `categoria_proyectos`
@@ -1042,7 +1081,7 @@ ALTER TABLE `imagenes_proyectos`
 -- AUTO_INCREMENT de la tabla `informe`
 --
 ALTER TABLE `informe`
-  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT de la tabla `inicio`
@@ -1096,7 +1135,7 @@ ALTER TABLE `redes_sociales`
 -- AUTO_INCREMENT de la tabla `reportebeneficiarios`
 --
 ALTER TABLE `reportebeneficiarios`
-  MODIFY `id_reportebeneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=269;
+  MODIFY `id_reportebeneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=306;
 
 --
 -- AUTO_INCREMENT de la tabla `rol_usuario`

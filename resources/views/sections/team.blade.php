@@ -10,7 +10,7 @@
 
       <article class="team-card" data-anim="zoom-in" data-delay="0" role="listitem">
         <div class="member-img">
-          <img src="{{ asset('assets/img/team/1.png') }}"
+          <img src="https://ajal-lol.org/assets/img/team/1.png"
                alt="Fotografía de LEG. Jenevy Ríos Pech, Presidenta" loading="lazy">
         </div>
         <div class="member-info">
@@ -21,7 +21,7 @@
 
       <article class="team-card" data-anim="zoom-in" data-delay="100" role="listitem">
         <div class="member-img">
-          <img src="{{ asset('assets/img/team/4.png') }}"
+          <img src="https://ajal-lol.org/assets/img/team/4.png"
                alt="Fotografía de Br. Mirna El Pech, Secretaria" loading="lazy">
         </div>
         <div class="member-info">
@@ -32,7 +32,7 @@
 
       <article class="team-card" data-anim="zoom-in" data-delay="200" role="listitem">
         <div class="member-img">
-          <img src="{{ asset('assets/img/team/3.png') }}"
+          <img src="https://ajal-lol.org/assets/img/team/3.png"
                alt="Fotografía de Ing. Paula Guadalupe Pech Puc, Tesorera" loading="lazy">
         </div>
         <div class="member-info">

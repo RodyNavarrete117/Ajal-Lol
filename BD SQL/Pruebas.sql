@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 18-03-2026 a las 16:16:41
+-- Tiempo de generación: 19-03-2026 a las 16:48:14
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -725,14 +725,14 @@ INSERT INTO `rol_usuario` (`id_rol_usuario`, `id_usuario`, `cargo_usuario`) VALU
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `seccion`
+-- Estructura de tabla para la tabla `secciones_web`
 --
 
-CREATE TABLE `seccion` (
+CREATE TABLE `secciones_web` (
   `id_seccion` int NOT NULL,
-  `id_rol_usuario` int NOT NULL,
   `titulo_seccion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `estado_seccion` tinyint(1) DEFAULT '1'
+  `estado_seccion` tinyint(1) DEFAULT '1',
+  `id_usuario` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -757,6 +757,7 @@ CREATE TABLE `sessions` (
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
 ('8MiYoqoafimQYO3ha8ZlCn2SHQWBaJLf4VOm6QTW', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiNXZZTEZCb3lLeXBLcndBc3Jmc05ZTEo0UjVPTnR1cEFjYnI1QzZlUyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hcGkvbm90aWZpY2F0aW9ucy9jb3VudCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO30=', 1773850587),
 ('wUm8KirR40x0a72JMBpZk6MH0h1soAQP4tya2ljc', NULL, '127.0.0.1', 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/17.5 Mobile/15A5370a Safari/602.1', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiMDBOQjZFN0pQUXdRRzFuSHRsN2I0UHY0a1kxS0J1dWl3ODlHbjh5USI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hcGkvbm90aWZpY2F0aW9ucy9jb3VudCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO30=', 1773686743),
+('yVpFxR41Wi3Wb7CQ2vPRHKx8OBFxrNjPgoIVmmDd', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiU1lqU2J2MktZOFZiaXFlaERBSGNzelVkZnNadjBvQUJDU1liblJQZiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1773938879),
 ('zF4gxUqVo0UIPrEWE6DN48qkF7g94ToLADdNMb7E', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoibXlhUTk2cG5PUGdSM09LNmZSMmpXcnJrQUs1ZnB5d3d2V1kyYU03cSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO30=', 1773769107);
 
 -- --------------------------------------------------------
@@ -984,11 +985,11 @@ ALTER TABLE `rol_usuario`
   ADD KEY `id_usuario` (`id_usuario`);
 
 --
--- Indices de la tabla `seccion`
+-- Indices de la tabla `secciones_web`
 --
-ALTER TABLE `seccion`
+ALTER TABLE `secciones_web`
   ADD PRIMARY KEY (`id_seccion`),
-  ADD KEY `id_rol_usuario` (`id_rol_usuario`);
+  ADD KEY `fk_seccion_usuario` (`id_usuario`);
 
 --
 -- Indices de la tabla `sessions`
@@ -1144,9 +1145,9 @@ ALTER TABLE `rol_usuario`
   MODIFY `id_rol_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT de la tabla `seccion`
+-- AUTO_INCREMENT de la tabla `secciones_web`
 --
-ALTER TABLE `seccion`
+ALTER TABLE `secciones_web`
   MODIFY `id_seccion` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
@@ -1175,13 +1176,13 @@ ALTER TABLE `widgets_actividades`
 -- Filtros para la tabla `actividades`
 --
 ALTER TABLE `actividades`
-  ADD CONSTRAINT `actividades_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `seccion` (`id_seccion`);
+  ADD CONSTRAINT `actividades_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
 --
 -- Filtros para la tabla `aliados`
 --
 ALTER TABLE `aliados`
-  ADD CONSTRAINT `aliados_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `seccion` (`id_seccion`);
+  ADD CONSTRAINT `aliados_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
 --
 -- Filtros para la tabla `asistenciabeneficiarios`
@@ -1193,13 +1194,13 @@ ALTER TABLE `asistenciabeneficiarios`
 -- Filtros para la tabla `contacto`
 --
 ALTER TABLE `contacto`
-  ADD CONSTRAINT `contacto_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `seccion` (`id_seccion`);
+  ADD CONSTRAINT `contacto_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
 --
 -- Filtros para la tabla `directiva`
 --
 ALTER TABLE `directiva`
-  ADD CONSTRAINT `directiva_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `seccion` (`id_seccion`);
+  ADD CONSTRAINT `directiva_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
 --
 -- Filtros para la tabla `imagenes_proyectos`
@@ -1211,13 +1212,13 @@ ALTER TABLE `imagenes_proyectos`
 -- Filtros para la tabla `inicio`
 --
 ALTER TABLE `inicio`
-  ADD CONSTRAINT `inicio_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `seccion` (`id_seccion`);
+  ADD CONSTRAINT `inicio_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
 --
 -- Filtros para la tabla `nosotros`
 --
 ALTER TABLE `nosotros`
-  ADD CONSTRAINT `nosotros_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `seccion` (`id_seccion`);
+  ADD CONSTRAINT `nosotros_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
 --
 -- Filtros para la tabla `notificaciones`
@@ -1230,13 +1231,13 @@ ALTER TABLE `notificaciones`
 -- Filtros para la tabla `preguntas_frecuentes`
 --
 ALTER TABLE `preguntas_frecuentes`
-  ADD CONSTRAINT `preguntas_frecuentes_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `seccion` (`id_seccion`);
+  ADD CONSTRAINT `preguntas_frecuentes_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
 --
 -- Filtros para la tabla `proyectos`
 --
 ALTER TABLE `proyectos`
-  ADD CONSTRAINT `proyectos_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `seccion` (`id_seccion`),
+  ADD CONSTRAINT `proyectos_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`),
   ADD CONSTRAINT `proyectos_ibfk_2` FOREIGN KEY (`categoria`) REFERENCES `categoria_proyectos` (`id_categoria`);
 
 --
@@ -1252,10 +1253,10 @@ ALTER TABLE `rol_usuario`
   ADD CONSTRAINT `rol_usuario_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
 
 --
--- Filtros para la tabla `seccion`
+-- Filtros para la tabla `secciones_web`
 --
-ALTER TABLE `seccion`
-  ADD CONSTRAINT `seccion_ibfk_1` FOREIGN KEY (`id_rol_usuario`) REFERENCES `rol_usuario` (`id_rol_usuario`);
+ALTER TABLE `secciones_web`
+  ADD CONSTRAINT `fk_seccion_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
 
 --
 -- Filtros para la tabla `widgets_actividades`

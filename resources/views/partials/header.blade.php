@@ -36,7 +36,7 @@
     <div class="container">
 
       <a href="{{ url('/') }}" class="logo" aria-label="Ajal Lol A.C. — Inicio">
-        <img src="{{ asset('assets/img/logo.webp') }}" alt="Logotipo Ajal Lol" width="90" height="54">
+        <img src="{{ asset('assets/img/ajallol/ImagenPrincipal.png') }}" alt="Logotipo Ajal Lol">
       </a>
 
       <nav id="navmenu" class="navmenu" aria-label="Navegación principal">

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 04-03-2026 a las 17:21:00
+-- Tiempo de generación: 19-03-2026 a las 16:48:14
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `prueba3`
+-- Base de datos: `prueba5`
 --
 
 -- --------------------------------------------------------
@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `actividades` (
   `id_actividad` int NOT NULL,
   `id_seccion` int NOT NULL,
-  `anio_actividad` int DEFAULT NULL,
+  `año_actividad` int DEFAULT NULL,
   `titulo_actividad` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `texto_actividad` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -50,135 +50,104 @@ CREATE TABLE `aliados` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `beneficiarios`
+-- Estructura de tabla para la tabla `asistenciabeneficiarios`
 --
 
-CREATE TABLE `beneficiarios` (
-  `id_beneficiario` int NOT NULL,
+CREATE TABLE `asistenciabeneficiarios` (
+  `id_asistenciabeneficiario` int NOT NULL,
   `id_informe` int NOT NULL,
-  `nombre` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `curp` char(18) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `asistencianombrebeneficiario` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `asistenciaedadbeneficiario` int DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `beneficiarios`
+-- Volcado de datos para la tabla `asistenciabeneficiarios`
 --
 
-INSERT INTO `beneficiarios` (`id_beneficiario`, `id_informe`, `nombre`, `curp`, `created_at`) VALUES
-(1, 1, 'Juan Pérez López', 'PELJ900101HYNLPN09', '2026-02-20 18:06:10'),
-(2, 1, 'Ana María López Tun', 'LOTA920305MYNPNN03', '2026-02-20 18:06:10'),
-(3, 1, 'Carlos Méndez Chi', 'MECC880712HYNCHS02', '2026-02-20 18:06:10'),
-(4, 2, 'Luis Fernández Pech', 'FEPL930212HYNPRR07', '2026-02-20 18:06:10'),
-(5, 2, 'María Gómez Pool', 'GOPM950610MYNPRL08', '2026-02-20 18:06:10'),
-(6, 3, 'José Chan Yam', 'CHYJ870914HYNMJR05', '2026-02-20 18:06:10'),
-(7, 3, 'Daniela Torres Cauich', 'TOCD990120MYNTRN06', '2026-02-20 18:06:10'),
-(8, 3, 'Miguel Uc Ek', 'UCEM910315HYNCMK04', '2026-02-20 18:06:10'),
-(9, 3, 'Laura Canul Poot', 'CAPL920725MYNPLN02', '2026-02-20 18:06:10'),
-(151, 22, 'Octavio Paz Novelo', 'NISJ850320HYNCSF01', '2026-03-02 18:05:35'),
-(152, 22, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', '2026-03-02 18:05:35'),
-(153, 22, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', '2026-03-02 18:05:35'),
-(154, 22, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', '2026-03-02 18:05:35'),
-(155, 22, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', '2026-03-02 18:05:35'),
-(156, 22, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', '2026-03-02 18:05:35'),
-(171, 30, 'Octavio Paz Novelo', 'NISJ850320HYNCSF01', '2026-03-02 18:20:28'),
-(172, 30, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', '2026-03-02 18:20:28'),
-(173, 30, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', '2026-03-02 18:20:28'),
-(174, 30, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', '2026-03-02 18:20:28'),
-(175, 30, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', '2026-03-02 18:20:28'),
-(176, 30, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', '2026-03-02 18:20:28'),
-(177, 31, 'Octavio Paz Novelo', 'NISJ850320HYNCSF01', '2026-03-02 18:22:21'),
-(178, 31, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', '2026-03-02 18:22:21'),
-(179, 31, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', '2026-03-02 18:22:21'),
-(180, 31, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', '2026-03-02 18:22:21'),
-(181, 31, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', '2026-03-02 18:22:21'),
-(182, 31, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', '2026-03-02 18:22:21'),
-(183, 32, 'Octavio Paz Novelo', 'NISJ850320HYNCSF01', '2026-03-02 18:25:03'),
-(184, 32, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', '2026-03-02 18:25:03'),
-(185, 32, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', '2026-03-02 18:25:03'),
-(186, 32, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', '2026-03-02 18:25:03'),
-(187, 32, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', '2026-03-02 18:25:03'),
-(188, 32, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', '2026-03-02 18:25:03'),
-(189, 37, 'Octavio Paz Novelo', 'NISJ850320HYNCSF01', '2026-03-02 18:28:43'),
-(190, 37, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', '2026-03-02 18:28:43'),
-(191, 37, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', '2026-03-02 18:28:43'),
-(192, 37, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', '2026-03-02 18:28:43'),
-(193, 37, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', '2026-03-02 18:28:43'),
-(194, 37, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', '2026-03-02 18:28:43'),
-(195, 43, 'Octavio Paz Novelo', 'NISJ850320HYNCSF01', '2026-03-02 18:32:40'),
-(196, 43, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', '2026-03-02 18:32:40'),
-(197, 43, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', '2026-03-02 18:32:40'),
-(198, 43, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', '2026-03-02 18:32:40'),
-(199, 43, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', '2026-03-02 18:32:40'),
-(200, 43, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', '2026-03-02 18:32:40'),
-(201, 44, 'Octavio Paz Novelo', 'NISJ850320HYNCSF01', '2026-03-02 18:33:53'),
-(202, 44, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', '2026-03-02 18:33:53'),
-(203, 44, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', '2026-03-02 18:33:53'),
-(204, 44, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', '2026-03-02 18:33:53'),
-(205, 44, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', '2026-03-02 18:33:53'),
-(206, 44, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', '2026-03-02 18:33:53'),
-(207, 45, 'Octavio Paz Novelo', 'NISJ850320HYNCSF01', '2026-03-02 18:35:01'),
-(208, 45, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', '2026-03-02 18:35:01'),
-(209, 45, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', '2026-03-02 18:35:01'),
-(210, 45, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', '2026-03-02 18:35:01'),
-(211, 45, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', '2026-03-02 18:35:01'),
-(212, 45, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', '2026-03-02 18:35:01'),
-(213, 48, 'Octavio Paz Novelo', 'NISJ850320HYNCSF01', '2026-03-02 18:37:39'),
-(214, 48, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', '2026-03-02 18:37:39'),
-(215, 48, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', '2026-03-02 18:37:39'),
-(216, 48, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', '2026-03-02 18:37:39'),
-(217, 48, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', '2026-03-02 18:37:39'),
-(218, 48, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', '2026-03-02 18:37:39'),
-(219, 49, 'Octavio Paz Novelo', 'NISJ850320HYNCSF01', '2026-03-02 18:38:15'),
-(220, 49, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', '2026-03-02 18:38:15'),
-(221, 49, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', '2026-03-02 18:38:15'),
-(222, 49, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', '2026-03-02 18:38:15'),
-(223, 49, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', '2026-03-02 18:38:15'),
-(224, 49, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', '2026-03-02 18:38:15'),
-(225, 53, 'Octavio Paz Novelo', 'NISJ850320HYNCSF01', '2026-03-02 18:51:41'),
-(226, 53, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', '2026-03-02 18:51:41'),
-(227, 53, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', '2026-03-02 18:51:41'),
-(228, 53, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', '2026-03-02 18:51:41'),
-(229, 53, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', '2026-03-02 18:51:41'),
-(230, 53, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', '2026-03-02 18:51:41'),
-(231, 54, 'Octavio Paz Novelo', 'NISJ850320HYNCSF01', '2026-03-02 18:52:20'),
-(232, 54, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', '2026-03-02 18:52:20'),
-(233, 54, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', '2026-03-02 18:52:20'),
-(234, 54, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', '2026-03-02 18:52:20'),
-(235, 54, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', '2026-03-02 18:52:20'),
-(236, 54, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', '2026-03-02 18:52:20'),
-(237, 57, 'Octavio Paz Novelo', 'NISJ850320HYNCSF01', '2026-03-02 18:53:34'),
-(238, 57, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', '2026-03-02 18:53:34'),
-(239, 57, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', '2026-03-02 18:53:34'),
-(240, 57, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', '2026-03-02 18:53:34'),
-(241, 57, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', '2026-03-02 18:53:34'),
-(242, 57, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', '2026-03-02 18:53:34'),
-(243, 58, 'Octavio Paz Novelo', 'NISJ850320HYNCSF01', '2026-03-02 21:54:30'),
-(244, 58, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', '2026-03-02 21:54:30'),
-(245, 58, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', '2026-03-02 21:54:30'),
-(246, 58, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', '2026-03-02 21:54:30'),
-(247, 58, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', '2026-03-02 21:54:30'),
-(248, 58, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', '2026-03-02 21:54:30'),
-(249, 59, 'Octavio Paz Novelo', 'NISJ850320HYNCSF01', '2026-03-02 22:09:53'),
-(250, 59, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', '2026-03-02 22:09:53'),
-(251, 59, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', '2026-03-02 22:09:53'),
-(252, 59, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', '2026-03-02 22:09:53'),
-(253, 59, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', '2026-03-02 22:09:53'),
-(254, 59, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', '2026-03-02 22:09:53'),
-(255, 60, 'Octavio Paz Novelo', 'NISJ850320HYNCSF01', '2026-03-03 15:31:04'),
-(256, 60, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', '2026-03-03 15:31:04'),
-(257, 60, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', '2026-03-03 15:31:04'),
-(258, 60, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', '2026-03-03 15:31:04'),
-(259, 60, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', '2026-03-03 15:31:04'),
-(260, 60, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', '2026-03-03 15:31:04'),
-(261, 60, 'Valeria Peña Cabrera', 'PECV990120MYNPBR06', '2026-03-03 15:31:04'),
-(262, 60, 'José López Reyes', 'LORJ860118HDFPYR07', '2026-03-03 15:31:04'),
-(263, 60, 'Fernando Mendoza Silva', 'MESF840519HDFNLR11', '2026-03-03 15:31:04'),
-(264, 60, 'Ángel Medina Torres', 'META900315HDFDTR21', '2026-03-03 15:31:04'),
-(265, 60, 'Daniel Aguilar Reyes', 'AGRD880912HDFGLN23', '2026-03-03 15:31:04'),
-(266, 60, 'Erika Pacheco Luna', 'PALE970201MDFCHS24', '2026-03-03 15:31:04'),
-(267, 60, 'Francisco Ríos Mendoza', 'RIMF850617HDFNSR25', '2026-03-03 15:31:04'),
-(268, 60, 'Guadalupe Castro Mejía', 'CAMG920403MDFSTL26', '2026-03-03 15:31:04');
+INSERT INTO `asistenciabeneficiarios` (`id_asistenciabeneficiario`, `id_informe`, `asistencianombrebeneficiario`, `asistenciaedadbeneficiario`, `created_at`) VALUES
+(6, 2, 'Margarita Balam Cocom', 36, '2026-01-16 16:00:00'),
+(7, 2, 'Rafael Cauich Ek', 34, '2026-01-16 16:05:00'),
+(8, 2, 'Teresa Ucan May', 25, '2026-01-16 16:10:00'),
+(9, 2, 'Cirilo Tun Dzul', 61, '2026-01-16 16:15:00'),
+(10, 3, 'Armando Tun Poot', 42, '2026-01-15 14:30:00'),
+(11, 3, 'Verónica Moo Chi', 29, '2026-01-15 14:35:00'),
+(12, 3, 'Héctor Canul Tzec', 55, '2026-01-15 14:40:00'),
+(13, 3, 'Gabriela Chuc Noh', 31, '2026-01-15 14:45:00'),
+(14, 7, 'Humberto Caamal Kú', 50, '2026-02-20 17:00:00'),
+(15, 7, 'Adriana Pool Tzab', 27, '2026-02-20 17:05:00'),
+(16, 7, 'Gilberto Chan Chim', 37, '2026-02-20 17:10:00'),
+(17, 7, 'Lorena Couoh Nah', 32, '2026-02-20 17:15:00'),
+(18, 7, 'Domingo Ku Xool', 45, '2026-02-20 17:20:00'),
+(19, 7, 'Esperanza Dzib Canche', 38, '2026-02-20 17:25:00'),
+(20, 7, 'Nicolás Pech Baas', 60, '2026-02-20 17:30:00'),
+(21, 22, 'Beatriz Yam Xool', 25, '2026-02-20 15:00:00'),
+(22, 22, 'Aurelio Mis Kauil', 53, '2026-02-20 15:05:00'),
+(23, 22, 'Claudia Chuc Baas', 30, '2026-02-20 15:10:00'),
+(24, 22, 'Marcos Cupul Noh', 41, '2026-02-20 15:15:00'),
+(25, 30, 'Alejandro Dzib Novelo', 44, '2026-03-01 16:00:00'),
+(26, 30, 'Patricia Canul Cocom', 38, '2026-03-01 16:05:00'),
+(27, 30, 'Ramón Tuz Tzec', 56, '2026-03-01 16:10:00'),
+(28, 31, 'Isabel Ek Kantún', 26, '2026-03-21 15:30:00'),
+(29, 31, 'Yolanda Cen Balam', 49, '2026-03-21 15:35:00'),
+(30, 31, 'Félix Cohuo Xiu', 62, '2026-03-21 15:40:00'),
+(31, 32, 'Óscar Tello Mex', 34, '2026-03-02 14:00:00'),
+(32, 32, 'Fernanda Uicab Chan', 25, '2026-03-02 14:05:00'),
+(33, 32, 'Crescencio Poot Ku', 52, '2026-03-02 14:10:00'),
+(34, 37, 'Liliana Nah Uc', 28, '2026-02-22 16:30:00'),
+(35, 37, 'Sebastián Chim Cohuó', 37, '2026-02-22 16:35:00'),
+(36, 37, 'Dolores Cauich Pat', 45, '2026-02-22 16:40:00'),
+(37, 43, 'Carmen Kú Xiu', 45, '2026-02-20 19:00:00'),
+(38, 43, 'Arnulfo Dzul Pat', 59, '2026-02-20 19:05:00'),
+(39, 43, 'Norma Canché Tun', 30, '2026-02-20 19:10:00'),
+(40, 44, 'Víctor Baas Canche', 36, '2026-03-03 15:00:00'),
+(41, 44, 'Esther May Cocom', 47, '2026-03-03 15:05:00'),
+(42, 44, 'Rogelio Dzul Xool', 31, '2026-03-03 15:10:00'),
+(43, 45, 'Rubén Cauich Dzul', 43, '2026-04-02 16:00:00'),
+(44, 45, 'Diana Pech Ucan', 28, '2026-04-02 16:05:00'),
+(45, 45, 'Gregorio Tun Balam', 54, '2026-04-02 16:10:00'),
+(46, 48, 'Silvia Cob Kauil', 25, '2026-04-15 14:30:00'),
+(47, 48, 'Mauricio Xool Moo', 40, '2026-04-15 14:35:00'),
+(48, 48, 'Lorena Couoh Nah', 32, '2026-04-15 14:40:00'),
+(49, 49, 'Dolores Chel Tzuc', 32, '2026-05-01 15:00:00'),
+(50, 49, 'Francisco Caamal Balam', 49, '2026-05-01 15:05:00'),
+(51, 49, 'Consuelo Poot Mis', 65, '2026-05-01 15:10:00'),
+(52, 49, 'Bernardo Xiu Cohuó', 71, '2026-05-01 15:15:00'),
+(53, 53, 'Arturo Dzib Cauich', 38, '2026-04-02 17:00:00'),
+(54, 53, 'Guadalupe Mex Poot', 33, '2026-04-02 17:05:00'),
+(55, 53, 'Lucero Cohuo Chan', 26, '2026-04-02 17:10:00'),
+(56, 54, 'Enrique Noh Tzab', 45, '2026-05-20 16:00:00'),
+(57, 54, 'Rebeca Chan Ucan', 24, '2026-05-20 16:05:00'),
+(58, 54, 'Ignacio Ku Tuz', 56, '2026-05-20 16:10:00'),
+(59, 54, 'Miriam Cauich Balam', 31, '2026-05-20 16:15:00'),
+(60, 57, 'Valentina Uc Cen', 27, '2026-06-05 14:00:00'),
+(61, 57, 'Javier Baalam Cohuo', 42, '2026-06-05 14:05:00'),
+(62, 57, 'Ignacio Dzul Tun', 35, '2026-06-05 14:10:00'),
+(63, 58, 'Consuelo Poot Mis', 35, '2026-09-20 15:00:00'),
+(64, 58, 'Bernardo Xiu Cohuó', 51, '2026-09-20 15:05:00'),
+(65, 58, 'Alicia Tun Canché', 24, '2026-09-20 15:10:00'),
+(66, 59, 'Roberto Ek Dzib', 37, '2026-07-20 16:00:00'),
+(67, 59, 'Minerva Ucan Caamal', 30, '2026-07-20 16:05:00'),
+(68, 59, 'Alicia Tun Canché', 24, '2026-07-20 16:10:00'),
+(69, 59, 'Samuel Pech Dzul', 22, '2026-07-20 16:15:00'),
+(70, 60, 'Lorenzo Balam Tuz', 48, '2026-03-03 14:00:00'),
+(71, 60, 'Patricia Dzul Cohuo', 22, '2026-03-03 14:05:00'),
+(72, 60, 'Andrés Cauich May', 43, '2026-03-03 14:10:00'),
+(73, 60, 'Gregorio Tun Balam', 54, '2026-03-03 14:15:00'),
+(74, 60, 'Esperanza Mis Xool', 39, '2026-03-03 14:20:00'),
+(75, 62, 'Rodolfo Navarrete Ek', 21, '2026-03-11 15:57:38'),
+(76, 62, 'Alejandro Cab Can', 42, '2026-03-11 15:57:38'),
+(77, 62, 'Martina Lopéz', 23, '2026-03-11 15:57:38'),
+(78, 62, 'Mario Muñoz', 12, '2026-03-11 15:57:38'),
+(79, 62, 'Ignacio Montero', 43, '2026-03-11 15:57:38'),
+(80, 62, 'Alfredo Dorantes', 32, '2026-03-11 15:57:38'),
+(81, 65, 'Rodolfo Navarrete Ek', 21, '2026-03-12 15:45:11'),
+(82, 65, 'Alejandro Cab Can', 42, '2026-03-12 15:45:11'),
+(83, 65, 'Martina Lopéz', 53, '2026-03-12 15:45:11'),
+(84, 65, 'Mario Muñoz', 43, '2026-03-12 15:45:11'),
+(85, 65, 'Ignacio Montero', 32, '2026-03-12 15:45:11'),
+(86, 65, 'Alfredo Dorantes', 19, '2026-03-12 15:45:11'),
+(87, 65, 'Gustavo Pech', 20, '2026-03-12 15:45:11');
 
 -- --------------------------------------------------------
 
@@ -349,7 +318,6 @@ CREATE TABLE `informe` (
 --
 
 INSERT INTO `informe` (`id_informe`, `nombre_organizacion`, `evento`, `lugar`, `fecha`, `numero_telefonico`, `created_at`, `updated_at`) VALUES
-(1, 'Ajal-lol AC', 'Campaña de prevención de caries', 'Hoctún, Yucatán', '2026-01-14', '9991234567', '2026-02-20 18:06:10', '2026-02-20 18:06:10'),
 (2, 'Ajal-lol AC', 'Actividad recreativa de Año Nuevo', 'Izamal, Yucatán', '2026-01-16', '9997654321', '2026-02-20 18:06:10', '2026-02-20 18:06:10'),
 (3, 'Ajal-lol AC', 'Entrega de juguetes Día de Reyes', 'Tekit, Yucatán', '2026-01-15', '9998887777', '2026-02-20 18:06:10', '2026-02-20 18:06:10'),
 (7, 'Ajal-lol AC', 'Distribución de despensas alimentarias', 'Akil, Yucatán', '2026-02-20', NULL, '2026-02-26 23:10:08', '2026-02-26 23:10:08'),
@@ -368,7 +336,12 @@ INSERT INTO `informe` (`id_informe`, `nombre_organizacion`, `evento`, `lugar`, `
 (57, 'Ajal-lol AC', 'Jornada de reforestación comunitaria', 'Akil, Yucatán', '2026-06-05', NULL, '2026-03-03 00:53:34', '2026-03-03 00:53:34'),
 (58, 'Ajal-lol AC', 'Entrega de materiales de construcción', 'Akil, Yucatán', '2026-09-20', NULL, '2026-03-03 03:54:30', '2026-03-03 03:54:30'),
 (59, 'Ajal-lol AC', 'Programa de becas y apoyo educativo', 'Akil, Yucatán', '2026-07-20', NULL, '2026-03-03 04:09:53', '2026-03-03 04:09:53'),
-(60, 'Ajal-lol AC', 'Entrega de despensas y artículos del hogar', 'Akil, Yucatán', '2026-03-03', NULL, '2026-03-03 21:31:04', '2026-03-03 21:31:04');
+(60, 'Ajal-lol AC', 'Entrega de despensas y artículos del hogar', 'Akil, Yucatán', '2026-03-03', NULL, '2026-03-03 21:31:04', '2026-03-03 21:31:04'),
+(61, 'Ajal-lol AC', 'Brigada de Salud Integral \"Vida Sana\"', 'Izamal, Yucatán', '2026-03-10', NULL, '2026-03-11 00:05:21', '2026-03-11 00:05:21'),
+(62, 'Ajal-lol AC', 'Jornada de reforestación comunitaria', 'Akil, Yucatán', '2026-03-11', NULL, '2026-03-11 21:57:37', '2026-03-11 21:57:37'),
+(63, 'Ajal-lol AC', 'Jornada de reforestación comunitaria', 'Chikindzonot, Yucatán', '2026-03-11', NULL, '2026-03-11 22:50:10', '2026-03-11 22:50:10'),
+(64, 'Ajal-lol AC', 'Campaña de apoyo a adultos mayores', 'Acanceh, Yucatán', '2026-03-11', NULL, '2026-03-11 23:16:43', '2026-03-11 23:16:43'),
+(65, 'Ajal-lol AC', 'Taller de capacitación para el empleo', 'Abalá, Yucatán', '2026-03-20', NULL, '2026-03-12 21:45:11', '2026-03-12 21:45:11');
 
 -- --------------------------------------------------------
 
@@ -542,7 +515,7 @@ CREATE TABLE `proyectos` (
   `categoria` int NOT NULL,
   `titulo_proyecto` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `descripcion_proyecto` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `anio_proyecto` int DEFAULT NULL
+  `año_proyecto` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -556,6 +529,174 @@ CREATE TABLE `redes_sociales` (
   `nombre_redsocial` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `url_redsocial` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `reportebeneficiarios`
+--
+
+CREATE TABLE `reportebeneficiarios` (
+  `id_reportebeneficiario` int NOT NULL,
+  `id_informe` int NOT NULL,
+  `reportenombrebeneficiario` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `reportecurpbeneficiario` char(18) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `reporteedadbeneficiario` int DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `reportebeneficiarios`
+--
+
+INSERT INTO `reportebeneficiarios` (`id_reportebeneficiario`, `id_informe`, `reportenombrebeneficiario`, `reportecurpbeneficiario`, `reporteedadbeneficiario`, `created_at`) VALUES
+(4, 2, 'Luis Fernández Pech', 'FEPL930212HYNPRR07', 31, '2026-02-20 18:06:10'),
+(5, 2, 'María Gómez Pool', 'GOPM950610MYNPRL08', 29, '2026-02-20 18:06:10'),
+(6, 3, 'José Chan Yam', 'CHYJ870914HYNMJR05', 38, '2026-02-20 18:06:10'),
+(7, 3, 'Daniela Torres Cauich', 'TOCD990120MYNTRN06', 26, '2026-02-20 18:06:10'),
+(8, 3, 'Miguel Uc Ek', 'UCEM910315HYNCMK04', 34, '2026-02-20 18:06:10'),
+(9, 3, 'Laura Canul Poot', 'CAPL920725MYNPLN02', 30, '2026-02-20 18:06:10'),
+(151, 22, 'Rodolfo Cabeza Navarrete Cab', 'NISJ850320HYNCSF01', 40, '2026-03-02 18:05:35'),
+(152, 22, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', 37, '2026-03-02 18:05:35'),
+(153, 22, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', 34, '2026-03-02 18:05:35'),
+(154, 22, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 39, '2026-03-02 18:05:35'),
+(155, 22, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', 28, '2026-03-02 18:05:35'),
+(156, 22, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', 27, '2026-03-02 18:05:35'),
+(171, 30, 'Rodolfo Cabeza Navarrete Cab', 'NISJ850320HYNCSF01', 44, '2026-03-02 18:20:28'),
+(172, 30, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', 37, '2026-03-02 18:20:28'),
+(173, 30, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', 34, '2026-03-02 18:20:28'),
+(174, 30, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 39, '2026-03-02 18:20:28'),
+(175, 30, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', 28, '2026-03-02 18:20:28'),
+(176, 30, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', 27, '2026-03-02 18:20:28'),
+(177, 31, 'Rodolfo Cabeza Navarrete Cab', 'NISJ850320HYNCSF01', 40, '2026-03-02 18:22:21'),
+(178, 31, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', 37, '2026-03-02 18:22:21'),
+(179, 31, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', 34, '2026-03-02 18:22:21'),
+(180, 31, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 45, '2026-03-02 18:22:21'),
+(181, 31, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', 29, '2026-03-02 18:22:21'),
+(182, 31, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', 32, '2026-03-02 18:22:21'),
+(183, 32, 'Rodolfo Cabeza Navarrete Cab', 'NISJ850320HYNCSF01', 40, '2026-03-02 18:25:03'),
+(184, 32, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', 37, '2026-03-02 18:25:03'),
+(185, 32, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', 34, '2026-03-02 18:25:03'),
+(186, 32, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 41, '2026-03-02 18:25:03'),
+(187, 32, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', 29, '2026-03-02 18:25:03'),
+(188, 32, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', 26, '2026-03-02 18:25:03'),
+(189, 37, 'Rodolfo Cabeza Navarrete Cab', 'NISJ850320HYNCSF01', 40, '2026-03-02 18:28:43'),
+(190, 37, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', 37, '2026-03-02 18:28:43'),
+(191, 37, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', 34, '2026-03-02 18:28:43'),
+(192, 37, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 48, '2026-03-02 18:28:43'),
+(193, 37, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', 29, '2026-03-02 18:28:43'),
+(194, 37, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', 27, '2026-03-02 18:28:43'),
+(195, 43, 'Rodolfo Cabeza Navarrete Cab', 'NISJ850320HYNCSF01', 40, '2026-03-02 18:32:40'),
+(196, 43, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', 37, '2026-03-02 18:32:40'),
+(197, 43, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', 34, '2026-03-02 18:32:40'),
+(198, 43, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 43, '2026-03-02 18:32:40'),
+(199, 43, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', 29, '2026-03-02 18:32:40'),
+(200, 43, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', 27, '2026-03-02 18:32:40'),
+(201, 44, 'Rodolfo Cabeza Navarrete Cab', 'NISJ850320HYNCSF01', 40, '2026-03-02 18:33:53'),
+(202, 44, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', 37, '2026-03-02 18:33:53'),
+(203, 44, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', 34, '2026-03-02 18:33:53'),
+(204, 44, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 50, '2026-03-02 18:33:53'),
+(205, 44, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', 29, '2026-03-02 18:33:53'),
+(206, 44, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', 27, '2026-03-02 18:33:53'),
+(207, 45, 'Rodolfo Cabeza Navarrete Cab', 'NISJ850320HYNCSF01', 40, '2026-03-02 18:35:01'),
+(208, 45, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', 37, '2026-03-02 18:35:01'),
+(209, 45, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', 34, '2026-03-02 18:35:01'),
+(210, 45, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 46, '2026-03-02 18:35:01'),
+(211, 45, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', 29, '2026-03-02 18:35:01'),
+(212, 45, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', 27, '2026-03-02 18:35:01'),
+(213, 48, 'Rodolfo Cabeza Navarrete Cab', 'NISJ850320HYNCSF01', 40, '2026-03-02 18:37:39'),
+(214, 48, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', 37, '2026-03-02 18:37:39'),
+(215, 48, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', 34, '2026-03-02 18:37:39'),
+(216, 48, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 52, '2026-03-02 18:37:39'),
+(217, 48, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', 29, '2026-03-02 18:37:39'),
+(218, 48, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', 27, '2026-03-02 18:37:39'),
+(219, 49, 'Rodolfo Cabeza Navarrete Cab', 'NISJ850320HYNCSF01', 40, '2026-03-02 18:38:15'),
+(220, 49, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', 37, '2026-03-02 18:38:15'),
+(221, 49, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', 34, '2026-03-02 18:38:15'),
+(222, 49, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 55, '2026-03-02 18:38:15'),
+(223, 49, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', 29, '2026-03-02 18:38:15'),
+(224, 49, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', 27, '2026-03-02 18:38:15'),
+(225, 53, 'Rodolfo Cabeza Navarrete Cab', 'NISJ850320HYNCSF01', 40, '2026-03-02 18:51:41'),
+(226, 53, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', 37, '2026-03-02 18:51:41'),
+(227, 53, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', 34, '2026-03-02 18:51:41'),
+(228, 53, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 39, '2026-03-02 18:51:41'),
+(229, 53, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', 29, '2026-03-02 18:51:41'),
+(230, 53, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', 27, '2026-03-02 18:51:41'),
+(231, 54, 'Rodolfo Cabeza Navarrete Cab', 'NISJ850320HYNCSF01', 40, '2026-03-02 18:52:20'),
+(232, 54, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', 37, '2026-03-02 18:52:20'),
+(233, 54, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', 34, '2026-03-02 18:52:20'),
+(234, 54, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 42, '2026-03-02 18:52:20'),
+(235, 54, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', 29, '2026-03-02 18:52:20'),
+(236, 54, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', 27, '2026-03-02 18:52:20'),
+(237, 57, 'Rodolfo Cabeza Navarrete Cab', 'NISJ850320HYNCSF01', 40, '2026-03-02 18:53:34'),
+(238, 57, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', 37, '2026-03-02 18:53:34'),
+(239, 57, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', 34, '2026-03-02 18:53:34'),
+(240, 57, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 47, '2026-03-02 18:53:34'),
+(241, 57, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', 29, '2026-03-02 18:53:34'),
+(242, 57, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', 27, '2026-03-02 18:53:34'),
+(243, 58, 'Rodolfo Cabeza Navarrete Cab', 'NISJ850320HYNCSF01', 40, '2026-03-02 21:54:30'),
+(244, 58, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', 37, '2026-03-02 21:54:30'),
+(245, 58, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', 34, '2026-03-02 21:54:30'),
+(246, 58, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 53, '2026-03-02 21:54:30'),
+(247, 58, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', 29, '2026-03-02 21:54:30'),
+(248, 58, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', 27, '2026-03-02 21:54:30'),
+(249, 59, 'Rodolfo Cabeza Navarrete Cab', 'NISJ850320HYNCSF01', 40, '2026-03-02 22:09:53'),
+(250, 59, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', 37, '2026-03-02 22:09:53'),
+(251, 59, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', 34, '2026-03-02 22:09:53'),
+(252, 59, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 44, '2026-03-02 22:09:53'),
+(253, 59, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', 29, '2026-03-02 22:09:53'),
+(254, 59, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', 27, '2026-03-02 22:09:53'),
+(255, 60, 'Rodolfo Cabeza Navarrete Cab', 'NISJ850320HYNCSF01', 40, '2026-03-03 15:31:04'),
+(256, 60, 'Juan Carlos Pérez López', 'PELJ880430HYNTRS03', 37, '2026-03-03 15:31:04'),
+(257, 60, 'María Fernanda Gómez Ruiz', 'GORM910305MDFMGN06', 34, '2026-03-03 15:31:04'),
+(258, 60, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 39, '2026-03-03 15:31:04'),
+(259, 60, 'Miguel Ángel Navarro Ortiz', 'NAOM970214HDFVRT10', 29, '2026-03-03 15:31:04'),
+(260, 60, 'Gabriela Mendoza Paredes', 'MEPG980418MDFNRB16', 27, '2026-03-03 15:31:04'),
+(261, 60, 'Valeria Peña Cabrera', 'PECV990120MYNPBR06', 25, '2026-03-03 15:31:04'),
+(262, 60, 'José López Reyes', 'LORJ860118HDFPYR07', 39, '2026-03-03 15:31:04'),
+(263, 60, 'Fernando Mendoza Silva', 'MESF840519HDFNLR11', 41, '2026-03-03 15:31:04'),
+(264, 60, 'Ángel Medina Torres', 'META900315HDFDTR21', 35, '2026-03-03 15:31:04'),
+(265, 60, 'Daniel Aguilar Reyes', 'AGRD880912HDFGLN23', 37, '2026-03-03 15:31:04'),
+(266, 60, 'Erika Pacheco Luna', 'PALE970201MDFCHS24', 28, '2026-03-03 15:31:04'),
+(267, 60, 'Francisco Ríos Mendoza', 'RIMF850617HDFNSR25', 40, '2026-03-03 15:31:04'),
+(268, 60, 'Guadalupe Castro Mejía', 'CAMG920403MDFSTL26', 33, '2026-03-03 15:31:04'),
+(269, 61, 'Alejandro García Torres', 'GATA850522HDFLRN03', 56, '2026-03-10 18:05:21'),
+(270, 61, 'María Elena López Ruiz', 'LORM920315MDFZRS08', 23, '2026-03-10 18:05:21'),
+(271, 61, 'Ricardo Méndez Castro', 'MECR781110HDFNNN01', 32, '2026-03-10 18:05:21'),
+(272, 61, 'Sofía Villalobos Sanz', 'VISS050720MDFLND05', 23, '2026-03-10 18:05:21'),
+(273, 61, 'Javier Ortiz Pineda', 'ORPJ600102HDFRRD09', 21, '2026-03-10 18:05:21'),
+(274, 61, 'Claudia Rivas Montes', 'RIMC951212MDFNTN02', 39, '2026-03-10 18:05:21'),
+(275, 63, 'Alejandro García Torres', 'GATA850522HDFLRN03', 21, '2026-03-11 16:50:10'),
+(276, 63, 'María Elena López Ruiz', 'LORM920315MDFZRS08', 43, '2026-03-11 16:50:10'),
+(277, 63, 'Ricardo Méndez Castro', 'MECR781110HDFNNN01', 43, '2026-03-11 16:50:10'),
+(278, 63, 'Sofía Villalobos Sanz', 'VISS050720MDFLND05', 43, '2026-03-11 16:50:10'),
+(279, 63, 'Javier Ortiz Pineda', 'ORPJ600102HDFRRD09', 12, '2026-03-11 16:50:10'),
+(280, 63, 'Claudia Rivas Montes', 'RIMC951212MDFNTN02', 42, '2026-03-11 16:50:10'),
+(281, 64, 'Juan Carlos Méndez López', 'MELJ900315HYNNDN01', 32, '2026-03-11 17:16:43'),
+(282, 64, 'María Elena López Ruiz', 'LORM920315MDFZRS08', 54, '2026-03-11 17:16:43'),
+(283, 64, 'Ricardo Méndez Castro', 'MECR781110HDFNNN01', 21, '2026-03-11 17:16:43'),
+(284, 64, 'Sofía Villalobos Sanz', 'VISS050720MDFLND05', 43, '2026-03-11 17:16:43'),
+(285, 64, 'Javier Ortiz Pineda', 'ORPJ600102HDFRRD09', 12, '2026-03-11 17:16:43'),
+(286, 64, 'Claudia Rivas Montes', 'RIMC951212MDFNTN02', 65, '2026-03-11 17:16:43'),
+(287, 64, 'María Fernanda Ruiz Gómez', 'RUGM920804MYNRRM02', 43, '2026-03-11 17:16:43'),
+(288, 64, 'Luis Alberto Chan Poot', 'CAPL880112HYNHST03', 31, '2026-03-11 17:16:43'),
+(289, 64, 'Ana Sofía Castillo Pérez', 'CAPA950623MYNSRN04', 67, '2026-03-11 17:16:43'),
+(290, 64, 'José Manuel Tun Canul', 'TUCM870909HYNMNL05', 90, '2026-03-11 17:16:43'),
+(291, 64, 'Daniela Guadalupe Ek Cauich', 'ECDG990214MYNCLK06', 21, '2026-03-11 17:16:43'),
+(292, 64, 'Pedro Antonio Puc May', 'PUMP910530HYNPCM07', 54, '2026-03-11 17:16:43'),
+(293, 64, 'Karla Beatriz Pech Dzib', 'PEDK960718MYNPBZ08', 34, '2026-03-11 17:16:43'),
+(294, 64, 'Miguel Ángel Cetz Canché', 'CACM890421HYNCTZ09', 43, '2026-03-11 17:16:43'),
+(295, 64, 'Laura Patricia Poot Chi', 'POCL940102MYNPRC10', 23, '2026-03-11 17:16:43'),
+(296, 64, 'Teresa del Carmen May Pech', 'MAPT850627MYNTRS12', 24, '2026-03-11 17:16:43'),
+(297, 64, 'Rosa María Ek Tun', 'ETRM910905MYNRST14', 54, '2026-03-11 17:16:43'),
+(298, 64, 'Andrés Felipe Dzib Chan', 'DCHA920210HYNFDR15', 65, '2026-03-11 17:16:43'),
+(299, 64, 'Gabriela Alejandra Puc Chi', 'PUCG980701MYNGBC16', 76, '2026-03-11 17:16:43'),
+(300, 64, 'Víctor Hugo Canché May', 'CAMV860418HYNVTR17', 34, '2026-03-11 17:16:43'),
+(301, 64, 'Ricardo Antonio Chan Tun', 'CHTR900806HYNRCN19', 31, '2026-03-11 17:16:43'),
+(302, 64, 'Jorge Alberto Pech Canul', 'PECJ910214HYNGRG21', 21, '2026-03-11 17:16:43'),
+(303, 64, 'Verónica del Carmen Chan Ek', 'CHEV940322MYNVRC22', 21, '2026-03-11 17:16:43'),
+(304, 64, 'Daniela Beatriz Canché Pech', 'CAPD960406MYNDNL26', 43, '2026-03-11 17:16:43'),
+(305, 64, 'Oscar Daniel Cetz Poot', 'CHDC980115MYNCLD30', 21, '2026-03-11 17:16:43');
 
 -- --------------------------------------------------------
 
@@ -584,23 +725,15 @@ INSERT INTO `rol_usuario` (`id_rol_usuario`, `id_usuario`, `cargo_usuario`) VALU
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `seccion`
+-- Estructura de tabla para la tabla `secciones_web`
 --
 
-CREATE TABLE `seccion` (
+CREATE TABLE `secciones_web` (
   `id_seccion` int NOT NULL,
-  `id_rol_usuario` int NOT NULL,
   `titulo_seccion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `estado_seccion` tinyint(1) DEFAULT '1'
+  `estado_seccion` tinyint(1) DEFAULT '1',
+  `id_usuario` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `seccion`
---
-
-INSERT INTO `seccion` (`id_seccion`, `id_rol_usuario`, `titulo_seccion`, `estado_seccion`) VALUES
-(1, 1, 'Panel Administrador', 1),
-(2, 2, 'Panel Editor', 1);
 
 -- --------------------------------------------------------
 
@@ -622,8 +755,10 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('8tQprrdRANzW0y88F5JnPBqR2qYdghPhcUlsjlB8', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiMlV4WHdqRWIwWk1KeWNqeUFPeE1OZHd0ckpCZGxkWldoSTd3bkFKbyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9ob21lIjtzOjU6InJvdXRlIjtzOjEwOiJhZG1pbi5ob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO30=', 1772561007),
-('bIPxwXZIOSucCE7xGN9b8OcVgLBdt2VI7TMTlSiH', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoicXdTaENTVkdFZXdiQjFZUjFqMWdJclpzYnR1MVRLUVExQnhGQ01UYiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hcGkvbm90aWZpY2F0aW9ucy9jb3VudCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO30=', 1772644859);
+('8MiYoqoafimQYO3ha8ZlCn2SHQWBaJLf4VOm6QTW', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiNXZZTEZCb3lLeXBLcndBc3Jmc05ZTEo0UjVPTnR1cEFjYnI1QzZlUyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hcGkvbm90aWZpY2F0aW9ucy9jb3VudCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO30=', 1773850587),
+('wUm8KirR40x0a72JMBpZk6MH0h1soAQP4tya2ljc', NULL, '127.0.0.1', 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/17.5 Mobile/15A5370a Safari/602.1', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiMDBOQjZFN0pQUXdRRzFuSHRsN2I0UHY0a1kxS0J1dWl3ODlHbjh5USI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hcGkvbm90aWZpY2F0aW9ucy9jb3VudCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO30=', 1773686743),
+('yVpFxR41Wi3Wb7CQ2vPRHKx8OBFxrNjPgoIVmmDd', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiU1lqU2J2MktZOFZiaXFlaERBSGNzelVkZnNadjBvQUJDU1liblJQZiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1773938879),
+('zF4gxUqVo0UIPrEWE6DN48qkF7g94ToLADdNMb7E', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoibXlhUTk2cG5PUGdSM09LNmZSMmpXcnJrQUs1ZnB5d3d2V1kyYU03cSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO30=', 1773769107);
 
 -- --------------------------------------------------------
 
@@ -699,11 +834,11 @@ ALTER TABLE `aliados`
   ADD KEY `id_seccion` (`id_seccion`);
 
 --
--- Indices de la tabla `beneficiarios`
+-- Indices de la tabla `asistenciabeneficiarios`
 --
-ALTER TABLE `beneficiarios`
-  ADD PRIMARY KEY (`id_beneficiario`),
-  ADD UNIQUE KEY `unique_beneficiario_informe` (`id_informe`,`curp`);
+ALTER TABLE `asistenciabeneficiarios`
+  ADD PRIMARY KEY (`id_asistenciabeneficiario`),
+  ADD KEY `id_informe` (`id_informe`);
 
 --
 -- Indices de la tabla `cache`
@@ -836,6 +971,13 @@ ALTER TABLE `redes_sociales`
   ADD PRIMARY KEY (`id_redes_sociales`);
 
 --
+-- Indices de la tabla `reportebeneficiarios`
+--
+ALTER TABLE `reportebeneficiarios`
+  ADD PRIMARY KEY (`id_reportebeneficiario`),
+  ADD UNIQUE KEY `unique_reportebeneficiario_informe` (`id_informe`,`reportecurpbeneficiario`);
+
+--
 -- Indices de la tabla `rol_usuario`
 --
 ALTER TABLE `rol_usuario`
@@ -843,11 +985,11 @@ ALTER TABLE `rol_usuario`
   ADD KEY `id_usuario` (`id_usuario`);
 
 --
--- Indices de la tabla `seccion`
+-- Indices de la tabla `secciones_web`
 --
-ALTER TABLE `seccion`
+ALTER TABLE `secciones_web`
   ADD PRIMARY KEY (`id_seccion`),
-  ADD KEY `id_rol_usuario` (`id_rol_usuario`);
+  ADD KEY `fk_seccion_usuario` (`id_usuario`);
 
 --
 -- Indices de la tabla `sessions`
@@ -895,10 +1037,10 @@ ALTER TABLE `aliados`
   MODIFY `id_aliados` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `beneficiarios`
+-- AUTO_INCREMENT de la tabla `asistenciabeneficiarios`
 --
-ALTER TABLE `beneficiarios`
-  MODIFY `id_beneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=269;
+ALTER TABLE `asistenciabeneficiarios`
+  MODIFY `id_asistenciabeneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
 
 --
 -- AUTO_INCREMENT de la tabla `categoria_proyectos`
@@ -940,7 +1082,7 @@ ALTER TABLE `imagenes_proyectos`
 -- AUTO_INCREMENT de la tabla `informe`
 --
 ALTER TABLE `informe`
-  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT de la tabla `inicio`
@@ -991,15 +1133,21 @@ ALTER TABLE `redes_sociales`
   MODIFY `id_redes_sociales` int NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `reportebeneficiarios`
+--
+ALTER TABLE `reportebeneficiarios`
+  MODIFY `id_reportebeneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=306;
+
+--
 -- AUTO_INCREMENT de la tabla `rol_usuario`
 --
 ALTER TABLE `rol_usuario`
   MODIFY `id_rol_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT de la tabla `seccion`
+-- AUTO_INCREMENT de la tabla `secciones_web`
 --
-ALTER TABLE `seccion`
+ALTER TABLE `secciones_web`
   MODIFY `id_seccion` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
@@ -1028,31 +1176,31 @@ ALTER TABLE `widgets_actividades`
 -- Filtros para la tabla `actividades`
 --
 ALTER TABLE `actividades`
-  ADD CONSTRAINT `actividades_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `seccion` (`id_seccion`);
+  ADD CONSTRAINT `actividades_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
 --
 -- Filtros para la tabla `aliados`
 --
 ALTER TABLE `aliados`
-  ADD CONSTRAINT `aliados_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `seccion` (`id_seccion`);
+  ADD CONSTRAINT `aliados_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
 --
--- Filtros para la tabla `beneficiarios`
+-- Filtros para la tabla `asistenciabeneficiarios`
 --
-ALTER TABLE `beneficiarios`
-  ADD CONSTRAINT `beneficiarios_ibfk_1` FOREIGN KEY (`id_informe`) REFERENCES `informe` (`id_informe`) ON DELETE CASCADE;
+ALTER TABLE `asistenciabeneficiarios`
+  ADD CONSTRAINT `asistenciabeneficiarios_ibfk_1` FOREIGN KEY (`id_informe`) REFERENCES `informe` (`id_informe`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `contacto`
 --
 ALTER TABLE `contacto`
-  ADD CONSTRAINT `contacto_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `seccion` (`id_seccion`);
+  ADD CONSTRAINT `contacto_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
 --
 -- Filtros para la tabla `directiva`
 --
 ALTER TABLE `directiva`
-  ADD CONSTRAINT `directiva_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `seccion` (`id_seccion`);
+  ADD CONSTRAINT `directiva_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
 --
 -- Filtros para la tabla `imagenes_proyectos`
@@ -1064,13 +1212,13 @@ ALTER TABLE `imagenes_proyectos`
 -- Filtros para la tabla `inicio`
 --
 ALTER TABLE `inicio`
-  ADD CONSTRAINT `inicio_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `seccion` (`id_seccion`);
+  ADD CONSTRAINT `inicio_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
 --
 -- Filtros para la tabla `nosotros`
 --
 ALTER TABLE `nosotros`
-  ADD CONSTRAINT `nosotros_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `seccion` (`id_seccion`);
+  ADD CONSTRAINT `nosotros_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
 --
 -- Filtros para la tabla `notificaciones`
@@ -1083,14 +1231,20 @@ ALTER TABLE `notificaciones`
 -- Filtros para la tabla `preguntas_frecuentes`
 --
 ALTER TABLE `preguntas_frecuentes`
-  ADD CONSTRAINT `preguntas_frecuentes_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `seccion` (`id_seccion`);
+  ADD CONSTRAINT `preguntas_frecuentes_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
 --
 -- Filtros para la tabla `proyectos`
 --
 ALTER TABLE `proyectos`
-  ADD CONSTRAINT `proyectos_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `seccion` (`id_seccion`),
+  ADD CONSTRAINT `proyectos_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`),
   ADD CONSTRAINT `proyectos_ibfk_2` FOREIGN KEY (`categoria`) REFERENCES `categoria_proyectos` (`id_categoria`);
+
+--
+-- Filtros para la tabla `reportebeneficiarios`
+--
+ALTER TABLE `reportebeneficiarios`
+  ADD CONSTRAINT `reportebeneficiarios_ibfk_1` FOREIGN KEY (`id_informe`) REFERENCES `informe` (`id_informe`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `rol_usuario`
@@ -1099,10 +1253,10 @@ ALTER TABLE `rol_usuario`
   ADD CONSTRAINT `rol_usuario_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
 
 --
--- Filtros para la tabla `seccion`
+-- Filtros para la tabla `secciones_web`
 --
-ALTER TABLE `seccion`
-  ADD CONSTRAINT `seccion_ibfk_1` FOREIGN KEY (`id_rol_usuario`) REFERENCES `rol_usuario` (`id_rol_usuario`);
+ALTER TABLE `secciones_web`
+  ADD CONSTRAINT `fk_seccion_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
 
 --
 -- Filtros para la tabla `widgets_actividades`

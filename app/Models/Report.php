@@ -15,7 +15,6 @@ class Report extends Model
         'evento',
         'lugar',
         'fecha',
-        'numero_telefonico',
     ];
 
     // Un reporte tiene muchos beneficiarios (tabla reportebeneficiarios)

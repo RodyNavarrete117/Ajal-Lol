@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 20-03-2026 a las 17:13:35
+-- Tiempo de generación: 19-03-2026 a las 16:48:14
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `prueba6`
+-- Base de datos: `prueba5`
 --
 
 -- --------------------------------------------------------
@@ -60,32 +60,6 @@ CREATE TABLE `asistenciabeneficiarios` (
   `asistenciaedadbeneficiario` int DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `asistenciabeneficiarios`
---
-
-INSERT INTO `asistenciabeneficiarios` (`id_asistenciabeneficiario`, `id_informe`, `asistencianombrebeneficiario`, `asistenciaedadbeneficiario`, `created_at`) VALUES
-(1, 11, 'Rosa Isela Vargas Mendoza', 42, '2026-03-19 16:00:00'),
-(2, 11, 'Jorge Arturo Leal Castro', 36, '2026-03-19 16:05:00'),
-(3, 12, 'Adriana Solís Herrera', 29, '2026-03-24 16:00:00'),
-(4, 12, 'Francisco Javier Ruiz Peña', 51, '2026-03-24 16:05:00'),
-(5, 13, 'Mariana López Soto', 24, '2026-03-26 16:00:00'),
-(6, 13, 'Alejandro Vega Fuentes', 47, '2026-03-26 16:05:00'),
-(7, 14, 'Silvia Patricia Cruz Mora', 38, '2026-04-02 16:00:00'),
-(8, 14, 'Ricardo Mendoza Aguilar', 55, '2026-04-02 16:05:00'),
-(9, 15, 'Brenda Esther Ramos Díaz', 31, '2026-04-07 16:00:00'),
-(10, 15, 'Guillermo Santos Pérez', 63, '2026-04-07 16:05:00'),
-(11, 16, 'Norma Beatriz Flores Ortiz', 45, '2026-04-14 16:00:00'),
-(12, 16, 'Daniel Enrique Reyes Salinas', 27, '2026-04-14 16:05:00'),
-(13, 17, 'Leticia Amador Gutiérrez', 53, '2026-04-21 16:00:00'),
-(14, 17, 'Óscar Hernández Morales', 39, '2026-04-21 16:05:00'),
-(15, 18, 'Yolanda Serrano Medina', 66, '2026-04-28 16:00:00'),
-(16, 18, 'Ernesto Carrillo Vázquez', 33, '2026-04-28 16:05:00'),
-(17, 19, 'Catalina Muñoz Ramírez', 48, '2026-05-05 16:00:00'),
-(18, 19, 'Salvador Torres Espinoza', 22, '2026-05-05 16:05:00'),
-(19, 20, 'Irma Guadalupe Peña Luna', 57, '2026-05-12 16:00:00'),
-(20, 20, 'Benjamín Cortés Navarro', 41, '2026-05-12 16:05:00');
 
 -- --------------------------------------------------------
 
@@ -185,32 +159,6 @@ CREATE TABLE `formulario_contacto` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `formulario_contacto`
---
-
-INSERT INTO `formulario_contacto` (`id_formcontacto`, `nombre_completo`, `correo`, `numero_telefonico`, `asunto`, `mensaje`, `fecha_envio`) VALUES
-(1, 'Juan Pablo Méndez Ruiz', 'jpablo@email.com', '999-100-0001', 'Voluntariado', 'Me gustaría participar como voluntario en sus actividades comunitarias.', '2026-01-10 09:00:00'),
-(2, 'Sandra Gómez Torres', 'sandra@email.com', '999-100-0002', 'Donación en especie', 'Deseo donar ropa y víveres en buen estado. ¿Cuál es el procedimiento?', '2026-01-12 10:30:00'),
-(3, 'Alberto Reyes Castillo', 'alberto@email.com', NULL, 'Información general', 'Quisiera conocer más sobre los proyectos activos de la organización.', '2026-01-15 11:00:00'),
-(4, 'Rosa Chan Poot', 'rosa@email.com', '999-100-0004', 'Servicio social', 'Soy estudiante universitaria y me interesa realizar mi servicio social.', '2026-01-18 14:00:00'),
-(5, 'Ernesto Vega Leal', 'ernesto@email.com', '999-100-0005', 'Alianza institucional', 'Representamos a una institución educativa y buscamos posibles alianzas.', '2026-01-20 08:30:00'),
-(6, 'Mónica Sánchez Flores', 'monica@email.com', '999-100-0006', 'Apoyo comunitario', 'Nuestra colonia necesita apoyo para un programa de alimentación escolar.', '2026-01-22 09:15:00'),
-(7, 'Rafael Ortiz Mendoza', 'rafael@email.com', NULL, 'Talleres de capacitación', '¿Cómo puedo inscribirme a los talleres de emprendimiento que ofrecen?', '2026-01-25 12:00:00'),
-(8, 'Cristina López Herrera', 'cristina@email.com', '999-100-0008', 'Donación económica', 'Me gustaría realizar una aportación mensual a sus programas. ¿Cómo puedo hacerlo?', '2026-01-28 15:30:00'),
-(9, 'Gerardo Fuentes Díaz', 'gerardo@email.com', '999-100-0009', 'Solicitud de apoyo', 'Soy jefe de familia de una comunidad rural y necesitamos apoyo alimentario.', '2026-02-01 08:00:00'),
-(10, 'Laura Martínez Soto', 'laura@email.com', '999-100-0010', 'Voluntariado juvenil', 'Un grupo de jóvenes de preparatoria queremos participar como voluntarios.', '2026-02-04 10:00:00'),
-(11, 'Ignacio Ramírez Canul', 'ignacio@email.com', '999-100-0011', 'Materiales de construcción', '¿Tienen programas de apoyo para mejoramiento de vivienda?', '2026-02-06 11:30:00'),
-(12, 'Verónica Hernández Pech', 'veronica@email.com', NULL, 'Becas escolares', 'Tengo dos hijos en primaria y me interesa el programa de becas que mencionan.', '2026-02-09 13:00:00'),
-(13, 'Antonio Castro Dzul', 'antonio@email.com', '999-100-0013', 'Patrocinio', 'Somos una empresa local interesada en patrocinar alguno de sus proyectos.', '2026-02-12 09:00:00'),
-(14, 'Patricia Morales Tun', 'patricia@email.com', '999-100-0014', 'Información de eventos', '¿Cómo me entero de los próximos eventos y actividades que realizan?', '2026-02-15 10:45:00'),
-(15, 'Héctor Jiménez Xool', 'hector@email.com', NULL, 'Apoyo médico', 'Mi comunidad no tiene acceso a servicios de salud. ¿Pueden visitarnos?', '2026-02-18 08:30:00'),
-(16, 'Diana Pérez Cauich', 'diana@email.com', '999-100-0016', 'Voluntariado profesional', 'Soy enfermera y me gustaría ofrecer mi tiempo en sus brigadas de salud.', '2026-02-20 14:00:00'),
-(17, 'Fernando Salinas Ek', 'fernando@email.com', '999-100-0017', 'Donación de medicamentos', 'Cuento con medicamentos de primeros auxilios que quisiera donar.', '2026-02-23 09:30:00'),
-(18, 'Alejandra Vega Balam', 'alejandra@email.com', '999-100-0018', 'Solicitud de talleres', 'Represento a una junta de vecinos y nos interesa recibir talleres de nutrición.', '2026-02-25 11:00:00'),
-(19, 'Roberto Gutiérrez May', 'roberto@email.com', NULL, 'Colaboración académica', 'Soy investigador y me gustaría estudiar el impacto de sus programas sociales.', '2026-02-27 16:00:00'),
-(20, 'Isabel Flores Cohuo', 'isabel@email.com', '999-100-0020', 'Información general', 'Me llegó una invitación a su evento y quisiera confirmar mi asistencia.', '2026-03-01 10:00:00');
-
---
 -- Disparadores `formulario_contacto`
 --
 DELIMITER $$
@@ -249,6 +197,7 @@ CREATE TABLE `imagenes_proyectos` (
 
 --
 -- Estructura de tabla para la tabla `informe`
+-- NOTA: Se eliminó la columna `numero_telefonico` por no estar en uso
 --
 
 CREATE TABLE `informe` (
@@ -260,33 +209,6 @@ CREATE TABLE `informe` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `informe`
---
-
-INSERT INTO `informe` (`id_informe`, `nombre_organizacion`, `evento`, `lugar`, `fecha`, `created_at`, `updated_at`) VALUES
-(1, 'Ajal-lol AC', 'Jornada de salud preventiva', 'Mérida, Yucatán', '2026-01-08', '2026-01-08 14:00:00', '2026-01-08 14:00:00'),
-(2, 'Ajal-lol AC', 'Entrega de útiles escolares', 'Valladolid, Yucatán', '2026-01-15', '2026-01-15 14:00:00', '2026-01-15 14:00:00'),
-(3, 'Ajal-lol AC', 'Brigada de atención médica', 'Tekax, Yucatán', '2026-01-22', '2026-01-22 14:00:00', '2026-01-22 14:00:00'),
-(4, 'Ajal-lol AC', 'Distribución de despensas alimentarias', 'Akil, Yucatán', '2026-02-03', '2026-02-03 14:00:00', '2026-02-03 14:00:00'),
-(5, 'Ajal-lol AC', 'Programa de becas estudiantiles', 'Izamal, Yucatán', '2026-02-10', '2026-02-10 14:00:00', '2026-02-10 14:00:00'),
-(6, 'Ajal-lol AC', 'Apoyo a adultos mayores', 'Motul, Yucatán', '2026-02-17', '2026-02-17 14:00:00', '2026-02-17 14:00:00'),
-(7, 'Ajal-lol AC', 'Entrega de insumos para el hogar', 'Ticul, Yucatán', '2026-02-24', '2026-02-24 14:00:00', '2026-02-24 14:00:00'),
-(8, 'Ajal-lol AC', 'Campaña de nutrición infantil', 'Oxkutzcab, Yucatán', '2026-03-03', '2026-03-03 14:00:00', '2026-03-03 14:00:00'),
-(9, 'Ajal-lol AC', 'Jornada de apoyo a familias vulnerables', 'Tizimín, Yucatán', '2026-03-10', '2026-03-10 14:00:00', '2026-03-10 14:00:00'),
-(10, 'Ajal-lol AC', 'Entrega de materiales de construcción', 'Progreso, Yucatán', '2026-03-17', '2026-03-17 14:00:00', '2026-03-17 14:00:00'),
-(11, 'Ajal-lol AC', 'Taller de capacitación para el empleo', 'Mérida, Yucatán', '2026-03-19', '2026-03-19 14:00:00', '2026-03-19 14:00:00'),
-(12, 'Ajal-lol AC', 'Jornada de reforestación comunitaria', 'Umán, Yucatán', '2026-03-24', '2026-03-24 14:00:00', '2026-03-24 14:00:00'),
-(13, 'Ajal-lol AC', 'Campaña de apoyo educativo', 'Kanasín, Yucatán', '2026-03-26', '2026-03-26 14:00:00', '2026-03-26 14:00:00'),
-(14, 'Ajal-lol AC', 'Distribución de suministros médicos', 'Hunucmá, Yucatán', '2026-04-02', '2026-04-02 14:00:00', '2026-04-02 14:00:00'),
-(15, 'Ajal-lol AC', 'Programa de apoyo a jóvenes emprendedores', 'Maxcanú, Yucatán', '2026-04-07', '2026-04-07 14:00:00', '2026-04-07 14:00:00'),
-(16, 'Ajal-lol AC', 'Entrega de canastas básicas', 'Chemax, Yucatán', '2026-04-14', '2026-04-14 14:00:00', '2026-04-14 14:00:00'),
-(17, 'Ajal-lol AC', 'Brigada de asistencia social', 'Espita, Yucatán', '2026-04-21', '2026-04-21 14:00:00', '2026-04-21 14:00:00'),
-(18, 'Ajal-lol AC', 'Jornada de salud bucal gratuita', 'Temozón, Yucatán', '2026-04-28', '2026-04-28 14:00:00', '2026-04-28 14:00:00'),
-(19, 'Ajal-lol AC', 'Entrega de kit escolar', 'Peto, Yucatán', '2026-05-05', '2026-05-05 14:00:00', '2026-05-05 14:00:00'),
-(20, 'Ajal-lol AC', 'Campaña de vacunación comunitaria', 'Acanceh, Yucatán', '2026-05-12', '2026-05-12 14:00:00', '2026-05-12 14:00:00'),
-(66, 'Ajal-lol AC', 'Campaña de vacunación comunitaria', 'Mérida, Yucatán', '2026-03-19', '2026-03-20 23:12:36', '2026-03-20 23:12:36');
 
 -- --------------------------------------------------------
 
@@ -390,72 +312,6 @@ CREATE TABLE `notificaciones` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `notificaciones`
---
-
-INSERT INTO `notificaciones` (`id_notificacion`, `id_usuario`, `id_formulario`, `titulo`, `mensaje`, `leido`, `created_at`) VALUES
-(28, 1, 1, 'Nueva solicitud de: Juan Pablo Méndez Ruiz', 'Voluntariado — Me gustaría participar como voluntario en sus actividades comunitarias.', 0, '2026-03-20 17:08:51'),
-(29, 5, 1, 'Nueva solicitud de: Juan Pablo Méndez Ruiz', 'Voluntariado — Me gustaría participar como voluntario en sus actividades comunitarias.', 0, '2026-03-20 17:08:51'),
-(30, 8, 1, 'Nueva solicitud de: Juan Pablo Méndez Ruiz', 'Voluntariado — Me gustaría participar como voluntario en sus actividades comunitarias.', 0, '2026-03-20 17:08:51'),
-(31, 1, 2, 'Nueva solicitud de: Sandra Gómez Torres', 'Donación en especie — Deseo donar ropa y víveres en buen estado. ¿Cuál es el procedimiento?', 0, '2026-03-20 17:08:51'),
-(32, 5, 2, 'Nueva solicitud de: Sandra Gómez Torres', 'Donación en especie — Deseo donar ropa y víveres en buen estado. ¿Cuál es el procedimiento?', 0, '2026-03-20 17:08:51'),
-(33, 8, 2, 'Nueva solicitud de: Sandra Gómez Torres', 'Donación en especie — Deseo donar ropa y víveres en buen estado. ¿Cuál es el procedimiento?', 0, '2026-03-20 17:08:51'),
-(34, 1, 3, 'Nueva solicitud de: Alberto Reyes Castillo', 'Información general — Quisiera conocer más sobre los proyectos activos de la organización.', 0, '2026-03-20 17:08:51'),
-(35, 5, 3, 'Nueva solicitud de: Alberto Reyes Castillo', 'Información general — Quisiera conocer más sobre los proyectos activos de la organización.', 0, '2026-03-20 17:08:51'),
-(36, 8, 3, 'Nueva solicitud de: Alberto Reyes Castillo', 'Información general — Quisiera conocer más sobre los proyectos activos de la organización.', 0, '2026-03-20 17:08:51'),
-(37, 1, 4, 'Nueva solicitud de: Rosa Chan Poot', 'Servicio social — Soy estudiante universitaria y me interesa realizar mi servicio social.', 0, '2026-03-20 17:08:51'),
-(38, 5, 4, 'Nueva solicitud de: Rosa Chan Poot', 'Servicio social — Soy estudiante universitaria y me interesa realizar mi servicio social.', 0, '2026-03-20 17:08:51'),
-(39, 8, 4, 'Nueva solicitud de: Rosa Chan Poot', 'Servicio social — Soy estudiante universitaria y me interesa realizar mi servicio social.', 0, '2026-03-20 17:08:51'),
-(40, 1, 5, 'Nueva solicitud de: Ernesto Vega Leal', 'Alianza institucional — Representamos a una institución educativa y buscamos posibles alianzas.', 0, '2026-03-20 17:08:51'),
-(41, 5, 5, 'Nueva solicitud de: Ernesto Vega Leal', 'Alianza institucional — Representamos a una institución educativa y buscamos posibles alianzas.', 0, '2026-03-20 17:08:51'),
-(42, 8, 5, 'Nueva solicitud de: Ernesto Vega Leal', 'Alianza institucional — Representamos a una institución educativa y buscamos posibles alianzas.', 0, '2026-03-20 17:08:51'),
-(43, 1, 6, 'Nueva solicitud de: Mónica Sánchez Flores', 'Apoyo comunitario — Nuestra colonia necesita apoyo para un programa de alimentación escolar.', 0, '2026-03-20 17:08:51'),
-(44, 5, 6, 'Nueva solicitud de: Mónica Sánchez Flores', 'Apoyo comunitario — Nuestra colonia necesita apoyo para un programa de alimentación escolar.', 0, '2026-03-20 17:08:51'),
-(45, 8, 6, 'Nueva solicitud de: Mónica Sánchez Flores', 'Apoyo comunitario — Nuestra colonia necesita apoyo para un programa de alimentación escolar.', 0, '2026-03-20 17:08:51'),
-(46, 1, 7, 'Nueva solicitud de: Rafael Ortiz Mendoza', 'Talleres de capacitación — ¿Cómo puedo inscribirme a los talleres de emprendimiento que ofrecen?', 0, '2026-03-20 17:08:51'),
-(47, 5, 7, 'Nueva solicitud de: Rafael Ortiz Mendoza', 'Talleres de capacitación — ¿Cómo puedo inscribirme a los talleres de emprendimiento que ofrecen?', 0, '2026-03-20 17:08:51'),
-(48, 8, 7, 'Nueva solicitud de: Rafael Ortiz Mendoza', 'Talleres de capacitación — ¿Cómo puedo inscribirme a los talleres de emprendimiento que ofrecen?', 0, '2026-03-20 17:08:51'),
-(49, 1, 8, 'Nueva solicitud de: Cristina López Herrera', 'Donación económica — Me gustaría realizar una aportación mensual a sus programas. ¿Cómo puedo hacerlo?', 0, '2026-03-20 17:08:51'),
-(50, 5, 8, 'Nueva solicitud de: Cristina López Herrera', 'Donación económica — Me gustaría realizar una aportación mensual a sus programas. ¿Cómo puedo hacerlo?', 0, '2026-03-20 17:08:51'),
-(51, 8, 8, 'Nueva solicitud de: Cristina López Herrera', 'Donación económica — Me gustaría realizar una aportación mensual a sus programas. ¿Cómo puedo hacerlo?', 0, '2026-03-20 17:08:51'),
-(52, 1, 9, 'Nueva solicitud de: Gerardo Fuentes Díaz', 'Solicitud de apoyo — Soy jefe de familia de una comunidad rural y necesitamos apoyo alimentario.', 0, '2026-03-20 17:08:51'),
-(53, 5, 9, 'Nueva solicitud de: Gerardo Fuentes Díaz', 'Solicitud de apoyo — Soy jefe de familia de una comunidad rural y necesitamos apoyo alimentario.', 0, '2026-03-20 17:08:51'),
-(54, 8, 9, 'Nueva solicitud de: Gerardo Fuentes Díaz', 'Solicitud de apoyo — Soy jefe de familia de una comunidad rural y necesitamos apoyo alimentario.', 0, '2026-03-20 17:08:51'),
-(55, 1, 10, 'Nueva solicitud de: Laura Martínez Soto', 'Voluntariado juvenil — Un grupo de jóvenes de preparatoria queremos participar como voluntarios.', 0, '2026-03-20 17:08:51'),
-(56, 5, 10, 'Nueva solicitud de: Laura Martínez Soto', 'Voluntariado juvenil — Un grupo de jóvenes de preparatoria queremos participar como voluntarios.', 0, '2026-03-20 17:08:51'),
-(57, 8, 10, 'Nueva solicitud de: Laura Martínez Soto', 'Voluntariado juvenil — Un grupo de jóvenes de preparatoria queremos participar como voluntarios.', 0, '2026-03-20 17:08:51'),
-(58, 1, 11, 'Nueva solicitud de: Ignacio Ramírez Canul', 'Materiales de construcción — ¿Tienen programas de apoyo para mejoramiento de vivienda?', 0, '2026-03-20 17:08:51'),
-(59, 5, 11, 'Nueva solicitud de: Ignacio Ramírez Canul', 'Materiales de construcción — ¿Tienen programas de apoyo para mejoramiento de vivienda?', 0, '2026-03-20 17:08:51'),
-(60, 8, 11, 'Nueva solicitud de: Ignacio Ramírez Canul', 'Materiales de construcción — ¿Tienen programas de apoyo para mejoramiento de vivienda?', 0, '2026-03-20 17:08:51'),
-(61, 1, 12, 'Nueva solicitud de: Verónica Hernández Pech', 'Becas escolares — Tengo dos hijos en primaria y me interesa el programa de becas que mencionan.', 0, '2026-03-20 17:08:51'),
-(62, 5, 12, 'Nueva solicitud de: Verónica Hernández Pech', 'Becas escolares — Tengo dos hijos en primaria y me interesa el programa de becas que mencionan.', 0, '2026-03-20 17:08:51'),
-(63, 8, 12, 'Nueva solicitud de: Verónica Hernández Pech', 'Becas escolares — Tengo dos hijos en primaria y me interesa el programa de becas que mencionan.', 0, '2026-03-20 17:08:51'),
-(64, 1, 13, 'Nueva solicitud de: Antonio Castro Dzul', 'Patrocinio — Somos una empresa local interesada en patrocinar alguno de sus proyectos.', 0, '2026-03-20 17:08:51'),
-(65, 5, 13, 'Nueva solicitud de: Antonio Castro Dzul', 'Patrocinio — Somos una empresa local interesada en patrocinar alguno de sus proyectos.', 0, '2026-03-20 17:08:51'),
-(66, 8, 13, 'Nueva solicitud de: Antonio Castro Dzul', 'Patrocinio — Somos una empresa local interesada en patrocinar alguno de sus proyectos.', 0, '2026-03-20 17:08:51'),
-(67, 1, 14, 'Nueva solicitud de: Patricia Morales Tun', 'Información de eventos — ¿Cómo me entero de los próximos eventos y actividades que realizan?', 0, '2026-03-20 17:08:51'),
-(68, 5, 14, 'Nueva solicitud de: Patricia Morales Tun', 'Información de eventos — ¿Cómo me entero de los próximos eventos y actividades que realizan?', 0, '2026-03-20 17:08:51'),
-(69, 8, 14, 'Nueva solicitud de: Patricia Morales Tun', 'Información de eventos — ¿Cómo me entero de los próximos eventos y actividades que realizan?', 0, '2026-03-20 17:08:51'),
-(70, 1, 15, 'Nueva solicitud de: Héctor Jiménez Xool', 'Apoyo médico — Mi comunidad no tiene acceso a servicios de salud. ¿Pueden visitarnos?', 0, '2026-03-20 17:08:51'),
-(71, 5, 15, 'Nueva solicitud de: Héctor Jiménez Xool', 'Apoyo médico — Mi comunidad no tiene acceso a servicios de salud. ¿Pueden visitarnos?', 0, '2026-03-20 17:08:51'),
-(72, 8, 15, 'Nueva solicitud de: Héctor Jiménez Xool', 'Apoyo médico — Mi comunidad no tiene acceso a servicios de salud. ¿Pueden visitarnos?', 0, '2026-03-20 17:08:51'),
-(73, 1, 16, 'Nueva solicitud de: Diana Pérez Cauich', 'Voluntariado profesional — Soy enfermera y me gustaría ofrecer mi tiempo en sus brigadas de salud.', 0, '2026-03-20 17:08:51'),
-(74, 5, 16, 'Nueva solicitud de: Diana Pérez Cauich', 'Voluntariado profesional — Soy enfermera y me gustaría ofrecer mi tiempo en sus brigadas de salud.', 0, '2026-03-20 17:08:51'),
-(75, 8, 16, 'Nueva solicitud de: Diana Pérez Cauich', 'Voluntariado profesional — Soy enfermera y me gustaría ofrecer mi tiempo en sus brigadas de salud.', 0, '2026-03-20 17:08:51'),
-(76, 1, 17, 'Nueva solicitud de: Fernando Salinas Ek', 'Donación de medicamentos — Cuento con medicamentos de primeros auxilios que quisiera donar.', 0, '2026-03-20 17:08:51'),
-(77, 5, 17, 'Nueva solicitud de: Fernando Salinas Ek', 'Donación de medicamentos — Cuento con medicamentos de primeros auxilios que quisiera donar.', 0, '2026-03-20 17:08:51'),
-(78, 8, 17, 'Nueva solicitud de: Fernando Salinas Ek', 'Donación de medicamentos — Cuento con medicamentos de primeros auxilios que quisiera donar.', 0, '2026-03-20 17:08:51'),
-(79, 1, 18, 'Nueva solicitud de: Alejandra Vega Balam', 'Solicitud de talleres — Represento a una junta de vecinos y nos interesa recibir talleres de nutrición.', 0, '2026-03-20 17:08:51'),
-(80, 5, 18, 'Nueva solicitud de: Alejandra Vega Balam', 'Solicitud de talleres — Represento a una junta de vecinos y nos interesa recibir talleres de nutrición.', 0, '2026-03-20 17:08:51'),
-(81, 8, 18, 'Nueva solicitud de: Alejandra Vega Balam', 'Solicitud de talleres — Represento a una junta de vecinos y nos interesa recibir talleres de nutrición.', 0, '2026-03-20 17:08:51'),
-(82, 1, 19, 'Nueva solicitud de: Roberto Gutiérrez May', 'Colaboración académica — Soy investigador y me gustaría estudiar el impacto de sus programas sociales.', 0, '2026-03-20 17:08:51'),
-(83, 5, 19, 'Nueva solicitud de: Roberto Gutiérrez May', 'Colaboración académica — Soy investigador y me gustaría estudiar el impacto de sus programas sociales.', 0, '2026-03-20 17:08:51'),
-(84, 8, 19, 'Nueva solicitud de: Roberto Gutiérrez May', 'Colaboración académica — Soy investigador y me gustaría estudiar el impacto de sus programas sociales.', 0, '2026-03-20 17:08:51'),
-(85, 1, 20, 'Nueva solicitud de: Isabel Flores Cohuo', 'Información general — Me llegó una invitación a su evento y quisiera confirmar mi asistencia.', 0, '2026-03-20 17:08:51'),
-(86, 5, 20, 'Nueva solicitud de: Isabel Flores Cohuo', 'Información general — Me llegó una invitación a su evento y quisiera confirmar mi asistencia.', 0, '2026-03-20 17:08:51'),
-(87, 8, 20, 'Nueva solicitud de: Isabel Flores Cohuo', 'Información general — Me llegó una invitación a su evento y quisiera confirmar mi asistencia.', 0, '2026-03-20 17:08:51');
-
 -- --------------------------------------------------------
 
 --
@@ -523,22 +379,6 @@ CREATE TABLE `reportebeneficiarios` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `reportebeneficiarios`
---
-
-INSERT INTO `reportebeneficiarios` (`id_reportebeneficiario`, `id_informe`, `reportenombrebeneficiario`, `reportecurpbeneficiario`, `reporteedadbeneficiario`, `created_at`) VALUES
-(306, 66, 'Alejandro García Torres', 'GATA850522HDFLRN03', 34, '2026-03-20 17:12:36'),
-(307, 66, 'María Elena López Ruiz', 'LORM920315MDFZRS08', 32, '2026-03-20 17:12:36'),
-(308, 66, 'Ricardo Méndez Castro', 'MECR781110HDFNNN01', 32, '2026-03-20 17:12:36'),
-(309, 66, 'Sofía Villalobos Sanz', 'VISS050720MDFLND05', 34, '2026-03-20 17:12:36'),
-(310, 66, 'Javier Ortiz Pineda', 'ORPJ600102HDFRRD09', 34, '2026-03-20 17:12:36'),
-(311, 66, 'Claudia Rivas Montes', 'RIMC951212MDFNTN02', 42, '2026-03-20 17:12:36'),
-(312, 66, 'María Fernanda Ruiz Gómez', 'RUGM920804MYNRRM02', 32, '2026-03-20 17:12:36'),
-(313, 66, 'Luis Alberto Chan Poot', 'CAPL880112HYNHST03', 65, '2026-03-20 17:12:36'),
-(314, 66, 'Ana Sofía Castillo Pérez', 'CAPA950623MYNSRN04', 54, '2026-03-20 17:12:36'),
-(315, 66, 'José Manuel Tun Canul', 'TUCM870909HYNMNL05', 43, '2026-03-20 17:12:36');
-
 -- --------------------------------------------------------
 
 --
@@ -590,13 +430,6 @@ CREATE TABLE `sessions` (
   `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `last_activity` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `sessions`
---
-
-INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('aS2llvSMzoUUYNQ8UoYaizoK2Q71DK004Mw2Czio', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiZjRhbW1XbFpFQTBrSW5Fc01QRDg4amxFYXhzU09leWdXOFJnSWhqYiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hcGkvbm90aWZpY2F0aW9ucy9jb3VudCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO30=', 1774026784);
 
 -- --------------------------------------------------------
 
@@ -862,147 +695,75 @@ ALTER TABLE `widgets_actividades`
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
---
--- AUTO_INCREMENT de la tabla `actividades`
---
 ALTER TABLE `actividades`
   MODIFY `id_actividad` int NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `aliados`
---
 ALTER TABLE `aliados`
   MODIFY `id_aliados` int NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `asistenciabeneficiarios`
---
 ALTER TABLE `asistenciabeneficiarios`
   MODIFY `id_asistenciabeneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
 
---
--- AUTO_INCREMENT de la tabla `categoria_proyectos`
---
 ALTER TABLE `categoria_proyectos`
   MODIFY `id_categoria` int NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `contacto`
---
 ALTER TABLE `contacto`
   MODIFY `id_contacto` int NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `directiva`
---
 ALTER TABLE `directiva`
   MODIFY `id_directiva` int NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `failed_jobs`
---
 ALTER TABLE `failed_jobs`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `formulario_contacto`
---
 ALTER TABLE `formulario_contacto`
-  MODIFY `id_formcontacto` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id_formcontacto` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
---
--- AUTO_INCREMENT de la tabla `imagenes_proyectos`
---
 ALTER TABLE `imagenes_proyectos`
   MODIFY `id_imagen` int NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `informe`
---
 ALTER TABLE `informe`
-  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
---
--- AUTO_INCREMENT de la tabla `inicio`
---
 ALTER TABLE `inicio`
   MODIFY `id_inicio` int NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `jobs`
---
 ALTER TABLE `jobs`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `migrations`
---
 ALTER TABLE `migrations`
   MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
---
--- AUTO_INCREMENT de la tabla `nosotros`
---
 ALTER TABLE `nosotros`
   MODIFY `id_nosotros` int NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `notificaciones`
---
 ALTER TABLE `notificaciones`
-  MODIFY `id_notificacion` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
+  MODIFY `id_notificacion` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
---
--- AUTO_INCREMENT de la tabla `preguntas_frecuentes`
---
 ALTER TABLE `preguntas_frecuentes`
   MODIFY `id_preguntasfrecuentes` int NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `proyectos`
---
 ALTER TABLE `proyectos`
   MODIFY `id_proyecto` int NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `redes_sociales`
---
 ALTER TABLE `redes_sociales`
   MODIFY `id_redes_sociales` int NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `reportebeneficiarios`
---
 ALTER TABLE `reportebeneficiarios`
-  MODIFY `id_reportebeneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=316;
+  MODIFY `id_reportebeneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=306;
 
---
--- AUTO_INCREMENT de la tabla `rol_usuario`
---
 ALTER TABLE `rol_usuario`
   MODIFY `id_rol_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
---
--- AUTO_INCREMENT de la tabla `secciones_web`
---
 ALTER TABLE `secciones_web`
   MODIFY `id_seccion` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
---
--- AUTO_INCREMENT de la tabla `users`
---
 ALTER TABLE `users`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT de la tabla `usuario`
---
 ALTER TABLE `usuario`
   MODIFY `id_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
---
--- AUTO_INCREMENT de la tabla `widgets_actividades`
---
 ALTER TABLE `widgets_actividades`
   MODIFY `id_widgetactividad` int NOT NULL AUTO_INCREMENT;
 
@@ -1010,97 +771,53 @@ ALTER TABLE `widgets_actividades`
 -- Restricciones para tablas volcadas
 --
 
---
--- Filtros para la tabla `actividades`
---
 ALTER TABLE `actividades`
   ADD CONSTRAINT `actividades_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
---
--- Filtros para la tabla `aliados`
---
 ALTER TABLE `aliados`
   ADD CONSTRAINT `aliados_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
---
--- Filtros para la tabla `asistenciabeneficiarios`
---
 ALTER TABLE `asistenciabeneficiarios`
   ADD CONSTRAINT `asistenciabeneficiarios_ibfk_1` FOREIGN KEY (`id_informe`) REFERENCES `informe` (`id_informe`) ON DELETE CASCADE;
 
---
--- Filtros para la tabla `contacto`
---
 ALTER TABLE `contacto`
   ADD CONSTRAINT `contacto_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
---
--- Filtros para la tabla `directiva`
---
 ALTER TABLE `directiva`
   ADD CONSTRAINT `directiva_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
---
--- Filtros para la tabla `imagenes_proyectos`
---
 ALTER TABLE `imagenes_proyectos`
   ADD CONSTRAINT `imagenes_proyectos_ibfk_1` FOREIGN KEY (`proyecto`) REFERENCES `proyectos` (`id_proyecto`);
 
---
--- Filtros para la tabla `inicio`
---
 ALTER TABLE `inicio`
   ADD CONSTRAINT `inicio_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
---
--- Filtros para la tabla `nosotros`
---
 ALTER TABLE `nosotros`
   ADD CONSTRAINT `nosotros_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
---
--- Filtros para la tabla `notificaciones`
---
 ALTER TABLE `notificaciones`
   ADD CONSTRAINT `notificaciones_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE,
   ADD CONSTRAINT `notificaciones_ibfk_2` FOREIGN KEY (`id_formulario`) REFERENCES `formulario_contacto` (`id_formcontacto`) ON DELETE SET NULL;
 
---
--- Filtros para la tabla `preguntas_frecuentes`
---
 ALTER TABLE `preguntas_frecuentes`
   ADD CONSTRAINT `preguntas_frecuentes_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
---
--- Filtros para la tabla `proyectos`
---
 ALTER TABLE `proyectos`
   ADD CONSTRAINT `proyectos_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`),
   ADD CONSTRAINT `proyectos_ibfk_2` FOREIGN KEY (`categoria`) REFERENCES `categoria_proyectos` (`id_categoria`);
 
---
--- Filtros para la tabla `reportebeneficiarios`
---
 ALTER TABLE `reportebeneficiarios`
   ADD CONSTRAINT `reportebeneficiarios_ibfk_1` FOREIGN KEY (`id_informe`) REFERENCES `informe` (`id_informe`) ON DELETE CASCADE;
 
---
--- Filtros para la tabla `rol_usuario`
---
 ALTER TABLE `rol_usuario`
   ADD CONSTRAINT `rol_usuario_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
 
---
--- Filtros para la tabla `secciones_web`
---
 ALTER TABLE `secciones_web`
   ADD CONSTRAINT `fk_seccion_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
 
---
--- Filtros para la tabla `widgets_actividades`
---
 ALTER TABLE `widgets_actividades`
   ADD CONSTRAINT `widgets_actividades_ibfk_1` FOREIGN KEY (`actividad_id`) REFERENCES `actividades` (`id_actividad`);
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

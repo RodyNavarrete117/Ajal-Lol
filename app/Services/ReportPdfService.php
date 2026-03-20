@@ -168,17 +168,10 @@ class ReportPdfService
                 <td class="meta-label">Lugar</td>
                 <td class="meta-value">' . htmlspecialchars($report->lugar) . '</td>
             </tr>
-            ' . ($report->numero_telefonico ? '
-            <tr>
-                <td class="meta-label">Teléfono</td>
-                <td class="meta-value">' . htmlspecialchars($report->numero_telefonico) . '</td>
-                <td class="meta-label">Total beneficiarios</td>
-                <td class="meta-value"><strong style="font-size:14px; color:#783d66;">' . $totalBenef . '</strong></td>
-            </tr>' : '
             <tr>
                 <td class="meta-label">Total beneficiarios</td>
                 <td class="meta-value" colspan="3"><strong style="font-size:14px; color:#783d66;">' . $totalBenef . '</strong></td>
-            </tr>') . '
+            </tr>
         </table>
 
         <div class="section-header">Registro de personas beneficiarias</div>

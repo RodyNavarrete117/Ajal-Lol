@@ -60,7 +60,6 @@ class ReportsController extends Controller
             'evento'              => 'required|string|max:150',
             'lugar'               => 'required|string|max:150',
             'fecha'               => 'required|date',
-            'numero_telefonico'   => 'nullable|string|max:50',
         ]);
 
         // ── Validación específica según tipo ─────────────────────────────────
@@ -85,7 +84,6 @@ class ReportsController extends Controller
             'evento',
             'lugar',
             'fecha',
-            'numero_telefonico',
         ]));
 
         // ── Guardar personas según tipo ───────────────────────────────────────
@@ -134,12 +132,11 @@ class ReportsController extends Controller
             'evento'              => 'nullable|string|max:150',
             'lugar'               => 'nullable|string|max:150',
             'fecha'               => 'required|date',
-            'numero_telefonico'   => 'nullable|string|max:50',
         ]);
 
         // ── Objeto temporal (nunca se persiste) ───────────────────────────────
         $report = new Report($request->only([
-            'nombre_organizacion', 'evento', 'lugar', 'fecha', 'numero_telefonico',
+            'nombre_organizacion', 'evento', 'lugar', 'fecha',
         ]));
         $report->id_informe = 0;
 
@@ -225,7 +222,6 @@ class ReportsController extends Controller
             'evento'              => 'required|string|max:150',
             'lugar'               => 'required|string|max:150',
             'fecha'               => 'required|date',
-            'numero_telefonico'   => 'nullable|string|max:50',
         ]);
 
         // ── Validación específica ─────────────────────────────────────────────
@@ -251,7 +247,6 @@ class ReportsController extends Controller
             'evento',
             'lugar',
             'fecha',
-            'numero_telefonico',
         ]));
 
         // ── Reemplazar personas según tipo ────────────────────────────────────

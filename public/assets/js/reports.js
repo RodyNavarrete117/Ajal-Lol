@@ -1614,13 +1614,11 @@ document.addEventListener('DOMContentLoaded', function () {
         btnBlank.addEventListener('click', function (e) {
             e.preventDefault();
 
-            // Solo necesitamos los campos base — no los beneficiarios
             const tipo = document.getElementById('tipo_informe_form')?.value || 'asistencia';
             const org  = document.getElementById('nombre_organizacion')?.value || '';
             const evt  = document.getElementById('input-evento')?.value        || '';
             const lug  = document.getElementById('input-lugar')?.value         || '';
             const fec  = document.getElementById('fecha')?.value               || '';
-            const tel  = form?.querySelector('[name="numero_telefonico"]')?.value || '';
 
             const formData = new FormData();
             formData.set('_token',               CSRF_TOKEN);
@@ -1630,7 +1628,6 @@ document.addEventListener('DOMContentLoaded', function () {
             formData.set('evento',               evt);
             formData.set('lugar',                lug);
             formData.set('fecha',                fec || new Date().toISOString().split('T')[0]);
-            formData.set('numero_telefonico',    tel);
 
             fetch(ROUTE_PREVIEW_PDF, {
                 method: 'POST',
@@ -1672,4 +1669,3 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
-

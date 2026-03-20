@@ -342,7 +342,7 @@
 
 /* ─── FAQ ─── */
 .faq-list { max-width: 780px; margin-inline: auto; }
-.faq-item { border-bottom: 1px solid var(--rose-pale); overflow: hidden; }
+.faq-item { border-bottom: 1px solid var(--rose-pale); }
 .faq-question {
   width: 100%; display: flex; justify-content: space-between; align-items: center;
   padding: 1.4rem 0; background: none; border: none; cursor: none; text-align: left;
@@ -360,8 +360,16 @@
   background: var(--rose-deep); border-color: var(--rose-deep);
   color: var(--white); transform: rotate(90deg);
 }
-.faq-answer { max-height: 0; overflow: hidden; transition: max-height .45s ease, padding .3s ease; }
-.faq-item.open .faq-answer { max-height: 500px; padding-bottom: 1.4rem; }
+/* ─── FAQ ─── */
+.faq-answer { 
+  height: 0; 
+  overflow: hidden; 
+  transition: height .45s ease, padding .3s ease; 
+}
+.faq-item.open .faq-answer { 
+  height: auto; 
+  padding-bottom: 1.4rem; 
+}
 .faq-answer p {
   color: var(--text-mid); font-size: .93rem; line-height: 1.8; font-weight: 400;
   padding-left: 1rem; border-left: 2px solid var(--rose-pale);

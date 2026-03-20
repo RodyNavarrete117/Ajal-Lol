@@ -83,7 +83,7 @@
   <!-- ── JS propio (orden importante: utils primero) ── -->
   <script src="{{ asset('assets/js/publicpages/utils.js') }}"></script>     {{-- Utilidades, cursor, preloader, animaciones --}}
   <script src="{{ asset('assets/js/publicpages/header.js') }}"></script>    {{-- Header, nav, dropdown --}}
-  <script src="{{ asset('assets/js/publicpages/sections.js') }}"></script>  {{-- Contadores, marquee, FAQ --}}
+  <script src="{{ asset('assets/js/publicpages/sections.js') }}" defer></script>  {{-- Contadores, marquee, FAQ --}}
   <script src="{{ asset('assets/js/publicpages/portfolio.js') }}"></script> {{-- Year tabs, filtros, lightbox --}}
   <script src="{{ asset('assets/js/publicpages/contact.js') }}"></script>   {{-- Formulario de contacto --}}
 

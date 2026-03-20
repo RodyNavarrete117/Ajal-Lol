@@ -15,7 +15,7 @@
         </div>
         <div class="member-info">
           <h3>LEG. Jenevy Ríos Pech</h3>
-          <span>Presidenta</span>
+          <span>Ayudante</span>
         </div>
       </article>
 
@@ -37,7 +37,7 @@
         </div>
         <div class="member-info">
           <h3>Ing. Paula Guadalupe Pech Puc</h3>
-          <span>Tesorera</span>
+          <span>Presidenta</span>
         </div>
       </article>
 

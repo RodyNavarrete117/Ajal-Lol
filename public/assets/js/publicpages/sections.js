@@ -78,32 +78,26 @@
   /* ═══════════════════════════════════════════════
      FAQ ACCORDION
   ═══════════════════════════════════════════════ */
-  function initFaq() {
-    const items = $$('.faq-item');
-    items.forEach(item => {
-      const btn = item.querySelector('.faq-question');
-      if (!btn) return;
+function initFaq() {
+  document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.faq-question');
+    if (!btn) return;
 
-      if (!btn.querySelector('.faq-toggle')) {
-        const icon = document.createElement('span');
-        icon.className = 'faq-toggle';
-        icon.innerHTML = '<i class="bi bi-chevron-right"></i>';
-        btn.appendChild(icon);
-      }
+    const item = btn.closest('.faq-item');
+    const answer = item.querySelector('.faq-answer');
+    const isOpen = item.classList.contains('open');
 
-      on(btn, 'click', () => {
-        const isOpen = item.classList.contains('open');
-        items.forEach(i => {
-          i.classList.remove('open');
-          i.querySelector('.faq-question')?.setAttribute('aria-expanded', 'false');
-        });
-        if (!isOpen) {
-          item.classList.add('open');
-          btn.setAttribute('aria-expanded', 'true');
-        }
-      });
+    document.querySelectorAll('.faq-item').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.faq-answer').style.maxHeight = '0';
     });
-  }
+
+    if (!isOpen) {
+      item.classList.add('open');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+    }
+  });
+}
 
   /* ── Init ── */
   function init() {

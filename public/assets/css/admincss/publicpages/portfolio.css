@@ -32,6 +32,7 @@
   transition: var(--transition);
   position: relative;
   overflow: hidden;
+  isolation: isolate; /* ← agrega esto */
 }
 
 .year-tab i {
@@ -50,6 +51,7 @@
   opacity: 0;
   transition: opacity var(--transition);
   border-radius: inherit;
+  z-index: -1; /* ← cambia de nada a -1 */
 }
 
 .year-tab:hover {
@@ -73,114 +75,6 @@
 @keyframes panelFadeIn {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: none; }
-}
-
-/* ─── PANEL GENERAL ─── */
-.general-intro {
-  max-width: 720px;
-  margin-inline: auto;
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.general-intro p {
-  font-size: 1rem;
-  color: var(--text-mid);
-  line-height: 1.8;
-  font-weight: 400;
-}
-
-.general-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.6rem;
-}
-
-.general-card {
-  background: var(--white);
-  border-radius: var(--radius-md);
-  padding: 2rem 1.8rem;
-  border: 1px solid var(--rose-pale);
-  transition: var(--transition);
-  position: relative;
-  overflow: hidden;
-  cursor: none;
-}
-
-.general-card::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--rose-mid), var(--gold));
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--transition);
-}
-
-.general-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--rose-soft);
-}
-
-.general-card:hover::after { transform: scaleX(1); }
-
-.general-card-icon {
-  width: 48px;
-  height: 48px;
-  background: var(--rose-blush);
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.4rem;
-  color: var(--rose-mid);
-  margin-bottom: 1.1rem;
-  transition: var(--transition);
-}
-
-.general-card:hover .general-card-icon {
-  background: var(--rose-deep);
-  color: var(--white);
-  transform: rotate(-4deg) scale(1.06);
-}
-
-.general-card h3 {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  color: var(--rose-deep);
-  font-weight: 700;
-  margin-bottom: .3rem;
-}
-
-.general-card-stat {
-  font-size: .82rem;
-  font-weight: 700;
-  color: var(--rose-mid);
-  letter-spacing: .5px;
-  text-transform: uppercase;
-  margin-bottom: .7rem;
-  display: flex;
-  align-items: center;
-  gap: .4rem;
-}
-
-.general-card-stat::before {
-  content: '';
-  display: inline-block;
-  width: 20px;
-  height: 2px;
-  background: linear-gradient(90deg, var(--rose-mid), var(--gold));
-  border-radius: 99px;
-  flex-shrink: 0;
-}
-
-.general-card p {
-  font-size: .88rem;
-  color: var(--text-mid);
-  line-height: 1.75;
-  font-weight: 400;
 }
 
 /* ─── FILTROS DE CATEGORÍA (dentro de cada panel de año) ─── */
@@ -339,10 +233,8 @@
 .lightbox-close:hover { color: var(--rose-pale); transform: rotate(90deg) scale(1.1); }
 
 /* ─── Responsive ─── */
-@media (max-width: 960px) { .general-grid   { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 768px) { .portfolio-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) {
-  .general-grid { grid-template-columns: 1fr; }
   .year-tab     { font-size: .82rem; padding: .5rem 1.2rem; }
 }
 @media (max-width: 480px) { .portfolio-grid { grid-template-columns: 1fr; } }

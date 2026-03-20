@@ -102,7 +102,7 @@
           </li>
 
           <li role="none">
-            <a href="{{ url('/#faq') }}" role="menuitem">FAQ</a>
+            <a href="{{ url('/#faq') }}" role="menuitem">Preguntas</a>
           </li>
           <li role="none">
             <a href="{{ url('/#contact') }}" role="menuitem">Contacto</a>

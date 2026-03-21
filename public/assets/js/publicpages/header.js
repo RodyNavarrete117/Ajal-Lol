@@ -45,7 +45,7 @@ function initHeader() {
     const current = window.scrollY;
     updateBranding();
 
-    if (current > 100) {
+    if (current > 1500) {
       if (current > lastScroll) {
         branding?.classList.add('nav-hidden');
       } else {

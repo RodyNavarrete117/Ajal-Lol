@@ -15,6 +15,26 @@
   transition: var(--transition);
 }
 #header.scrolled { border-bottom-color: var(--rose-pale); box-shadow: var(--shadow-sm); }
+#header {
+  transition: transform .4s ease, box-shadow var(--transition), border-color var(--transition);
+}
+
+#header.nav-hidden {
+  transform: translateY(-100%);
+}
+
+.topbar {
+  transition: max-height .4s ease, padding .4s ease, opacity .3s ease;
+  overflow: hidden;
+  max-height: 100px;
+  opacity: 1;
+}
+
+.topbar.hidden {
+  max-height: 0;
+  padding: 0;
+  opacity: 0;
+}
 
 /* ─── Topbar ─── */
 .topbar {
@@ -23,7 +43,7 @@
   font-size: .8rem;
 }
 .topbar .container    { display: flex; justify-content: space-between; align-items: center; }
-.contact-info         { display: flex; gap: 1.6rem; align-items: center; }
+.contact-info         { display: flex; gap: 1.6rem; align-items: center; margin-bottom: 0px;}
 .contact-info i       { display: flex; align-items: center; gap: .4rem; color: var(--rose-pale); }
 .contact-info a       { color: var(--white); transition: color var(--transition); }
 .contact-info a:hover { color: var(--gold-light); }
@@ -42,11 +62,15 @@
 .logo:hover img      { transform: scale(1.06) rotate(-1deg); }
 
 /* ─── Nav ─── */
-.navmenu ul {
+.navmenu ul[role="menubar"] {
   display: flex;
-  gap: 2.2rem;
   align-items: center;
+  gap: 2.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
+
 .navmenu a {
   font-size: .82rem;
   font-weight: 500;

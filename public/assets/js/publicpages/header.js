@@ -13,23 +13,46 @@
   /* ═══════════════════════════════════════════════
      HEADER — shrink + active nav
   ═══════════════════════════════════════════════ */
-  function initHeader() {
-    const header   = $('#header');
-    const navLinks = $$('.navmenu a[href^="#"]');
-    const sections = $$('section[id], #hero');
+function initHeader() {
+  const header   = $('#header');
+  const topbar   = $('.topbar');
+  const navLinks = $$('.navmenu a[href^="#"]');
+  const sections = $$('section[id], #hero');
 
-    on(window, 'scroll', () => {
-      header?.classList.toggle('scrolled', window.scrollY > 60);
+  let lastScroll = 0;
 
-      let current = '';
-      sections.forEach(sec => {
-        if (window.scrollY >= sec.offsetTop - 140) current = sec.id;
-      });
-      navLinks.forEach(a => {
-        a.classList.toggle('active', a.getAttribute('href') === `#${current}`);
-      });
-    }, { passive: true });
-  }
+  on(window, 'scroll', () => {
+    const current = window.scrollY;
+
+    // Ocultar topbar al hacer scroll
+    topbar?.classList.toggle('hidden', current > 60);
+
+    // Scrolled class en header
+    header?.classList.toggle('scrolled', current > 60);
+
+    // Hide/show nav en scroll down/up
+    if (current > 100) {
+      if (current > lastScroll) {
+        header?.classList.add('nav-hidden');
+      } else {
+        header?.classList.remove('nav-hidden');
+      }
+    } else {
+      header?.classList.remove('nav-hidden');
+    }
+
+    lastScroll = current;
+
+    // Active nav
+    let currentId = '';
+    sections.forEach(sec => {
+      if (current >= sec.offsetTop - 140) currentId = sec.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === `#${currentId}`);
+    });
+  }, { passive: true });
+}
 
   /* ═══════════════════════════════════════════════
      MOBILE NAV

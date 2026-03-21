@@ -32,8 +32,6 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
   <!-- ── CSS propio (dividido para ahorrar código) ── -->
-   <!-- <link href="{{ asset('assets/css/index.css') }}" rel="stylesheet">
-  <link href="{{ asset('assets/css/admincss/publicpages/portfolio.css') }}" rel="stylesheet"> -->
   <link href="{{ asset('assets/css/admincss/publicpages/base.css') }}"     rel="stylesheet"> {{-- Variables, reset, utils, cursor, preloader --}}
   <link href="{{ asset('assets/css/admincss/publicpages/header.css') }}"   rel="stylesheet"> {{-- Header, nav, dropdown --}}
   <link href="{{ asset('assets/css/admincss/publicpages/sections.css') }}" rel="stylesheet"> {{-- Hero, about, stats, aliados, actividades, team, mvov, faq --}}

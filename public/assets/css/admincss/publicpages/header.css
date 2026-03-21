@@ -7,33 +7,8 @@
 
 /* ─── Header ─── */
 #header {
-  position: sticky; top: 0; z-index: 700;
-  background: rgba(253,248,245,.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid transparent;
-  transition: var(--transition);
-}
-#header.scrolled { border-bottom-color: var(--rose-pale); box-shadow: var(--shadow-sm); }
-#header {
-  transition: transform .4s ease, box-shadow var(--transition), border-color var(--transition);
-}
-
-#header.nav-hidden {
-  transform: translateY(-100%);
-}
-
-.topbar {
-  transition: max-height .4s ease, padding .4s ease, opacity .3s ease;
-  overflow: hidden;
-  max-height: 100px;
-  opacity: 1;
-}
-
-.topbar.hidden {
-  max-height: 0;
-  padding: 0;
-  opacity: 0;
+  position: relative;
+  z-index: 700;
 }
 
 /* ─── Topbar ─── */
@@ -56,7 +31,21 @@
 .topbar .social-links a:hover { color: var(--white); transform: translateY(-2px); }
 
 /* ─── Branding ─── */
-.branding { padding: .8rem 0; }
+.branding {
+  padding: .8rem 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 700;
+  background: rgba(253,248,245,.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid transparent;
+  transition: transform .4s ease, box-shadow var(--transition), border-color var(--transition);
+}
+.branding.scrolled { border-bottom-color: var(--rose-pale); box-shadow: var(--shadow-sm); }
+.branding.nav-hidden { transform: translateY(-100%); }
 .branding .container { display: flex; justify-content: space-between; align-items: center; }
 .logo img            { height: 54px; width: auto; transition: transform var(--spring); }
 .logo:hover img      { transform: scale(1.06) rotate(-1deg); }

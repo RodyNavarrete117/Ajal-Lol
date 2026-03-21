@@ -1,4 +1,4 @@
-<header id="header" class="header sticky-top">
+<header id="header" class="header">
 
   <!-- Topbar -->
   <div class="topbar" role="complementary" aria-label="Información de contacto rápido">

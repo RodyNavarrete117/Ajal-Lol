@@ -14,36 +14,49 @@
      HEADER — shrink + active nav
   ═══════════════════════════════════════════════ */
 function initHeader() {
-  const header   = $('#header');
+  const branding = $('.branding');
   const topbar   = $('.topbar');
   const navLinks = $$('.navmenu a[href^="#"]');
   const sections = $$('section[id], #hero');
+  let lastScroll  = 0;
 
-  let lastScroll = 0;
+  // Ejecutar al cargar para posicionar correctamente desde el inicio
+  const updateBranding = () => {
+    const current        = window.scrollY;
+    const topbarHeight   = topbar.offsetHeight;
+    const brandingHeight = branding.offsetHeight;
+    const offset         = Math.max(0, topbarHeight - current);
+    branding.style.top   = offset + 'px';
+    branding?.classList.toggle('scrolled', current > topbarHeight);
+
+    // Solo el alto del branding, no incluir el topbar
+    const main = document.querySelector('#main');
+    if (main) main.style.paddingTop = brandingHeight + 'px';
+  };
+
+  // Llamar inmediatamente al cargar
+  updateBranding();
+
+  // Y también después de que todo cargue completamente
+  window.addEventListener('load', updateBranding);
+  setTimeout(updateBranding, 100);
 
   on(window, 'scroll', () => {
     const current = window.scrollY;
+    updateBranding();
 
-    // Ocultar topbar al hacer scroll
-    topbar?.classList.toggle('hidden', current > 60);
-
-    // Scrolled class en header
-    header?.classList.toggle('scrolled', current > 60);
-
-    // Hide/show nav en scroll down/up
     if (current > 100) {
       if (current > lastScroll) {
-        header?.classList.add('nav-hidden');
+        branding?.classList.add('nav-hidden');
       } else {
-        header?.classList.remove('nav-hidden');
+        branding?.classList.remove('nav-hidden');
       }
     } else {
-      header?.classList.remove('nav-hidden');
+      branding?.classList.remove('nav-hidden');
     }
 
     lastScroll = current;
 
-    // Active nav
     let currentId = '';
     sections.forEach(sec => {
       if (current >= sec.offsetTop - 140) currentId = sec.id;

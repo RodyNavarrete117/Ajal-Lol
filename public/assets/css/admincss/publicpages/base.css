@@ -179,7 +179,7 @@ body.cursor-hover #cursor-ring {
   box-shadow: var(--shadow-md);
   opacity: 0; pointer-events: none;
   transition: var(--transition);
-  z-index: 800; cursor: none;
+  z-index: 100; cursor: none;
 }
 #scroll-top.visible { opacity: 1; pointer-events: auto; }
 #scroll-top:hover   { transform: translateY(-4px) scale(1.08); box-shadow: var(--shadow-glow); }

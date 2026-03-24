@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 19-03-2026 a las 16:48:14
+-- Tiempo de generación: 24-03-2026 a las 17:29:17
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `prueba5`
+-- Base de datos: `prueba6`
 --
 
 -- --------------------------------------------------------
@@ -50,15 +50,14 @@ CREATE TABLE `aliados` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `asistenciabeneficiarios`
+-- Estructura de tabla para la tabla `beneficiarios`
 --
 
-CREATE TABLE `asistenciabeneficiarios` (
-  `id_asistenciabeneficiario` int NOT NULL,
-  `id_informe` int NOT NULL,
-  `asistencianombrebeneficiario` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `asistenciaedadbeneficiario` int DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE `beneficiarios` (
+  `id_beneficiario` int NOT NULL,
+  `nombre_beneficiario` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `curp_beneficiario` char(18) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `edad_beneficiario` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -197,17 +196,30 @@ CREATE TABLE `imagenes_proyectos` (
 
 --
 -- Estructura de tabla para la tabla `informe`
--- NOTA: Se eliminó la columna `numero_telefonico` por no estar en uso
 --
 
 CREATE TABLE `informe` (
   `id_informe` int NOT NULL,
   `nombre_organizacion` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `evento` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `lugar` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `fecha` date NOT NULL,
+  `evento_informe` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `lugar_evento_informe` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fecha_informe` date NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `informe_beneficiarios`
+--
+
+CREATE TABLE `informe_beneficiarios` (
+  `id` int NOT NULL,
+  `id_informe` int NOT NULL,
+  `id_beneficiario` int NOT NULL,
+  `tipo_informe` enum('reporte','asistencia') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -271,15 +283,6 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `migrations`
---
-
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(1, '0001_01_01_000000_create_users_table', 1),
-(2, '0001_01_01_000001_create_cache_table', 1),
-(3, '0001_01_01_000002_create_jobs_table', 1);
 
 -- --------------------------------------------------------
 
@@ -367,21 +370,6 @@ CREATE TABLE `redes_sociales` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `reportebeneficiarios`
---
-
-CREATE TABLE `reportebeneficiarios` (
-  `id_reportebeneficiario` int NOT NULL,
-  `id_informe` int NOT NULL,
-  `reportenombrebeneficiario` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `reportecurpbeneficiario` char(18) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `reporteedadbeneficiario` int DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `rol_usuario`
 --
 
@@ -397,11 +385,11 @@ CREATE TABLE `rol_usuario` (
 
 INSERT INTO `rol_usuario` (`id_rol_usuario`, `id_usuario`, `cargo_usuario`) VALUES
 (1, 1, 'administrador'),
-(2, 2, 'editor'),
-(5, 5, 'administrador'),
-(6, 6, 'editor'),
-(7, 7, 'editor'),
-(8, 8, 'administrador');
+(2, 2, 'administrador'),
+(3, 3, 'administrador'),
+(4, 4, 'editor'),
+(5, 5, 'editor'),
+(6, 6, 'editor');
 
 -- --------------------------------------------------------
 
@@ -430,6 +418,13 @@ CREATE TABLE `sessions` (
   `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `last_activity` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `sessions`
+--
+
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+('vlMFIMhnT98PlXfR93aUqFhQB5apM1pGgk75GXD3', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiZzV5b2tzNzVXb1lwanQxcDVwbk9peUVsaUVmejlDUmx5RzhOOWRVciI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hcGkvbm90aWZpY2F0aW9ucy9jb3VudCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MTc6IkFkbWluaXN0cmFkb3IgVW5vIjtzOjU6ImVtYWlsIjtzOjE4OiJhZG1pbjFAYWphbGxvbC5jb20iO3M6Mzoicm9sIjtzOjEzOiJhZG1pbmlzdHJhZG9yIjt9', 1774373189);
 
 -- --------------------------------------------------------
 
@@ -466,12 +461,12 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`id_usuario`, `nombre_usuario`, `correo_usuario`, `contraseña_usuario`) VALUES
-(1, 'Rodolfo Navarrete Ek', 'admin@ajallol.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
-(2, 'Editor General', 'editor@ajallol.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
-(5, 'Nintendo Xbox Sanchéz', 'Nintendo2@gmail.com', '$2y$12$iLo8g7nF5zhGdVshUv3mYuKdmAQP5QWAyND84bOv58788ZGE8UOJi'),
-(6, 'Lorenzo Sánchez Martín', 'lorenzo@gmail.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
-(7, 'Jefe de Area', 'Nintendo@gmail.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
-(8, 'Oscar Alejandro Sanchéz', 'Martin@gmail.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92');
+(1, 'Administrador Uno', 'admin1@ajallol.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
+(2, 'Administrador Dos', 'admin2@ajallol.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
+(3, 'Administrador Tres', 'admin3@ajallol.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
+(4, 'Editor Uno', 'editor1@ajallol.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
+(5, 'Editor Dos', 'editor2@ajallol.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
+(6, 'Editor Tres', 'editor3@ajallol.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f');
 
 -- --------------------------------------------------------
 
@@ -505,11 +500,11 @@ ALTER TABLE `aliados`
   ADD KEY `id_seccion` (`id_seccion`);
 
 --
--- Indices de la tabla `asistenciabeneficiarios`
+-- Indices de la tabla `beneficiarios`
 --
-ALTER TABLE `asistenciabeneficiarios`
-  ADD PRIMARY KEY (`id_asistenciabeneficiario`),
-  ADD KEY `id_informe` (`id_informe`);
+ALTER TABLE `beneficiarios`
+  ADD PRIMARY KEY (`id_beneficiario`),
+  ADD UNIQUE KEY `unique_curp_beneficiario` (`curp_beneficiario`);
 
 --
 -- Indices de la tabla `cache`
@@ -570,7 +565,15 @@ ALTER TABLE `imagenes_proyectos`
 --
 ALTER TABLE `informe`
   ADD PRIMARY KEY (`id_informe`),
-  ADD UNIQUE KEY `unique_informe_evento` (`evento`,`lugar`,`fecha`);
+  ADD UNIQUE KEY `unique_informe_evento` (`evento_informe`,`lugar_evento_informe`,`fecha_informe`);
+
+--
+-- Indices de la tabla `informe_beneficiarios`
+--
+ALTER TABLE `informe_beneficiarios`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_informe_beneficiario_tipo` (`id_informe`,`id_beneficiario`,`tipo_informe`),
+  ADD KEY `id_beneficiario` (`id_beneficiario`);
 
 --
 -- Indices de la tabla `inicio`
@@ -642,13 +645,6 @@ ALTER TABLE `redes_sociales`
   ADD PRIMARY KEY (`id_redes_sociales`);
 
 --
--- Indices de la tabla `reportebeneficiarios`
---
-ALTER TABLE `reportebeneficiarios`
-  ADD PRIMARY KEY (`id_reportebeneficiario`),
-  ADD UNIQUE KEY `unique_reportebeneficiario_informe` (`id_informe`,`reportecurpbeneficiario`);
-
---
 -- Indices de la tabla `rol_usuario`
 --
 ALTER TABLE `rol_usuario`
@@ -695,75 +691,147 @@ ALTER TABLE `widgets_actividades`
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
+--
+-- AUTO_INCREMENT de la tabla `actividades`
+--
 ALTER TABLE `actividades`
   MODIFY `id_actividad` int NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `aliados`
+--
 ALTER TABLE `aliados`
   MODIFY `id_aliados` int NOT NULL AUTO_INCREMENT;
 
-ALTER TABLE `asistenciabeneficiarios`
-  MODIFY `id_asistenciabeneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
+--
+-- AUTO_INCREMENT de la tabla `beneficiarios`
+--
+ALTER TABLE `beneficiarios`
+  MODIFY `id_beneficiario` int NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `categoria_proyectos`
+--
 ALTER TABLE `categoria_proyectos`
   MODIFY `id_categoria` int NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `contacto`
+--
 ALTER TABLE `contacto`
   MODIFY `id_contacto` int NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `directiva`
+--
 ALTER TABLE `directiva`
   MODIFY `id_directiva` int NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `failed_jobs`
+--
 ALTER TABLE `failed_jobs`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `formulario_contacto`
+--
 ALTER TABLE `formulario_contacto`
-  MODIFY `id_formcontacto` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_formcontacto` int NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `imagenes_proyectos`
+--
 ALTER TABLE `imagenes_proyectos`
   MODIFY `id_imagen` int NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `informe`
+--
 ALTER TABLE `informe`
-  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `informe_beneficiarios`
+--
+ALTER TABLE `informe_beneficiarios`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `inicio`
+--
 ALTER TABLE `inicio`
   MODIFY `id_inicio` int NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `jobs`
+--
 ALTER TABLE `jobs`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `migrations`
+--
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `nosotros`
+--
 ALTER TABLE `nosotros`
   MODIFY `id_nosotros` int NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `notificaciones`
+--
 ALTER TABLE `notificaciones`
-  MODIFY `id_notificacion` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id_notificacion` int NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `preguntas_frecuentes`
+--
 ALTER TABLE `preguntas_frecuentes`
   MODIFY `id_preguntasfrecuentes` int NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `proyectos`
+--
 ALTER TABLE `proyectos`
   MODIFY `id_proyecto` int NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `redes_sociales`
+--
 ALTER TABLE `redes_sociales`
   MODIFY `id_redes_sociales` int NOT NULL AUTO_INCREMENT;
 
-ALTER TABLE `reportebeneficiarios`
-  MODIFY `id_reportebeneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=306;
-
+--
+-- AUTO_INCREMENT de la tabla `rol_usuario`
+--
 ALTER TABLE `rol_usuario`
-  MODIFY `id_rol_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_rol_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
+--
+-- AUTO_INCREMENT de la tabla `secciones_web`
+--
 ALTER TABLE `secciones_web`
-  MODIFY `id_seccion` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_seccion` int NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `users`
+--
 ALTER TABLE `users`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `usuario`
+--
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
+--
+-- AUTO_INCREMENT de la tabla `widgets_actividades`
+--
 ALTER TABLE `widgets_actividades`
   MODIFY `id_widgetactividad` int NOT NULL AUTO_INCREMENT;
 
@@ -771,53 +839,92 @@ ALTER TABLE `widgets_actividades`
 -- Restricciones para tablas volcadas
 --
 
+--
+-- Filtros para la tabla `actividades`
+--
 ALTER TABLE `actividades`
   ADD CONSTRAINT `actividades_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
+--
+-- Filtros para la tabla `aliados`
+--
 ALTER TABLE `aliados`
   ADD CONSTRAINT `aliados_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
-ALTER TABLE `asistenciabeneficiarios`
-  ADD CONSTRAINT `asistenciabeneficiarios_ibfk_1` FOREIGN KEY (`id_informe`) REFERENCES `informe` (`id_informe`) ON DELETE CASCADE;
-
+--
+-- Filtros para la tabla `contacto`
+--
 ALTER TABLE `contacto`
   ADD CONSTRAINT `contacto_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
+--
+-- Filtros para la tabla `directiva`
+--
 ALTER TABLE `directiva`
   ADD CONSTRAINT `directiva_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
+--
+-- Filtros para la tabla `imagenes_proyectos`
+--
 ALTER TABLE `imagenes_proyectos`
   ADD CONSTRAINT `imagenes_proyectos_ibfk_1` FOREIGN KEY (`proyecto`) REFERENCES `proyectos` (`id_proyecto`);
 
+--
+-- Filtros para la tabla `informe_beneficiarios`
+--
+ALTER TABLE `informe_beneficiarios`
+  ADD CONSTRAINT `informe_beneficiarios_ibfk_1` FOREIGN KEY (`id_informe`) REFERENCES `informe` (`id_informe`) ON DELETE CASCADE,
+  ADD CONSTRAINT `informe_beneficiarios_ibfk_2` FOREIGN KEY (`id_beneficiario`) REFERENCES `beneficiarios` (`id_beneficiario`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `inicio`
+--
 ALTER TABLE `inicio`
   ADD CONSTRAINT `inicio_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
+--
+-- Filtros para la tabla `nosotros`
+--
 ALTER TABLE `nosotros`
   ADD CONSTRAINT `nosotros_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
+--
+-- Filtros para la tabla `notificaciones`
+--
 ALTER TABLE `notificaciones`
   ADD CONSTRAINT `notificaciones_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE,
   ADD CONSTRAINT `notificaciones_ibfk_2` FOREIGN KEY (`id_formulario`) REFERENCES `formulario_contacto` (`id_formcontacto`) ON DELETE SET NULL;
 
+--
+-- Filtros para la tabla `preguntas_frecuentes`
+--
 ALTER TABLE `preguntas_frecuentes`
   ADD CONSTRAINT `preguntas_frecuentes_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
 
+--
+-- Filtros para la tabla `proyectos`
+--
 ALTER TABLE `proyectos`
   ADD CONSTRAINT `proyectos_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`),
   ADD CONSTRAINT `proyectos_ibfk_2` FOREIGN KEY (`categoria`) REFERENCES `categoria_proyectos` (`id_categoria`);
 
-ALTER TABLE `reportebeneficiarios`
-  ADD CONSTRAINT `reportebeneficiarios_ibfk_1` FOREIGN KEY (`id_informe`) REFERENCES `informe` (`id_informe`) ON DELETE CASCADE;
-
+--
+-- Filtros para la tabla `rol_usuario`
+--
 ALTER TABLE `rol_usuario`
   ADD CONSTRAINT `rol_usuario_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
 
+--
+-- Filtros para la tabla `secciones_web`
+--
 ALTER TABLE `secciones_web`
   ADD CONSTRAINT `fk_seccion_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
 
+--
+-- Filtros para la tabla `widgets_actividades`
+--
 ALTER TABLE `widgets_actividades`
   ADD CONSTRAINT `widgets_actividades_ibfk_1` FOREIGN KEY (`actividad_id`) REFERENCES `actividades` (`id_actividad`);
-
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

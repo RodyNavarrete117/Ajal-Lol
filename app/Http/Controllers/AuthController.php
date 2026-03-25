@@ -9,10 +9,14 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        // Validación mínima
+        // Validación con mensajes personalizados
         $request->validate([
             'email'    => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
+        ], [
+            'email.required'    => 'El correo electrónico es obligatorio.',
+            'email.email'       => 'Ingrese un correo electrónico válido.',
+            'password.required' => 'La contraseña es obligatoria.',
         ]);
 
         // Buscar usuario + rol
@@ -32,9 +36,9 @@ class AuthController extends Controller
             ->first();
 
         if (!$usuario) {
-            return back()->withErrors([
-                'email' => 'Credenciales incorrectas'
-            ]);
+            return back()
+                ->withErrors(['email' => 'Correo o contraseña incorrectos.'])
+                ->withInput($request->only('email')); // conserva el correo en el campo
         }
 
         // Guardar sesión
@@ -42,7 +46,7 @@ class AuthController extends Controller
             'user_id' => $usuario->id_usuario,
             'nombre'  => $usuario->nombre_usuario,
             'email'   => $usuario->correo_usuario,
-            'rol'     => $usuario->cargo_usuario
+            'rol'     => $usuario->cargo_usuario,
         ]);
 
         // Redirige al loader

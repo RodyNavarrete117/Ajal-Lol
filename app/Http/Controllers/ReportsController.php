@@ -8,28 +8,130 @@ use App\Services\AttendancePdfService;
 use App\Services\BlankReportPdfService;
 use App\Services\BlankAttendancePdfService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class ReportsController extends Controller
 {
     public function __construct(
-        protected ReportPdfService         $pdfService,
-        protected AttendancePdfService     $attendancePdfService,
-        protected BlankReportPdfService    $blankReportService,
+        protected ReportPdfService          $pdfService,
+        protected AttendancePdfService      $attendancePdfService,
+        protected BlankReportPdfService     $blankReportService,
         protected BlankAttendancePdfService $blankAttendanceService,
     ) {}
+
+    // =============================================
+    // MENSAJES DE VALIDACIÓN REUTILIZABLES
+    // =============================================
+    private function baseMessages(): array
+    {
+        return [
+            'nombre_organizacion.required' => 'El nombre de la organización es obligatorio.',
+            'nombre_organizacion.max'      => 'El nombre de la organización no debe superar los 150 caracteres.',
+            'evento.required'              => 'El nombre del evento es obligatorio.',
+            'evento.max'                   => 'El nombre del evento no debe superar los 150 caracteres.',
+            'lugar.required'               => 'El lugar del evento es obligatorio.',
+            'lugar.max'                    => 'El lugar no debe superar los 150 caracteres.',
+            'fecha.required'               => 'La fecha del evento es obligatoria.',
+            'fecha.date'                   => 'La fecha ingresada no tiene un formato válido.',
+        ];
+    }
+
+    /**
+     * Valida el array de personas y colapsa todos los errores de filas
+     * en UN solo mensaje general para no repetir por cada índice.
+     */
+    private function validarPersonasReporte(Request $request): void
+    {
+        $validator = Validator::make($request->all(), [
+            'beneficiarios'                                 => 'required|array|min:1',
+            'beneficiarios.*.reportenombrebeneficiario'     => 'required|string|max:150',
+            'beneficiarios.*.reportecurpbeneficiario'       => 'required|string|max:18',
+            'beneficiarios.*.reporteedadbeneficiario'       => 'nullable|integer|min:0|max:120',
+        ]);
+
+        if ($validator->fails()) {
+            $errores  = $validator->errors();
+            $mensajes = [];
+
+            // Mensaje general si el array está vacío
+            if ($errores->has('beneficiarios')) {
+                $mensajes['beneficiarios'] = 'Debe agregar al menos un beneficiario.';
+            }
+
+            // Un solo mensaje por tipo de campo (nombre, CURP, edad)
+            // sin importar cuántas filas fallen
+            $hayNombre = collect($errores->keys())
+                ->filter(fn ($k) => str_contains($k, 'reportenombrebeneficiario'))
+                ->isNotEmpty();
+
+            $hayCurp = collect($errores->keys())
+                ->filter(fn ($k) => str_contains($k, 'reportecurpbeneficiario'))
+                ->isNotEmpty();
+
+            $hayEdad = collect($errores->keys())
+                ->filter(fn ($k) => str_contains($k, 'reporteedadbeneficiario'))
+                ->isNotEmpty();
+
+            if ($hayNombre) {
+                $mensajes['beneficiarios_nombre'] = 'Hay beneficiarios sin nombre. Por favor, complétalos.';
+            }
+            if ($hayCurp) {
+                $mensajes['beneficiarios_curp'] = 'Hay beneficiarios sin CURP. Por favor, complétalos.';
+            }
+            if ($hayEdad) {
+                $mensajes['beneficiarios_edad'] = 'Alguna edad ingresada no es válida.';
+            }
+
+            throw ValidationException::withMessages($mensajes);
+        }
+    }
+
+    private function validarPersonasAsistencia(Request $request): void
+    {
+        $validator = Validator::make($request->all(), [
+            'asistencias'                                   => 'required|array|min:1',
+            'asistencias.*.asistencianombrebeneficiario'    => 'required|string|max:150',
+            'asistencias.*.asistenciaedadbeneficiario'      => 'nullable|integer|min:0|max:120',
+        ]);
+
+        if ($validator->fails()) {
+            $errores  = $validator->errors();
+            $mensajes = [];
+
+            if ($errores->has('asistencias')) {
+                $mensajes['asistencias'] = 'Debe agregar al menos un asistente.';
+            }
+
+            $hayNombre = collect($errores->keys())
+                ->filter(fn ($k) => str_contains($k, 'asistencianombrebeneficiario'))
+                ->isNotEmpty();
+
+            $hayEdad = collect($errores->keys())
+                ->filter(fn ($k) => str_contains($k, 'asistenciaedadbeneficiario'))
+                ->isNotEmpty();
+
+            if ($hayNombre) {
+                $mensajes['asistencias_nombre'] = 'Hay asistentes sin nombre. Por favor, complétalos.';
+            }
+            if ($hayEdad) {
+                $mensajes['asistencias_edad'] = 'Alguna edad ingresada no es válida.';
+            }
+
+            throw ValidationException::withMessages($mensajes);
+        }
+    }
 
     // =============================================
     // LISTADO (Calendario + Historial)
     // =============================================
     public function index()
     {
-        // Traemos ambos conteos para poder mostrar el total real en el modal
         $reports = Report::withCount(['beneficiaries', 'attendances'])
             ->latest('fecha')
             ->get();
 
         $events = $reports->mapWithKeys(function ($report) {
-            // El total visible es el que aplique según el tipo guardado
             $total = $report->beneficiaries_count > 0
                 ? $report->beneficiaries_count
                 : $report->attendances_count;
@@ -54,28 +156,19 @@ class ReportsController extends Controller
     {
         $tipo = $request->input('tipo_informe', 'asistencia');
 
-        // ── Validación base (siempre requerida) ──────────────────────────────
+        // ── Validación base ───────────────────────────────────────────────────
         $request->validate([
             'nombre_organizacion' => 'required|string|max:150',
             'evento'              => 'required|string|max:150',
             'lugar'               => 'required|string|max:150',
             'fecha'               => 'required|date',
-        ]);
+        ], $this->baseMessages());
 
-        // ── Validación específica según tipo ─────────────────────────────────
+        // ── Validación específica con mensaje único por campo ─────────────────
         if ($tipo === 'reporte') {
-            $request->validate([
-                'beneficiarios'                                 => 'required|array|min:1',
-                'beneficiarios.*.reportenombrebeneficiario'     => 'required|string|max:150',
-                'beneficiarios.*.reportecurpbeneficiario'       => 'required|string|max:18',
-                'beneficiarios.*.reporteedadbeneficiario'       => 'nullable|integer|min:0|max:120',
-            ]);
+            $this->validarPersonasReporte($request);
         } else {
-            $request->validate([
-                'asistencias'                                   => 'required|array|min:1',
-                'asistencias.*.asistencianombrebeneficiario'    => 'required|string|max:150',
-                'asistencias.*.asistenciaedadbeneficiario'      => 'nullable|integer|min:0|max:120',
-            ]);
+            $this->validarPersonasAsistencia($request);
         }
 
         // ── Crear informe ─────────────────────────────────────────────────────
@@ -132,7 +225,10 @@ class ReportsController extends Controller
             'evento'              => 'nullable|string|max:150',
             'lugar'               => 'nullable|string|max:150',
             'fecha'               => 'required|date',
-        ]);
+        ], array_merge($this->baseMessages(), [
+            'nombre_organizacion.required' => 'El nombre de la organización es obligatorio para generar el PDF.',
+            'fecha.required'               => 'La fecha es obligatoria para generar el PDF.',
+        ]));
 
         // ── Objeto temporal (nunca se persiste) ───────────────────────────────
         $report = new Report($request->only([
@@ -160,13 +256,6 @@ class ReportsController extends Controller
         $disposition = $request->input('_action') === 'pdf_download' ? 'attachment' : 'inline';
 
         if ($tipo === 'reporte') {
-            $request->validate([
-                'beneficiarios'                                 => 'nullable|array',
-                'beneficiarios.*.reportenombrebeneficiario'     => 'nullable|string|max:150',
-                'beneficiarios.*.reportecurpbeneficiario'       => 'nullable|string|max:18',
-                'beneficiarios.*.reporteedadbeneficiario'       => 'nullable|integer|min:0|max:120',
-            ]);
-
             $personas = collect($request->beneficiarios ?? [])
                 ->filter(fn ($b) =>
                     !empty(trim($b['reportenombrebeneficiario'] ?? '')) &&
@@ -183,12 +272,6 @@ class ReportsController extends Controller
             $filename = 'reporte_preview.pdf';
 
         } else {
-            $request->validate([
-                'asistencias'                                   => 'nullable|array',
-                'asistencias.*.asistencianombrebeneficiario'    => 'nullable|string|max:150',
-                'asistencias.*.asistenciaedadbeneficiario'      => 'nullable|integer|min:0|max:120',
-            ]);
-
             $personas = collect($request->asistencias ?? [])
                 ->filter(fn ($a) =>
                     !empty(trim($a['asistencianombrebeneficiario'] ?? ''))
@@ -222,22 +305,13 @@ class ReportsController extends Controller
             'evento'              => 'required|string|max:150',
             'lugar'               => 'required|string|max:150',
             'fecha'               => 'required|date',
-        ]);
+        ], $this->baseMessages());
 
-        // ── Validación específica ─────────────────────────────────────────────
+        // ── Validación específica con mensaje único por campo ─────────────────
         if ($tipo === 'reporte') {
-            $request->validate([
-                'beneficiarios'                                 => 'required|array|min:1',
-                'beneficiarios.*.reportenombrebeneficiario'     => 'required|string|max:150',
-                'beneficiarios.*.reportecurpbeneficiario'       => 'required|string|max:18',
-                'beneficiarios.*.reporteedadbeneficiario'       => 'nullable|integer|min:0|max:120',
-            ]);
+            $this->validarPersonasReporte($request);
         } else {
-            $request->validate([
-                'asistencias'                                   => 'required|array|min:1',
-                'asistencias.*.asistencianombrebeneficiario'    => 'required|string|max:150',
-                'asistencias.*.asistenciaedadbeneficiario'      => 'nullable|integer|min:0|max:120',
-            ]);
+            $this->validarPersonasAsistencia($request);
         }
 
         $report = Report::findOrFail($id);
@@ -251,7 +325,6 @@ class ReportsController extends Controller
 
         // ── Reemplazar personas según tipo ────────────────────────────────────
         if ($tipo === 'reporte') {
-            // Limpiar asistencias anteriores si las hubiera y guardar beneficiarios
             $report->attendances()->delete();
             $report->beneficiaries()->delete();
 
@@ -268,7 +341,6 @@ class ReportsController extends Controller
                     ])
                 );
         } else {
-            // Limpiar beneficiarios anteriores si los hubiera y guardar asistencias
             $report->beneficiaries()->delete();
             $report->attendances()->delete();
 
@@ -312,7 +384,6 @@ class ReportsController extends Controller
 
     // =============================================
     // PDF DESDE HISTORIAL
-    // Detecta el tipo por qué tabla tiene datos
     // =============================================
     public function pdf($id)
     {

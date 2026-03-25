@@ -183,12 +183,31 @@
     });
   }
 
+    /* ═══════════════════════════════════════════════
+     SCROLLBAR RADIUS — quita bordes en extremos
+  ═══════════════════════════════════════════════ */
+  function initScrollbarRadius() {
+    const html = document.documentElement;
+
+    function update() {
+      const scroll    = window.scrollY;
+      const maxScroll = document.body.scrollHeight - window.innerHeight;
+
+      html.classList.toggle('scroll-top',    scroll < 10);
+      html.classList.toggle('scroll-bottom', scroll > maxScroll - 10);
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  }
+
   /* ── Init ── */
   function init() {
     initHeader();
     initScrollSpy();
     initMobileNav();
     initNavDropdown();
+    initScrollbarRadius();
   }
 
   if (document.readyState === 'loading') {

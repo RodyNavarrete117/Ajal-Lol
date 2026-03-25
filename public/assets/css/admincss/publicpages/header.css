@@ -203,6 +203,14 @@
 }
 .nav-close-btn:hover { background: var(--rose-deep); color: var(--white); }
 
+html.scroll-top ::-webkit-scrollbar-thumb {
+  border-radius: 0 0 4px 4px;
+}
+
+html.scroll-bottom ::-webkit-scrollbar-thumb {
+  border-radius: 4px 4px 0 0;
+}
+
 @media (max-width: 1100px) {
   .nav-close-btn { display: flex; }
 }

@@ -1,0 +1,204 @@
+// ============================================================
+// Base de datos: prueba6 — Ajal-lol AC
+// Para visualizar: pega este código en https://dbdiagram.io
+// ============================================================
+
+// ── Usuarios y roles ────────────────────────────────────────
+
+Table usuario {
+  id_usuario        int         [pk, increment]
+  nombre_usuario    varchar(150) [not null]
+  correo_usuario    varchar(100) [not null, unique]
+  contraseña_usuario varchar(255) [not null]
+}
+
+Table rol_usuario {
+  id_rol_usuario  int         [pk, increment]
+  id_usuario      int         [not null, ref: > usuario.id_usuario]
+  cargo_usuario   varchar(20) [not null, note: "ENUM: administrador, editor"]
+}
+
+// ── Intermediario central ────────────────────────────────────
+
+Table paginas {
+  id_pagina    int          [pk, increment]
+  id_usuario   int          [not null, ref: > usuario.id_usuario]
+  slug         varchar(100) [not null, unique, note: "URL amigable: /nosotros"]
+  titulo       varchar(150) [not null]
+  descripcion  text
+  plantilla    varchar(100) [default: "default", note: "Blade template a usar"]
+  activo       tinyint      [default: 1]
+  orden        int          [default: 0]
+  meta_title   varchar(150) [note: "SEO title"]
+  meta_desc    varchar(255) [note: "SEO description"]
+}
+
+// ── Contenido web ────────────────────────────────────────────
+
+Table inicio {
+  id_inicio     int          [pk, increment]
+  id_pagina     int          [not null, ref: > paginas.id_pagina]
+  titulo_inicio varchar(150)
+  texto_inicio  text
+  img_inicio    varchar(255)
+  url_inicio    varchar(255)
+  activo        tinyint      [default: 1]
+}
+
+Table nosotros {
+  id_nosotros        int          [pk, increment]
+  id_pagina          int          [not null, ref: > paginas.id_pagina]
+  titulo_nosotros    varchar(150)
+  imagen_nosotros    varchar(255)
+  subtitulo_nosotros varchar(150)
+  texto_nosotros     text
+  activo             tinyint      [default: 1]
+}
+
+Table aliados {
+  id_aliados  int          [pk, increment]
+  id_pagina   int          [not null, ref: > paginas.id_pagina]
+  img_aliados varchar(255)
+  nombre      varchar(150)
+  url         varchar(255)
+  activo      tinyint      [default: 1]
+}
+
+Table contacto {
+  id_contacto         int         [pk, increment]
+  id_pagina           int         [not null, ref: > paginas.id_pagina]
+  direccion_contacto  varchar(255)
+  telefono_contacto   varchar(50)
+  email_contacto      varchar(100)
+  activo              tinyint     [default: 1]
+}
+
+Table directiva {
+  id_directiva      int          [pk, increment]
+  id_pagina         int          [not null, ref: > paginas.id_pagina]
+  nombre_directiva  varchar(150)
+  foto_directiva    varchar(255)
+  orden_directiva   int
+  activo            tinyint      [default: 1]
+}
+
+Table preguntas_frecuentes {
+  id_preguntasfrecuentes int          [pk, increment]
+  id_pagina              int          [not null, ref: > paginas.id_pagina]
+  titulo_pregunta        varchar(150)
+  texto_respuesta        text
+  orden                  int          [default: 0]
+  activo                 tinyint      [default: 1]
+}
+
+Table redes_sociales {
+  id_redes_sociales  int         [pk, increment]
+  nombre_redsocial   varchar(50)
+  url_redsocial      varchar(255)
+  icono              varchar(50)
+  activo             tinyint     [default: 1]
+}
+
+// ── Actividades y widgets ─────────────────────────────────────
+
+Table actividades {
+  id_actividad      int          [pk, increment]
+  id_pagina         int          [not null, ref: > paginas.id_pagina]
+  año_actividad     int
+  titulo_actividad  varchar(150)
+  texto_actividad   text
+  activo            tinyint      [default: 1]
+}
+
+Table widgets_actividades {
+  id_widgetactividad  int          [pk, increment]
+  actividad_id        int          [not null, ref: > actividades.id_actividad]
+  titulo              varchar(100)
+  texto               text
+}
+
+// ── Proyectos ─────────────────────────────────────────────────
+
+Table categoria_proyectos {
+  id_categoria  int          [pk, increment]
+  nombre        varchar(100)
+  descripcion   text
+  orden         int
+}
+
+Table proyectos {
+  id_proyecto          int          [pk, increment]
+  id_pagina            int          [not null, ref: > paginas.id_pagina]
+  categoria            int          [not null, ref: > categoria_proyectos.id_categoria]
+  titulo_proyecto      varchar(150)
+  descripcion_proyecto text
+  año_proyecto         int
+  activo               tinyint      [default: 1]
+}
+
+Table imagenes_proyectos {
+  id_imagen      int          [pk, increment]
+  proyecto       int          [not null, ref: > proyectos.id_proyecto]
+  ruta           varchar(255)
+  descripcion    text
+  fecha_creacion date
+}
+
+// ── Informes ──────────────────────────────────────────────────
+
+Table informe {
+  id_informe           int          [pk, increment]
+  nombre_organizacion  varchar(150) [not null]
+  evento               varchar(150) [not null]
+  lugar                varchar(150) [not null]
+  fecha                date         [not null]
+  created_at           timestamp
+  updated_at           timestamp
+
+  indexes {
+    (evento, lugar, fecha) [unique]
+  }
+}
+
+Table asistenciabeneficiarios {
+  id_asistenciabeneficiario     int          [pk, increment]
+  id_informe                    int          [not null, ref: > informe.id_informe]
+  asistencianombrebeneficiario  varchar(150) [not null]
+  asistenciaedadbeneficiario    int
+  created_at                    timestamp
+}
+
+Table reportebeneficiarios {
+  id_reportebeneficiario     int      [pk, increment]
+  id_informe                 int      [not null, ref: > informe.id_informe]
+  reportenombrebeneficiario  varchar(150) [not null]
+  reportecurpbeneficiario    char(18)     [not null]
+  reporteedadbeneficiario    int
+  created_at                 timestamp
+
+  indexes {
+    (id_informe, reportecurpbeneficiario) [unique]
+  }
+}
+
+// ── Contacto y notificaciones ─────────────────────────────────
+
+Table formulario_contacto {
+  id_formcontacto    int          [pk, increment]
+  nombre_completo    varchar(150)
+  correo             varchar(100)
+  numero_telefonico  varchar(50)
+  asunto             varchar(150)
+  mensaje            text
+  fecha_envio        datetime     [default: `now()`]
+}
+
+Table notificaciones {
+  id_notificacion  int          [pk, increment]
+  id_usuario       int          [not null, ref: > usuario.id_usuario]
+  id_formulario    int          [ref: > formulario_contacto.id_formcontacto]
+  titulo           varchar(150) [not null]
+  mensaje          text         [not null]
+  leido            tinyint      [default: 0]
+  created_at       timestamp
+}

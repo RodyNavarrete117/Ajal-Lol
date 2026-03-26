@@ -3,14 +3,14 @@ document.addEventListener('DOMContentLoaded', function () {
     // ─────────────────────────────────────────────────────────────
     // TOAST
     // ─────────────────────────────────────────────────────────────
-    function showToast(type = 'success', title = '', message = '', duration = 4000) {
-        const icons = {
-            success: `<svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-            error:   `<svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
-            info:    `<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
-            warning: `<svg viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" stroke-width="2"/><path d="M12 9v4M12 17h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
-        };
+    const TOAST_ICONS = {
+        success: `<svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        error:   `<svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+        info:    `<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+        warning: `<svg viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" stroke-width="2"/><path d="M12 9v4M12 17h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+    };
 
+    function showToast(type = 'info', title = '', message = '', duration = 4000) {
         let container = document.getElementById('toast-container');
         if (!container) {
             container = document.createElement('div');
@@ -20,21 +20,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
+
+        // Estructura con clase .toast-inner explícita
         toast.innerHTML = `
-            <div class="toast-icon">${icons[type] || icons.info}</div>
-            <div class="toast-body">
-                <p class="toast-title">${title}</p>
-                ${message ? `<p class="toast-msg">${message}</p>` : ''}
+            <div class="toast-inner">
+                <div class="toast-icon">${TOAST_ICONS[type] || TOAST_ICONS.info}</div>
+                <div class="toast-body">
+                    <p class="toast-title">${title}</p>
+                    ${message ? `<p class="toast-msg">${message}</p>` : ''}
+                </div>
+                <button class="toast-close" aria-label="Cerrar">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </button>
             </div>
-            <button class="toast-close" aria-label="Cerrar">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-            </button>
-            <div class="toast-bar-wrap"><div class="toast-bar"></div></div>
+            <div class="toast-bar-wrap">
+                <div class="toast-bar"></div>
+            </div>
         `;
 
         container.appendChild(toast);
 
-        // Animar barra de progreso
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 toast.classList.add('show');
@@ -44,8 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        const timer = setTimeout(() => dismissToast(toast), duration);
-        toast._timer = timer;
+        toast._timer = setTimeout(() => dismissToast(toast), duration);
 
         toast.querySelector('.toast-close').addEventListener('click', () => {
             clearTimeout(toast._timer);
@@ -65,7 +69,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // ─────────────────────────────────────────────────────────────
     let pendingDeleteItem = null;
 
-    // Crear modal una sola vez
     const modal = document.createElement('div');
     modal.id = 'delete-modal';
     modal.className = 'delete-modal';
@@ -107,10 +110,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     modal.querySelector('.delete-modal-confirm').addEventListener('click', function () {
         if (!pendingDeleteItem) return;
-
         const name = pendingDeleteItem.querySelector('.page-name').textContent;
 
-        // Animación de salida del item
         pendingDeleteItem.style.transition = 'all 0.4s ease';
         pendingDeleteItem.style.opacity = '0';
         pendingDeleteItem.style.transform = 'translateX(40px)';
@@ -130,13 +131,12 @@ document.addEventListener('DOMContentLoaded', function () {
         closeDeleteModal();
     });
 
-    // Tecla Escape cierra el modal
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && modal.classList.contains('open')) closeDeleteModal();
     });
 
     // ─────────────────────────────────────────────────────────────
-    // TABS — Activas / Inactivas con animación
+    // TABS — Activas / Inactivas
     // ─────────────────────────────────────────────────────────────
     const tabs      = document.querySelectorAll('.tab-btn');
     const pagesList = document.querySelector('.pages-list');
@@ -144,13 +144,11 @@ document.addEventListener('DOMContentLoaded', function () {
     tabs.forEach(tab => {
         tab.addEventListener('click', function () {
             if (this.classList.contains('active')) return;
-
             tabs.forEach(t => t.classList.remove('active'));
             this.classList.add('active');
 
             const isInactivas = this.textContent.trim().toLowerCase().includes('inactivas');
 
-            // Animación de fade + slide al cambiar tab
             pagesList.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
             pagesList.style.opacity    = '0';
             pagesList.style.transform  = 'translateY(8px)';
@@ -158,7 +156,6 @@ document.addEventListener('DOMContentLoaded', function () {
             setTimeout(() => {
                 pagesList.style.opacity   = '1';
                 pagesList.style.transform = 'translateY(0)';
-
                 if (isInactivas) {
                     showToast('info', 'Sin secciones inactivas', 'No hay secciones desactivadas por el momento.');
                 }
@@ -167,36 +164,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // ─────────────────────────────────────────────────────────────
-    // BOTONES EDITAR
-    // ─────────────────────────────────────────────────────────────
-    document.querySelectorAll('.btn-edit').forEach(btn => {
-        btn.addEventListener('click', function (e) {
-            e.stopPropagation();
-        });
-    });
-
-    // ─────────────────────────────────────────────────────────────
-    // BOTONES VER
-    // ─────────────────────────────────────────────────────────────
-    document.querySelectorAll('.btn-view').forEach(btn => {
-        btn.addEventListener('click', function (e) {
-            e.stopPropagation();
-        });
-    });
-
-    // ─────────────────────────────────────────────────────────────
-    // BOTONES ELIMINAR → abre modal
+    // BOTONES ELIMINAR
     // ─────────────────────────────────────────────────────────────
     document.querySelectorAll('.btn-delete').forEach(btn => {
         btn.addEventListener('click', function (e) {
             e.stopPropagation();
-            const pageItem = this.closest('.page-item');
-            openDeleteModal(pageItem);
+            openDeleteModal(this.closest('.page-item'));
         });
     });
 
     // ─────────────────────────────────────────────────────────────
-    // BOTÓN CREAR NUEVA SECCIÓN (visual únicamente)
+    // BOTÓN CREAR NUEVA SECCIÓN
     // ─────────────────────────────────────────────────────────────
     const btnNew = document.querySelector('.btn-new-page');
     if (btnNew) {

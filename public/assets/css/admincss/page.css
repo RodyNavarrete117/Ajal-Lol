@@ -125,6 +125,7 @@
     gap: 1.5rem;
 }
 
+/* ==================== PAGE ITEM ==================== */
 .page-item {
     background: var(--page-item-bg);
     border-radius: 16px;
@@ -136,21 +137,28 @@
     transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
     cursor: pointer;
     animation: slideInLeft 0.5s ease-out backwards;
-    border-left: 4px solid transparent;
+    border-left: 4px solid #9b4d77;
+    overflow: hidden;
 }
 
-.page-item:nth-child(1) { animation-delay: 0.1s; border-left-color: #9b4d77; }
-.page-item:nth-child(2) { animation-delay: 0.2s; border-left-color: #b35a8b; }
-.page-item:nth-child(3) { animation-delay: 0.3s; border-left-color: #c96d9f; }
+/* Delays escalonados para los 8 items */
+.page-item:nth-child(1) { animation-delay: 0.05s; border-left-color: #9b4d77; }
+.page-item:nth-child(2) { animation-delay: 0.10s; border-left-color: #a8538a; }
+.page-item:nth-child(3) { animation-delay: 0.15s; border-left-color: #b35a8b; }
+.page-item:nth-child(4) { animation-delay: 0.20s; border-left-color: #bc6192; }
+.page-item:nth-child(5) { animation-delay: 0.25s; border-left-color: #c46799; }
+.page-item:nth-child(6) { animation-delay: 0.30s; border-left-color: #cc6d9f; }
+.page-item:nth-child(7) { animation-delay: 0.35s; border-left-color: #d474a6; }
+.page-item:nth-child(8) { animation-delay: 0.40s; border-left-color: #dc7aac; }
 
 .page-item:hover {
     transform: translateX(8px);
     box-shadow: var(--page-item-shadow-hov);
 }
 
-/* ==================== PAGE ICON ==================== */
+/* ==================== PAGE ICON WRAPPER ==================== */
 .page-icon-wrapper {
-    width: 70px; height: 70px;
+    width: 60px; height: 60px;
     border-radius: 14px;
     display: flex;
     align-items: center;
@@ -159,45 +167,88 @@
     transition: all 0.4s ease;
     position: relative;
     overflow: hidden;
+    /* Color base para todos — se sobreescribe por nth-child */
+    background: linear-gradient(135deg, #9b4d77 0%, #783d66 100%);
 }
 
-/* Modo claro: gradientes sólidos */
-.page-item:nth-child(1) .page-icon-wrapper { background: linear-gradient(135deg, #9b4d77 0%, #783d66 100%); }
-.page-item:nth-child(2) .page-icon-wrapper { background: linear-gradient(135deg, #b35a8b 0%, #9b4d77 100%); }
-.page-item:nth-child(3) .page-icon-wrapper { background: linear-gradient(135deg, #c96d9f 0%, #b35a8b 100%); }
+/* Gradientes individuales por item (modo claro) */
+.page-item:nth-child(1) .page-icon-wrapper { background: linear-gradient(135deg, #9b4d77,  #6d3356); }
+.page-item:nth-child(2) .page-icon-wrapper { background: linear-gradient(135deg, #a8538a,  #7a3d66); }
+.page-item:nth-child(3) .page-icon-wrapper { background: linear-gradient(135deg, #b35a8b,  #864172); }
+.page-item:nth-child(4) .page-icon-wrapper { background: linear-gradient(135deg, #bc6192,  #8f4878); }
+.page-item:nth-child(5) .page-icon-wrapper { background: linear-gradient(135deg, #c46799,  #97507e); }
+.page-item:nth-child(6) .page-icon-wrapper { background: linear-gradient(135deg, #cc6d9f,  #9f5785); }
+.page-item:nth-child(7) .page-icon-wrapper { background: linear-gradient(135deg, #d474a6,  #a75e8b); }
+.page-item:nth-child(8) .page-icon-wrapper { background: linear-gradient(135deg, #dc7aac,  #af6592); }
 
-/* Modo oscuro: fondo transparente, sin overflow hidden para que el ícono respire */
+/* ── Dark mode: todos los wrappers con fondo semitransparente ── */
 [data-theme="dark"] .page-icon-wrapper {
-    background: transparent !important;
+    background: rgba(155, 77, 119, 0.18) !important;
     overflow: visible;
+    border: 1px solid rgba(155, 77, 119, 0.3);
 }
 
-/* ── Íconos home y team: fill directo al SVG ── */
-[data-theme="dark"] .page-item:nth-child(1) .page-icon-wrapper svg { fill: #d46ba8; }
-[data-theme="dark"] .page-item:nth-child(2) .page-icon-wrapper svg { fill: #e07fb8; }
+/* ── SVG base: fill blanco en modo claro ── */
+.page-icon-wrapper svg {
+    width: 32px; height: 32px;
+    fill: white;
+    stroke: none;
+    transition: all 0.4s ease;
+    position: relative;
+    z-index: 1;
+}
 
-/* ── Ícono contacto (envelope): tratamiento especial ──
-   El sobre tiene rect (cuerpo) + path (solapa con stroke).
-   En dark mode: cuerpo con fill semitransparente + stroke visible,
-   solapa solo con stroke, sin fill.
-*/
-[data-theme="dark"] .page-item:nth-child(3) .page-icon-wrapper svg {
-    fill: none;  /* no llenar el SVG global */
+/* ── Dark mode: todos los íconos con stroke rosado, sin fill ── */
+[data-theme="dark"] .page-icon-wrapper svg {
+    fill: none !important;
+    stroke: #d46ba8;
+    stroke-width: 1.8px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Íconos que usan stroke incluso en modo claro (líneas, no siluetas) */
+.icon-actividades svg,
+.icon-faq svg {
+    fill: none;
+    stroke: white;
+    stroke-width: 2px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Icono contacto: tratamiento especial por tener rect + path */
+.icon-contact rect {
+    fill: white;
+    stroke: none;
+}
+.icon-contact .envelope-flap {
+    fill: none;
+    stroke: #9b4d77;
+    stroke-width: 1.8px;
+    stroke-linecap: round;
 }
 
 [data-theme="dark"] .icon-contact rect {
-    fill: rgba(240, 156, 200, 0.18);
-    stroke: #f09cc8;
+    fill: rgba(212, 107, 168, 0.2);
+    stroke: #d46ba8;
     stroke-width: 1.5px;
 }
-
 [data-theme="dark"] .icon-contact .envelope-flap {
     fill: none;
-    stroke: #f09cc8;
+    stroke: #d46ba8;
     stroke-width: 1.8px;
 }
 
-/* Brillo del hover en modo claro */
+/* Icono FAQ: círculo + path internos */
+[data-theme="dark"] .icon-faq circle,
+[data-theme="dark"] .icon-faq path,
+[data-theme="dark"] .icon-faq line {
+    stroke: #d46ba8;
+    fill: none;
+}
+
+/* ── Brillo del hover en modo claro ── */
 .page-icon-wrapper::before {
     content: '';
     position: absolute;
@@ -211,18 +262,9 @@
 
 .page-item:hover .page-icon-wrapper::before { transform: translateX(100%) rotate(45deg); }
 .page-item:hover .page-icon-wrapper         { transform: scale(1.1) rotate(-8deg); }
+.page-item:hover .page-icon-wrapper svg     { transform: scale(1.15); }
 
-.page-icon-wrapper svg {
-    width: 36px; height: 36px;
-    fill: white;
-    transition: all 0.4s ease;
-    position: relative;
-    z-index: 1;
-}
-
-.page-item:hover .page-icon-wrapper svg { transform: scale(1.15); }
-
-/* Animaciones de iconos individuales */
+/* ── Animaciones específicas de íconos ── */
 .icon-home .door { transform-origin: left center; transition: transform 0.4s ease; }
 .page-item:hover .icon-home .door { transform: rotateY(20deg); }
 
@@ -279,22 +321,21 @@
     stroke-width: 2;
 }
 
-.btn-edit   { border-color: #9b4d77; }
+.btn-edit     { border-color: #9b4d77; }
 .btn-edit svg { stroke: #9b4d77; fill: none; }
 .btn-edit:hover   { background: #9b4d77; transform: translateY(-3px) rotate(5deg); box-shadow: 0 6px 20px rgba(155,77,119,0.3); }
 .btn-edit:hover svg { stroke: white; }
 
-.btn-view   { border-color: #48bb78; }
+.btn-view     { border-color: #48bb78; }
 .btn-view svg { stroke: #48bb78; fill: none; }
 .btn-view:hover   { background: #48bb78; transform: translateY(-3px) scale(1.05); box-shadow: 0 6px 20px rgba(72,187,120,0.3); }
 .btn-view:hover svg { stroke: white; }
 
-.btn-delete { border-color: #f56565; }
+.btn-delete     { border-color: #f56565; }
 .btn-delete svg { stroke: #f56565; fill: none; }
 .btn-delete:hover { background: #f56565; transform: translateY(-3px) rotate(-5deg); box-shadow: 0 6px 20px rgba(245,101,101,0.3); }
 .btn-delete:hover svg { stroke: white; }
 
-/* Fondo sutil en modo oscuro */
 [data-theme="dark"] .btn-edit   { background: rgba(155,77,119,0.08); }
 [data-theme="dark"] .btn-view   { background: rgba(72,187,120,0.08); }
 [data-theme="dark"] .btn-delete { background: rgba(245,101,101,0.08); }
@@ -332,4 +373,228 @@ body.reduce-animations .page-item:hover { transform: translateX(3px) !important;
     .pages-header h2 { font-size: 1.8rem; }
     .page-item { flex-direction: column; text-align: center; }
     .page-actions { width: 100%; justify-content: center; }
+}
+
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  TOAST                                                        ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+#toast-container {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.toast {
+    pointer-events: all;
+    min-width: 280px;
+    max-width: 360px;
+    border-radius: 14px;
+    background: #ffffff;
+    border: 0.5px solid rgba(0,0,0,0.08);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+    overflow: hidden;
+    transform: translateX(120%);
+    opacity: 0;
+    transition: transform 0.35s cubic-bezier(.4,0,.2,1), opacity 0.35s ease;
+}
+
+[data-theme="dark"] .toast {
+    background: #1e2a3a;
+    border-color: rgba(255,255,255,0.08);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.toast.show { transform: translateX(0); opacity: 1; }
+.toast.hide { transform: translateX(120%); opacity: 0; }
+
+.toast > div:first-child {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px 10px;
+}
+
+.toast-icon {
+    width: 22px; height: 22px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.toast-icon svg { width: 20px; height: 20px; }
+
+.toast-success .toast-icon svg { stroke: #38a169; }
+.toast-error   .toast-icon svg { stroke: #e53e3e; }
+.toast-info    .toast-icon svg { stroke: #3182ce; }
+.toast-warning .toast-icon svg { stroke: #d69e2e; }
+
+.toast-body { flex: 1; }
+.toast-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 2px;
+}
+[data-theme="dark"] .toast-title { color: #e8e8f0; }
+
+.toast-msg {
+    font-size: 12px;
+    color: #555;
+    margin: 0;
+    line-height: 1.5;
+}
+[data-theme="dark"] .toast-msg { color: #a0a8c0; }
+
+.toast-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    margin-top: 1px;
+    opacity: 0.45;
+    transition: opacity 0.2s;
+    display: flex;
+}
+.toast-close:hover { opacity: 1; }
+.toast-close svg { width: 14px; height: 14px; stroke: currentColor; }
+[data-theme="dark"] .toast-close { color: #a0a8c0; }
+
+.toast-bar-wrap { height: 3px; background: rgba(0,0,0,0.06); }
+[data-theme="dark"] .toast-bar-wrap { background: rgba(255,255,255,0.06); }
+
+.toast-bar { height: 3px; width: 100%; }
+.toast-success .toast-bar { background: #38a169; }
+.toast-error   .toast-bar { background: #e53e3e; }
+.toast-info    .toast-bar { background: #3182ce; }
+.toast-warning .toast-bar { background: #d69e2e; }
+
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  MODAL ELIMINAR                                               ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+.delete-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.delete-modal.open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.delete-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.delete-modal-card {
+    position: relative;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 2rem 2rem 1.75rem;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+    transform: scale(0.88) translateY(20px);
+    transition: transform 0.35s cubic-bezier(.34,1.56,.64,1), opacity 0.3s ease;
+    opacity: 0;
+}
+
+[data-theme="dark"] .delete-modal-card {
+    background: #1a2235;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+}
+
+.delete-modal.open .delete-modal-card {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+.delete-modal-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(245,101,101,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+}
+
+.delete-modal-icon svg {
+    width: 28px; height: 28px;
+    stroke: #f56565;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.delete-modal-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0 0 0.6rem;
+}
+[data-theme="dark"] .delete-modal-title { color: #e8e8f0; }
+
+.delete-modal-msg {
+    font-size: 0.92rem;
+    color: #718096;
+    line-height: 1.6;
+    margin: 0 0 1.75rem;
+}
+[data-theme="dark"] .delete-modal-msg { color: #a0a8c0; }
+
+.delete-modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.delete-modal-cancel,
+.delete-modal-confirm {
+    padding: 0.7rem 1.6rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.delete-modal-cancel {
+    background: #edf2f7;
+    color: #4a5568;
+}
+.delete-modal-cancel:hover { background: #e2e8f0; transform: translateY(-1px); }
+
+[data-theme="dark"] .delete-modal-cancel { background: #2d3748; color: #a0aec0; }
+[data-theme="dark"] .delete-modal-cancel:hover { background: #3a4a62; }
+
+.delete-modal-confirm {
+    background: #f56565;
+    color: #ffffff;
+}
+.delete-modal-confirm:hover {
+    background: #e53e3e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(229,62,62,0.35);
 }

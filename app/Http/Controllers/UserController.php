@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -65,7 +66,7 @@ class UserController extends Controller
             $userId = DB::table('usuario')->insertGetId([
                 'nombre_usuario' => $request->nombre_usuario,
                 'correo_usuario' => $request->correo_usuario,
-                'contraseña_usuario' => hash('sha256', $request->contraseña_usuario)
+                'contraseña_usuario' => Hash::make($request->contraseña_usuario)
             ]);
 
             // Insertar en tabla rol_usuario
@@ -164,7 +165,7 @@ class UserController extends Controller
 
             // Si hay nueva contraseña, agregarla
             if ($request->filled('contraseña_usuario')) {
-                $updateData['contraseña_usuario'] = hash('sha256', $request->contraseña_usuario);
+                $updateData['contraseña_usuario'] = Hash::make($request->contraseña_usuario);
             }
 
             DB::table('usuario')

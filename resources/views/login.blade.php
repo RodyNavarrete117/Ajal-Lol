@@ -161,7 +161,7 @@
         <!-- Recuperar contraseña -->
         <div class="forgot step" id="forgot-password">
             ¿Olvidó su contraseña?<br>
-            <a href="#">Haga click aquí</a>
+            <a href="{{ route('password.forgot') }}">Haga click aquí</a>
         </div>
 
     </div>
@@ -183,5 +183,12 @@
 @endif
 
 <script src="{{ asset('assets/js/login.js') }}"></script>
+@if (session('status'))
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    showToast('success', '¡Éxito!', @json(session('status')), 5);
+  });
+</script>
+@endif
 </body>
 </html>

@@ -8,6 +8,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PasswordResetController;
 
 /* Página pública */
 Route::get('/', fn() => view('index'));
@@ -153,3 +154,8 @@ Route::prefix('api/notifications')->group(function () {
 
     Route::post('{id}/read',   [NotificationController::class, 'markRead']);
 });
+
+Route::get('/forgot-password',        [PasswordResetController::class, 'showForgotForm'])->name('password.forgot');
+Route::post('/forgot-password',       [PasswordResetController::class, 'sendResetLink'])->name('password.forgot.send');
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset.form');
+Route::post('/reset-password',        [PasswordResetController::class, 'resetPassword'])->name('password.reset');

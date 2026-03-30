@@ -38,15 +38,20 @@ class AuthController extends Controller
                 ->withInput($request->only('email'));
         }
 
-        $hash            = $usuario->contraseña_usuario;
-        $autenticado     = false;
+        $hash        = $usuario->contraseña_usuario;
+        $autenticado = false;
 
         // 1. bcrypt (usuarios ya migrados o que resetearon contraseña)
-        if (Hash::check($request->password, $hash)) {
-            $autenticado = true;
+        try {
+            if (Hash::check($request->password, $hash)) {
+                $autenticado = true;
+            }
+        } catch (\RuntimeException $e) {
+            // Hash no es bcrypt, continuar al fallback SHA-256
         }
+
         // 2. SHA-256 legacy → migrar silenciosamente a bcrypt
-        elseif (hash('sha256', $request->password) === $hash) {
+        if (!$autenticado && hash('sha256', $request->password) === $hash) {
             $autenticado = true;
 
             DB::table('usuario')

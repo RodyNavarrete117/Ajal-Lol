@@ -18,15 +18,15 @@ Route::get('/pagina', fn() => view('visualpage'));
 /// Páginas de events por año
 // Acepta: 2023, 2024, 2025
 Route::get('/events/{year}', function ($year) {
- 
+
     $yearsAllowed = ['2023', '2024', '2025'];
- 
+
     if (!in_array($year, $yearsAllowed)) {
         abort(404);
     }
- 
+
     return view("events.{$year}");
- 
+
 })->name('events.year')
   ->where('year', '202[0-9]'); // Solo años que empiecen con 202
   // Cuando se agregué la base de datos se realizarán cambios o de plano se eliminará estas rutas
@@ -130,17 +130,41 @@ Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])
     ->name('admin.users.destroy');
 
 /* ===== EDICIÓN DE PÁGINAS ===== */
-Route::get('/admin/pages/home/edit',
-    fn() => view('admin.pages.home_edit'))
-    ->name('admin.pages.home.edit');
+Route::prefix('admin/pages')->group(function () {
 
-Route::get('/admin/pages/about/edit',
-    fn() => view('admin.pages.about_edit'))
-    ->name('admin.pages.about.edit');
+    Route::get('/home/edit',
+        fn() => view('admin.pages.home_edit'))
+        ->name('admin.pages.home.edit');
 
-Route::get('/admin/pages/contact/edit',
-    fn() => view('admin.pages.contact_edit'))
-    ->name('admin.pages.contact.edit');
+    Route::get('/about/edit',
+        fn() => view('admin.pages.about_edit'))
+        ->name('admin.pages.about.edit');
+
+    Route::get('/allies/edit',
+        fn() => view('admin.pages.allies_edit'))
+        ->name('admin.pages.allies.edit');
+
+    Route::get('/activities/edit',
+        fn() => view('admin.pages.activities_edit'))
+        ->name('admin.pages.activities.edit');
+
+    Route::get('/projects/edit',
+        fn() => view('admin.pages.projects_edit'))
+        ->name('admin.pages.projects.edit');
+
+    Route::get('/board/edit',
+        fn() => view('admin.pages.board_edit'))
+        ->name('admin.pages.board.edit');
+
+    Route::get('/faq/edit',
+        fn() => view('admin.pages.faq_edit'))
+        ->name('admin.pages.faq.edit');
+
+    Route::get('/contact/edit',
+        fn() => view('admin.pages.contact_edit'))
+        ->name('admin.pages.contact.edit');
+
+});
 
 /* ===== NOTIFICACIONES (API) ===== */
 Route::prefix('api/notifications')->group(function () {

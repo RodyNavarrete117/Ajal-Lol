@@ -96,3 +96,7 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script src="{{ asset('assets/js/editpage/board_edit.js') }}"></script>
+@endpush

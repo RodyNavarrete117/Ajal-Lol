@@ -1,9 +1,9 @@
 @extends('admin.dashboard')
 
-@section('title', 'Editar Página - Preguntas Frecuentes')
+@section('title', 'Editar Página - Proyectos')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/admincss/editpagescss/faq_edit.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/admincss/editpagescss/projects_edit.css') }}">
 @endpush
 
 @section('content')
@@ -15,12 +15,12 @@
         <div class="edit-header">
             <div class="edit-header-top">
                 <div class="edit-icon">
-                    <i class="fa fa-circle-question"></i>
+                    <i class="fa fa-folder-open"></i>
                 </div>
-                <h2>Editar Página Preguntas Frecuentes</h2>
+                <h2>Editar Página Proyectos</h2>
             </div>
             <p class="subtitle">
-                Administra las preguntas y respuestas más comunes sobre la organización, sus servicios y cómo colaborar.
+                Modifica los proyectos sociales clasificados por categoría y año que se muestran en el sitio público.
             </p>
         </div>
 
@@ -36,7 +36,7 @@
                     type="text"
                     id="titulo_seccion"
                     name="titulo_seccion"
-                    value="Preguntas Frecuentes"
+                    value="Proyectos"
                     placeholder="Escribe el título de la sección..."
                     required
                 >
@@ -44,63 +44,38 @@
 
             <div class="form-group">
                 <label for="descripcion">
-                    Descripción introductoria
+                    Descripción
                 </label>
                 <textarea
                     id="descripcion"
                     name="descripcion"
-                    rows="3"
-                    placeholder="Escribe un texto introductorio para la sección..."
-                >Respuestas a las dudas más comunes sobre la organización, sus servicios y cómo colaborar.</textarea>
+                    rows="4"
+                    placeholder="Escribe una descripción general de los proyectos..."
+                >Proyectos sociales clasificados por categoría y año. Alimentación, educación, salud y más.</textarea>
             </div>
 
             <div class="form-group">
-                <label for="pregunta_1">
-                    Pregunta 1
+                <label for="categorias">
+                    Categorías disponibles
                 </label>
                 <input
                     type="text"
-                    id="pregunta_1"
-                    name="pregunta_1"
-                    value=""
-                    placeholder="Escribe la pregunta..."
+                    id="categorias"
+                    name="categorias"
+                    value="Alimentación, Educación, Salud"
+                    placeholder="Ej: Alimentación, Educación, Salud..."
                 >
             </div>
 
             <div class="form-group">
-                <label for="respuesta_1">
-                    Respuesta 1
+                <label for="proyecto_destacado">
+                    Proyecto destacado
                 </label>
                 <textarea
-                    id="respuesta_1"
-                    name="respuesta_1"
-                    rows="3"
-                    placeholder="Escribe la respuesta..."
-                ></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="pregunta_2">
-                    Pregunta 2
-                </label>
-                <input
-                    type="text"
-                    id="pregunta_2"
-                    name="pregunta_2"
-                    value=""
-                    placeholder="Escribe la pregunta..."
-                >
-            </div>
-
-            <div class="form-group">
-                <label for="respuesta_2">
-                    Respuesta 2
-                </label>
-                <textarea
-                    id="respuesta_2"
-                    name="respuesta_2"
-                    rows="3"
-                    placeholder="Escribe la respuesta..."
+                    id="proyecto_destacado"
+                    name="proyecto_destacado"
+                    rows="4"
+                    placeholder="Describe el proyecto principal o más relevante..."
                 ></textarea>
             </div>
 
@@ -120,3 +95,7 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script src="{{ asset('assets/js/editpage/projects_edit.js') }}"></script>
+@endpush

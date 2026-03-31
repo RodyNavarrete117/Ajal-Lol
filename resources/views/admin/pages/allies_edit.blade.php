@@ -96,3 +96,7 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script src="{{ asset('assets/js/editpage/allies_edit.js') }}"></script>
+@endpush

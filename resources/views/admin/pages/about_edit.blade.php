@@ -68,3 +68,7 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script src="{{ asset('assets/js/editpage/about_edit.js') }}"></script>
+@endpush

@@ -7,6 +7,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="{{ asset('assets/css/login.css') }}">
 </head>
+<style>
+  .login-card {
+    padding-bottom: 200px;
+  }
+</style>
 <body>
 <div class="login-container">
   <div class="logo">
@@ -25,7 +30,7 @@
       <input type="hidden" name="token" value="{{ $token }}">
       <input type="hidden" name="email" value="{{ $email }}">
 
-      <div class="input-group step step-active @error('password') error @enderror">
+      <div class="input-group step step-active @error('password') error @enderror" style="margin-bottom: 20px;">
         <i class="fa-solid fa-lock"></i>
         <input type="password" name="password" placeholder="Nueva contraseña (mín. 8 caracteres)">
         @error('password')

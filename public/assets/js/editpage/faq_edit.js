@@ -1,6 +1,8 @@
-/* ==================== faq_edit — JS ==================== */
+/* ==================== aliados_edit.js ==================== */
 (function () {
     'use strict';
+
+    const MAX_SIZE_MB = 2;
 
     /* ── Toast ─────────────────────────────────────────── */
     function showToast(message, type = 'success') {
@@ -18,107 +20,148 @@
             <span class="edit-toast__msg">${message}</span>
         `;
         document.body.appendChild(toast);
-
         requestAnimationFrame(() => toast.classList.add('edit-toast--show'));
-
         setTimeout(() => {
             toast.classList.remove('edit-toast--show');
             toast.addEventListener('transitionend', () => toast.remove(), { once: true });
-        }, 3200);
+        }, 3400);
     }
 
-    /* ── Validación visual ─────────────────────────────── */
-    function validateForm(form) {
-        let valid = true;
+    /* ── Preview de imagen ──────────────────────────────── */
+    function setPreview(slotNum, file) {
+        const preview  = document.getElementById(`preview-${slotNum}`);
+        const nameEl   = document.getElementById(`name-${slotNum}`);
+        if (!preview || !nameEl) return;
 
-        form.querySelectorAll('input[required], textarea[required]').forEach(field => {
-            clearError(field);
-            if (!field.value.trim()) {
-                markError(field, 'Este campo es obligatorio.');
-                valid = false;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            preview.innerHTML = `<img src="${e.target.result}" alt="Logo ${slotNum}">`;
+            preview.classList.add('has-image');
+            nameEl.textContent = file.name;
+            nameEl.classList.add('has-file');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function clearSlot(slotNum) {
+        const preview = document.getElementById(`preview-${slotNum}`);
+        const nameEl  = document.getElementById(`name-${slotNum}`);
+        const input   = document.getElementById(`logo_${slotNum}`);
+        if (!preview || !nameEl || !input) return;
+
+        preview.innerHTML = `
+            <div class="logo-slot__empty">
+                <i class="fa fa-image"></i>
+                <span>Logo ${slotNum}</span>
+            </div>
+        `;
+        preview.classList.remove('has-image');
+        nameEl.textContent = 'Sin imagen';
+        nameEl.classList.remove('has-file');
+        input.value = '';
+    }
+
+    /* ── Hacer clic en preview abre el file input ───────── */
+    document.querySelectorAll('.logo-slot__preview').forEach(preview => {
+        preview.addEventListener('click', () => {
+            const slot  = preview.id.replace('preview-', '');
+            const input = document.getElementById(`logo_${slot}`);
+            if (input) input.click();
+        });
+    });
+
+    /* ── File inputs: validar y mostrar preview ─────────── */
+    document.querySelectorAll('.logo-input').forEach(input => {
+        input.addEventListener('change', function () {
+            const slot = this.dataset.slot;
+            const file = this.files[0];
+            if (!file) return;
+
+            if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+                showToast(`El archivo supera el límite de ${MAX_SIZE_MB}MB.`, 'error');
+                this.value = '';
+                return;
             }
+
+            const allowed = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp'];
+            if (!allowed.includes(file.type)) {
+                showToast('Formato no permitido. Usa PNG, JPG, SVG o WEBP.', 'error');
+                this.value = '';
+                return;
+            }
+
+            setPreview(slot, file);
+        });
+    });
+
+    /* ── Botones de limpiar ─────────────────────────────── */
+    document.querySelectorAll('.btn-clear').forEach(btn => {
+        btn.addEventListener('click', function () {
+            clearSlot(this.dataset.slot);
+        });
+    });
+
+    /* ── Drag & Drop sobre cada slot ────────────────────── */
+    document.querySelectorAll('.logo-slot__preview').forEach(preview => {
+        preview.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            preview.style.borderColor = 'var(--accent)';
+            preview.style.background  = 'var(--accent-light)';
         });
 
-        return valid;
-    }
+        preview.addEventListener('dragleave', () => {
+            preview.style.borderColor = '';
+            preview.style.background  = '';
+        });
 
-    function markError(field, msg) {
-        field.classList.add('field--error');
-        const err = document.createElement('span');
-        err.className = 'field-error-msg';
-        err.textContent = msg;
-        field.insertAdjacentElement('afterend', err);
-        field.addEventListener('input', () => clearError(field), { once: true });
-    }
+        preview.addEventListener('drop', (e) => {
+            e.preventDefault();
+            preview.style.borderColor = '';
+            preview.style.background  = '';
 
-    function clearError(field) {
-        field.classList.remove('field--error');
-        const msg = field.parentElement.querySelector('.field-error-msg');
-        if (msg) msg.remove();
-    }
+            const slot = preview.id.replace('preview-', '');
+            const file = e.dataTransfer.files[0];
+            if (!file) return;
 
-    /* ── Submit ────────────────────────────────────────── */
+            if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+                showToast(`El archivo supera el límite de ${MAX_SIZE_MB}MB.`, 'error');
+                return;
+            }
+
+            const allowed = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp'];
+            if (!allowed.includes(file.type)) {
+                showToast('Formato no permitido. Usa PNG, JPG, SVG o WEBP.', 'error');
+                return;
+            }
+
+            // Asignar al input correspondiente y mostrar preview
+            const input  = document.getElementById(`logo_${slot}`);
+            const dt     = new DataTransfer();
+            dt.items.add(file);
+            if (input) input.files = dt.files;
+            setPreview(slot, file);
+        });
+    });
+
+    /* ── Validación y submit ────────────────────────────── */
     const form = document.querySelector('.edit-container form');
     if (!form) return;
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        if (!validateForm(form)) {
-            showToast('Por favor completa los campos obligatorios.', 'error');
+        const titulo = document.getElementById('titulo_aliados');
+        if (titulo && !titulo.value.trim()) {
+            titulo.classList.add('field--error');
+            titulo.focus();
+            showToast('Por favor completa el título de la sección.', 'error');
+            titulo.addEventListener('input', () => titulo.classList.remove('field--error'), { once: true });
             return;
         }
 
         showToast('Cambios guardados correctamente.', 'success');
-        /* TODO: aquí irá el fetch/axios cuando se conecte la BD */
+        /* TODO: reemplazar con fetch/axios al conectar la BD */
+        // form.submit();
     });
-
-    /* ── Estilos del toast y errores (inyectados una vez) ── */
-    if (!document.getElementById('edit-page-js-styles')) {
-        const style = document.createElement('style');
-        style.id = 'edit-page-js-styles';
-        style.textContent = `
-            /* Toast */
-            .edit-toast {
-                position: fixed;
-                bottom: 28px;
-                right: 28px;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                padding: 13px 20px;
-                border-radius: 12px;
-                font-size: 14px;
-                font-weight: 500;
-                color: #fff;
-                box-shadow: 0 8px 28px rgba(0,0,0,0.18);
-                opacity: 0;
-                transform: translateY(14px);
-                transition: opacity 0.3s ease, transform 0.3s ease;
-                z-index: 9999;
-                pointer-events: none;
-            }
-            .edit-toast--show {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            .edit-toast--success { background: #2d7d46; }
-            .edit-toast--error   { background: #c0392b; }
-            .edit-toast__icon    { font-size: 16px; }
-
-            /* Campos con error */
-            .field--error {
-                border-color: #c0392b !important;
-                box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.15) !important;
-            }
-            .field-error-msg {
-                margin-top: 5px;
-                font-size: 12px;
-                color: #c0392b;
-                font-weight: 500;
-            }
-        `;
-        document.head.appendChild(style);
-    }
 
 })();

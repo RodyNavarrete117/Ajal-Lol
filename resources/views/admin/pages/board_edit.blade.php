@@ -3,6 +3,7 @@
 @section('title', 'Editar Página - Directiva')
 
 @push('styles')
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap">
 <link rel="stylesheet" href="{{ asset('assets/css/admincss/editpagescss/board_edit.css') }}">
 @endpush
 
@@ -20,73 +21,125 @@
                 <h2>Editar Página Directiva</h2>
             </div>
             <p class="subtitle">
-                Actualiza los integrantes del consejo directivo de la organización con su cargo correspondiente.
+                Actualiza los integrantes del consejo directivo con su foto, nombre completo y cargo correspondiente.
             </p>
         </div>
 
         {{-- Form --}}
-        <form method="POST" action="#">
+        <form method="POST" action="#" enctype="multipart/form-data">
             @csrf
 
+            {{-- Campos generales --}}
             <div class="form-group">
-                <label for="titulo_seccion">
-                    Título de la sección
-                </label>
+                <label for="titulo_seccion">Título de la sección</label>
                 <input
                     type="text"
                     id="titulo_seccion"
                     name="titulo_seccion"
-                    value="Consejo Directivo"
+                    value="{{ old('titulo_seccion', 'Directiva') }}"
                     placeholder="Escribe el título de la sección..."
                     required
                 >
+                @error('titulo_seccion')
+                    <span class="field-error-msg">{{ $message }}</span>
+                @enderror
             </div>
 
             <div class="form-group">
-                <label for="descripcion">
-                    Descripción
-                </label>
-                <textarea
-                    id="descripcion"
-                    name="descripcion"
-                    rows="4"
-                    placeholder="Escribe una descripción sobre la directiva..."
-                >Integrantes del consejo directivo de la organización, con foto y cargo.</textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="miembro_nombre_1">
-                    Miembro 1 — Nombre completo
-                </label>
+                <label for="subtitulo">Subtítulo</label>
                 <input
                     type="text"
-                    id="miembro_nombre_1"
-                    name="miembro_nombre_1"
-                    value=""
-                    placeholder="Nombre del integrante..."
+                    id="subtitulo"
+                    name="subtitulo"
+                    value="{{ old('subtitulo', 'Comité Directivo') }}"
+                    placeholder="Ej: Comité Directivo..."
                 >
             </div>
 
-            <div class="form-group">
-                <label for="miembro_cargo_1">
-                    Miembro 1 — Cargo
-                </label>
-                <input
-                    type="text"
-                    id="miembro_cargo_1"
-                    name="miembro_cargo_1"
-                    value=""
-                    placeholder="Ej: Presidenta, Secretaria, Tesorera..."
-                >
+            {{-- Divisor de miembros --}}
+            <div class="members-label">
+                <span class="members-label-text">Miembros del consejo</span>
+                <span class="members-label-hint">Foto · Nombre · Cargo</span>
             </div>
 
+            {{-- Grid de miembros --}}
+            <div class="members-grid" id="membersGrid">
+
+                @for ($i = 1; $i <= 3; $i++)
+                <div class="member-card" id="member-{{ $i }}">
+
+                    {{-- Número --}}
+                    <div class="member-card__num">{{ $i }}</div>
+
+                    {{-- Foto --}}
+                    <div class="member-photo-wrap">
+                        <div class="member-photo" id="photo-preview-{{ $i }}">
+                            <div class="member-photo__empty">
+                                <i class="fa fa-user"></i>
+                            </div>
+                        </div>
+                        <label class="btn-photo-upload" for="foto_{{ $i }}">
+                            <i class="fa fa-camera"></i>
+                            Subir foto
+                        </label>
+                        <input
+                            type="file"
+                            id="foto_{{ $i }}"
+                            name="foto_{{ $i }}"
+                            accept="image/png,image/jpeg,image/webp"
+                            class="photo-input"
+                            data-member="{{ $i }}"
+                            style="display:none;"
+                        >
+                    </div>
+
+                    {{-- Campos de texto --}}
+                    <div class="member-fields">
+                        <div class="form-group">
+                            <label for="miembro_nombre_{{ $i }}">Nombre completo</label>
+                            <input
+                                type="text"
+                                id="miembro_nombre_{{ $i }}"
+                                name="miembro_nombre_{{ $i }}"
+                                value="{{ old('miembro_nombre_' . $i) }}"
+                                placeholder="Ej: Ing. Paula Guadalupe Pech Puc"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="miembro_cargo_{{ $i }}">Cargo</label>
+                            <input
+                                type="text"
+                                id="miembro_cargo_{{ $i }}"
+                                name="miembro_cargo_{{ $i }}"
+                                value="{{ old('miembro_cargo_' . $i) }}"
+                                placeholder="Ej: Presidenta, Secretaria..."
+                            >
+                        </div>
+                    </div>
+
+                    {{-- Quitar miembro --}}
+                    <button type="button" class="btn-remove-member" data-member="{{ $i }}" title="Quitar miembro">
+                        <i class="fa fa-xmark"></i>
+                    </button>
+
+                </div>
+                @endfor
+
+            </div>
+
+            {{-- Agregar miembro --}}
+            <button type="button" class="btn-add-member" id="btnAddMember">
+                <i class="fa fa-plus"></i>
+                Agregar miembro
+            </button>
+
+            {{-- Acciones --}}
             <div class="form-actions">
                 <button type="submit" class="btn-save">
                     <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
                     Guardar Cambios
                 </button>
-                <button type="button" class="btn-cancel"
-                    onclick="window.history.back()">
+                <button type="button" class="btn-cancel" onclick="window.history.back()">
                     Cancelar
                 </button>
             </div>

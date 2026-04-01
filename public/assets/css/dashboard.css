@@ -717,6 +717,11 @@ body.reduce-animations *::after {
 
 /* ==================== RESPONSIVE — MOBILE ==================== */
 @media (max-width: 768px) {
+    /* Ocultar notificaciones del menú en móvil (ya está el botón arriba a la derecha) */
+    .menu-bottom .notification-trigger {
+        display: none !important;
+    }
+    
     .sidebar {
         width: 100%;
         height: auto;

@@ -1,132 +1,163 @@
-/* ==================== VARIABLES — MODO CLARO / OSCURO ==================== */
+/* ==================== VARIABLES ==================== */
 :root {
-    /* Modo claro */
-    --bg-page:        #f9fafc;
-    --bg-container:   #ffffff;
-    --bg-input:       #f9fafc;
-    --bg-input-focus: #ffffff;
+    --bg-page:          #f0f2f8;
+    --bg-container:     #ffffff;
+    --bg-card:          #f8f9fd;
+    --bg-input:         #ffffff;
+    --bg-input-focus:   #ffffff;
+    --bg-header:        linear-gradient(135deg, #7d3f6a 0%, #a0527f 50%, #5c2e52 100%);
 
-    --border:         #e2e8f0;
-    --border-focus:   #7d3f6a;
+    --border:           #e4e8f0;
+    --border-focus:     #7d3f6a;
+    --border-card:      #ede0ea;
 
-    --text-heading:   #1a202c;
-    --text-sub:       #718096;
-    --text-label:     #4a5568;
-    --text-input:     #1a202c;
-    --text-placeholder: #a0aec0;
+    --text-heading:     #ffffff;
+    --text-sub:         rgba(255,255,255,0.75);
+    --text-label:       #4a3558;
+    --text-input:       #1a1028;
+    --text-placeholder: #b0a8bc;
+    --text-section:     #7d3f6a;
+    --text-body:        #3d3050;
 
-    --accent:         #7d3f6a;
-    --accent-hover:   #662f57;
-    --accent-light:   rgba(125, 63, 106, 0.08);
+    --accent:           #7d3f6a;
+    --accent-hover:     #662f57;
+    --accent-light:     rgba(125, 63, 106, 0.10);
+    --accent-glow:      rgba(125, 63, 106, 0.22);
 
-    --btn-cancel-bg:      #edf2f7;
-    --btn-cancel-color:   #4a5568;
-    --btn-cancel-hover:   #e2e8f0;
+    --btn-cancel-bg:    #f0eaf4;
+    --btn-cancel-color: #6b5880;
+    --btn-cancel-hover: #e4d8ec;
 
-    --shadow-container: 0 2px 12px rgba(0,0,0,0.06);
-    --shadow-input-focus: 0 0 0 3px rgba(125, 63, 106, 0.15);
+    --shadow-container: 0 8px 40px rgba(100, 50, 90, 0.10), 0 2px 8px rgba(0,0,0,0.04);
+    --shadow-card:      0 2px 12px rgba(100, 50, 90, 0.07);
+    --shadow-input-focus: 0 0 0 3px rgba(125, 63, 106, 0.18);
+    --shadow-btn:       0 6px 20px rgba(125, 63, 106, 0.35);
 
-    --label-accent: #7d3f6a;
+    --radius-container: 24px;
+    --radius-card:      16px;
+    --radius-input:     12px;
+    --radius-btn:       12px;
 
     --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 [data-theme="dark"] {
-    /* Modo oscuro — azul marino oscuro igual al resto del dashboard */
-    --bg-page:        #0f1420;
-    --bg-container:   #161b27;
-    --bg-input:       #1e2a45;
-    --bg-input-focus: #243356;
+    --bg-page:          #0c1018;
+    --bg-container:     #141924;
+    --bg-card:          #1a2236;
+    --bg-input:         #1e2a40;
+    --bg-input-focus:   #243352;
+    --bg-header:        linear-gradient(135deg, #3a1a32 0%, #5c2e52 50%, #2a1228 100%);
 
-    --border:         #2d4070;
-    --border-focus:   #d46ba8;
+    --border:           #263050;
+    --border-focus:     #d46ba8;
+    --border-card:      #2d3a58;
 
-    --text-heading:   #e8e8f0;
-    --text-sub:       #6878a8;
-    --text-label:     #a0a8c0;
-    --text-input:     #e8e8f0;
-    --text-placeholder: #4a5878;
+    --text-heading:     #f0e8f4;
+    --text-sub:         rgba(200,180,210,0.70);
+    --text-label:       #c0a8d0;
+    --text-input:       #e8e0f0;
+    --text-placeholder: #4a5070;
+    --text-section:     #d46ba8;
+    --text-body:        #a898b8;
 
-    --accent:         #d46ba8;
-    --accent-hover:   #e07db8;
-    --accent-light:   rgba(212, 107, 168, 0.10);
+    --accent:           #d46ba8;
+    --accent-hover:     #e07db8;
+    --accent-light:     rgba(212, 107, 168, 0.12);
+    --accent-glow:      rgba(212, 107, 168, 0.20);
 
-    --btn-cancel-bg:      #1e2a45;
-    --btn-cancel-color:   #a0a8c0;
-    --btn-cancel-hover:   #243356;
+    --btn-cancel-bg:    #1e2a40;
+    --btn-cancel-color: #a898b8;
+    --btn-cancel-hover: #263050;
 
-    --shadow-container: 0 2px 12px rgba(0,0,0,0.35);
-    --shadow-input-focus: 0 0 0 3px rgba(212, 107, 168, 0.18);
-
-    --label-accent: #d46ba8;
+    --shadow-container: 0 8px 40px rgba(0,0,0,0.40);
+    --shadow-card:      0 2px 12px rgba(0,0,0,0.25);
+    --shadow-input-focus: 0 0 0 3px rgba(212, 107, 168, 0.20);
+    --shadow-btn:       0 6px 20px rgba(212, 107, 168, 0.30);
 }
 
 /* ==================== BASE ==================== */
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
-/* ==================== PAGE WRAPPER ==================== */
+/* ==================== WRAPPER ==================== */
 .edit-page-wrapper {
+    min-height: 100%;
+    padding: 12px 0 40px;
     transition: background var(--transition);
 }
 
 /* ==================== CONTAINER ==================== */
 .edit-container {
-    max-width: 680px;
+    max-width: 780px;
     margin: 0 auto;
-    padding: 44px 48px;
     background: var(--bg-container);
-    border-radius: 20px;
+    border-radius: var(--radius-container);
     box-shadow: var(--shadow-container);
     border: 1px solid var(--border);
+    overflow: hidden;
     transition: background var(--transition), box-shadow var(--transition), border-color var(--transition);
-
-    /* Animación de entrada */
-    animation: containerIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+    animation: containerIn 0.55s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
-/* ==================== HEADER ==================== */
+/* ==================== HEADER BANNER ==================== */
 .edit-header {
-    margin-bottom: 36px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--border);
-    transition: border-color var(--transition);
+    background: var(--bg-header);
+    padding: 36px 44px 32px;
+    position: relative;
+    overflow: hidden;
+}
 
-    animation: fadeSlideDown 0.5s ease both;
-    animation-delay: 0.08s;
+/* Decorative circles */
+.edit-header::before,
+.edit-header::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.12;
+    background: #ffffff;
+    pointer-events: none;
+}
+.edit-header::before {
+    width: 260px; height: 260px;
+    top: -80px; right: -60px;
+}
+.edit-header::after {
+    width: 140px; height: 140px;
+    bottom: -50px; left: 30px;
 }
 
 .edit-header-top {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 8px;
+    gap: 16px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+    animation: fadeSlideDown 0.5s ease both;
+    animation-delay: 0.10s;
 }
 
 .edit-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
-    background: var(--accent-light);
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.25);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--accent);
-    font-size: 18px;
+    color: #ffffff;
+    font-size: 20px;
     flex-shrink: 0;
-    transition: background var(--transition), color var(--transition);
 }
 
 .edit-container h2 {
     margin: 0;
-    font-size: 22px;
-    font-weight: 700;
+    font-size: 24px;
+    font-weight: 800;
     color: var(--text-heading);
-    transition: color var(--transition);
-    letter-spacing: -0.3px;
+    letter-spacing: -0.4px;
 }
 
 .subtitle {
@@ -134,41 +165,102 @@
     color: var(--text-sub);
     font-size: 14px;
     line-height: 1.6;
-    transition: color var(--transition);
-    padding-left: 56px; /* align with title (icon width + gap) */
+    padding-left: 64px;
+    position: relative;
+    z-index: 1;
+    animation: fadeSlideDown 0.5s ease both;
+    animation-delay: 0.18s;
+}
+
+/* ==================== FORM BODY ==================== */
+.edit-form-body {
+    padding: 36px 44px 40px;
+}
+
+/* ==================== SECTIONS ==================== */
+.form-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-card);
+    padding: 26px 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-card);
+    transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+    animation: fadeSlideUp 0.45s ease both;
+}
+
+.form-section:nth-child(1) { animation-delay: 0.18s; }
+.form-section:nth-child(2) { animation-delay: 0.26s; }
+.form-section:nth-child(3) { animation-delay: 0.34s; }
+
+.form-section:hover {
+    box-shadow: 0 4px 20px var(--accent-glow);
+    border-color: var(--border-focus);
+}
+
+.form-section-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-section);
+    margin-bottom: 22px;
+    padding-bottom: 14px;
+    border-bottom: 1.5px solid var(--border-card);
+    transition: color var(--transition), border-color var(--transition);
+}
+
+.form-section-title i {
+    width: 28px;
+    height: 28px;
+    background: var(--accent-light);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--accent);
+    flex-shrink: 0;
+}
+
+/* ==================== FORM GRID ==================== */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
 }
 
 /* ==================== FORM GROUPS ==================== */
 .form-group {
-    margin-bottom: 22px;
+    margin-bottom: 18px;
     display: flex;
     flex-direction: column;
 }
 
-.form-group:nth-child(1) { animation: fadeSlideUp 0.45s ease both; animation-delay: 0.16s; }
-.form-group:nth-child(2) { animation: fadeSlideUp 0.45s ease both; animation-delay: 0.24s; }
-.form-group:nth-child(3) { animation: fadeSlideUp 0.45s ease both; animation-delay: 0.32s; }
-.form-group:nth-child(4) { animation: fadeSlideUp 0.45s ease both; animation-delay: 0.40s; }
+.form-group:last-child { margin-bottom: 0; }
 
 .form-group label {
-    margin-bottom: 7px;
+    margin-bottom: 8px;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 12.5px;
     color: var(--text-label);
-    letter-spacing: 0.3px;
+    letter-spacing: 0.4px;
     text-transform: uppercase;
     transition: color var(--transition);
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
 }
 
 .form-group label::before {
     content: '';
     display: inline-block;
     width: 3px;
-    height: 13px;
-    background: var(--label-accent);
+    height: 12px;
+    background: var(--accent);
     border-radius: 2px;
     flex-shrink: 0;
     transition: background var(--transition);
@@ -176,22 +268,21 @@
 
 .form-group input,
 .form-group textarea {
-    padding: 12px 14px;
+    padding: 12px 15px;
     background: var(--bg-input);
     border: 1.5px solid var(--border);
-    border-radius: 10px;
+    border-radius: var(--radius-input);
     font-size: 14.5px;
     color: var(--text-input);
     transition: border-color var(--transition), background var(--transition),
                 box-shadow var(--transition), color var(--transition);
     font-family: inherit;
     resize: vertical;
+    line-height: 1.5;
 }
 
 .form-group input::placeholder,
-.form-group textarea::placeholder {
-    color: var(--text-placeholder);
-}
+.form-group textarea::placeholder { color: var(--text-placeholder); }
 
 .form-group input:focus,
 .form-group textarea:focus {
@@ -201,139 +292,100 @@
     box-shadow: var(--shadow-input-focus);
 }
 
-.form-group textarea {
-    min-height: 110px;
-    line-height: 1.6;
-}
+.form-group textarea { min-height: 108px; line-height: 1.65; }
 
 /* ==================== ACTIONS ==================== */
 .form-actions {
     display: flex;
     gap: 12px;
-    margin-top: 32px;
-    padding-top: 24px;
+    margin-top: 8px;
+    padding-top: 28px;
     border-top: 1px solid var(--border);
     transition: border-color var(--transition);
-
     animation: fadeSlideUp 0.45s ease both;
-    animation-delay: 0.46s;
+    animation-delay: 0.42s;
 }
 
 .btn-save,
 .btn-cancel {
-    padding: 11px 24px;
-    border-radius: 9px;
+    padding: 13px 28px;
+    border-radius: var(--radius-btn);
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     border: none;
     transition: background var(--transition), color var(--transition),
                 transform 0.15s ease, box-shadow 0.15s ease;
     font-family: inherit;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.3px;
 }
 
 .btn-save {
     background: var(--accent);
     color: #ffffff;
-    box-shadow: 0 4px 14px rgba(128, 65, 106, 0.3);
+    box-shadow: var(--shadow-btn);
 }
 
 .btn-save:hover {
     background: var(--accent-hover);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(128, 65, 106, 0.38);
+    box-shadow: 0 10px 28px rgba(125, 63, 106, 0.42);
 }
 
-.btn-save:active {
-    transform: translateY(0px) scale(0.97);
-    box-shadow: 0 2px 8px rgba(128, 65, 106, 0.25);
-}
+.btn-save:active { transform: translateY(0) scale(0.97); }
 
-.btn-cancel {
-    background: var(--btn-cancel-bg);
-    color: var(--btn-cancel-color);
-}
+.btn-cancel { background: var(--btn-cancel-bg); color: var(--btn-cancel-color); }
+.btn-cancel:hover { background: var(--btn-cancel-hover); transform: translateY(-2px); }
+.btn-cancel:active { transform: translateY(0) scale(0.97); }
 
-.btn-cancel:hover {
-    background: var(--btn-cancel-hover);
-    transform: translateY(-2px);
+/* ==================== ERROR STATES (from JS) ==================== */
+.field--error {
+    border-color: #c0392b !important;
+    box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.14) !important;
 }
-
-.btn-cancel:active {
-    transform: translateY(0px) scale(0.97);
+.field-error-msg {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #c0392b;
+    font-weight: 500;
 }
 
 /* ==================== KEYFRAMES ==================== */
 @keyframes containerIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.98);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+    from { opacity: 0; transform: translateY(24px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-
 @keyframes fadeSlideDown {
-    from { opacity: 0; transform: translateY(-12px); }
+    from { opacity: 0; transform: translateY(-10px); }
     to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(14px); }
+    from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ==================== REDUCE ANIMATIONS ==================== */
+/* ==================== REDUCE MOTION ==================== */
 @media (prefers-reduced-motion: reduce) {
-    .edit-container,
-    .edit-header,
-    .form-group,
-    .form-actions {
-        animation: none !important;
-        opacity: 1 !important;
-        transform: none !important;
+    .edit-container, .edit-header-top, .subtitle,
+    .form-section, .form-actions {
+        animation: none !important; opacity: 1 !important; transform: none !important;
     }
 }
 
 body.reduce-animations .edit-container,
-body.reduce-animations .edit-header,
-body.reduce-animations .form-group,
+body.reduce-animations .form-section,
 body.reduce-animations .form-actions {
-    animation: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-}
-
-body.reduce-animations .btn-save:hover,
-body.reduce-animations .btn-cancel:hover {
-    transform: none !important;
-}
-
-body.reduce-animations .btn-save:active,
-body.reduce-animations .btn-cancel:active {
-    transform: scale(0.98) !important;
+    animation: none !important; opacity: 1 !important; transform: none !important;
 }
 
 /* ==================== RESPONSIVE ==================== */
-@media (max-width: 600px) {
-    .edit-container {
-        padding: 28px 22px;
-    }
-
-    .subtitle {
-        padding-left: 0;
-    }
-
-    .form-actions {
-        flex-direction: column;
-    }
-
+@media (max-width: 640px) {
+    .edit-header        { padding: 28px 24px 26px; }
+    .edit-form-body     { padding: 24px 20px 30px; }
+    .form-section       { padding: 20px 18px; }
+    .subtitle           { padding-left: 0; }
+    .form-row           { grid-template-columns: 1fr; }
+    .form-actions       { flex-direction: column; }
     .btn-save,
-    .btn-cancel {
-        width: 100%;
-        text-align: center;
-    }
+    .btn-cancel         { width: 100%; text-align: center; }
 }

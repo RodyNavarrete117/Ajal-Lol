@@ -70,3 +70,7 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script src="{{ asset('assets/js/editpage/home_edit.js') }}"></script>
+@endpush

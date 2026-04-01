@@ -144,6 +144,7 @@
             <div class="input-group step" id="password-group">
                 <i class="fa-solid fa-lock"></i>
                 <input type="password" id="password" name="password" placeholder="Escriba su contraseña">
+                <i class="fa-solid fa-eye toggle-password" id="togglePassword" style="left: 280px"></i>
             </div>
 
             <div class="actions">

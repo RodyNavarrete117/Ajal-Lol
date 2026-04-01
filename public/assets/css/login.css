@@ -270,3 +270,20 @@ body {
         font-size: 13px;
     }
 }
+
+/* Ojo para mostrar/ocultar contraseña */
+.toggle-password {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaaaaa;
+    font-size: 15px;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s ease;
+}
+
+.toggle-password:hover {
+    color: #8d3a6d;
+}

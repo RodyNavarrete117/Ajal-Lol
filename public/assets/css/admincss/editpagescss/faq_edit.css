@@ -69,9 +69,9 @@
 
 /* ── Container ── */
 .edit-container {
-    max-width: 720px;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 44px 48px;
+    padding: 44px 52px;
     background: var(--bg-container);
     border-radius: 22px;
     box-shadow: var(--shadow-container);
@@ -258,11 +258,11 @@
     background: var(--card-bg);
     border: 1.5px solid var(--card-border);
     border-radius: 15px;
-    padding: 18px 18px 18px 0;
+    padding: 18px 20px 18px 0;
     display: grid;
-    grid-template-columns: 36px 32px 1fr 36px;
+    grid-template-columns: 40px 34px 1fr 38px;
     align-items: start;
-    gap: 0 10px;
+    gap: 0 12px;
     transition: border-color var(--transition), box-shadow var(--transition),
                 background var(--transition), opacity var(--transition), transform var(--transition);
     cursor: default;
@@ -493,10 +493,14 @@
 }
 
 /* ── Responsive ── */
+@media (max-width: 860px) {
+    .edit-container { padding: 32px 28px; }
+}
+
 @media (max-width: 600px) {
     .edit-container { padding: 28px 20px; }
     .subtitle { padding-left: 0; }
-    .faq-card { grid-template-columns: 32px 28px 1fr 32px; }
+    .faq-card { grid-template-columns: 32px 28px 1fr 32px; gap: 0 8px; }
     .form-actions { flex-direction: column; }
     .btn-save, .btn-cancel { width: 100%; justify-content: center; }
 }

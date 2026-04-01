@@ -1,8 +1,9 @@
 @extends('admin.dashboard')
 
-@section('title', 'Editar Página - Aliados')
+@section('title', 'Editar Página - Aliados / Patrocinadores')
 
 @push('styles')
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap">
 <link rel="stylesheet" href="{{ asset('assets/css/admincss/editpagescss/allies_edit.css') }}">
 @endpush
 
@@ -11,122 +12,91 @@
 <div class="edit-page-wrapper">
     <div class="edit-container">
 
-        {{-- ── Header banner ───────────────────────────────────── --}}
+        {{-- Header --}}
         <div class="edit-header">
             <div class="edit-header-top">
                 <div class="edit-icon">
                     <i class="fa fa-handshake"></i>
                 </div>
-                <h2>Editar Página Aliados</h2>
+                <h2>Editar Sección de Aliados</h2>
             </div>
             <p class="subtitle">
-                Administra los logos y datos de las organizaciones aliadas que aparecen en el sitio público.
+                Administra los logos de organizaciones aliadas y patrocinadores que se muestran en el sitio.
             </p>
         </div>
 
-        {{-- ── Formulario ──────────────────────────────────────── --}}
-        <div class="edit-form-body">
-            <form method="POST" action="#" enctype="multipart/form-data" id="allies-form">
-                @csrf
+        {{-- Form --}}
+        <form method="POST" action="#" enctype="multipart/form-data">
+            @csrf
 
-                {{-- Campo oculto: id_pagina (se llenará cuando se conecte la BD) --}}
-                <input type="hidden" name="id_pagina" value="1">
+            {{-- Título de sección --}}
+            <div class="form-group">
+                <label for="titulo_aliados">Título de la sección</label>
+                <input
+                    type="text"
+                    id="titulo_aliados"
+                    name="titulo_aliados"
+                    value="{{ old('titulo_aliados', 'Nuestros Aliados') }}"
+                    placeholder="Ej. Nuestros Aliados, Patrocinadores..."
+                    required
+                >
+                @error('titulo_aliados')
+                    <span class="field-error-msg">{{ $message }}</span>
+                @enderror
+            </div>
 
-                {{-- Sección: Textos de la sección --}}
-                <div class="form-section">
-                    <div class="form-section-title">
-                        <i class="fa fa-pen-to-square"></i>
-                        Textos de la sección
-                    </div>
+            {{-- Grid de logos --}}
+            <div class="logos-section-label">
+                <span class="logos-label-text">Logos (6 espacios)</span>
+                <span class="logos-label-hint">Formatos: PNG, JPG, SVG · Máx. 2MB por imagen</span>
+            </div>
 
-                    <div class="form-group">
-                        <label for="titulo_seccion">Título</label>
-                        <input
-                            type="text"
-                            id="titulo_seccion"
-                            name="titulo_seccion"
-                            value="Aliados"
-                            placeholder="Ej: Aliados"
-                            required
-                        >
-                    </div>
+            <div class="logos-grid">
 
-                    <div class="form-group">
-                        <label for="subtitulo">Subtítulo destacado</label>
-                        <input
-                            type="text"
-                            id="subtitulo"
-                            name="subtitulo"
-                            value="confían"
-                            placeholder="Palabra en negrita dentro del subtítulo..."
-                        >
-                        <span class="field-hint">
-                            Se mostrará como: «Organizaciones que <strong>confían</strong> en nosotros»
-                        </span>
-                    </div>
-                </div>
-
-                {{-- Sección: Logos de aliados --}}
-                <div class="form-section">
-                    <div class="form-section-title">
-                        <i class="fa fa-images"></i>
-                        Logos de aliados
-                        <span class="ally-counter" id="ally-counter">0 registros</span>
-                    </div>
-
-                    {{-- Zona de arrastre --}}
-                    <div class="dropzone" id="dropzone">
-                        <div class="dropzone-inner">
-                            <div class="dropzone-icon">
-                                <i class="fa fa-cloud-arrow-up"></i>
-                            </div>
-                            <p class="dropzone-text">Arrastra los logos aquí</p>
-                            <p class="dropzone-sub">o haz clic para seleccionar archivos</p>
-                            <span class="dropzone-badge">PNG · JPG · SVG · WEBP</span>
+                @for ($i = 1; $i <= 6; $i++)
+                <div class="logo-slot" id="slot-{{ $i }}">
+                    <div class="logo-slot__preview" id="preview-{{ $i }}">
+                        <div class="logo-slot__empty">
+                            <i class="fa fa-image"></i>
+                            <span>Logo {{ $i }}</span>
                         </div>
+                    </div>
+                    <div class="logo-slot__actions">
+                        <label class="btn-upload" for="logo_{{ $i }}">
+                            <i class="fa fa-arrow-up-from-bracket"></i>
+                            Subir imagen
+                        </label>
                         <input
                             type="file"
-                            id="ally-file-input"
-                            name="img_aliados[]"
-                            multiple
+                            id="logo_{{ $i }}"
+                            name="logo_{{ $i }}"
                             accept="image/png,image/jpeg,image/svg+xml,image/webp"
-                            class="dropzone-input"
+                            class="logo-input"
+                            data-slot="{{ $i }}"
+                            style="display:none;"
                         >
+                        <button type="button" class="btn-clear" data-slot="{{ $i }}" title="Quitar imagen">
+                            <i class="fa fa-xmark"></i>
+                        </button>
                     </div>
-
-                    {{-- Grid de preview --}}
-                    <div class="allies-grid" id="allies-grid">
-                        {{--
-                            Estructura que generará el JS por cada aliado:
-                            Campos mapeados a la tabla `aliados`:
-                            - img_aliados  → imagen del logo
-                            - nombre       → nombre del aliado
-                            - url          → sitio web
-                            - activo       → toggle visible/oculto
-                            - id_pagina    → oculto, heredado del form
-                        --}}
-                    </div>
-
-                    <p class="allies-empty" id="allies-empty">
-                        <i class="fa fa-image"></i>
-                        Aún no hay aliados. Arrastra imágenes arriba para agregarlos.
-                    </p>
+                    <div class="logo-slot__name" id="name-{{ $i }}">Sin imagen</div>
                 </div>
+                @endfor
 
-                {{-- Acciones --}}
-                <div class="form-actions">
-                    <button type="submit" class="btn-save">
-                        <i class="fa fa-floppy-disk" style="margin-right:8px;"></i>
-                        Guardar Cambios
-                    </button>
-                    <button type="button" class="btn-cancel" onclick="window.history.back()">
-                        Cancelar
-                    </button>
-                </div>
+            </div>
 
-            </form>
-        </div>
+            {{-- Form actions --}}
+            <div class="form-actions">
+                <button type="submit" class="btn-save">
+                    <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
+                    Guardar Cambios
+                </button>
+                <button type="button" class="btn-cancel" onclick="window.history.back()">
+                    Cancelar
+                </button>
+            </div>
 
+        </form>
     </div>
 </div>
 

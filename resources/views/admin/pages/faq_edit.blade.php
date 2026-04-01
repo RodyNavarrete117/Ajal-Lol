@@ -1,10 +1,10 @@
 @extends('admin.dashboard')
 
-@section('title', 'Editar Página - Aliados / Patrocinadores')
+@section('title', 'Editar Página - Preguntas Frecuentes')
 
 @push('styles')
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap">
-<link rel="stylesheet" href="{{ asset('assets/css/admincss/editpagescss/aliados_edit.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/admincss/editpagescss/faq_edit.css') }}">
 @endpush
 
 @section('content')
@@ -16,76 +16,104 @@
         <div class="edit-header">
             <div class="edit-header-top">
                 <div class="edit-icon">
-                    <i class="fa fa-handshake"></i>
+                    <i class="fa fa-circle-question"></i>
                 </div>
-                <h2>Editar Sección de Aliados</h2>
+                <h2>Editar Página Preguntas Frecuentes</h2>
             </div>
             <p class="subtitle">
-                Administra los logos de organizaciones aliadas y patrocinadores que se muestran en el sitio.
+                Administra las preguntas y respuestas más comunes sobre la organización, sus servicios y cómo colaborar.
             </p>
         </div>
 
         {{-- Form --}}
-        <form method="POST" action="#" enctype="multipart/form-data">
+        <form method="POST" action="#">
             @csrf
 
-            {{-- Título de sección --}}
+            {{-- Campos generales --}}
             <div class="form-group">
-                <label for="titulo_aliados">Título de la sección</label>
+                <label for="titulo_seccion">Título de la sección</label>
                 <input
                     type="text"
-                    id="titulo_aliados"
-                    name="titulo_aliados"
-                    value="{{ old('titulo_aliados', 'Nuestros Aliados') }}"
-                    placeholder="Ej. Nuestros Aliados, Patrocinadores..."
+                    id="titulo_seccion"
+                    name="titulo_seccion"
+                    value="{{ old('titulo_seccion', 'Preguntas Frecuentes') }}"
+                    placeholder="Escribe el título de la sección..."
                     required
                 >
-                @error('titulo_aliados')
+                @error('titulo_seccion')
                     <span class="field-error-msg">{{ $message }}</span>
                 @enderror
             </div>
 
-            {{-- Grid de logos --}}
-            <div class="logos-section-label">
-                <span class="logos-label-text">Logos (6 espacios)</span>
-                <span class="logos-label-hint">Formatos: PNG, JPG, SVG · Máx. 2MB por imagen</span>
+            <div class="form-group">
+                <label for="descripcion">Descripción introductoria</label>
+                <textarea
+                    id="descripcion"
+                    name="descripcion"
+                    rows="3"
+                    placeholder="Escribe un texto introductorio para la sección..."
+                >{{ old('descripcion', 'Respuestas a las dudas más comunes sobre la organización, sus servicios y cómo colaborar.') }}</textarea>
+                @error('descripcion')
+                    <span class="field-error-msg">{{ $message }}</span>
+                @enderror
             </div>
 
-            <div class="logos-grid">
+            {{-- Divisor --}}
+            <div class="faqs-label">
+                <span class="faqs-label-text">Preguntas y respuestas</span>
+                <span class="faqs-label-hint">PNG, JPG, SVG · Máx. 2MB</span>
+            </div>
 
-                @for ($i = 1; $i <= 6; $i++)
-                <div class="logo-slot" id="slot-{{ $i }}">
-                    <div class="logo-slot__preview" id="preview-{{ $i }}">
-                        <div class="logo-slot__empty">
-                            <i class="fa fa-image"></i>
-                            <span>Logo {{ $i }}</span>
+            {{-- Lista de pares pregunta/respuesta --}}
+            <div class="faq-list" id="faqList">
+
+                @for ($i = 1; $i <= 2; $i++)
+                <div class="faq-card" id="faq-{{ $i }}">
+
+                    <div class="faq-card__drag" title="Arrastrar para reordenar">
+                        <i class="fa fa-grip-vertical"></i>
+                    </div>
+
+                    <div class="faq-card__num">{{ $i }}</div>
+
+                    <div class="faq-card__fields">
+                        <div class="form-group">
+                            <label for="pregunta_{{ $i }}">Pregunta</label>
+                            <input
+                                type="text"
+                                id="pregunta_{{ $i }}"
+                                name="pregunta_{{ $i }}"
+                                value="{{ old('pregunta_' . $i) }}"
+                                placeholder="Escribe la pregunta frecuente..."
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="respuesta_{{ $i }}">Respuesta</label>
+                            <textarea
+                                id="respuesta_{{ $i }}"
+                                name="respuesta_{{ $i }}"
+                                rows="3"
+                                placeholder="Escribe la respuesta detallada..."
+                            >{{ old('respuesta_' . $i) }}</textarea>
                         </div>
                     </div>
-                    <div class="logo-slot__actions">
-                        <label class="btn-upload" for="logo_{{ $i }}">
-                            <i class="fa fa-arrow-up-from-bracket"></i>
-                            Subir imagen
-                        </label>
-                        <input
-                            type="file"
-                            id="logo_{{ $i }}"
-                            name="logo_{{ $i }}"
-                            accept="image/png,image/jpeg,image/svg+xml,image/webp"
-                            class="logo-input"
-                            data-slot="{{ $i }}"
-                            style="display:none;"
-                        >
-                        <button type="button" class="btn-clear" data-slot="{{ $i }}" title="Quitar imagen">
-                            <i class="fa fa-xmark"></i>
-                        </button>
-                    </div>
-                    <div class="logo-slot__name" id="name-{{ $i }}">Sin imagen</div>
+
+                    <button type="button" class="faq-card__remove" data-faq="{{ $i }}" title="Eliminar pregunta">
+                        <i class="fa fa-xmark"></i>
+                    </button>
+
                 </div>
                 @endfor
 
             </div>
 
-            {{-- Form actions --}}
+            {{-- Botón agregar --}}
+            <button type="button" class="btn-add-faq" id="btnAddFaq">
+                <i class="fa fa-plus"></i>
+                Agregar pregunta
+            </button>
+
+            {{-- Acciones --}}
             <div class="form-actions">
                 <button type="submit" class="btn-save">
                     <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
@@ -103,5 +131,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('assets/js/editpage/aliados_edit.js') }}"></script>
+<script src="{{ asset('assets/js/editpage/faq_edit.js') }}"></script>
 @endpush

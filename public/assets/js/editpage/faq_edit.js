@@ -1,8 +1,9 @@
-/* ==================== aliados_edit.js ==================== */
+/* ==================== faq_edit.js ==================== */
 (function () {
     'use strict';
 
-    const MAX_SIZE_MB = 2;
+    let faqCount = document.querySelectorAll('.faq-card').length;
+    let dragSrc  = null;
 
     /* ── Toast ─────────────────────────────────────────── */
     function showToast(message, type = 'success') {
@@ -24,144 +25,201 @@
         setTimeout(() => {
             toast.classList.remove('edit-toast--show');
             toast.addEventListener('transitionend', () => toast.remove(), { once: true });
-        }, 3400);
+        }, 3200);
     }
 
-    /* ── Preview de imagen ──────────────────────────────── */
-    function setPreview(slotNum, file) {
-        const preview  = document.getElementById(`preview-${slotNum}`);
-        const nameEl   = document.getElementById(`name-${slotNum}`);
-        if (!preview || !nameEl) return;
+    /* ── Renumerar ──────────────────────────────────────── */
+    function renumber() {
+        document.querySelectorAll('.faq-card').forEach((card, i) => {
+            const n = i + 1;
+            card.id = `faq-${n}`;
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            preview.innerHTML = `<img src="${e.target.result}" alt="Logo ${slotNum}">`;
-            preview.classList.add('has-image');
-            nameEl.textContent = file.name;
-            nameEl.classList.add('has-file');
-        };
-        reader.readAsDataURL(file);
+            const badge = card.querySelector('.faq-card__num');
+            if (badge) badge.textContent = n;
+
+            card.querySelectorAll('input, textarea').forEach(el => {
+                const base = el.name.replace(/_\d+$/, '');
+                const newName = `${base}_${n}`;
+                const oldId   = el.id;
+                el.name = newName;
+                el.id   = newName;
+                const lbl = card.querySelector(`label[for="${oldId}"]`);
+                if (lbl) lbl.setAttribute('for', newName);
+            });
+
+            const btnRemove = card.querySelector('.faq-card__remove');
+            if (btnRemove) btnRemove.dataset.faq = n;
+        });
     }
 
-    function clearSlot(slotNum) {
-        const preview = document.getElementById(`preview-${slotNum}`);
-        const nameEl  = document.getElementById(`name-${slotNum}`);
-        const input   = document.getElementById(`logo_${slotNum}`);
-        if (!preview || !nameEl || !input) return;
-
-        preview.innerHTML = `
-            <div class="logo-slot__empty">
-                <i class="fa fa-image"></i>
-                <span>Logo ${slotNum}</span>
-            </div>
-        `;
-        preview.classList.remove('has-image');
-        nameEl.textContent = 'Sin imagen';
-        nameEl.classList.remove('has-file');
-        input.value = '';
-    }
-
-    /* ── Hacer clic en preview abre el file input ───────── */
-    document.querySelectorAll('.logo-slot__preview').forEach(preview => {
-        preview.addEventListener('click', () => {
-            const slot  = preview.id.replace('preview-', '');
-            const input = document.getElementById(`logo_${slot}`);
-            if (input) input.click();
-        });
-    });
-
-    /* ── File inputs: validar y mostrar preview ─────────── */
-    document.querySelectorAll('.logo-input').forEach(input => {
-        input.addEventListener('change', function () {
-            const slot = this.dataset.slot;
-            const file = this.files[0];
-            if (!file) return;
-
-            if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-                showToast(`El archivo supera el límite de ${MAX_SIZE_MB}MB.`, 'error');
-                this.value = '';
-                return;
-            }
-
-            const allowed = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp'];
-            if (!allowed.includes(file.type)) {
-                showToast('Formato no permitido. Usa PNG, JPG, SVG o WEBP.', 'error');
-                this.value = '';
-                return;
-            }
-
-            setPreview(slot, file);
-        });
-    });
-
-    /* ── Botones de limpiar ─────────────────────────────── */
-    document.querySelectorAll('.btn-clear').forEach(btn => {
-        btn.addEventListener('click', function () {
-            clearSlot(this.dataset.slot);
-        });
-    });
-
-    /* ── Drag & Drop sobre cada slot ────────────────────── */
-    document.querySelectorAll('.logo-slot__preview').forEach(preview => {
-        preview.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            preview.style.borderColor = 'var(--accent)';
-            preview.style.background  = 'var(--accent-light)';
-        });
-
-        preview.addEventListener('dragleave', () => {
-            preview.style.borderColor = '';
-            preview.style.background  = '';
-        });
-
-        preview.addEventListener('drop', (e) => {
-            e.preventDefault();
-            preview.style.borderColor = '';
-            preview.style.background  = '';
-
-            const slot = preview.id.replace('preview-', '');
-            const file = e.dataTransfer.files[0];
-            if (!file) return;
-
-            if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-                showToast(`El archivo supera el límite de ${MAX_SIZE_MB}MB.`, 'error');
-                return;
-            }
-
-            const allowed = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp'];
-            if (!allowed.includes(file.type)) {
-                showToast('Formato no permitido. Usa PNG, JPG, SVG o WEBP.', 'error');
-                return;
-            }
-
-            // Asignar al input correspondiente y mostrar preview
-            const input  = document.getElementById(`logo_${slot}`);
-            const dt     = new DataTransfer();
-            dt.items.add(file);
-            if (input) input.files = dt.files;
-            setPreview(slot, file);
-        });
-    });
-
-    /* ── Validación y submit ────────────────────────────── */
-    const form = document.querySelector('.edit-container form');
-    if (!form) return;
-
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const titulo = document.getElementById('titulo_aliados');
-        if (titulo && !titulo.value.trim()) {
-            titulo.classList.add('field--error');
-            titulo.focus();
-            showToast('Por favor completa el título de la sección.', 'error');
-            titulo.addEventListener('input', () => titulo.classList.remove('field--error'), { once: true });
+    /* ── Eliminar card ──────────────────────────────────── */
+    function removeCard(card) {
+        if (document.querySelectorAll('.faq-card').length <= 1) {
+            showToast('Debe haber al menos una pregunta.', 'error');
             return;
         }
+        card.style.transition = 'opacity .2s ease, transform .2s ease';
+        card.style.opacity    = '0';
+        card.style.transform  = 'translateY(-8px)';
+        setTimeout(() => { card.remove(); renumber(); }, 220);
+    }
 
-        showToast('Cambios guardados correctamente.', 'success');
-        /* TODO: reemplazar con fetch/axios al conectar la BD */
-        // form.submit();
+    /* ── Drag & Drop para reordenar ─────────────────────── */
+    function initDrag(card) {
+        const grip = card.querySelector('.faq-card__drag');
+
+        card.addEventListener('dragstart', (e) => {
+            dragSrc = card;
+            card.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        });
+
+        card.addEventListener('dragend', () => {
+            card.classList.remove('dragging');
+            document.querySelectorAll('.faq-card').forEach(c => c.classList.remove('drag-over'));
+            dragSrc = null;
+            renumber();
+        });
+
+        card.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            if (dragSrc && dragSrc !== card) {
+                card.classList.add('drag-over');
+            }
+        });
+
+        card.addEventListener('dragleave', () => {
+            card.classList.remove('drag-over');
+        });
+
+        card.addEventListener('drop', (e) => {
+            e.preventDefault();
+            card.classList.remove('drag-over');
+            if (!dragSrc || dragSrc === card) return;
+
+            const list = document.getElementById('faqList');
+            const cards = [...list.querySelectorAll('.faq-card')];
+            const srcIdx  = cards.indexOf(dragSrc);
+            const destIdx = cards.indexOf(card);
+
+            if (srcIdx < destIdx) {
+                card.after(dragSrc);
+            } else {
+                card.before(dragSrc);
+            }
+        });
+
+        // Solo el grip activa el arrastre
+        if (grip) {
+            grip.addEventListener('mousedown', () => { card.draggable = true; });
+            grip.addEventListener('mouseup',   () => { card.draggable = false; });
+        }
+        card.draggable = false;
+    }
+
+    /* ── Inicializar un card ────────────────────────────── */
+    function initCard(card) {
+        initDrag(card);
+
+        const btnRemove = card.querySelector('.faq-card__remove');
+        if (btnRemove) {
+            btnRemove.addEventListener('click', () => removeCard(card));
+        }
+    }
+
+    /* ── Construir nuevo card ───────────────────────────── */
+    function buildCard(n) {
+        const card = document.createElement('div');
+        card.className = 'faq-card';
+        card.id = `faq-${n}`;
+        card.style.cssText = 'opacity:0;transform:translateY(10px);';
+        card.innerHTML = `
+            <div class="faq-card__drag" title="Arrastrar para reordenar">
+                <i class="fa fa-grip-vertical"></i>
+            </div>
+            <div class="faq-card__num">${n}</div>
+            <div class="faq-card__fields">
+                <div class="form-group">
+                    <label for="pregunta_${n}">Pregunta</label>
+                    <input
+                        type="text"
+                        id="pregunta_${n}"
+                        name="pregunta_${n}"
+                        placeholder="Escribe la pregunta frecuente..."
+                    >
+                </div>
+                <div class="form-group">
+                    <label for="respuesta_${n}">Respuesta</label>
+                    <textarea
+                        id="respuesta_${n}"
+                        name="respuesta_${n}"
+                        rows="3"
+                        placeholder="Escribe la respuesta detallada..."
+                    ></textarea>
+                </div>
+            </div>
+            <button type="button" class="faq-card__remove" data-faq="${n}" title="Eliminar pregunta">
+                <i class="fa fa-xmark"></i>
+            </button>
+        `;
+        return card;
+    }
+
+    /* ── Agregar pregunta ───────────────────────────────── */
+    document.getElementById('btnAddFaq')?.addEventListener('click', () => {
+        faqCount++;
+        const card = buildCard(faqCount);
+        document.getElementById('faqList').appendChild(card);
+
+        requestAnimationFrame(() => {
+            card.style.transition = 'opacity .3s ease, transform .3s ease';
+            card.style.opacity    = '1';
+            card.style.transform  = 'translateY(0)';
+            card.querySelector('input')?.focus();
+        });
+
+        initCard(card);
     });
+
+    /* ── Validación ──────────────────────────────────────── */
+    function validateForm(form) {
+        let valid = true;
+        form.querySelectorAll('input[required]').forEach(field => {
+            field.classList.remove('field--error');
+            field.parentElement.querySelector('.field-error-msg')?.remove();
+
+            if (!field.value.trim()) {
+                field.classList.add('field--error');
+                const msg = document.createElement('span');
+                msg.className = 'field-error-msg';
+                msg.textContent = 'Este campo es obligatorio.';
+                field.insertAdjacentElement('afterend', msg);
+                field.addEventListener('input', () => {
+                    field.classList.remove('field--error');
+                    field.parentElement.querySelector('.field-error-msg')?.remove();
+                }, { once: true });
+                valid = false;
+            }
+        });
+        return valid;
+    }
+
+    /* ── Submit ──────────────────────────────────────────── */
+    const form = document.querySelector('.edit-container form');
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!validateForm(form)) {
+                showToast('Por favor completa los campos obligatorios.', 'error');
+                return;
+            }
+            showToast('Cambios guardados correctamente.', 'success');
+            /* TODO: reemplazar con fetch/axios o form.submit() */
+        });
+    }
+
+    /* ── Init cards existentes ───────────────────────────── */
+    document.querySelectorAll('.faq-card').forEach(card => initCard(card));
 
 })();

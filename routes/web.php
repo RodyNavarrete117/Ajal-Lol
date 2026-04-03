@@ -74,6 +74,7 @@ Route::middleware(['admin'])->group(function () {
         Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings');
         Route::post('/settings/change-password', [SettingsController::class, 'changePassword'])->name('admin.settings.change-password');
         Route::post('/settings/update-profile', [SettingsController::class, 'updateProfile'])->name('admin.settings.update-profile');
+        Route::post('/settings/keep-session', [SettingsController::class, 'keepSession']);
     });
 
     /* ===== USUARIOS ===== */

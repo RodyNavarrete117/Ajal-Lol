@@ -310,4 +310,35 @@ document.addEventListener('DOMContentLoaded', function () {
     function swalErr(title, text) {
         Swal.fire({ icon: 'error', title, text, confirmButtonColor: '#ef4444', confirmButtonText: 'Intentar de nuevo' });
     }
+
+    // ── Toggle mantener sesión ────────────────────────────────────────
+const keepSessionToggle = document.getElementById('keep_session');
+
+if (keepSessionToggle) {
+    keepSessionToggle.addEventListener('change', async function () {
+        try {
+            const response = await fetch('/admin/settings/keep-session', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'X-CSRF-TOKEN': csrfToken, 
+                    'Accept': 'application/json' 
+                },
+                body: JSON.stringify({ keep_session: this.checked })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showToast('success', 'Sesión actualizada', data.message);
+            } else {
+                showToast('error', 'Error', data.message);
+                this.checked = !this.checked; // revertir si falló
+            }
+        } catch {
+            showToast('error', 'Error de conexión', 'No se pudo guardar la preferencia.');
+            this.checked = !this.checked; // revertir si falló
+        }
+    });
+}
 });

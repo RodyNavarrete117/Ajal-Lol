@@ -228,4 +228,32 @@ class SettingsController extends Controller
             ], 500);
         }
     }
+
+    /* Actualizar preferencia de mantener sesión */
+    public function keepSession(Request $request)
+    {
+        if (!session()->has('user_id')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sesión expirada. Por favor inicia sesión nuevamente.'
+            ], 401);
+        }
+
+        if ($request->boolean('keep_session')) {
+            session()->put('remember_me', true);
+            session()->forget('expires_at');
+            cookie()->queue(cookie('remember_user', encrypt(session('user_id')), 60 * 24 * 30));
+            $message = 'Sesión configurada para mantenerse activa';
+        } else {
+            session()->forget('remember_me');
+            session()->put('expires_at', now()->addMinutes(config('session.lifetime'))->timestamp);
+            cookie()->queue(cookie()->forget('remember_user'));
+            $message = 'Sesión expirará en 30 minutos de inactividad';
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $message
+        ]);
+    }
 }

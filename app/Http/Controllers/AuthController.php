@@ -75,9 +75,9 @@ class AuthController extends Controller
             'rol'     => $usuario->cargo_usuario,
         ]);
 
-        // Si NO marcó remember_me, la sesión expira en 30 minutos
+        // Si NO marcó remember_me, la sesión expira conforme al env del sistema
         if (!$request->boolean('remember_me')) {
-            session()->put('expires_at', now()->addMinutes(30)->timestamp);
+            session()->put('expires_at', now()->addMinutes(config('session.lifetime'))->timestamp);
         }
 
         $mantener = $request->boolean('remember_me');

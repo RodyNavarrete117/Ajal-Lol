@@ -25,6 +25,23 @@
         }, 3200);
     }
 
+    /* ── Tabs ───────────────────────────────────────────── */
+    const tabs   = document.querySelectorAll('.edit-tab');
+    const panels = document.querySelectorAll('.edit-panel');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const target = tab.dataset.target;
+
+            tabs.forEach(t => t.classList.remove('active'));
+            panels.forEach(p => p.classList.remove('active'));
+
+            tab.classList.add('active');
+            const panel = document.getElementById('panel-' + target);
+            if (panel) panel.classList.add('active');
+        });
+    });
+
     /* ── Preview de imagen de historia ─────────────────── */
     const fileInput  = document.getElementById('imagen_historia');
     const previewEl  = document.getElementById('histImgPreview');
@@ -49,10 +66,8 @@
         if (fileInput) fileInput.value = '';
     }
 
-    // Click en el área preview → abre selector
     previewEl?.addEventListener('click', () => fileInput?.click());
 
-    // Cambio de archivo
     fileInput?.addEventListener('change', function () {
         const file = this.files[0];
         if (!file) return;
@@ -73,10 +88,8 @@
         renderPreview(file);
     });
 
-    // Botón quitar
     btnClear?.addEventListener('click', clearPreview);
 
-    // Drag & Drop
     uploadArea?.addEventListener('dragover', (e) => {
         e.preventDefault();
         uploadArea.classList.add('drag-over');
@@ -140,7 +153,18 @@
 
         if (!validateForm(form)) {
             showToast('Por favor completa los campos obligatorios.', 'error');
-            form.querySelector('.field--error')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Si el campo con error está en un panel inactivo, activar ese panel
+            const errorField = form.querySelector('.field--error');
+            if (errorField) {
+                const panel = errorField.closest('.edit-panel');
+                if (panel && !panel.classList.contains('active')) {
+                    const panelId = panel.id.replace('panel-', '');
+                    const tab = document.querySelector(`.edit-tab[data-target="${panelId}"]`);
+                    if (tab) tab.click();
+                }
+                setTimeout(() => errorField.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+            }
             return;
         }
 

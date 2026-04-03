@@ -61,18 +61,18 @@
 
 /* ── Wrapper ── */
 .edit-page-wrapper {
-    padding: 28px 16px 48px;
+    padding: 20px 20px 48px;
     font-family: 'DM Sans', sans-serif;
     transition: background var(--transition);
 }
 
 /* ── Container ── */
 .edit-container {
-    max-width: 1100px;
+    max-width: 100%;
     margin: 0 auto;
     padding: 0;
     background: var(--bg-container);
-    border-radius: 22px;
+    border-radius: 18px;
     box-shadow: var(--shadow-container);
     border: 1px solid var(--border);
     overflow: hidden;
@@ -145,30 +145,60 @@
     animation-delay: .16s;
 }
 
-/* ── Form wrapping ── */
+/* ── Tabs bar ── */
+.edit-tabs-bar {
+    display: flex;
+    gap: 4px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-card);
+    flex-wrap: wrap;
+}
+
+.edit-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: 10px;
+    border: 1.5px solid transparent;
+    background: transparent;
+    color: var(--text-label);
+    font-size: 13.5px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition), border-color var(--transition);
+    white-space: nowrap;
+}
+
+.edit-tab i { font-size: 13px; }
+
+.edit-tab:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+
+.edit-tab.active {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+}
+
+/* ── Form panels ── */
 form { padding: 32px 52px 40px; }
 
-/* ── Act sections ── */
-.act-section {
-    background: var(--bg-card);
-    border: 1px solid var(--border-card);
-    border-radius: 16px;
-    padding: 24px 28px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow-card);
-    transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
-    animation: fadeUp .45s ease both;
+.edit-panel {
+    display: none;
+    animation: fadeUp .35s ease both;
 }
 
-.act-section:nth-child(1) { animation-delay: .12s; }
-.act-section:nth-child(2) { animation-delay: .22s; }
-
-.act-section:hover {
-    border-color: var(--border-focus);
-    box-shadow: 0 4px 20px var(--accent-glow);
+.edit-panel.active {
+    display: block;
 }
 
-.act-section__title {
+/* ── Section title ── */
+.act-section-title {
     display: flex;
     align-items: center;
     gap: 9px;
@@ -183,7 +213,7 @@ form { padding: 32px 52px 40px; }
     transition: color var(--transition), border-color var(--transition);
 }
 
-.act-section__title i {
+.act-section-title i {
     width: 28px; height: 28px;
     background: var(--accent-light);
     border-radius: 8px;
@@ -200,12 +230,103 @@ form { padding: 32px 52px 40px; }
     transition: color var(--transition);
 }
 
-/* ── 2-col row for section 1 ── */
+/* ── 2-col row ── */
 .act-row {
     display: grid;
-    grid-template-columns: 1fr 200px;
-    gap: 16px;
+    grid-template-columns: 1fr 260px;
+    gap: 20px;
     margin-bottom: 0;
+}
+
+/* ── Year picker ── */
+.year-picker {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--bg-input);
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    overflow: hidden;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    height: 48px;
+}
+.year-picker:focus-within {
+    border-color: var(--border-focus);
+    box-shadow: var(--shadow-input-focus);
+}
+.year-picker__btn {
+    width: 44px;
+    height: 100%;
+    border: none;
+    background: transparent;
+    color: var(--accent);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition), color var(--transition);
+    flex-shrink: 0;
+}
+.year-picker__btn:hover {
+    background: var(--accent-light);
+}
+.year-picker__btn:active {
+    background: rgba(139,62,114,.18);
+}
+.year-picker__display {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    padding: 0 8px;
+    transition: border-color var(--transition);
+}
+.year-picker__value {
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    letter-spacing: -.5px;
+    transition: color var(--transition);
+}
+.year-picker__badge {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: var(--hint-color);
+    transition: color var(--transition);
+}
+
+/* ── Activity card wider ── */
+.activity-card {
+    background: var(--bg-container);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 20px 20px 0;
+    display: grid;
+    grid-template-columns: 68px 1fr 40px;
+    align-items: start;
+    gap: 0 16px;
+    transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.activity-card:hover {
+    border-color: rgba(139,62,114,.28);
+    box-shadow: 0 3px 18px rgba(60,30,80,.08);
+}
+
+.act-fields-row {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 16px;
+    margin-bottom: 14px;
 }
 
 /* ── Form groups ── */
@@ -264,20 +385,6 @@ form { padding: 32px 52px 40px; }
 }
 .form-group textarea { min-height: 88px; line-height: 1.6; }
 
-.field-hint {
-    margin-top: 5px;
-    font-size: 12px;
-    color: var(--hint-color);
-    transition: color var(--transition);
-}
-.field-hint code {
-    background: var(--accent-light);
-    color: var(--accent);
-    padding: 1px 5px;
-    border-radius: 4px;
-    font-size: 11px;
-}
-
 /* ── Error ── */
 .field--error {
     border-color: #c0392b !important;
@@ -290,7 +397,7 @@ form { padding: 32px 52px 40px; }
     font-weight: 500;
 }
 
-/* ── Activities list ── */
+/* ── Activity list ── */
 .activities-list {
     display: flex;
     flex-direction: column;
@@ -298,25 +405,9 @@ form { padding: 32px 52px 40px; }
     margin-bottom: 14px;
 }
 
-/* ── Activity card ── */
-.activity-card {
-    background: var(--bg-container);
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 18px 16px 18px 0;
-    display: grid;
-    grid-template-columns: 72px 1fr 38px;
-    align-items: start;
-    gap: 0 14px;
-    transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
-}
+/* ── Activity card side ── */
+.activity-card__fields { min-width: 0; }
 
-.activity-card:hover {
-    border-color: rgba(139,62,114,.28);
-    box-shadow: 0 3px 18px rgba(60,30,80,.08);
-}
-
-/* Side: número + ícono preview */
 .activity-card__side {
     display: flex;
     flex-direction: column;
@@ -348,45 +439,8 @@ form { padding: 32px 52px 40px; }
     flex-shrink: 0;
 }
 
-/* Fields area */
-.activity-card__fields { min-width: 0; }
+/* ── Remove btn ── */
 
-.act-fields-row {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-
-/* Icon input with prefix */
-.icon-input-wrap {
-    display: flex;
-    align-items: stretch;
-    min-width: 0;
-}
-
-.icon-input-prefix {
-    display: flex;
-    align-items: center;
-    padding: 0 10px;
-    background: var(--accent-light);
-    border: 1.5px solid var(--border);
-    border-right: none;
-    border-radius: 11px 0 0 11px;
-    color: var(--accent);
-    font-size: 13px;
-    flex-shrink: 0;
-    transition: background var(--transition), border-color var(--transition);
-}
-
-.icon-input {
-    border-radius: 0 11px 11px 0 !important;
-    flex: 1;
-    min-width: 0;
-    width: 0;
-}
-
-/* Botón eliminar */
 .btn-remove-act {
     width: 32px; height: 32px;
     border-radius: 8px;
@@ -422,6 +476,7 @@ form { padding: 32px 52px 40px; }
     display: flex; align-items: center; justify-content: center;
     gap: 8px;
     transition: background var(--transition), border-color var(--transition);
+    margin-bottom: 24px;
 }
 .btn-add-act i { font-size: 12px; }
 .btn-add-act:hover {
@@ -435,10 +490,8 @@ form { padding: 32px 52px 40px; }
     gap: 12px;
     padding-top: 26px;
     border-top: 1px solid var(--border);
-    margin-top: 4px;
+    margin-top: 8px;
     transition: border-color var(--transition);
-    animation: fadeUp .45s ease both;
-    animation-delay: .30s;
 }
 
 .btn-save, .btn-cancel {
@@ -575,12 +628,9 @@ form { padding: 32px 52px 40px; }
 }
 .icon-picker__title {
     font-family: 'Sora', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 15px; font-weight: 700;
     color: var(--text-heading);
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex; align-items: center; gap: 8px;
     transition: color var(--transition);
 }
 .icon-picker__title i { color: var(--accent); }
@@ -632,8 +682,7 @@ form { padding: 32px 52px 40px; }
     border: 1.5px solid var(--border);
     background: transparent;
     color: var(--text-sub);
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 12px; font-weight: 600;
     font-family: 'DM Sans', sans-serif;
     cursor: pointer;
     transition: background var(--transition), border-color var(--transition), color var(--transition);
@@ -675,11 +724,7 @@ form { padding: 32px 52px 40px; }
     background: var(--accent-light);
     border-color: var(--accent);
 }
-.icon-item i {
-    font-size: 22px;
-    color: var(--accent);
-    transition: color var(--transition);
-}
+.icon-item i { font-size: 22px; color: var(--accent); transition: color var(--transition); }
 .icon-item span {
     font-size: 10px;
     color: var(--text-sub);
@@ -729,25 +774,28 @@ form { padding: 32px 52px 40px; }
 
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
-    .edit-container, .edit-header-top, .subtitle, .act-section, .form-actions {
+    .edit-container, .edit-header-top, .subtitle, .edit-panel, .form-actions {
         animation: none !important; opacity: 1 !important; transform: none !important;
     }
 }
 
 /* ── Responsive ── */
 @media (max-width: 860px) {
-    .edit-header, form { padding-left: 32px; padding-right: 32px; }
-    .act-fields-row { grid-template-columns: 180px 1fr; }
+    .edit-header, form { padding-left: 28px; padding-right: 28px; }
+    .act-fields-row { grid-template-columns: 200px 1fr; }
+    .act-row { grid-template-columns: 1fr 220px; }
 }
 
 @media (max-width: 640px) {
     .edit-header     { padding: 28px 20px 26px; }
     form             { padding: 24px 16px 30px; }
-    .act-section     { padding: 18px 16px; }
     .subtitle        { padding-left: 0; }
     .act-row         { grid-template-columns: 1fr; }
     .act-fields-row  { grid-template-columns: 1fr; }
     .activity-card   { grid-template-columns: 56px 1fr 34px; gap: 0 10px; }
     .form-actions    { flex-direction: column; }
     .btn-save, .btn-cancel { width: 100%; justify-content: center; }
+    .edit-tabs-bar   { padding: 10px 16px; gap: 6px; }
+    .edit-tab        { padding: 8px 12px; font-size: 12.5px; }
+    .year-picker__value { font-size: 17px; }
 }

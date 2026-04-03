@@ -12,7 +12,7 @@
 <div class="edit-page-wrapper">
     <div class="edit-container">
 
-        {{-- Header --}}
+        {{-- ── Header ── --}}
         <div class="edit-header">
             <div class="edit-header-top">
                 <div class="edit-icon">
@@ -25,12 +25,24 @@
             </p>
         </div>
 
+        {{-- ── Tabs ── --}}
+        <div class="edit-tabs-bar">
+            <button class="edit-tab active" data-target="encabezado">
+                <i class="fa fa-heading"></i>
+                Encabezado
+            </button>
+            <button class="edit-tab" data-target="actividades">
+                <i class="fa fa-grid-2"></i>
+                Actividades
+            </button>
+        </div>
+
         <form method="POST" action="#">
             @csrf
 
-            {{-- ── SECCIÓN 1: Encabezado ── --}}
-            <div class="act-section">
-                <div class="act-section__title">
+            {{-- ══ PANEL: Encabezado ══ --}}
+            <div class="edit-panel active" id="panel-encabezado">
+                <div class="act-section-title">
                     <i class="fa fa-heading"></i>
                     Encabezado de la página
                 </div>
@@ -52,16 +64,20 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="anio_activo">Año activo (visible por defecto)</label>
-                        <input
-                            type="number"
-                            id="anio_activo"
-                            name="anio_activo"
-                            value="{{ old('anio_activo', date('Y')) }}"
-                            min="2000"
-                            max="2099"
-                            placeholder="{{ date('Y') }}"
-                        >
+                        <label>Año activo (visible por defecto)</label>
+                        <div class="year-picker">
+                            <button type="button" class="year-picker__btn" id="yearDown" aria-label="Año anterior">
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                            <div class="year-picker__display">
+                                <span class="year-picker__value" id="yearDisplay">{{ old('anio_activo', date('Y')) }}</span>
+                                <span class="year-picker__badge">año activo</span>
+                            </div>
+                            <button type="button" class="year-picker__btn" id="yearUp" aria-label="Año siguiente">
+                                <i class="fa fa-chevron-right"></i>
+                            </button>
+                            <input type="hidden" id="anio_activo" name="anio_activo" value="{{ old('anio_activo', date('Y')) }}">
+                        </div>
                     </div>
                 </div>
 
@@ -75,11 +91,19 @@
                         placeholder="Ej: Nuestras Actividades 2023"
                     >
                 </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">
+                        <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
+                        Guardar Cambios
+                    </button>
+                    <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
+                </div>
             </div>
 
-            {{-- ── SECCIÓN 2: Tarjetas de actividades ── --}}
-            <div class="act-section">
-                <div class="act-section__title">
+            {{-- ══ PANEL: Actividades ══ --}}
+            <div class="edit-panel" id="panel-actividades">
+                <div class="act-section-title">
                     <i class="fa fa-grid-2"></i>
                     Tarjetas de actividades
                 </div>
@@ -89,12 +113,12 @@
 
                     @php
                         $actividades = [
-                            ['icono' => 'fa-tooth',        'titulo' => 'Jornada dental',          'descripcion' => 'Por segundo año consecutivo, se realizaron jornadas de servicios dentales con el apoyo de la Fundación Smile y Global Dental. Un equipo de 35 dentistas brindó servicios gratuitos, atendiendo a 159 pacientes de varios municipios.'],
-                            ['icono' => 'fa-heart-pulse',  'titulo' => 'Jornada de salud',        'descripcion' => 'Realizamos 2 jornadas de salud en Hoctún con detección gratuita de niveles de azúcar, presión arterial, peso, talla, vista y orientación psicológica, beneficiando a 300 personas.'],
-                            ['icono' => 'fa-chalkboard',   'titulo' => 'Talleres de capacitación','descripcion' => 'Con el apoyo de Mentors International, se realizaron cursos de administración básica para pequeños emprendedores en varios municipios, beneficiando a 150 personas.'],
-                            ['icono' => 'fa-tree',         'titulo' => 'Reforestación',           'descripcion' => 'El Ayuntamiento de Mérida donó 1,666 plantas forestales y maderables a 11 localidades para reforestar predios de producción y traspatio.'],
-                            ['icono' => 'fa-feather',      'titulo' => 'Cría de pavos de engorda','descripcion' => 'Como seguimiento al proyecto iniciado en 2022 con donativos de OXXO que benefició a 350 familias, en 2023 se pudo continuar con el programa de engorda de pavos de traspatio.'],
-                            ['icono' => 'fa-droplet',      'titulo' => 'Entrega de tinacos',      'descripcion' => 'Gracias a la gestión de Ajal Lol y la aportación de Mariana Trinitaria, se llevaron programas de abastecimiento de agua a varias comunidades, beneficiando a más de 400 familias.'],
+                            ['icono' => 'fa-tooth',        'titulo' => 'Jornada dental',           'descripcion' => 'Por segundo año consecutivo, se realizaron jornadas de servicios dentales con el apoyo de la Fundación Smile y Global Dental. Un equipo de 35 dentistas brindó servicios gratuitos, atendiendo a 159 pacientes de varios municipios.'],
+                            ['icono' => 'fa-heart-pulse',  'titulo' => 'Jornada de salud',         'descripcion' => 'Realizamos 2 jornadas de salud en Hoctún con detección gratuita de niveles de azúcar, presión arterial, peso, talla, vista y orientación psicológica, beneficiando a 300 personas.'],
+                            ['icono' => 'fa-chalkboard',   'titulo' => 'Talleres de capacitación', 'descripcion' => 'Con el apoyo de Mentors International, se realizaron cursos de administración básica para pequeños emprendedores en varios municipios, beneficiando a 150 personas.'],
+                            ['icono' => 'fa-tree',         'titulo' => 'Reforestación',            'descripcion' => 'El Ayuntamiento de Mérida donó 1,666 plantas forestales y maderables a 11 localidades para reforestar predios de producción y traspatio.'],
+                            ['icono' => 'fa-feather',      'titulo' => 'Cría de pavos de engorda', 'descripcion' => 'Como seguimiento al proyecto iniciado en 2022 con donativos de OXXO que benefició a 350 familias, en 2023 se pudo continuar con el programa de engorda de pavos de traspatio.'],
+                            ['icono' => 'fa-droplet',      'titulo' => 'Entrega de tinacos',       'descripcion' => 'Gracias a la gestión de Ajal Lol y la aportación de Mariana Trinitaria, se llevaron programas de abastecimiento de agua a varias comunidades, beneficiando a más de 400 familias.'],
                         ];
                     @endphp
 
@@ -113,7 +137,9 @@
                                 <div class="form-group">
                                     <label for="act_icono_{{ $i + 1 }}">Ícono</label>
                                     <div class="icon-selector-wrap">
-                                        <div class="icon-selector-trigger" data-target="act_icono_{{ $i + 1 }}" data-preview="icon-preview-{{ $i + 1 }}">
+                                        <div class="icon-selector-trigger"
+                                             data-target="act_icono_{{ $i + 1 }}"
+                                             data-preview="icon-preview-{{ $i + 1 }}">
                                             <div class="icon-selector-trigger__preview" id="trigger-preview-{{ $i + 1 }}">
                                                 <i class="fa {{ $act['icono'] }}"></i>
                                             </div>
@@ -170,26 +196,20 @@
                     Agregar actividad
                 </button>
 
-            </div>
-
-            {{-- Acciones --}}
-            <div class="form-actions">
-                <button type="submit" class="btn-save">
-                    <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
-                    Guardar Cambios
-                </button>
-                <button type="button" class="btn-cancel" onclick="window.history.back()">
-                    Cancelar
-                </button>
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">
+                        <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
+                        Guardar Cambios
+                    </button>
+                    <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
+                </div>
             </div>
 
         </form>
     </div>
 </div>
 
-@endsection
-
-{{-- ── Panel selector de íconos (global, compartido) ── --}}
+{{-- ── Panel selector de íconos (global) ── --}}
 <div class="icon-picker" id="iconPicker" role="dialog" aria-modal="true" aria-label="Seleccionar ícono">
     <div class="icon-picker__backdrop" id="iconPickerBackdrop"></div>
     <div class="icon-picker__panel">
@@ -211,6 +231,8 @@
         </div>
     </div>
 </div>
+
+@endsection
 
 @push('scripts')
 <script src="{{ asset('assets/js/editpage/activities_edit.js') }}"></script>

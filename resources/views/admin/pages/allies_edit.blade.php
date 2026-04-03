@@ -45,13 +45,22 @@
                 @enderror
             </div>
 
-            {{-- Grid de logos --}}
+            {{-- Header de logos --}}
             <div class="logos-section-label">
-                <span class="logos-label-text">Logos (6 espacios)</span>
-                <span class="logos-label-hint">Formatos: PNG, JPG, SVG · Máx. 2MB por imagen</span>
+                <span class="logos-label-text">Logos de aliados</span>
+                <div class="logos-label-right">
+                    <span class="logos-counter" id="logosCounter">6 / 18</span>
+                    <span class="logos-label-hint">PNG, JPG, SVG · Máx. 2MB c/u</span>
+                </div>
             </div>
 
-            <div class="logos-grid">
+            {{-- Barra de progreso --}}
+            <div class="logos-progress-bar">
+                <div class="logos-progress-fill" id="logosProgressFill" style="width: 33.33%"></div>
+            </div>
+
+            {{-- Grid de logos --}}
+            <div class="logos-grid" id="logosGrid">
 
                 @for ($i = 1; $i <= 6; $i++)
                 <div class="logo-slot" id="slot-{{ $i }}">
@@ -64,7 +73,7 @@
                     <div class="logo-slot__actions">
                         <label class="btn-upload" for="logo_{{ $i }}">
                             <i class="fa fa-arrow-up-from-bracket"></i>
-                            Subir imagen
+                            Subir
                         </label>
                         <input
                             type="file"
@@ -83,6 +92,17 @@
                 </div>
                 @endfor
 
+            </div>
+
+            {{-- Botón agregar + máximo --}}
+            <div class="logos-add-bar" id="logosAddBar">
+                <button type="button" class="btn-add-logo" id="btnAddLogo">
+                    <i class="fa fa-plus"></i>
+                    Agregar logo
+                </button>
+                <span class="logos-max-hint" id="logosMaxHint">
+                    Puedes agregar hasta <strong>18</strong> logos en total
+                </span>
             </div>
 
             {{-- Form actions --}}

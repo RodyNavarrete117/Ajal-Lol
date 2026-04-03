@@ -12,7 +12,7 @@
 <div class="edit-page-wrapper">
     <div class="edit-container">
 
-        {{-- Header --}}
+        {{-- ── Header ── --}}
         <div class="edit-header">
             <div class="edit-header-top">
                 <div class="edit-icon">
@@ -25,194 +25,305 @@
             </p>
         </div>
 
+        {{-- ── Tabs ── --}}
+        <div class="edit-tabs-bar">
+            <button class="edit-tab active" data-target="info">
+                <i class="fa fa-circle-info"></i>
+                Información
+            </button>
+            <button class="edit-tab" data-target="redes">
+                <i class="fa fa-share-nodes"></i>
+                Redes sociales
+            </button>
+            <button class="edit-tab" data-target="mapa">
+                <i class="fa fa-map"></i>
+                Mapa
+            </button>
+        </div>
+
         <form method="POST" action="#">
             @csrf
 
-            {{-- ── SECCIÓN 1: Información general ── --}}
-            <div class="section-label">
-                <span class="section-label__text">
+            {{-- ══ PANEL: Información general ══ --}}
+            <div class="edit-panel active" id="panel-info">
+                <div class="panel-section-title">
                     <i class="fa fa-circle-info"></i>
                     Información general
-                </span>
-                <span class="section-label__hint">Aparece en el header, footer y página de contacto</span>
-            </div>
+                    <span class="panel-section-hint">Aparece en el header, footer y página de contacto</span>
+                </div>
 
-            <div class="info-grid">
+                <div class="info-grid">
+                    <div class="form-group">
+                        <label for="correo">
+                            <i class="fa fa-envelope"></i>
+                            Correo electrónico
+                            <span class="req">*</span>
+                        </label>
+                        <input
+                            type="email"
+                            id="correo"
+                            name="correo"
+                            value="{{ old('correo', 'ajal-lol@hotmail.com') }}"
+                            placeholder="correo@ejemplo.com"
+                            required
+                        >
+                        @error('correo')
+                            <span class="field-error-msg">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-                <div class="form-group">
-                    <label for="correo">
-                        <i class="fa fa-envelope"></i>
-                        Correo electrónico
-                        <span class="req">*</span>
-                    </label>
-                    <input
-                        type="email"
-                        id="correo"
-                        name="correo"
-                        value="{{ old('correo', 'ajal-lol@hotmail.com') }}"
-                        placeholder="correo@ejemplo.com"
-                        required
-                    >
-                    @error('correo')
-                        <span class="field-error-msg">{{ $message }}</span>
-                    @enderror
+                    <div class="form-group">
+                        <label for="telefono">
+                            <i class="fa fa-phone"></i>
+                            Teléfono
+                            <span class="req">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="telefono"
+                            name="telefono"
+                            value="{{ old('telefono', '+52 999 177 3532') }}"
+                            placeholder="+52 000 000 0000"
+                            required
+                        >
+                        @error('telefono')
+                            <span class="field-error-msg">{{ $message }}</span>
+                        @enderror
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="telefono">
-                        <i class="fa fa-phone"></i>
-                        Teléfono
-                        <span class="req">*</span>
+                    <label for="direccion">
+                        <i class="fa fa-location-dot"></i>
+                        Dirección
+                    </label>
+                    <textarea
+                        id="direccion"
+                        name="direccion"
+                        rows="2"
+                        placeholder="Calle, número, colonia, ciudad..."
+                    >{{ old('direccion', 'Calle 24 # 99 × 21 y 19 Col. Centro, Hoctún, Yucatán.') }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="horario">
+                        <i class="fa fa-clock"></i>
+                        Horario de atención
                     </label>
                     <input
                         type="text"
-                        id="telefono"
-                        name="telefono"
-                        value="{{ old('telefono', '+52 999 177 3532') }}"
-                        placeholder="+52 000 000 0000"
-                        required
+                        id="horario"
+                        name="horario"
+                        value="{{ old('horario', 'Lun–Vie · 9:00 a.m. – 1:00 p.m.') }}"
+                        placeholder="Ej: Lun–Vie · 9:00 a.m. – 1:00 p.m."
                     >
-                    @error('telefono')
-                        <span class="field-error-msg">{{ $message }}</span>
-                    @enderror
                 </div>
 
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">
+                        <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
+                        Guardar Cambios
+                    </button>
+                    <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="direccion">
-                    <i class="fa fa-location-dot"></i>
-                    Dirección
-                </label>
-                <textarea
-                    id="direccion"
-                    name="direccion"
-                    rows="2"
-                    placeholder="Calle, número, colonia, ciudad..."
-                >{{ old('direccion', 'Calle 24 # 99 × 21 y 19 Col. Centro, Hoctún, Yucatán.') }}</textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="horario">
-                    <i class="fa fa-clock"></i>
-                    Horario de atención
-                </label>
-                <input
-                    type="text"
-                    id="horario"
-                    name="horario"
-                    value="{{ old('horario', 'Lun–Vie · 9:00 a.m. – 1:00 p.m.') }}"
-                    placeholder="Ej: Lun–Vie · 9:00 a.m. – 1:00 p.m."
-                >
-            </div>
-
-            {{-- ── SECCIÓN 2: Redes sociales ── --}}
-            <div class="section-label">
-                <span class="section-label__text">
+            {{-- ══ PANEL: Redes sociales ══ --}}
+            <div class="edit-panel" id="panel-redes">
+                <div class="panel-section-title">
                     <i class="fa fa-share-nodes"></i>
                     Redes sociales
-                </span>
-                <span class="section-label__hint">Pega la URL completa de cada perfil</span>
+                    <span class="panel-section-hint">Pega la URL completa de cada perfil</span>
+                </div>
+
+                <div class="social-grid">
+
+                    <div class="form-group social-group social-group--fb">
+                        <label for="facebook">
+                            <i class="fa-brands fa-facebook"></i>
+                            Facebook
+                        </label>
+                        <div class="input-with-prefix">
+                            <span class="input-prefix">
+                                <i class="fa-brands fa-facebook"></i>
+                            </span>
+                            <input
+                                type="url"
+                                id="facebook"
+                                name="facebook"
+                                value="{{ old('facebook') }}"
+                                placeholder="https://facebook.com/tu-pagina"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group social-group social-group--ig">
+                        <label for="instagram">
+                            <i class="fa-brands fa-instagram"></i>
+                            Instagram
+                        </label>
+                        <div class="input-with-prefix">
+                            <span class="input-prefix">
+                                <i class="fa-brands fa-instagram"></i>
+                            </span>
+                            <input
+                                type="url"
+                                id="instagram"
+                                name="instagram"
+                                value="{{ old('instagram') }}"
+                                placeholder="https://instagram.com/tu-perfil"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group social-group social-group--li">
+                        <label for="linkedin">
+                            <i class="fa-brands fa-linkedin"></i>
+                            LinkedIn
+                        </label>
+                        <div class="input-with-prefix">
+                            <span class="input-prefix">
+                                <i class="fa-brands fa-linkedin"></i>
+                            </span>
+                            <input
+                                type="url"
+                                id="linkedin"
+                                name="linkedin"
+                                value="{{ old('linkedin') }}"
+                                placeholder="https://linkedin.com/company/tu-empresa"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group social-group social-group--yt">
+                        <label for="youtube">
+                            <i class="fa-brands fa-youtube"></i>
+                            YouTube
+                        </label>
+                        <div class="input-with-prefix">
+                            <span class="input-prefix">
+                                <i class="fa-brands fa-youtube"></i>
+                            </span>
+                            <input
+                                type="url"
+                                id="youtube"
+                                name="youtube"
+                                value="{{ old('youtube') }}"
+                                placeholder="https://youtube.com/@tu-canal"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group social-group social-group--tt">
+                        <label for="tiktok">
+                            <i class="fa-brands fa-tiktok"></i>
+                            TikTok
+                        </label>
+                        <div class="input-with-prefix">
+                            <span class="input-prefix">
+                                <i class="fa-brands fa-tiktok"></i>
+                            </span>
+                            <input
+                                type="url"
+                                id="tiktok"
+                                name="tiktok"
+                                value="{{ old('tiktok') }}"
+                                placeholder="https://tiktok.com/@tu-usuario"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group social-group social-group--tw">
+                        <label for="twitter">
+                            <i class="fa-brands fa-x-twitter"></i>
+                            X / Twitter
+                        </label>
+                        <div class="input-with-prefix">
+                            <span class="input-prefix">
+                                <i class="fa-brands fa-x-twitter"></i>
+                            </span>
+                            <input
+                                type="url"
+                                id="twitter"
+                                name="twitter"
+                                value="{{ old('twitter') }}"
+                                placeholder="https://x.com/tu-usuario"
+                            >
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">
+                        <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
+                        Guardar Cambios
+                    </button>
+                    <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
+                </div>
             </div>
 
-            <div class="social-grid">
-
-                <div class="form-group social-group">
-                    <label for="facebook">
-                        <i class="fa-brands fa-facebook"></i>
-                        Facebook
-                    </label>
-                    <div class="input-with-prefix">
-                        <span class="input-prefix">facebook.com/</span>
-                        <input
-                            type="url"
-                            id="facebook"
-                            name="facebook"
-                            value="{{ old('facebook') }}"
-                            placeholder="https://facebook.com/tu-pagina"
-                        >
-                    </div>
-                </div>
-
-                <div class="form-group social-group">
-                    <label for="instagram">
-                        <i class="fa-brands fa-instagram"></i>
-                        Instagram
-                    </label>
-                    <div class="input-with-prefix">
-                        <span class="input-prefix">instagram.com/</span>
-                        <input
-                            type="url"
-                            id="instagram"
-                            name="instagram"
-                            value="{{ old('instagram') }}"
-                            placeholder="https://instagram.com/tu-perfil"
-                        >
-                    </div>
-                </div>
-
-                <div class="form-group social-group">
-                    <label for="linkedin">
-                        <i class="fa-brands fa-linkedin"></i>
-                        LinkedIn
-                    </label>
-                    <div class="input-with-prefix">
-                        <span class="input-prefix">linkedin.com/in/</span>
-                        <input
-                            type="url"
-                            id="linkedin"
-                            name="linkedin"
-                            value="{{ old('linkedin') }}"
-                            placeholder="https://linkedin.com/company/tu-empresa"
-                        >
-                    </div>
-                </div>
-
-            </div>
-
-            {{-- ── SECCIÓN 3: Mapa ── --}}
-            <div class="section-label">
-                <span class="section-label__text">
+            {{-- ══ PANEL: Mapa ══ --}}
+            <div class="edit-panel" id="panel-mapa">
+                <div class="panel-section-title">
                     <i class="fa fa-map"></i>
                     Mapa de Google
-                </span>
-                <span class="section-label__hint">Copia el código embed desde Google Maps</span>
-            </div>
-
-            <div class="form-group">
-                <label for="mapa_embed">
-                    <i class="fa fa-code"></i>
-                    Código embed del mapa
-                </label>
-                <textarea
-                    id="mapa_embed"
-                    name="mapa_embed"
-                    rows="4"
-                    placeholder='&lt;iframe src="https://www.google.com/maps/embed?..." ...&gt;&lt;/iframe&gt;'
-                >{{ old('mapa_embed') }}</textarea>
-                <span class="field-hint">
-                    En Google Maps → Compartir → Incorporar un mapa → Copiar HTML
-                </span>
-            </div>
-
-            {{-- Vista previa del mapa --}}
-            <div class="map-preview" id="mapPreview">
-                <div class="map-preview__empty" id="mapEmpty">
-                    <i class="fa fa-map-location-dot"></i>
-                    <span>La vista previa del mapa aparecerá aquí</span>
+                    <span class="panel-section-hint">Copia el código embed desde Google Maps</span>
                 </div>
-                <div class="map-preview__frame" id="mapFrame" style="display:none;"></div>
-            </div>
 
-            {{-- ── Acciones ── --}}
-            <div class="form-actions">
-                <button type="submit" class="btn-save">
-                    <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
-                    Guardar Cambios
-                </button>
-                <button type="button" class="btn-cancel" onclick="window.history.back()">
-                    Cancelar
-                </button>
+                <div class="mapa-layout">
+                    <div class="mapa-layout__form">
+                        <div class="form-group">
+                            <label for="mapa_embed">
+                                <i class="fa fa-code"></i>
+                                Código embed del mapa
+                            </label>
+                            <textarea
+                                id="mapa_embed"
+                                name="mapa_embed"
+                                rows="8"
+                                placeholder='&lt;iframe src="https://www.google.com/maps/embed?..." ...&gt;&lt;/iframe&gt;'
+                            >{{ old('mapa_embed') }}</textarea>
+                            <span class="field-hint">
+                                En Google Maps → Compartir → Incorporar un mapa → Copiar HTML
+                            </span>
+                        </div>
+
+                        <div class="mapa-steps">
+                            <div class="mapa-step">
+                                <span class="mapa-step__num">1</span>
+                                <span>Abre <strong>Google Maps</strong> y busca tu ubicación</span>
+                            </div>
+                            <div class="mapa-step">
+                                <span class="mapa-step__num">2</span>
+                                <span>Haz clic en <strong>Compartir</strong> → Incorporar un mapa</span>
+                            </div>
+                            <div class="mapa-step">
+                                <span class="mapa-step__num">3</span>
+                                <span>Copia el código <strong>&lt;iframe&gt;</strong> y pégalo arriba</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mapa-layout__preview">
+                        <div class="mapa-preview-label">Vista previa</div>
+                        <div class="map-preview" id="mapPreview">
+                            <div class="map-preview__empty" id="mapEmpty">
+                                <i class="fa fa-map-location-dot"></i>
+                                <span>La vista previa aparecerá aquí</span>
+                            </div>
+                            <div class="map-preview__frame" id="mapFrame" style="display:none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">
+                        <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
+                        Guardar Cambios
+                    </button>
+                    <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
+                </div>
             </div>
 
         </form>

@@ -4,7 +4,6 @@
 
     /* ════════════════════════════════════════════════════
        CATÁLOGO DE ÍCONOS — organizados por categoría
-       Cada entrada: { cls: 'fa-xxx', label: 'Nombre legible' }
     ════════════════════════════════════════════════════ */
     const ICON_CATALOG = {
         'Salud': [
@@ -48,44 +47,43 @@
             { cls: 'fa-fish',             label: 'Pez'              },
         ],
         'Comunidad': [
-            { cls: 'fa-people-group',     label: 'Grupo de personas'},
-            { cls: 'fa-hands-holding-heart', label: 'Apoyo'        },
-            { cls: 'fa-house',            label: 'Casa'             },
-            { cls: 'fa-utensils',         label: 'Alimentación'     },
-            { cls: 'fa-shirt',            label: 'Ropa'             },
-            { cls: 'fa-gift',             label: 'Donación'         },
-            { cls: 'fa-hand-holding-hand',label: 'Solidaridad'      },
-            { cls: 'fa-church',           label: 'Iglesia'          },
-            { cls: 'fa-store',            label: 'Comercio local'   },
-            { cls: 'fa-children',         label: 'Niños'            },
-            { cls: 'fa-person-cane',      label: 'Adulto mayor'     },
-            { cls: 'fa-baby',             label: 'Bebé'             },
+            { cls: 'fa-people-group',        label: 'Grupo de personas' },
+            { cls: 'fa-hands-holding-heart', label: 'Apoyo'             },
+            { cls: 'fa-house',               label: 'Casa'              },
+            { cls: 'fa-utensils',            label: 'Alimentación'      },
+            { cls: 'fa-shirt',               label: 'Ropa'              },
+            { cls: 'fa-gift',                label: 'Donación'          },
+            { cls: 'fa-hand-holding-hand',   label: 'Solidaridad'       },
+            { cls: 'fa-church',              label: 'Iglesia'           },
+            { cls: 'fa-store',               label: 'Comercio local'    },
+            { cls: 'fa-children',            label: 'Niños'             },
+            { cls: 'fa-person-cane',         label: 'Adulto mayor'      },
+            { cls: 'fa-baby',                label: 'Bebé'              },
         ],
         'Trabajo': [
-            { cls: 'fa-briefcase',        label: 'Maletín'          },
-            { cls: 'fa-hammer',           label: 'Martillo'         },
-            { cls: 'fa-screwdriver-wrench', label: 'Herramientas'  },
-            { cls: 'fa-tractor',          label: 'Tractor'          },
-            { cls: 'fa-industry',         label: 'Industria'        },
-            { cls: 'fa-money-bill-wave',  label: 'Dinero'           },
-            { cls: 'fa-chart-line',       label: 'Crecimiento'      },
-            { cls: 'fa-handshake',        label: 'Acuerdo'          },
-            { cls: 'fa-bullhorn',         label: 'Anuncio'          },
-            { cls: 'fa-calendar-check',   label: 'Evento'           },
+            { cls: 'fa-briefcase',          label: 'Maletín'      },
+            { cls: 'fa-hammer',             label: 'Martillo'     },
+            { cls: 'fa-screwdriver-wrench', label: 'Herramientas' },
+            { cls: 'fa-tractor',            label: 'Tractor'      },
+            { cls: 'fa-industry',           label: 'Industria'    },
+            { cls: 'fa-money-bill-wave',    label: 'Dinero'       },
+            { cls: 'fa-chart-line',         label: 'Crecimiento'  },
+            { cls: 'fa-handshake',          label: 'Acuerdo'      },
+            { cls: 'fa-bullhorn',           label: 'Anuncio'      },
+            { cls: 'fa-calendar-check',     label: 'Evento'       },
         ],
         'General': [
-            { cls: 'fa-star',             label: 'Estrella'         },
-            { cls: 'fa-trophy',           label: 'Trofeo'           },
-            { cls: 'fa-flag',             label: 'Bandera'          },
-            { cls: 'fa-circle-check',     label: 'Completado'       },
-            { cls: 'fa-calendar-days',    label: 'Calendario'       },
-            { cls: 'fa-map-location-dot', label: 'Ubicación'        },
-            { cls: 'fa-camera',           label: 'Fotografía'       },
-            { cls: 'fa-music',            label: 'Música / Arte'    },
-            { cls: 'fa-palette',          label: 'Pintura'          },
-            { cls: 'fa-shirt',            label: 'Textiles'         },
-            { cls: 'fa-fire',             label: 'Urgente'          },
-            { cls: 'fa-shield-halved',    label: 'Protección'       },
+            { cls: 'fa-star',             label: 'Estrella'     },
+            { cls: 'fa-trophy',           label: 'Trofeo'       },
+            { cls: 'fa-flag',             label: 'Bandera'      },
+            { cls: 'fa-circle-check',     label: 'Completado'   },
+            { cls: 'fa-calendar-days',    label: 'Calendario'   },
+            { cls: 'fa-map-location-dot', label: 'Ubicación'    },
+            { cls: 'fa-camera',           label: 'Fotografía'   },
+            { cls: 'fa-music',            label: 'Música / Arte'},
+            { cls: 'fa-palette',          label: 'Pintura'      },
+            { cls: 'fa-fire',             label: 'Urgente'      },
+            { cls: 'fa-shield-halved',    label: 'Protección'   },
         ],
     };
 
@@ -93,8 +91,56 @@
         icons.map(ic => ({ ...ic, cat }))
     );
 
+    /* ════ TABS ════ */
+    const tabs   = document.querySelectorAll('.edit-tab');
+    const panels = document.querySelectorAll('.edit-panel');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const target = tab.dataset.target;
+            tabs.forEach(t => t.classList.remove('active'));
+            panels.forEach(p => p.classList.remove('active'));
+            tab.classList.add('active');
+            const panel = document.getElementById('panel-' + target);
+            if (panel) panel.classList.add('active');
+        });
+    });
+
+    /* ════ YEAR PICKER ════ */
+    const yearDisplay = document.getElementById('yearDisplay');
+    const yearInput   = document.getElementById('anio_activo');
+    const yearDown    = document.getElementById('yearDown');
+    const yearUp      = document.getElementById('yearUp');
+    const MIN_YEAR    = 2000;
+    const MAX_YEAR    = 2099;
+
+    function animateYear(el, direction) {
+        el.style.transition = 'none';
+        el.style.transform  = direction === 'up' ? 'translateY(12px)' : 'translateY(-12px)';
+        el.style.opacity    = '0';
+        requestAnimationFrame(() => {
+            el.style.transition = 'transform .18s ease, opacity .18s ease';
+            el.style.transform  = 'translateY(0)';
+            el.style.opacity    = '1';
+        });
+    }
+
+    function updateYear(delta) {
+        let val = parseInt(yearInput.value) + delta;
+        if (val < MIN_YEAR) val = MIN_YEAR;
+        if (val > MAX_YEAR) val = MAX_YEAR;
+        yearInput.value   = val;
+        yearDisplay.textContent = val;
+        animateYear(yearDisplay, delta > 0 ? 'up' : 'down');
+        yearDown.disabled = val <= MIN_YEAR;
+        yearUp.disabled   = val >= MAX_YEAR;
+    }
+
+    yearDown?.addEventListener('click', () => updateYear(-1));
+    yearUp?.addEventListener('click',   () => updateYear(1));
+
     /* ════ ESTADO DEL PICKER ════ */
-    let activeTarget  = null; // { hiddenInput, previewEl, triggerEl, triggerNameEl, triggerClassEl }
+    let activeTarget   = null;
     let activeCategory = 'Todos';
 
     /* ════ REFERENCIAS DOM ════ */
@@ -167,18 +213,12 @@
     /* ════ SELECCIONAR ÍCONO ════ */
     function selectIcon(ic) {
         if (!activeTarget) return;
-
         const { hiddenInput, previewEl, triggerEl, triggerNameEl, triggerClassEl } = activeTarget;
 
-        // Actualizar input oculto
         hiddenInput.value = ic.cls;
 
-        // Actualizar preview de la tarjeta
-        if (previewEl) {
-            previewEl.innerHTML = `<i class="fa ${ic.cls}"></i>`;
-        }
+        if (previewEl) previewEl.innerHTML = `<i class="fa ${ic.cls}"></i>`;
 
-        // Actualizar trigger visual
         if (triggerEl) {
             const triggerPreview = triggerEl.querySelector('.icon-selector-trigger__preview');
             if (triggerPreview) triggerPreview.innerHTML = `<i class="fa ${ic.cls}"></i>`;
@@ -186,12 +226,10 @@
         if (triggerNameEl) triggerNameEl.textContent = ic.label;
         if (triggerClassEl) triggerClassEl.textContent = ic.cls;
 
-        // Marcar seleccionado en el grid
         document.querySelectorAll('.icon-item').forEach(el => {
             el.classList.toggle('selected', el.dataset.cls === ic.cls);
         });
 
-        // Cerrar picker después de un instante
         setTimeout(closePicker, 220);
     }
 
@@ -210,9 +248,7 @@
     function closePicker() {
         picker.classList.remove('open');
         document.body.style.overflow = '';
-        if (activeTarget?.triggerEl) {
-            activeTarget.triggerEl.classList.remove('open');
-        }
+        if (activeTarget?.triggerEl) activeTarget.triggerEl.classList.remove('open');
         activeTarget = null;
     }
 
@@ -222,7 +258,6 @@
         if (e.key === 'Escape' && picker.classList.contains('open')) closePicker();
     });
 
-    // Búsqueda con debounce
     let searchTimer;
     searchInput.addEventListener('input', () => {
         clearTimeout(searchTimer);
@@ -233,14 +268,14 @@
         }, 220);
     });
 
-    /* ════ INICIALIZAR TRIGGER EN UNA TARJETA ════ */
+    /* ════ INICIALIZAR TRIGGER ════ */
     function initTrigger(trigger) {
-        const targetId       = trigger.dataset.target;
-        const previewId      = trigger.dataset.preview;
-        const hiddenInput    = document.getElementById(targetId);
-        const previewEl      = document.getElementById(previewId);
-        const triggerNameEl  = trigger.querySelector('.icon-selector-trigger__name');
-        const triggerClassEl = trigger.querySelector('.icon-selector-trigger__class');
+        const targetId      = trigger.dataset.target;
+        const previewId     = trigger.dataset.preview;
+        const hiddenInput   = document.getElementById(targetId);
+        const previewEl     = document.getElementById(previewId);
+        const triggerNameEl = trigger.querySelector('.icon-selector-trigger__name');
+        const triggerClassEl= trigger.querySelector('.icon-selector-trigger__class');
 
         if (!hiddenInput) return;
 
@@ -262,12 +297,12 @@
             const iconPreview = card.querySelector('.activity-card__icon-preview');
             if (iconPreview) iconPreview.id = `icon-preview-${n}`;
 
-            const triggerPreviewId = card.querySelector('.icon-selector-trigger__preview')?.id;
-            const triggerPreview   = card.querySelector(`#trigger-preview-${card.dataset.oldN || n}`);
+            const triggerPreview = card.querySelector('[id^="trigger-preview-"]');
             if (triggerPreview) triggerPreview.id = `trigger-preview-${n}`;
 
-            const triggerName  = card.querySelector('[id^="trigger-name-"]');
-            if (triggerName)  triggerName.id  = `trigger-name-${n}`;
+            const triggerName = card.querySelector('[id^="trigger-name-"]');
+            if (triggerName) triggerName.id = `trigger-name-${n}`;
+
             const triggerClass = card.querySelector('[id^="trigger-class-"]');
             if (triggerClass) triggerClass.id = `trigger-class-${n}`;
 
@@ -366,7 +401,7 @@
         initCard(card);
     });
 
-    /* ════ VALIDACIÓN Y SUBMIT ════ */
+    /* ════ TOAST ════ */
     function showToast(message, type = 'success') {
         const existing = document.querySelector('.edit-toast');
         if (existing) existing.remove();
@@ -386,14 +421,17 @@
         }, 3200);
     }
 
+    /* ════ VALIDACIÓN Y SUBMIT ════ */
     const form = document.querySelector('.edit-container form');
     if (form) {
         form.addEventListener('submit', function (e) {
             e.preventDefault();
             let valid = true;
+
             form.querySelectorAll('input[required]').forEach(field => {
                 field.classList.remove('field--error');
                 field.parentElement.querySelector('.field-error-msg')?.remove();
+
                 if (!field.value.trim()) {
                     field.classList.add('field--error');
                     const msg = document.createElement('span');
@@ -407,15 +445,30 @@
                     valid = false;
                 }
             });
-            if (!valid) { showToast('Por favor completa los campos obligatorios.', 'error'); return; }
+
+            if (!valid) {
+                showToast('Por favor completa los campos obligatorios.', 'error');
+
+                // Si el error está en un panel inactivo, activarlo
+                const errorField = form.querySelector('.field--error');
+                if (errorField) {
+                    const panel = errorField.closest('.edit-panel');
+                    if (panel && !panel.classList.contains('active')) {
+                        const panelId = panel.id.replace('panel-', '');
+                        const tab = document.querySelector(`.edit-tab[data-target="${panelId}"]`);
+                        if (tab) tab.click();
+                    }
+                    setTimeout(() => errorField.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+                }
+                return;
+            }
+
             showToast('Cambios guardados correctamente.', 'success');
         });
     }
 
-    /* ════ INIT EXISTENTES ════ */
+    /* ════ INIT ════ */
     document.querySelectorAll('.activity-card').forEach(card => initCard(card));
-
-    // Inicializar categorías al cargar
     renderCategories();
 
 })();

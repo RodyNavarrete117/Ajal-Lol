@@ -177,31 +177,62 @@
     animation-delay: .18s;
 }
 
+/* ── Tabs bar ── */
+.edit-tabs-bar {
+    display: flex;
+    gap: 4px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-card);
+    flex-wrap: wrap;
+}
+
+.edit-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: var(--radius-btn);
+    border: 1.5px solid transparent;
+    background: transparent;
+    color: var(--text-label);
+    font-size: 13.5px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition), border-color var(--transition);
+    white-space: nowrap;
+}
+
+.edit-tab i {
+    font-size: 13px;
+}
+
+.edit-tab:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+
+.edit-tab.active {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+}
+
 /* ── Form body ── */
 .edit-form-body { padding: 36px 60px 40px; }
 
-/* ── Sections ── */
-.form-section {
-    background: var(--bg-card);
-    border: 1px solid var(--border-card);
-    border-radius: var(--radius-card);
-    padding: 26px 28px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow-card);
-    transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
-    animation: fadeSlideUp .45s ease both;
+/* ── Panels ── */
+.edit-panel {
+    display: none;
+    animation: fadeSlideUp .35s ease both;
 }
 
-.form-section:nth-child(1) { animation-delay: .18s; }
-.form-section:nth-child(2) { animation-delay: .26s; }
-.form-section:nth-child(3) { animation-delay: .34s; }
-.form-section:nth-child(4) { animation-delay: .42s; }
-
-.form-section:hover {
-    box-shadow: 0 4px 20px var(--accent-glow);
-    border-color: var(--border-focus);
+.edit-panel.active {
+    display: block;
 }
 
+/* ── Sections title ── */
 .form-section-title {
     display: flex;
     align-items: center;
@@ -339,7 +370,6 @@
     background: var(--upload-hover-bg);
 }
 
-/* Preview */
 .image-upload-area__preview {
     min-height: 200px;
     display: flex;
@@ -363,7 +393,6 @@
     transform: scale(1.015);
 }
 
-/* Empty state */
 .image-upload-area__empty {
     display: flex;
     flex-direction: column;
@@ -382,7 +411,6 @@
 
 .image-upload-area:hover .image-upload-area__empty { color: var(--accent); }
 
-/* Actions bar */
 .image-upload-area__actions {
     display: flex;
     gap: 10px;
@@ -442,12 +470,10 @@
 .form-actions {
     display: flex;
     gap: 12px;
-    margin-top: 8px;
-    padding-top: 28px;
+    margin-top: 32px;
+    padding-top: 24px;
     border-top: 1px solid var(--border);
     transition: border-color var(--transition);
-    animation: fadeSlideUp .45s ease both;
-    animation-delay: .50s;
 }
 
 .btn-save,
@@ -488,7 +514,7 @@
 }
 .section-desc strong { color: var(--accent); font-weight: 600; }
 
-/* ── Identity grid (una columna, apiladas verticalmente) ── */
+/* ── Identity grid ── */
 .identity-grid {
     display: flex;
     flex-direction: column;
@@ -525,7 +551,6 @@
     box-shadow: 0 4px 20px var(--accent-glow);
 }
 
-/* Card header */
 .identity-card__header {
     display: flex;
     align-items: center;
@@ -562,7 +587,6 @@
 .identity-card--objetivo .identity-card__label { color: #16a34a; }
 .identity-card--valores  .identity-card__label { color: #d97706; }
 
-/* Fields inside card */
 .identity-card .form-group { margin-bottom: 0; }
 .identity-card .form-group:last-child { margin-bottom: 0; }
 .identity-card .form-group label { font-size: 11px; }
@@ -570,16 +594,15 @@
 .identity-card .form-group textarea { background: var(--bg-card); font-size: 14px; }
 .identity-card .form-group textarea { min-height: 110px; }
 
-/* Layout interno: título a la izquierda (30%), contenido a la derecha (70%) */
 .identity-card__body {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 16px;
-    align-items: start;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 }
 
-/* Identity header fields */
-.identity-header-fields { margin-top: 4px; }
+.identity-header-fields {
+    margin-bottom: 20px;
+}
 
 /* ── Toast ── */
 .edit-toast {
@@ -614,7 +637,7 @@
 
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
-    .edit-container, .edit-header-top, .subtitle, .form-section, .form-actions {
+    .edit-container, .edit-header-top, .subtitle, .edit-panel, .form-actions {
         animation: none !important; opacity: 1 !important; transform: none !important;
     }
 }
@@ -622,8 +645,6 @@
 /* ── Responsive ── */
 @media (max-width: 1060px) {
     .edit-header, .edit-form-body { padding-left: 36px; padding-right: 36px; }
-    .identity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .identity-card__body { grid-template-columns: 220px 1fr; }
 }
 
 @media (max-width: 860px) {
@@ -634,10 +655,10 @@
 @media (max-width: 640px) {
     .edit-header     { padding: 28px 20px 26px; }
     .edit-form-body  { padding: 24px 16px 30px; }
-    .form-section    { padding: 20px 16px; }
     .subtitle        { padding-left: 0; }
     .form-row        { grid-template-columns: 1fr; }
-    .identity-grid   { grid-template-columns: 1fr; }
     .form-actions    { flex-direction: column; }
     .btn-save, .btn-cancel { width: 100%; text-align: center; justify-content: center; }
+    .edit-tabs-bar   { padding: 10px 16px; gap: 6px; }
+    .edit-tab        { padding: 8px 12px; font-size: 12.5px; }
 }

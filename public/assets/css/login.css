@@ -230,6 +230,105 @@ body {
     text-decoration: underline;
 }
 
+/* ── Toast container ────────────────────────────────────────── */
+#toast-container {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+/* ── Toast card ─────────────────────────────────────────────── */
+.toast {
+    pointer-events: all;
+    min-width: 280px;
+    max-width: 340px;
+    border-radius: 12px;
+    border: 0.5px solid rgba(0, 0, 0, 0.10);
+    background: #ffffff;
+    overflow: hidden;
+    transform: translateX(120%);
+    opacity: 0;
+    transition: transform 0.35s cubic-bezier(.4, 0, .2, 1), opacity 0.35s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+.toast.hide {
+    transform: translateX(120%);
+    opacity: 0;
+}
+
+/* ── Toast body ─────────────────────────────────────────────── */
+.toast-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px 10px;
+}
+.toast-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+}
+.toast-icon.danger  { background: #F7C1C1; color: #791F1F; }
+.toast-icon.success { background: #9FE1CB; color: #085041; }
+.toast-icon.warning { background: #FAC775; color: #633806; }
+.toast-icon.info    { background: #B5D4F4; color: #0C447C; }
+
+.toast-body { flex: 1; }
+
+.toast-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 2px;
+}
+.toast-msg {
+    font-size: 12px;
+    color: #555555;
+    margin: 0;
+    line-height: 1.5;
+}
+.toast-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #aaaaaa;
+    font-size: 14px;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.toast-close:hover { color: #333333; }
+
+/* ── Barra de progreso ──────────────────────────────────────── */
+.toast-bar-wrap {
+    height: 3px;
+    background: #f0f0f0;
+}
+.toast-bar {
+    height: 3px;
+    width: 100%;
+}
+.toast-bar.danger  { background: #E24B4A; }
+.toast-bar.success { background: #1D9E75; }
+.toast-bar.warning { background: #EF9F27; }
+.toast-bar.info    { background: #378ADD; }
 
 /*  Para responsive para una WEB A.P.P como dice el jefe de Rodolfo Addam Sosa Ek        */
 @media (max-width: 480px) {
@@ -286,4 +385,67 @@ body {
 
 .toggle-password:hover {
     color: #8d3a6d;
+}
+
+/* ── Remember me ────────────────────────────────────────────── */
+#remember-group {
+    padding: 0 4px;
+    display: flex;
+    justify-content: center;
+    margin-top: 0;        /* sin margen cuando está oculto */
+    transition:
+        opacity 0.5s ease,
+        transform 0.5s ease,
+        max-height 0.6s ease,
+        margin-top 0.5s ease;  /* animar el margen también */
+}
+#remember-group.step-active {
+    margin-top: 20px;     /* margen solo cuando aparece */
+}
+
+#remember-group label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    width: auto; /* que no ocupe todo el ancho */
+}
+
+#remember-group input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    border-radius: 5px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+}
+
+#remember-group input[type="checkbox"]:checked {
+    background: #ffffff;
+    border-color: #ffffff;
+}
+
+#remember-group input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0px;
+    width: 5px;
+    height: 9px;
+    border: 2px solid #8d3a6d;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg);
+}
+
+#remember-group span {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
 }

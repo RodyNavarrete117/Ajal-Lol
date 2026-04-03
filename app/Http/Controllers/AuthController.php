@@ -75,6 +75,29 @@ class AuthController extends Controller
             'rol'     => $usuario->cargo_usuario,
         ]);
 
+        // Si NO marcó remember_me, la sesión expira en 30 minutos
+        if (!$request->boolean('remember_me')) {
+            session()->put('expires_at', now()->addMinutes(30)->timestamp);
+        }
+
+        $mantener = $request->boolean('remember_me');
+
+        if ($mantener) {
+            session()->put('remember_me', true);
+            cookie()->queue(cookie(
+                'remember_user',
+                encrypt($usuario->id_usuario),
+                60 * 24 * 30
+            ));
+        }
+
         return redirect()->route('loading');
+    }
+
+    public function logout(Request $request)
+    {
+        session()->flush(); // borra toda la sesión
+        cookie()->queue(cookie()->forget('remember_user'));
+        return redirect()->route('login');
     }
 }

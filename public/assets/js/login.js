@@ -77,6 +77,8 @@ window.addEventListener('DOMContentLoaded', () => {
             passwordGroup.classList.add('step-active');
             backBtn.classList.add('step-active');
             forgot.classList.add('step-active');
+
+            document.getElementById('remember-group').classList.add('step-active');
             card.classList.add('step-password');
             actionBtn.textContent = 'Iniciar sesión';
             actionBtn.type        = 'submit';
@@ -150,6 +152,8 @@ actionBtn.addEventListener('click', () => {
         passwordGroup.classList.add('step-active');
         backBtn.classList.add('step-active');
         forgot.classList.add('step-active');
+
+        document.getElementById('remember-group').classList.add('step-active');
     }, 150);
 
     card.classList.add('step-password');
@@ -167,6 +171,8 @@ backBtn.addEventListener('click', () => {
     passwordGroup.classList.remove('step-active');
     backBtn.classList.remove('step-active');
     forgot.classList.remove('step-active');
+
+    document.getElementById('remember-group').classList.remove('step-active');
 
     setTimeout(() => {
         emailGroup.classList.add('step-active');

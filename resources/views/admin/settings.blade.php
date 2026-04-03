@@ -97,9 +97,23 @@
                         <div class="setting-desc">Permanece conectado en este dispositivo</div>
                     </div>
                     <label class="toggle-switch">
-                        <input type="checkbox" id="keep_session" name="keep_session" checked>
+                        <input type="checkbox" id="keep_session" name="keep_session" 
+                        {{ session('remember_me') ? 'checked' : '' }}>
                         <span class="toggle-slider"></span>
                     </label>
+                </div>
+                <div class="setting-item" style="margin-top: 15px;">
+                    <div class="setting-info">
+                        <div class="setting-label">Finalizar sesión</div>
+                        <div class="setting-desc">Cierra tu cuenta de forma segura en este dispositivo</div>
+                    </div>
+                    
+                    <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                        @csrf
+                        <button type="submit" class="btn-primary" style="background-color: #dc2626; border-color: #dc2626;">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
 

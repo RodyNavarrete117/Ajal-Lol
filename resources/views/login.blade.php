@@ -11,107 +11,6 @@
     <!-- CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/login.css') }}">
 
-    <style>
-        /* ── Toast container ────────────────────────────────────────── */
-        #toast-container {
-            position: fixed;
-            top: 1.25rem;
-            right: 1.25rem;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 9999;
-            pointer-events: none;
-        }
-
-        /* ── Toast card ─────────────────────────────────────────────── */
-        .toast {
-            pointer-events: all;
-            min-width: 280px;
-            max-width: 340px;
-            border-radius: 12px;
-            border: 0.5px solid rgba(0, 0, 0, 0.10);
-            background: #ffffff;
-            overflow: hidden;
-            transform: translateX(120%);
-            opacity: 0;
-            transition: transform 0.35s cubic-bezier(.4, 0, .2, 1), opacity 0.35s ease;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-        }
-        .toast.show {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        .toast.hide {
-            transform: translateX(120%);
-            opacity: 0;
-        }
-
-        /* ── Toast body ─────────────────────────────────────────────── */
-        .toast-inner {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 12px 14px 10px;
-        }
-        .toast-icon {
-            width: 20px;
-            height: 20px;
-            flex-shrink: 0;
-            margin-top: 1px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 600;
-        }
-        .toast-icon.danger  { background: #F7C1C1; color: #791F1F; }
-        .toast-icon.success { background: #9FE1CB; color: #085041; }
-        .toast-icon.warning { background: #FAC775; color: #633806; }
-        .toast-icon.info    { background: #B5D4F4; color: #0C447C; }
-
-        .toast-body { flex: 1; }
-
-        .toast-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin: 0 0 2px;
-        }
-        .toast-msg {
-            font-size: 12px;
-            color: #555555;
-            margin: 0;
-            line-height: 1.5;
-        }
-        .toast-close {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #aaaaaa;
-            font-size: 14px;
-            padding: 0;
-            line-height: 1;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-        .toast-close:hover { color: #333333; }
-
-        /* ── Barra de progreso ──────────────────────────────────────── */
-        .toast-bar-wrap {
-            height: 3px;
-            background: #f0f0f0;
-        }
-        .toast-bar {
-            height: 3px;
-            width: 100%;
-        }
-        .toast-bar.danger  { background: #E24B4A; }
-        .toast-bar.success { background: #1D9E75; }
-        .toast-bar.warning { background: #EF9F27; }
-        .toast-bar.info    { background: #378ADD; }
-    </style>
 </head>
 <body>
 
@@ -145,6 +44,13 @@
                 <i class="fa-solid fa-lock"></i>
                 <input type="password" id="password" name="password" placeholder="Escriba su contraseña">
                 <i class="fa-solid fa-eye toggle-password" id="togglePassword" style="left: 280px"></i>
+            </div>
+
+            <div class="step" id="remember-group">
+                <label style="color: white; font-size: 14px; cursor: pointer;">
+                    <input type="checkbox" name="remember_me" value="1" style="margin-right: 5px;">
+                    Mantener sesión iniciada
+                </label>
             </div>
 
             <div class="actions">
@@ -188,6 +94,16 @@
 <script>
   window.addEventListener('DOMContentLoaded', () => {
     showToast('success', '¡Éxito!', @json(session('status')), 5);
+  });
+</script>
+@endif
+
+{{-- Toast para mensajes de error (¡Aquí va lo del middleware!) --}}
+@if (session('error'))
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    // Asumo que tu función showToast acepta 'error' o 'danger' como primer parámetro
+    showToast('error', 'Acceso denegado', @json(session('error')), 5);
   });
 </script>
 @endif

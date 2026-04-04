@@ -142,6 +142,7 @@ class ReportsController extends Controller
                     'title'               => $report->evento,
                     'lugar'               => $report->lugar,
                     'beneficiaries_count' => $total,
+                    'tipo'                => $report->beneficiaries_count > 0 ? 'reporte' : 'asistencia', // ← agregar
                 ]
             ];
         });

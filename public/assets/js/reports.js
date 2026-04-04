@@ -416,10 +416,17 @@ function openEventModal(id, title, date, lugar) {
     document.getElementById('event-modal-subtitle').textContent = fechaFormateada;
     document.getElementById('event-modal-lugar').textContent    = lugar || 'Sin especificar';
 
-    const count = (typeof eventsFromDB !== 'undefined' && eventsFromDB[date])
-        ? eventsFromDB[date].beneficiaries_count : null;
-    document.getElementById('modal-info-beneficiarios').textContent =
-        count !== null ? `${count} personas` : '—';
+    const eventData = (typeof eventsFromDB !== 'undefined' && eventsFromDB[date])
+        ? eventsFromDB[date] : null;
+
+    const tipo  = eventData ? eventData.tipo : null;
+
+    const tipoEl = document.getElementById('modal-info-tipo');
+    if (tipoEl) {
+        tipoEl.textContent = tipo === 'reporte' ? 'Reporte'
+                        : tipo === 'asistencia' ? 'Asistencia'
+                        : '—';
+    }
 
     const btnView       = document.getElementById('btn-modal-view');
     const btnPdf        = document.getElementById('btn-modal-pdf');

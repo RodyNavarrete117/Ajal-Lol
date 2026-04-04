@@ -658,18 +658,19 @@
         </div>
     </div>
 
-    {{-- Beneficiarios --}}
+    {{-- Tipo de informe --}}
     <div class="modal-info-card">
         <div class="modal-info-icon">
             <svg viewBox="0 0 24 24" fill="none">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
         </div>
         <div class="modal-info-text">
-            <div class="modal-info-label">Beneficiarios</div>
-            <div class="modal-info-value" id="modal-info-beneficiarios">—</div>
+            <div class="modal-info-label">Tipo de informe</div>
+            <div class="modal-info-value" id="modal-info-tipo">—</div>
         </div>
     </div>
 </div>

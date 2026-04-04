@@ -551,11 +551,57 @@
     box-shadow: 0 4px 20px var(--accent-glow);
 }
 
+/* ── Identity card acordeón ── */
+.identity-card__toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: 'DM Sans', sans-serif;
+    text-align: left;
+}
+
 .identity-card__header {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 0;
+}
+
+.identity-card__chevron {
+    color: var(--hint-color);
+    font-size: 13px;
+    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1), color 0.2s;
+    flex-shrink: 0;
+}
+
+.identity-card:not([data-collapsed="true"]) .identity-card__chevron {
+    transform: rotate(180deg);
+    color: var(--accent);
+}
+
+/* Body colapsable */
+.identity-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    transition: max-height 0.38s cubic-bezier(0.4,0,0.2,1),
+                opacity 0.28s ease,
+                margin-top 0.28s ease;
+}
+
+.identity-card:not([data-collapsed="true"]) .identity-card__body {
+    max-height: 600px;
+    opacity: 1;
+    margin-top: 16px;
 }
 
 .identity-card__icon {

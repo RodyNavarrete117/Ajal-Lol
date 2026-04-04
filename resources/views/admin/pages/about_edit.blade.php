@@ -231,11 +231,16 @@
                     <div class="identity-grid">
 
                         {{-- Misión --}}
-                        <div class="identity-card identity-card--mision">
-                            <div class="identity-card__header">
-                                <div class="identity-card__icon"><i class="fa fa-circle-dot"></i></div>
-                                <span class="identity-card__label">Misión</span>
-                            </div>
+                        <div class="identity-card identity-card--mision" data-collapsed="true">
+                            <button type="button" class="identity-card__toggle">
+                                <div class="identity-card__header">
+                                    <div class="identity-card__icon"><i class="fa fa-circle-dot"></i></div>
+                                    <span class="identity-card__label">Misión</span>
+                                </div>
+                                <div class="identity-card__chevron">
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                            </button>
                             <div class="identity-card__body">
                                 <div class="form-group">
                                     <label for="titulo_mision">Título de la tarjeta</label>
@@ -251,11 +256,16 @@
                         </div>
 
                         {{-- Visión --}}
-                        <div class="identity-card identity-card--vision">
-                            <div class="identity-card__header">
-                                <div class="identity-card__icon"><i class="fa fa-eye"></i></div>
-                                <span class="identity-card__label">Visión</span>
-                            </div>
+                        <div class="identity-card identity-card--vision" data-collapsed="true">
+                            <button type="button" class="identity-card__toggle">
+                                <div class="identity-card__header">
+                                    <div class="identity-card__icon"><i class="fa fa-eye"></i></div>
+                                    <span class="identity-card__label">Visión</span>
+                                </div>
+                                <div class="identity-card__chevron">
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                            </button>
                             <div class="identity-card__body">
                                 <div class="form-group">
                                     <label for="titulo_vision">Título de la tarjeta</label>
@@ -271,11 +281,16 @@
                         </div>
 
                         {{-- Objetivo General --}}
-                        <div class="identity-card identity-card--objetivo">
-                            <div class="identity-card__header">
-                                <div class="identity-card__icon"><i class="fa fa-flag"></i></div>
-                                <span class="identity-card__label">Objetivo General</span>
-                            </div>
+                        <div class="identity-card identity-card--objetivo" data-collapsed="true">
+                            <button type="button" class="identity-card__toggle">
+                                <div class="identity-card__header">
+                                    <div class="identity-card__icon"><i class="fa fa-flag"></i></div>
+                                    <span class="identity-card__label">Objetivo General</span>
+                                </div>
+                                <div class="identity-card__chevron">
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                            </button>
                             <div class="identity-card__body">
                                 <div class="form-group">
                                     <label for="titulo_objetivo">Título de la tarjeta</label>
@@ -291,11 +306,16 @@
                         </div>
 
                         {{-- Valores --}}
-                        <div class="identity-card identity-card--valores">
-                            <div class="identity-card__header">
-                                <div class="identity-card__icon"><i class="fa fa-heart"></i></div>
-                                <span class="identity-card__label">Valores</span>
-                            </div>
+                        <div class="identity-card identity-card--valores" data-collapsed="true">
+                            <button type="button" class="identity-card__toggle">
+                                <div class="identity-card__header">
+                                    <div class="identity-card__icon"><i class="fa fa-heart"></i></div>
+                                    <span class="identity-card__label">Valores</span>
+                                </div>
+                                <div class="identity-card__chevron">
+                                    <i class="fa fa-chevron-down"></i>
+                                </div>
+                            </button>
                             <div class="identity-card__body">
                                 <div class="form-group">
                                     <label for="titulo_valores">Título de la tarjeta</label>
@@ -305,13 +325,13 @@
                                 <div class="form-group">
                                     <label for="valores">Contenido</label>
                                     <textarea id="valores" name="valores" rows="5"
-                                        placeholder="Solidaridad: ser empáticos...&#10;Igualdad: apoyo con amor...">{{ old('valores', "Solidaridad: ser empáticos y atender las necesidades de cada beneficiario.\nIgualdad: apoyo con amor y respeto, sin distinción.\nCompromiso: trato digno y trabajo social con pasión.\nInterculturalidad: apertura para convivir y aprender.") }}</textarea>
+                                        placeholder="Solidaridad: ser empáticos...">{{ old('valores', "Solidaridad: ser empáticos y atender las necesidades de cada beneficiario.\nIgualdad: apoyo con amor y respeto, sin distinción.\nCompromiso: trato digno y trabajo social con pasión.\nInterculturalidad: apertura para convivir y aprender.") }}</textarea>
                                     <span class="field-hint">Escribe cada valor en una línea separada. Usa el formato <strong>Nombre:</strong> descripción.</span>
                                 </div>
                             </div>
                         </div>
 
-                    </div>{{-- /identity-grid --}}
+                    </div>
 
                     <div class="form-actions">
                         <button type="submit" class="btn-save">

@@ -115,6 +115,15 @@
         renderPreview(file);
     });
 
+    /* ── Acordeón identidad ─────────────────────────────── */
+    document.querySelectorAll('.identity-card__toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const card = btn.closest('.identity-card');
+            const isCollapsed = card.dataset.collapsed === 'true';
+            card.dataset.collapsed = isCollapsed ? 'false' : 'true';
+        });
+    });
+
     /* ── Validación ──────────────────────────────────────── */
     function validateForm(form) {
         let valid = true;

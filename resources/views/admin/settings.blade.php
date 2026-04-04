@@ -98,7 +98,7 @@
                     </div>
                     <label class="toggle-switch">
                         <input type="checkbox" id="keep_session" name="keep_session" 
-                        {{ session('remember_me') ? 'checked' : '' }}>
+                        {{ (session('remember_me') || request()->cookie('remember_user')) ? 'checked' : '' }}>
                         <span class="toggle-slider"></span>
                     </label>
                 </div>

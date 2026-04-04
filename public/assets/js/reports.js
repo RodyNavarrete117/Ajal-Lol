@@ -505,11 +505,20 @@ async function deleteReport(id) {
                 closeEventModal();
                 sessionStorage.setItem('toast_message', 'Informe eliminado correctamente.');
                 sessionStorage.setItem('toast_type', 'delete');
-                // Solo regresar al historial si venía del historial
+
                 const fromHistory = document.getElementById('history-view').classList.contains('active');
                 if (fromHistory) {
                     sessionStorage.setItem('return_view', 'history');
+
+                    const activeTag = document.querySelector('.filter-tag.active');
+                    if (activeTag) sessionStorage.setItem('active_filter', activeTag.dataset.filter);
+
+                    const dropMonth = document.getElementById('dropdown-month');
+                    const dropYear  = document.getElementById('dropdown-year');
+                    if (dropMonth?.dataset.value !== 'all') sessionStorage.setItem('filter_month', dropMonth.dataset.value);
+                    if (dropYear?.dataset.value  !== 'all') sessionStorage.setItem('filter_year',  dropYear.dataset.value);
                 }
+
                 window.location.reload();
             }
             else alert('No se pudo eliminar el informe. Intenta de nuevo.');
@@ -753,7 +762,32 @@ function initFilters() {
 
     const quickTags = document.querySelectorAll('.filter-tag');
 
-    applyFilterLogic('year');
+    // ← AGREGAR: leer filtro guardado ANTES de aplicar el predeterminado
+    const savedFilter = sessionStorage.getItem('active_filter');
+    const savedMonth  = sessionStorage.getItem('filter_month');
+    const savedYear   = sessionStorage.getItem('filter_year');
+    const hayFiltroGuardado = savedFilter || savedMonth || savedYear;
+
+    if (hayFiltroGuardado) {
+        if (savedMonth || savedYear) {
+            if (savedMonth) resetCustomDropdown('dropdown-month', savedMonth);
+            if (savedYear)  resetCustomDropdown('dropdown-year',  savedYear);
+            quickTags.forEach(t => t.classList.remove('active'));
+            triggerDropdownFilter();
+        } else {
+            quickTags.forEach(t => {
+                t.classList.toggle('active', t.dataset.filter === savedFilter);
+            });
+            applyFilterLogic(savedFilter);
+        }
+        sessionStorage.removeItem('active_filter');
+        sessionStorage.removeItem('filter_month');
+        sessionStorage.removeItem('filter_year');
+    } else {
+        // comportamiento normal — filtro predeterminado "año"
+        applyFilterLogic('year');
+    }
+
     updateCountBadge();
 
     quickTags.forEach(tag => {

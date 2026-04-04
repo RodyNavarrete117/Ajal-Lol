@@ -1259,3 +1259,41 @@ input:-webkit-autofill:focus {
     -webkit-text-fill-color: var(--rpt-text) !important;
     transition: background-color 5000s ease-in-out 0s;
 }
+
+/* ── BENEFICIARIOS EN ITEM ── */
+.history-beneficiarios {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--rpt-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.history-beneficiarios svg {
+    width: 11px;
+    height: 11px;
+    flex-shrink: 0;
+}
+
+/* ── CONTADOR WRAP ── */
+.history-count-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: nowrap;
+}
+.history-count-sep {
+    color: var(--rpt-text-muted);
+    opacity: 0.5;
+    font-size: 0.75rem;
+}
+
+@media (max-width: 600px) {
+    .history-count-wrap {
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+    .history-count-sep {
+        display: none;
+    }
+}

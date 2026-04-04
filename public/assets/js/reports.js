@@ -858,8 +858,22 @@ function initSearch() {
 // ============================================
 function updateCountBadge() {
     const badge = document.getElementById('count-badge');
-    const visible = document.querySelectorAll('#history-list .history-group:not(.hidden)').length;
+    const visibleGroups = Array.from(document.querySelectorAll('#history-list .history-group:not(.hidden)'));
+    const visible = visibleGroups.length;
     if (badge) badge.textContent = visible;
+
+    const benefBadge = document.getElementById('count-beneficiarios');
+    if (benefBadge) {
+        const totalBenef = visibleGroups.reduce((sum, group) => {
+            const item = group.querySelector('.history-item');
+            if (!item) return sum;
+            const fecha = item.dataset.fecha;
+            const count = (typeof eventsFromDB !== 'undefined' && eventsFromDB[fecha])
+                ? (eventsFromDB[fecha].beneficiaries_count || 0) : 0;
+            return sum + count;
+        }, 0);
+        benefBadge.textContent = totalBenef;
+    }
 
     const list = document.getElementById('history-list');
     if (!list) return;
@@ -1439,12 +1453,35 @@ function renderPagination() {
     if (total === 0) { list.after(wrapper); return; }
     const counter = document.createElement('div');
     counter.className = 'history-meta';
+    const totalBenefInit = Array.from(list.querySelectorAll('.history-group:not(.hidden)')).reduce((sum, group) => {
+        const item = group.querySelector('.history-item');
+        if (!item) return sum;
+        const fecha = item.dataset.fecha;
+        const count = (typeof eventsFromDB !== 'undefined' && eventsFromDB[fecha])
+            ? (eventsFromDB[fecha].beneficiaries_count || 0) : 0;
+        return sum + count;
+    }, 0);
+
     counter.innerHTML = `
         <div class="history-meta-line"></div>
-        <div class="history-count">
-            <span>Mostrando</span>
-            <span class="count-badge" id="pag-count-badge">${total}</span>
-            <span>eventos</span>
+        <div class="history-count-wrap">
+            <div class="history-count">
+                <span>Mostrando</span>
+                <span class="count-badge" id="pag-count-badge">${total}</span>
+                <span>eventos</span>
+            </div>
+            <span class="history-count-sep">·</span>
+            <div class="history-count history-count-benef">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="width:11px;height:11px;flex-shrink:0;">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span class="count-badge" id="count-beneficiarios">${totalBenefInit}</span>
+                <span>beneficiarios</span>
+            </div>
         </div>
         <div class="history-meta-line"></div>`;
 
@@ -1456,10 +1493,24 @@ function renderPagination() {
             g.style.display = i < 10 ? '' : 'none';
         });
 
-        counter.querySelector('.history-count').innerHTML = `
-            <span>Mostrando</span>
-            <span class="count-badge" id="pag-count-badge">${Math.min(10, total)}</span>
-            <span>de ${total} eventos</span>`;
+        counter.querySelector('.history-count-wrap').innerHTML = `
+            <div class="history-count">
+                <span>Mostrando</span>
+                <span class="count-badge" id="pag-count-badge">${Math.min(10, total)}</span>
+                <span>de ${total} eventos</span>
+            </div>
+            <span class="history-count-sep">·</span>
+            <div class="history-count history-count-benef">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="width:11px;height:11px;flex-shrink:0;">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span class="count-badge" id="count-beneficiarios">${totalBenefInit}</span>
+                <span>beneficiarios</span>
+            </div>`;
 
         const totalPages = Math.ceil(total / 10);
         let currentPage = 1;
@@ -1533,6 +1584,31 @@ const observer = new MutationObserver(() => {
 });
 
     observer.observe(list, { subtree: true, attributeFilter: ['class'] });
+
+    // Inyectar conteo de beneficiarios en cada history-item
+    document.querySelectorAll('#history-list .history-item').forEach(item => {
+        const fecha = item.dataset.fecha;
+        const count = (typeof eventsFromDB !== 'undefined' && eventsFromDB[fecha])
+            ? eventsFromDB[fecha].beneficiaries_count : null;
+        if (count === null) return;
+
+        const metaRow = item.querySelector('.history-meta-row');
+        if (!metaRow) return;
+
+        const badge = document.createElement('span');
+        badge.className = 'history-beneficiarios';
+        badge.dataset.count = count;
+        badge.innerHTML = `
+            <span class="history-dot"></span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            ${count}`;
+        metaRow.appendChild(badge);
+    });
 }
 
 // ============================================

@@ -1,7 +1,6 @@
 /* ==================== page.js ==================== */
 document.addEventListener('DOMContentLoaded', function () {
 
-    /* ── SVG para íconos de ojo ── */
     const SVG_EYE_ON  = `<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>`;
     const SVG_EYE_OFF = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`;
 
@@ -20,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
             container.id = 'toast-container';
             document.body.appendChild(container);
         }
-
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
         toast.innerHTML = `
@@ -37,14 +35,12 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="toast-bar-wrap"><div class="toast-bar"></div></div>
         `;
         container.appendChild(toast);
-
         requestAnimationFrame(() => requestAnimationFrame(() => {
             toast.classList.add('show');
             const bar = toast.querySelector('.toast-bar');
             bar.style.transition = `width ${duration}ms linear`;
             requestAnimationFrame(() => { bar.style.width = '0%'; });
         }));
-
         toast._timer = setTimeout(() => dismissToast(toast), duration);
         toast.querySelector('.toast-close').addEventListener('click', () => {
             clearTimeout(toast._timer);
@@ -83,26 +79,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function openToggleModal(card, isActive) {
         pendingToggle = { card, isActive };
-        const name = card.querySelector('.page-card__name').textContent;
-
-        const icon     = modal.querySelector('#toggle-modal-icon');
-        const svg      = modal.querySelector('#toggle-modal-svg');
-        const title    = modal.querySelector('#toggle-modal-title');
-        const msg      = modal.querySelector('#toggle-modal-msg');
-        const confirm  = modal.querySelector('#toggle-modal-confirm');
+        const name    = card.querySelector('.header-name').textContent;
+        const icon    = modal.querySelector('#toggle-modal-icon');
+        const svg     = modal.querySelector('#toggle-modal-svg');
+        const title   = modal.querySelector('#toggle-modal-title');
+        const msg     = modal.querySelector('#toggle-modal-msg');
+        const confirm = modal.querySelector('#toggle-modal-confirm');
 
         if (isActive) {
-            icon.className    = 'toggle-modal-icon disable';
-            svg.innerHTML     = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`;
-            title.textContent = '¿Deshabilitar página?';
-            msg.innerHTML     = `La página <strong>"${name}"</strong> quedará oculta para los visitantes del sitio.`;
+            icon.className      = 'toggle-modal-icon disable';
+            svg.innerHTML       = SVG_EYE_OFF;
+            title.textContent   = '¿Deshabilitar página?';
+            msg.innerHTML       = `La página <strong>"${name}"</strong> quedará oculta para los visitantes del sitio.`;
             confirm.textContent = 'Sí, deshabilitar';
             confirm.className   = 'toggle-modal-confirm disable';
         } else {
-            icon.className    = 'toggle-modal-icon enable';
-            svg.innerHTML     = `<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>`;
-            title.textContent = '¿Habilitar página?';
-            msg.innerHTML     = `La página <strong>"${name}"</strong> volverá a ser visible para los visitantes del sitio.`;
+            icon.className      = 'toggle-modal-icon enable';
+            svg.innerHTML       = SVG_EYE_ON;
+            title.textContent   = '¿Habilitar página?';
+            msg.innerHTML       = `La página <strong>"${name}"</strong> volverá a ser visible para los visitantes del sitio.`;
             confirm.textContent = 'Sí, habilitar';
             confirm.className   = 'toggle-modal-confirm enable';
         }
@@ -123,16 +118,13 @@ document.addEventListener('DOMContentLoaded', function () {
     modal.querySelector('#toggle-modal-confirm').addEventListener('click', function () {
         if (!pendingToggle) return;
         const { card, isActive } = pendingToggle;
-        const name = card.querySelector('.page-card__name').textContent;
-        const btn  = card.querySelector('.card-btn--toggle');
-        const dot  = card.querySelector('.status-dot');
+        const name   = card.querySelector('.header-name').textContent;
+        const btn    = card.querySelector('.header-btn--toggle');
         const footer = card.querySelector('.page-card__footer');
 
         if (isActive) {
-            /* Deshabilitar */
             card.classList.add('inactive');
             card.dataset.active = '0';
-            card.querySelector('.status-label').textContent = 'Inactiva'; 
             btn.classList.add('off');
             btn.querySelector('svg').innerHTML = SVG_EYE_OFF;
             btn.title = 'Habilitar página';
@@ -142,10 +134,8 @@ document.addEventListener('DOMContentLoaded', function () {
             `;
             showToast('warning', 'Página deshabilitada', `"${name}" ya no es visible para los visitantes.`);
         } else {
-            /* Habilitar */
             card.classList.remove('inactive');
             card.dataset.active = '1';
-            card.querySelector('.status-label').textContent = 'Activa';
             btn.classList.remove('off');
             btn.querySelector('svg').innerHTML = SVG_EYE_ON;
             btn.title = 'Deshabilitar página';
@@ -164,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     /* ── Botones toggle ── */
-    document.querySelectorAll('.card-btn--toggle').forEach(btn => {
+    document.querySelectorAll('.header-btn--toggle').forEach(btn => {
         btn.addEventListener('click', e => {
             e.stopPropagation();
             const card     = btn.closest('.page-card');
@@ -194,12 +184,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     const active = card.dataset.active === '1';
                     card.style.display = (isInactivas ? !active : active) ? '' : 'none';
                 });
-
                 const visible = [...cards].filter(c => c.style.display !== 'none');
                 if (visible.length === 0 && isInactivas) {
                     showToast('info', 'Sin páginas inactivas', 'No hay páginas deshabilitadas por el momento.');
                 }
-
                 grid.style.opacity = '1';
             }, 220);
         });

@@ -1,6 +1,10 @@
 /* ==================== page.js ==================== */
 document.addEventListener('DOMContentLoaded', function () {
 
+    /* ── SVG para íconos de ojo ── */
+    const SVG_EYE_ON  = `<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>`;
+    const SVG_EYE_OFF = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+
     /* ── Toast ── */
     const TOAST_ICONS = {
         success: `<svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
@@ -55,68 +59,117 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => toast.remove(), 380);
     }
 
-    /* ── Modal eliminar ── */
-    let pendingDelete = null;
+    /* ── Modal habilitar / deshabilitar ── */
+    let pendingToggle = null;
 
     const modal = document.createElement('div');
-    modal.id = 'delete-modal';
-    modal.className = 'delete-modal';
+    modal.id = 'toggle-modal';
+    modal.className = 'toggle-modal';
     modal.innerHTML = `
-        <div class="delete-modal-backdrop"></div>
-        <div class="delete-modal-card">
-            <div class="delete-modal-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M3 6H21M19 6V20C19 20.53 18.79 21.04 18.41 21.41C18.04 21.79 17.53 22 17 22H7C6.47 22 5.96 21.79 5.59 21.41C5.21 21.04 5 20.53 5 20V6M8 6V4C8 3.47 8.21 2.96 8.59 2.59C8.96 2.21 9.47 2 10 2H14C14.53 2 15.04 2.21 15.41 2.59C15.79 2.96 16 3.47 16 4V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
+        <div class="toggle-modal-backdrop"></div>
+        <div class="toggle-modal-card">
+            <div class="toggle-modal-icon" id="toggle-modal-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="toggle-modal-svg"></svg>
             </div>
-            <h3 class="delete-modal-title">¿Eliminar sección?</h3>
-            <p class="delete-modal-msg">Estás a punto de eliminar <strong id="delete-page-name"></strong>. Esta acción no se puede deshacer.</p>
-            <div class="delete-modal-actions">
-                <button class="delete-modal-cancel">Cancelar</button>
-                <button class="delete-modal-confirm">Sí, eliminar</button>
+            <h3 class="toggle-modal-title" id="toggle-modal-title"></h3>
+            <p class="toggle-modal-msg" id="toggle-modal-msg"></p>
+            <div class="toggle-modal-actions">
+                <button class="toggle-modal-cancel">Cancelar</button>
+                <button class="toggle-modal-confirm" id="toggle-modal-confirm"></button>
             </div>
         </div>
     `;
     document.body.appendChild(modal);
 
-    function openModal(card) {
-        pendingDelete = card;
-        document.getElementById('delete-page-name').textContent = `"${card.querySelector('.page-card__name').textContent}"`;
+    function openToggleModal(card, isActive) {
+        pendingToggle = { card, isActive };
+        const name = card.querySelector('.page-card__name').textContent;
+
+        const icon     = modal.querySelector('#toggle-modal-icon');
+        const svg      = modal.querySelector('#toggle-modal-svg');
+        const title    = modal.querySelector('#toggle-modal-title');
+        const msg      = modal.querySelector('#toggle-modal-msg');
+        const confirm  = modal.querySelector('#toggle-modal-confirm');
+
+        if (isActive) {
+            icon.className    = 'toggle-modal-icon disable';
+            svg.innerHTML     = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+            title.textContent = '¿Deshabilitar página?';
+            msg.innerHTML     = `La página <strong>"${name}"</strong> quedará oculta para los visitantes del sitio.`;
+            confirm.textContent = 'Sí, deshabilitar';
+            confirm.className   = 'toggle-modal-confirm disable';
+        } else {
+            icon.className    = 'toggle-modal-icon enable';
+            svg.innerHTML     = `<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>`;
+            title.textContent = '¿Habilitar página?';
+            msg.innerHTML     = `La página <strong>"${name}"</strong> volverá a ser visible para los visitantes del sitio.`;
+            confirm.textContent = 'Sí, habilitar';
+            confirm.className   = 'toggle-modal-confirm enable';
+        }
+
         modal.classList.add('open');
         document.body.style.overflow = 'hidden';
     }
 
-    function closeModal() {
+    function closeToggleModal() {
         modal.classList.remove('open');
         document.body.style.overflow = '';
-        pendingDelete = null;
+        pendingToggle = null;
     }
 
-    modal.querySelector('.delete-modal-backdrop').addEventListener('click', closeModal);
-    modal.querySelector('.delete-modal-cancel').addEventListener('click', closeModal);
+    modal.querySelector('.toggle-modal-backdrop').addEventListener('click', closeToggleModal);
+    modal.querySelector('.toggle-modal-cancel').addEventListener('click', closeToggleModal);
 
-    modal.querySelector('.delete-modal-confirm').addEventListener('click', function () {
-        if (!pendingDelete) return;
-        const name = pendingDelete.querySelector('.page-card__name').textContent;
+    modal.querySelector('#toggle-modal-confirm').addEventListener('click', function () {
+        if (!pendingToggle) return;
+        const { card, isActive } = pendingToggle;
+        const name = card.querySelector('.page-card__name').textContent;
+        const btn  = card.querySelector('.card-btn--toggle');
+        const dot  = card.querySelector('.status-dot');
+        const footer = card.querySelector('.page-card__footer');
 
-        pendingDelete.style.transition = 'opacity .35s ease, transform .35s ease';
-        pendingDelete.style.opacity    = '0';
-        pendingDelete.style.transform  = 'scale(0.92) translateY(-10px)';
+        if (isActive) {
+            /* Deshabilitar */
+            card.classList.add('inactive');
+            card.dataset.active = '0';
+            card.querySelector('.status-label').textContent = 'Inactiva'; 
+            btn.classList.add('off');
+            btn.querySelector('svg').innerHTML = SVG_EYE_OFF;
+            btn.title = 'Habilitar página';
+            footer.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg>
+                <p class="inactive-since">Inactiva desde <strong>hace unos segundos</strong></p>
+            `;
+            showToast('warning', 'Página deshabilitada', `"${name}" ya no es visible para los visitantes.`);
+        } else {
+            /* Habilitar */
+            card.classList.remove('inactive');
+            card.dataset.active = '1';
+            card.querySelector('.status-label').textContent = 'Activa';
+            btn.classList.remove('off');
+            btn.querySelector('svg').innerHTML = SVG_EYE_ON;
+            btn.title = 'Deshabilitar página';
+            footer.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                <p class="footer-text">Actualizada <strong>hace unos segundos</strong></p>
+            `;
+            showToast('success', 'Página habilitada', `"${name}" ya es visible para los visitantes.`);
+        }
 
-        setTimeout(() => pendingDelete.remove(), 350);
-        closeModal();
-        showToast('success', 'Sección eliminada', `"${name}" fue eliminada correctamente.`);
+        closeToggleModal();
     });
 
     document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+        if (e.key === 'Escape' && modal.classList.contains('open')) closeToggleModal();
     });
 
-    /* ── Botones eliminar ── */
-    document.querySelectorAll('.card-btn--delete').forEach(btn => {
+    /* ── Botones toggle ── */
+    document.querySelectorAll('.card-btn--toggle').forEach(btn => {
         btn.addEventListener('click', e => {
             e.stopPropagation();
-            openModal(btn.closest('.page-card'));
+            const card     = btn.closest('.page-card');
+            const isActive = card.dataset.active === '1';
+            openToggleModal(card, isActive);
         });
     });
 
@@ -131,15 +184,24 @@ document.addEventListener('DOMContentLoaded', function () {
             this.classList.add('active');
 
             const isInactivas = this.textContent.trim().toLowerCase().includes('inactiva');
-            grid.style.transition = 'opacity .25s ease, transform .25s ease';
+            const cards = grid.querySelectorAll('.page-card');
+
+            grid.style.transition = 'opacity .22s ease';
             grid.style.opacity    = '0';
-            grid.style.transform  = 'translateY(8px)';
 
             setTimeout(() => {
-                grid.style.opacity   = '1';
-                grid.style.transform = 'translateY(0)';
-                if (isInactivas) showToast('info', 'Sin secciones inactivas', 'No hay secciones desactivadas por el momento.');
-            }, 250);
+                cards.forEach(card => {
+                    const active = card.dataset.active === '1';
+                    card.style.display = (isInactivas ? !active : active) ? '' : 'none';
+                });
+
+                const visible = [...cards].filter(c => c.style.display !== 'none');
+                if (visible.length === 0 && isInactivas) {
+                    showToast('info', 'Sin páginas inactivas', 'No hay páginas deshabilitadas por el momento.');
+                }
+
+                grid.style.opacity = '1';
+            }, 220);
         });
     });
 

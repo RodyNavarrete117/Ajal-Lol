@@ -70,13 +70,13 @@
   gap: 1.2rem;
   width: 100%;
   min-width: 0;
-  margin: 0;           /* Override Bootstrap .row margin */
+  margin: 0;
 }
 .form-group {
   margin-bottom: 1.3rem;
   width: 100%;
   min-width: 0;
-  padding: 0;          /* Override Bootstrap .col padding */
+  padding: 0;
   box-sizing: border-box;
 }
 .form-group label {
@@ -106,6 +106,14 @@
   background: var(--white);
   box-shadow: 0 0 0 4px rgba(192,84,122,.08);
 }
+
+/* Mejora visual: placeholder más suave */
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--text-light);
+  opacity: 0.6;
+}
+
 .form-group textarea { resize: vertical; min-height: 140px; }
 
 /* ─── Submit ─── */
@@ -131,10 +139,59 @@
 .form-submit:hover::before { opacity: 1; }
 .form-submit span { position: relative; z-index: 1; display: flex; align-items: center; gap: .6rem; }
 
+/* ── Estado: enviando ── */
+.form-submit--sending {
+  background: linear-gradient(135deg, #8B3E72, #c0527f);
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+.form-submit--sending::before { opacity: 0 !important; }
+
+/* Spinner SVG que gira */
+.btn-spinner {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  animation: spinnerRotate 0.8s linear infinite;
+}
+
+.btn-spinner circle {
+  animation: spinnerDash 1.2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes spinnerRotate {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spinnerDash {
+  0%   { stroke-dashoffset: 32; }
+  50%  { stroke-dashoffset: 8; }
+  100% { stroke-dashoffset: 32; }
+}
+
+/* ── Estado: enviado con éxito ── */
+.form-submit--success {
+  background: linear-gradient(135deg, #1e6e45, #27a062) !important;
+  cursor: not-allowed;
+  transform: none !important;
+}
+.form-submit--success::before { opacity: 0 !important; }
+
 /* ─── Status ─── */
-.form-status { margin-top: 1rem; font-size: .88rem; text-align: center; display: none; padding: .75rem; border-radius: var(--radius-sm); }
-.form-status.success { color: #2d6a4f; background: #d8f3dc; display: block; }
-.form-status.error   { color: #9b2226; background: #ffe3e3; display: block; }
+.form-status {
+  margin-top: 1rem; font-size: .88rem; text-align: center;
+  display: none; padding: .75rem 1rem; border-radius: var(--radius-sm);
+  animation: statusFadeIn .4s ease both;
+}
+.form-status.success { color: #2d6a4f; background: #d8f3dc; display: block; border: 1px solid #b7e4c7; }
+.form-status.error   { color: #9b2226; background: #ffe3e3; display: block; border: 1px solid #f5c2c7; }
+
+@keyframes statusFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
 /* ─── Override Bootstrap ─── */
 #contact .contact-layout    { display: grid !important; }

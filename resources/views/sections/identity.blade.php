@@ -1,5 +1,4 @@
 <section id="pricing" class="section">
-
   <div class="container">
     <div class="section-title" data-anim="fade-up">
       <h2>Nuestra Identidad</h2>
@@ -41,5 +40,4 @@
 
     </div>
   </div>
-
 </section>

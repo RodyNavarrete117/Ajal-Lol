@@ -128,7 +128,7 @@
                 </div>
             </div>
 
-            {{-- ══ PANEL: Redes sociales ══ --}}
+            {{-- ══ PANEL: Redes sociales (solo FB, IG, LinkedIn) ══ --}}
             <div class="edit-panel" id="panel-redes">
                 <div class="panel-section-title">
                     <i class="fa fa-share-nodes"></i>
@@ -144,9 +144,7 @@
                             Facebook
                         </label>
                         <div class="input-with-prefix">
-                            <span class="input-prefix">
-                                <i class="fa-brands fa-facebook"></i>
-                            </span>
+                            <span class="input-prefix"><i class="fa-brands fa-facebook"></i></span>
                             <input
                                 type="url"
                                 id="facebook"
@@ -163,9 +161,7 @@
                             Instagram
                         </label>
                         <div class="input-with-prefix">
-                            <span class="input-prefix">
-                                <i class="fa-brands fa-instagram"></i>
-                            </span>
+                            <span class="input-prefix"><i class="fa-brands fa-instagram"></i></span>
                             <input
                                 type="url"
                                 id="instagram"
@@ -182,72 +178,13 @@
                             LinkedIn
                         </label>
                         <div class="input-with-prefix">
-                            <span class="input-prefix">
-                                <i class="fa-brands fa-linkedin"></i>
-                            </span>
+                            <span class="input-prefix"><i class="fa-brands fa-linkedin"></i></span>
                             <input
                                 type="url"
                                 id="linkedin"
                                 name="linkedin"
                                 value="{{ old('linkedin') }}"
                                 placeholder="https://linkedin.com/company/tu-empresa"
-                            >
-                        </div>
-                    </div>
-
-                    <div class="form-group social-group social-group--yt">
-                        <label for="youtube">
-                            <i class="fa-brands fa-youtube"></i>
-                            YouTube
-                        </label>
-                        <div class="input-with-prefix">
-                            <span class="input-prefix">
-                                <i class="fa-brands fa-youtube"></i>
-                            </span>
-                            <input
-                                type="url"
-                                id="youtube"
-                                name="youtube"
-                                value="{{ old('youtube') }}"
-                                placeholder="https://youtube.com/@tu-canal"
-                            >
-                        </div>
-                    </div>
-
-                    <div class="form-group social-group social-group--tt">
-                        <label for="tiktok">
-                            <i class="fa-brands fa-tiktok"></i>
-                            TikTok
-                        </label>
-                        <div class="input-with-prefix">
-                            <span class="input-prefix">
-                                <i class="fa-brands fa-tiktok"></i>
-                            </span>
-                            <input
-                                type="url"
-                                id="tiktok"
-                                name="tiktok"
-                                value="{{ old('tiktok') }}"
-                                placeholder="https://tiktok.com/@tu-usuario"
-                            >
-                        </div>
-                    </div>
-
-                    <div class="form-group social-group social-group--tw">
-                        <label for="twitter">
-                            <i class="fa-brands fa-x-twitter"></i>
-                            X / Twitter
-                        </label>
-                        <div class="input-with-prefix">
-                            <span class="input-prefix">
-                                <i class="fa-brands fa-x-twitter"></i>
-                            </span>
-                            <input
-                                type="url"
-                                id="twitter"
-                                name="twitter"
-                                value="{{ old('twitter') }}"
-                                placeholder="https://x.com/tu-usuario"
                             >
                         </div>
                     </div>
@@ -263,7 +200,7 @@
                 </div>
             </div>
 
-            {{-- ══ PANEL: Mapa ══ --}}
+            {{-- ══ PANEL: Mapa (apilado, ancho completo) ══ --}}
             <div class="edit-panel" id="panel-mapa">
                 <div class="panel-section-title">
                     <i class="fa fa-map"></i>
@@ -271,50 +208,48 @@
                     <span class="panel-section-hint">Copia el código embed desde Google Maps</span>
                 </div>
 
-                <div class="mapa-layout">
-                    <div class="mapa-layout__form">
-                        <div class="form-group">
-                            <label for="mapa_embed">
-                                <i class="fa fa-code"></i>
-                                Código embed del mapa
-                            </label>
-                            <textarea
-                                id="mapa_embed"
-                                name="mapa_embed"
-                                rows="8"
-                                placeholder='&lt;iframe src="https://www.google.com/maps/embed?..." ...&gt;&lt;/iframe&gt;'
-                            >{{ old('mapa_embed') }}</textarea>
-                            <span class="field-hint">
-                                En Google Maps → Compartir → Incorporar un mapa → Copiar HTML
-                            </span>
-                        </div>
-
-                        <div class="mapa-steps">
-                            <div class="mapa-step">
-                                <span class="mapa-step__num">1</span>
-                                <span>Abre <strong>Google Maps</strong> y busca tu ubicación</span>
-                            </div>
-                            <div class="mapa-step">
-                                <span class="mapa-step__num">2</span>
-                                <span>Haz clic en <strong>Compartir</strong> → Incorporar un mapa</span>
-                            </div>
-                            <div class="mapa-step">
-                                <span class="mapa-step__num">3</span>
-                                <span>Copia el código <strong>&lt;iframe&gt;</strong> y pégalo arriba</span>
-                            </div>
-                        </div>
+                {{-- Instrucciones ── --}}
+                <div class="mapa-steps-bar">
+                    <div class="mapa-step">
+                        <span class="mapa-step__num">1</span>
+                        <span>Abre <strong>Google Maps</strong> y busca tu ubicación</span>
                     </div>
-
-                    <div class="mapa-layout__preview">
-                        <div class="mapa-preview-label">Vista previa</div>
-                        <div class="map-preview" id="mapPreview">
-                            <div class="map-preview__empty" id="mapEmpty">
-                                <i class="fa fa-map-location-dot"></i>
-                                <span>La vista previa aparecerá aquí</span>
-                            </div>
-                            <div class="map-preview__frame" id="mapFrame" style="display:none;"></div>
-                        </div>
+                    <div class="mapa-step">
+                        <span class="mapa-step__num">2</span>
+                        <span>Haz clic en <strong>Compartir</strong> → Incorporar un mapa</span>
                     </div>
+                    <div class="mapa-step">
+                        <span class="mapa-step__num">3</span>
+                        <span>Copia el código <strong>&lt;iframe&gt;</strong> y pégalo abajo</span>
+                    </div>
+                </div>
+
+                {{-- Textarea código ── --}}
+                <div class="form-group">
+                    <label for="mapa_embed">
+                        <i class="fa fa-code"></i>
+                        Código embed del mapa
+                    </label>
+                    <textarea
+                        id="mapa_embed"
+                        name="mapa_embed"
+                        rows="5"
+                        placeholder='&lt;iframe src="https://www.google.com/maps/embed?..." ...&gt;&lt;/iframe&gt;'
+                    >{{ old('mapa_embed') }}</textarea>
+                    <span class="field-hint">En Google Maps → Compartir → Incorporar un mapa → Copiar HTML</span>
+                </div>
+
+                {{-- Vista previa ── --}}
+                <div class="mapa-preview-label">
+                    <i class="fa fa-eye"></i>
+                    Vista previa del mapa
+                </div>
+                <div class="map-preview" id="mapPreview">
+                    <div class="map-preview__empty" id="mapEmpty">
+                        <i class="fa fa-map-location-dot"></i>
+                        <span>La vista previa aparecerá aquí cuando pegues el código</span>
+                    </div>
+                    <div class="map-preview__frame" id="mapFrame" style="display:none;"></div>
                 </div>
 
                 <div class="form-actions">

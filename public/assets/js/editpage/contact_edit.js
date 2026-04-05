@@ -59,8 +59,8 @@
             valid = false;
         }
 
-        // Validar URLs de redes sociales (si se llenaron)
-        ['facebook', 'instagram', 'linkedin', 'youtube', 'tiktok', 'twitter'].forEach(red => {
+        // Validar URLs: solo Facebook, Instagram y LinkedIn
+        ['facebook', 'instagram', 'linkedin'].forEach(red => {
             const input = form.querySelector(`#${red}`);
             if (input && input.value.trim()) {
                 try {
@@ -110,7 +110,7 @@
 
         if (iframe) {
             iframe.style.width   = '100%';
-            iframe.style.height  = '260px';
+            iframe.style.height  = '340px';
             iframe.style.border  = 'none';
             iframe.style.display = 'block';
             iframe.setAttribute('loading', 'lazy');
@@ -171,7 +171,6 @@
         if (!validateForm(form)) {
             showToast('Por favor revisa los campos marcados.', 'error');
 
-            // Si el error está en un panel inactivo, activarlo
             const errorField = form.querySelector('.field--error');
             if (errorField) {
                 const panel = errorField.closest('.edit-panel');

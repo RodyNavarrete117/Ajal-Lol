@@ -55,6 +55,63 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => toast.remove(), 380);
     }
 
+    /* ── Ripple al hacer clic en la tarjeta ── */
+    function spawnRipple(card, e) {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const ripple = document.createElement('span');
+        ripple.className = 'card-ripple';
+        ripple.style.cssText = `left:${x}px;top:${y}px`;
+        card.appendChild(ripple);
+        ripple.addEventListener('animationend', () => ripple.remove(), { once: true });
+    }
+
+    /* ── Obtener URL de edición de cada tarjeta ── */
+    function getEditUrl(card) {
+        // El botón de editar ya tiene el href correcto con la ruta de Laravel
+        const editBtn = card.querySelector('a.header-btn[title="Editar página"]');
+        return editBtn ? editBtn.getAttribute('href') : null;
+    }
+
+    /* ── Hacer toda la tarjeta clickeable ── */
+    document.querySelectorAll('.page-card').forEach(card => {
+        // Cursor pointer en toda la tarjeta
+        card.style.cursor = 'pointer';
+
+        card.addEventListener('click', function (e) {
+            // Ignorar si el clic fue en un botón de control (toggle, editar, preview)
+            if (e.target.closest('.header-controls')) return;
+            // Ignorar si la página está inactiva
+            if (card.classList.contains('inactive')) {
+                showToast('warning', 'Página inactiva', 'Habilita la página primero para editarla.');
+                return;
+            }
+
+            spawnRipple(card, e);
+
+            const url = getEditUrl(card);
+            if (url) {
+                // Pequeño delay para que se vea el ripple
+                setTimeout(() => { window.location.href = url; }, 160);
+            }
+        });
+
+        // Mostrar hint "Clic para editar" en el footer al hacer hover sobre la card
+        // (solo si el hover no es en los controles)
+        const footer    = card.querySelector('.page-card__footer');
+        const footerTxt = footer?.querySelector('.footer-text, .inactive-since');
+
+        card.addEventListener('mouseenter', function () {
+            if (card.classList.contains('inactive')) return;
+            card.classList.add('card--hovered');
+        });
+
+        card.addEventListener('mouseleave', function () {
+            card.classList.remove('card--hovered');
+        });
+    });
+
     /* ── Modal habilitar / deshabilitar ── */
     let pendingToggle = null;
 
@@ -125,6 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (isActive) {
             card.classList.add('inactive');
             card.dataset.active = '0';
+            card.style.cursor = 'default';
             btn.classList.add('off');
             btn.querySelector('svg').innerHTML = SVG_EYE_OFF;
             btn.title = 'Habilitar página';
@@ -136,6 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             card.classList.remove('inactive');
             card.dataset.active = '1';
+            card.style.cursor = 'pointer';
             btn.classList.remove('off');
             btn.querySelector('svg').innerHTML = SVG_EYE_ON;
             btn.title = 'Deshabilitar página';
@@ -153,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.key === 'Escape' && modal.classList.contains('open')) closeToggleModal();
     });
 
-    /* ── Botones toggle ── */
+    /* ── Botones toggle (evitar propagación al card click) ── */
     document.querySelectorAll('.header-btn--toggle').forEach(btn => {
         btn.addEventListener('click', e => {
             e.stopPropagation();

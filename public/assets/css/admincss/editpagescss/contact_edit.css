@@ -25,9 +25,6 @@
     --fb-color:           #1877f2;
     --ig-color:           #e1306c;
     --li-color:           #0077b5;
-    --yt-color:           #ff0000;
-    --tt-color:           #010101;
-    --tw-color:           #1da1f2;
     --shadow-container:   0 4px 32px rgba(60, 30, 80, 0.10);
     --shadow-input-focus: 0 0 0 3px rgba(139, 62, 114, 0.15);
     --label-accent:       #8B3E72;
@@ -58,7 +55,6 @@
     --shadow-container:   0 4px 32px rgba(0, 0, 0, 0.35);
     --shadow-input-focus: 0 0 0 3px rgba(212, 107, 168, 0.18);
     --label-accent:       #d46ba8;
-    --tt-color:           #d0d0d0;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -267,11 +263,7 @@ form { padding: 32px 52px 40px; }
     transition: color var(--transition);
 }
 
-.form-group label .req {
-    color: var(--accent);
-    font-size: 15px;
-    line-height: 0;
-}
+.form-group label .req { color: var(--accent); font-size: 15px; line-height: 0; }
 
 .form-group input,
 .form-group textarea {
@@ -319,7 +311,7 @@ form { padding: 32px 52px 40px; }
     font-weight: 500;
 }
 
-/* ── Social grid 3 columnas ── */
+/* ── Social grid: solo 3 redes, 3 columnas ── */
 .social-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -346,10 +338,10 @@ form { padding: 32px 52px 40px; }
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 12px;
+    padding: 0 13px;
     background: var(--section-bg);
     border-right: 1.5px solid var(--border);
-    font-size: 16px;
+    font-size: 17px;
     flex-shrink: 0;
     transition: background var(--transition), border-color var(--transition);
 }
@@ -369,47 +361,38 @@ form { padding: 32px 52px 40px; }
     outline: none;
 }
 
-/* Colores por red social */
 .social-group--fb .input-prefix { color: var(--fb-color); }
 .social-group--ig .input-prefix { color: var(--ig-color); }
 .social-group--li .input-prefix { color: var(--li-color); }
-.social-group--yt .input-prefix { color: var(--yt-color); }
-.social-group--tt .input-prefix { color: var(--tt-color); }
-.social-group--tw .input-prefix { color: var(--tw-color); }
 
 .social-group--fb label i { color: var(--fb-color); }
 .social-group--ig label i { color: var(--ig-color); }
 .social-group--li label i { color: var(--li-color); }
-.social-group--yt label i { color: var(--yt-color); }
-.social-group--tt label i { color: var(--tt-color); }
-.social-group--tw label i { color: var(--tw-color); }
 
-/* ── Mapa layout (form + preview lado a lado) ── */
-.mapa-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 28px;
-    align-items: start;
-}
+/* ── Mapa: apilado verticalmente, ancho completo ── */
 
-.mapa-layout__form .form-group { margin-bottom: 16px; }
-.mapa-layout__form .form-group textarea { min-height: 160px; }
-
-/* Pasos */
-.mapa-steps {
+/* Barra de pasos horizontal */
+.mapa-steps-bar {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 4px;
+    gap: 12px;
+    margin-bottom: 22px;
+    background: var(--section-bg);
+    border: 1px solid var(--section-border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    flex-wrap: wrap;
+    transition: background var(--transition), border-color var(--transition);
 }
 
 .mapa-step {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
+    gap: 9px;
     font-size: 13px;
     color: var(--text-sub);
     line-height: 1.5;
+    flex: 1;
+    min-width: 180px;
     transition: color var(--transition);
 }
 
@@ -429,27 +412,43 @@ form { padding: 32px 52px 40px; }
     transition: background var(--transition), color var(--transition);
 }
 
-/* Preview label */
+/* Textarea del embed — ancho completo, buena altura */
+#panel-mapa .form-group textarea {
+    min-height: 130px;
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* Label de vista previa */
 .mapa-preview-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .7px;
     color: var(--hint-color);
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    margin-top: 4px;
     transition: color var(--transition);
 }
 
-/* Map preview */
+.mapa-preview-label i { font-size: 12px; color: var(--accent); }
+
+/* Mapa preview ancho completo, buena altura */
 .map-preview {
+    width: 100%;
     border-radius: 14px;
     border: 1.5px solid var(--section-border);
     overflow: hidden;
     background: var(--section-bg);
-    min-height: 260px;
+    min-height: 340px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 4px;
     transition: border-color var(--transition), background var(--transition);
 }
 
@@ -457,21 +456,21 @@ form { padding: 32px 52px 40px; }
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     color: var(--text-placeholder);
-    padding: 32px;
+    padding: 48px 32px;
     text-align: center;
     pointer-events: none;
     transition: color var(--transition);
 }
 
-.map-preview__empty i { font-size: 32px; opacity: 0.4; }
-.map-preview__empty span { font-size: 13px; }
+.map-preview__empty i { font-size: 42px; opacity: 0.3; }
+.map-preview__empty span { font-size: 13px; max-width: 280px; line-height: 1.6; }
 
 .map-preview__frame { width: 100%; }
 .map-preview__frame iframe {
     width: 100%;
-    height: 260px;
+    height: 340px;
     border: none;
     display: block;
 }
@@ -550,7 +549,7 @@ form { padding: 32px 52px 40px; }
 @media (max-width: 860px) {
     .edit-header, form { padding-left: 32px; padding-right: 32px; }
     .social-grid { grid-template-columns: 1fr 1fr; }
-    .mapa-layout { grid-template-columns: 1fr; }
+    .mapa-steps-bar { gap: 10px; }
 }
 
 @media (max-width: 640px) {
@@ -559,6 +558,10 @@ form { padding: 32px 52px 40px; }
     .subtitle        { padding-left: 0; }
     .info-grid       { grid-template-columns: 1fr; }
     .social-grid     { grid-template-columns: 1fr; }
+    .mapa-steps-bar  { flex-direction: column; gap: 8px; }
+    .mapa-step       { min-width: unset; }
+    .map-preview     { min-height: 240px; }
+    .map-preview__frame iframe { height: 240px; }
     .form-actions    { flex-direction: column; }
     .btn-save, .btn-cancel { width: 100%; justify-content: center; }
     .edit-tabs-bar   { padding: 10px 16px; gap: 6px; }

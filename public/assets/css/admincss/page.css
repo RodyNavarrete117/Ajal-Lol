@@ -124,8 +124,11 @@
     overflow: hidden;
     display: flex; flex-direction: column;
     box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-    transition: transform var(--tr), box-shadow var(--tr);
+    transition: transform var(--tr), box-shadow var(--tr), border-color var(--tr);
     animation: fadeUp .45s ease both;
+    position: relative; /* necesario para el ripple */
+    cursor: pointer;
+    user-select: none;
 }
 .page-card:nth-child(1) { animation-delay: .08s; }
 .page-card:nth-child(2) { animation-delay: .13s; }
@@ -135,9 +138,73 @@
 .page-card:nth-child(6) { animation-delay: .33s; }
 .page-card:nth-child(7) { animation-delay: .38s; }
 .page-card:nth-child(8) { animation-delay: .43s; }
+
 .page-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(var(--rgb), 0.2);
+    transform: translateY(-6px);
+    box-shadow: 0 16px 48px rgba(var(--rgb), 0.22);
+    border-color: rgba(var(--rgb), 0.35);
+}
+
+/* Tarjeta inactiva — no se puede editar al hacer clic */
+.page-card.inactive {
+    cursor: default;
+    opacity: .7;
+}
+.page-card.inactive:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    border-color: var(--pg-card-border);
+}
+
+/* ── Ripple al clic ── */
+.card-ripple {
+    position: absolute;
+    border-radius: 50%;
+    width: 8px; height: 8px;
+    transform: translate(-50%, -50%) scale(0);
+    background: rgba(255, 255, 255, 0.28);
+    pointer-events: none;
+    animation: rippleExpand .55s ease-out forwards;
+    z-index: 10;
+}
+
+@keyframes rippleExpand {
+    0%   { transform: translate(-50%, -50%) scale(0);   opacity: .8; }
+    80%  { transform: translate(-50%, -50%) scale(40);  opacity: .2; }
+    100% { transform: translate(-50%, -50%) scale(55);  opacity: 0;  }
+}
+
+/* ── Hint "clic para editar" que aparece al hover ── */
+.page-card__footer {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Overlay de "Clic para editar" que se desliza desde abajo */
+.page-card:not(.inactive) .page-card__footer::after {
+    content: 'Clic para editar';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    color: rgba(var(--rgb), 1);
+    background: var(--pg-footer-bg);
+    border-top: 1px solid rgba(var(--rgb), 0.2);
+    opacity: 0;
+    transform: translateY(100%);
+    transition: opacity .22s ease, transform .22s ease;
+    pointer-events: none;
+}
+
+.page-card:not(.inactive):hover .page-card__footer::after {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* ── Card header coloreado ── */
@@ -259,7 +326,7 @@
 /* Controles en el header */
 .header-controls {
     display: flex; align-items: center; gap: 5px;
-    position: relative; z-index: 1;
+    position: relative; z-index: 2; /* z-index alto para capturar clicks */
     flex-shrink: 0;
 }
 .header-divider {
@@ -313,6 +380,7 @@
     padding: 9px 14px 10px;
     border-top: 1px solid var(--pg-footer-bdr);
     background: var(--pg-footer-bg);
+    min-height: 36px;
 }
 .page-card__footer > svg {
     width: 12px; height: 12px; flex-shrink: 0;
@@ -427,11 +495,11 @@
 /* ── Animaciones ── */
 @keyframes fadeDown { from { opacity:0; transform: translateY(-20px); } to { opacity:1; transform: translateY(0); } }
 @keyframes fadeUp   { from { opacity:0; transform: translateY(16px); }  to { opacity:1; transform: translateY(0); } }
-@keyframes pulse    { 0%,100% { box-shadow: 0 0 0 2px rgba(22,163,74,.2); } 50% { box-shadow: 0 0 0 4px rgba(22,163,74,.07); } }
 
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
-    .pages-header, .page-card, .filter-tabs { animation: none !important; opacity: 1 !important; transform: none !important; }
+    .pages-header, .page-card, .filter-tabs,
+    .card-ripple { animation: none !important; opacity: 1 !important; transform: none !important; }
 }
 
 /* ── Responsive ── */

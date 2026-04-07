@@ -10,6 +10,7 @@
   <meta name="keywords"    content="Ajal Lol, asistencia social, Yucatán, voluntariado, donaciones, comunidades mayas">
   <meta name="author"      content="Ajal Lol A.C.">
   <meta name="theme-color" content="#8b2252">
+  <meta name="csrf-token"  content="{{ csrf_token() }}">
 
   <!-- ── Open Graph ── -->
   <meta property="og:title"       content="Ajal Lol A.C. — Asistencia Social en Yucatán">
@@ -79,11 +80,11 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- ── JS propio (orden importante: utils primero) ── -->
-  <script src="{{ asset('assets/js/publicpages/utils.js') }}"></script>     {{-- Utilidades, cursor, preloader, animaciones --}}
-  <script src="{{ asset('assets/js/publicpages/header.js') }}"></script>    {{-- Header, nav, dropdown --}}
-  <script src="{{ asset('assets/js/publicpages/sections.js') }}" defer></script>  {{-- Contadores, marquee, FAQ --}}
-  <script src="{{ asset('assets/js/publicpages/portfolio.js') }}"></script> {{-- Year tabs, filtros, lightbox --}}
-  <script src="{{ asset('assets/js/publicpages/contact.js') }}"></script>   {{-- Formulario de contacto --}}
+  <script src="{{ asset('assets/js/publicpages/utils.js') }}"></script>
+  <script src="{{ asset('assets/js/publicpages/header.js') }}"></script>
+  <script src="{{ asset('assets/js/publicpages/sections.js') }}" defer></script>
+  <script src="{{ asset('assets/js/publicpages/portfolio.js') }}"></script>
+  <script src="{{ asset('assets/js/publicpages/contact.js') }}"></script>
 
 </body>
 </html>

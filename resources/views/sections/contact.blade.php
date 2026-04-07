@@ -57,6 +57,13 @@
 
         <form id="contact-form" novalidate aria-label="Formulario de contacto">
 
+          {{-- Honeypot: oculto para humanos, visible para bots --}}
+          <div style="display:none" aria-hidden="true">
+            <label for="website">No llenar</label>
+            <input type="text" id="website" name="website"
+                   tabindex="-1" autocomplete="off">
+          </div>
+
           <div class="form-row">
             <div class="form-group">
               <label for="name-field">Nombre completo</label>
@@ -75,7 +82,10 @@
               Teléfono <span style="font-weight:400;color:var(--text-light)">(opcional)</span>
             </label>
             <input type="tel" id="phone-field" name="phone"
-                   placeholder="+52 999 000 0000" autocomplete="tel">
+                   placeholder="+52 999 000 0000"
+                   autocomplete="tel"
+                   maxlength="17"
+                   pattern="(\+52\s?)?[\d\s\-]{10,15}">
           </div>
 
           <div class="form-group">

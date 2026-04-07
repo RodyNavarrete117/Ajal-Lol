@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FormController;
@@ -9,10 +12,20 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\ContactController;
+
+/* ── Rate limiter para el formulario de contacto ── */
+RateLimiter::for('contact', function (Request $request) {
+    return Limit::perMinutes(10, 3)->by($request->ip());
+});
 
 /* ===== RUTAS PÚBLICAS ===== */
 Route::get('/', fn() => view('index'));
 Route::get('/pagina', fn() => view('visualpage'));
+
+Route::post('/contact', [ContactController::class, 'store'])
+     ->middleware('throttle:contact')
+     ->name('contact.store');
 
 Route::get('/events/{year}', function ($year) {
     $yearsAllowed = ['2023', '2024', '2025'];

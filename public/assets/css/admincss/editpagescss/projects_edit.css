@@ -88,10 +88,6 @@
     transition: border-color var(--tr), background var(--tr);
     animation: fadeSlideUp 0.42s ease both;
 }
-.section-block:nth-child(2) { animation-delay: 0.10s; }
-.section-block:nth-child(3) { animation-delay: 0.18s; }
-.section-block:nth-child(4) { animation-delay: 0.26s; }
-
 .section-block__header {
     display: flex; align-items: flex-start; gap: 12px;
     margin-bottom: 18px; padding-bottom: 14px;
@@ -112,40 +108,6 @@
 .section-block__sub {
     font-size: 12px; color: var(--text-sub); margin-top: 2px; line-height: 1.5;
     transition: color var(--tr);
-}
-
-/* ══════════ TÍTULO FIJO ══════════ */
-.title-preview-row { margin-bottom: 16px; }
-.title-fixed-block {
-    display: inline-flex; align-items: center; gap: 12px;
-    background: var(--bg-input); border: 1.5px solid var(--border);
-    border-radius: 10px; padding: 12px 16px;
-    transition: background var(--tr), border-color var(--tr);
-}
-.title-fixed-label {
-    font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
-    text-transform: uppercase; color: var(--text-sub);
-    transition: color var(--tr);
-}
-.title-fixed-value {
-    font-size: 20px; font-weight: 800; color: var(--text-heading);
-    letter-spacing: -0.5px; transition: color var(--tr);
-}
-.title-fixed-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 11px; font-weight: 600;
-    color: var(--text-sub); background: var(--btn-cancel-bg);
-    padding: 4px 10px; border-radius: 20px;
-    transition: background var(--tr), color var(--tr);
-}
-
-/* ══════════ SUBTÍTULO FORM ══════════ */
-.subtitle-input-wrap {
-    display: flex; gap: 10px; align-items: stretch;
-}
-.subtitle-input-wrap input { flex: 1; }
-.btn-save--inline {
-    white-space: nowrap; padding: 10px 18px; flex-shrink: 0;
 }
 
 /* ══════════ FORM BASE ══════════ */
@@ -171,6 +133,16 @@
     outline: none; box-shadow: var(--shadow-focus);
 }
 .form-group textarea { resize: vertical; line-height: 1.6; }
+.form-group input[type="date"] { cursor: pointer; }
+
+/* ══════════ SUBTÍTULO INPUT WRAP ══════════ */
+.subtitle-input-wrap {
+    display: flex; gap: 10px; align-items: stretch;
+}
+.subtitle-input-wrap input { flex: 1; }
+.btn-save--inline {
+    white-space: nowrap; padding: 10px 18px; flex-shrink: 0;
+}
 
 /* ══════════ BUTTONS ══════════ */
 .btn-save, .btn-cancel {
@@ -192,43 +164,101 @@
 .btn-cancel:active { transform: scale(0.97); }
 .btn-cancel--sm { padding: 8px 14px; font-size: 12px; }
 
-/* ══════════ YEAR MANAGER ══════════ */
-.year-manager {
-    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+/* ══════════ YEAR ACCORDION LIST ══════════ */
+.year-accordion-list {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-bottom: 16px;
 }
-.year-tabs {
-    display: flex; flex-wrap: wrap; gap: 8px; flex: 1;
-}
-.year-tab {
-    display: inline-flex; align-items: center; gap: 0;
-    border: 1.5px solid var(--border); border-radius: 22px;
-    background: var(--bg-input); overflow: hidden;
-    cursor: pointer;
-    transition: border-color var(--tr), background var(--tr), box-shadow var(--tr);
-}
-.year-tab:hover { border-color: var(--accent); }
-.year-tab.active {
-    border-color: var(--accent); background: var(--accent);
-    box-shadow: 0 3px 10px rgba(125,63,106,0.22);
-}
-.year-tab__label {
-    padding: 8px 14px 8px 16px;
-    font-size: 13px; font-weight: 700;
-    color: var(--text-label);
-    transition: color var(--tr); user-select: none;
-}
-.year-tab.active .year-tab__label { color: #fff; }
-.year-tab__del {
-    padding: 0 10px 0 4px; border: none; background: transparent;
-    color: var(--text-sub); cursor: pointer; font-size: 11px;
-    display: flex; align-items: center; height: 100%;
-    transition: color var(--tr), background var(--tr);
-    border-radius: 0 20px 20px 0;
-}
-.year-tab__del:hover { color: #c0392b; background: rgba(192,57,43,0.08); }
-.year-tab.active .year-tab__del { color: rgba(255,255,255,0.7); }
-.year-tab.active .year-tab__del:hover { color: #fff; background: rgba(255,255,255,0.15); }
 
+/* ── Acordeón individual ── */
+.year-accordion {
+    border: 1.5px solid var(--border); border-radius: 12px;
+    overflow: hidden;
+    transition: border-color var(--tr), box-shadow var(--tr);
+    animation: fadeSlideUp 0.32s ease both;
+}
+.year-accordion.open {
+    border-color: var(--accent);
+    box-shadow: 0 4px 18px rgba(125,63,106,0.10);
+}
+
+/* ── Cabecera ── */
+.year-accordion__head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; cursor: pointer; user-select: none;
+    background: var(--bg-input);
+    transition: background var(--tr);
+    gap: 12px;
+}
+.year-accordion__head:hover { background: var(--accent-light); }
+.year-accordion.open .year-accordion__head {
+    background: var(--accent-light);
+    border-bottom: 1px solid var(--border);
+}
+
+.year-accordion__left {
+    display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0;
+}
+.year-accordion__num {
+    font-size: 20px; font-weight: 800; color: var(--accent);
+    letter-spacing: -0.5px; flex-shrink: 0;
+    transition: color var(--tr);
+}
+.year-accordion__preview-sub {
+    font-size: 13px; color: var(--text-sub);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-style: italic; transition: color var(--tr);
+}
+.year-accordion.open .year-accordion__preview-sub {
+    color: var(--text-label); font-style: normal;
+}
+
+.year-accordion__right {
+    display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.year-img-count {
+    font-size: 11px; font-weight: 600; color: var(--text-sub);
+    background: var(--bg-container); border: 1px solid var(--border);
+    padding: 3px 9px; border-radius: 10px;
+    transition: background var(--tr), border-color var(--tr), color var(--tr);
+}
+.year-del-btn {
+    width: 28px; height: 28px; border-radius: 7px;
+    border: 1px solid var(--border); background: var(--bg-container);
+    color: var(--text-sub); cursor: pointer; font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background var(--tr), color var(--tr), border-color var(--tr);
+}
+.year-del-btn:hover { background: #fdf0ee; border-color: #c0392b; color: #c0392b; }
+
+.year-chevron {
+    color: var(--text-sub); font-size: 12px;
+    transition: transform 0.25s ease, color var(--tr);
+    display: flex; align-items: center;
+}
+.year-accordion.open .year-chevron { transform: rotate(180deg); color: var(--accent); }
+
+/* ── Cuerpo del acordeón ── */
+.year-accordion__body {
+    padding: 20px 20px 22px;
+    display: none;
+    background: var(--bg-container);
+    transition: background var(--tr);
+}
+.year-accordion.open .year-accordion__body { display: block; }
+
+/* ── Formulario subtítulo del año ── */
+.year-subtitle-form-wrap {
+    margin-bottom: 20px; padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+    transition: border-color var(--tr);
+}
+
+/* ══════════ ADD YEAR BAR ══════════ */
+.add-year-bar {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    margin-top: 4px;
+}
 .btn-add-year {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 9px 16px; border: 1.5px dashed var(--accent);
@@ -240,10 +270,9 @@
 }
 .btn-add-year:hover { background: var(--accent-mid); transform: translateY(-1px); }
 
-/* Formulario agregar año */
 .add-year-form {
     display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-    margin-top: 14px; padding: 14px 16px;
+    padding: 12px 14px;
     background: var(--bg-input); border: 1.5px solid var(--border);
     border-radius: 10px; animation: fadeSlideUp 0.25s ease both;
     transition: background var(--tr), border-color var(--tr);
@@ -256,16 +285,7 @@
 }
 .new-year-input:focus { border-color: var(--border-focus); outline: none; box-shadow: var(--shadow-focus); }
 
-/* ══════════ YEAR CONTENT BADGE ══════════ */
-.year-content-badge {
-    display: inline-flex; align-items: center;
-    background: var(--accent); color: #fff;
-    font-size: 12px; font-weight: 700; padding: 3px 11px;
-    border-radius: 12px; letter-spacing: 0.3px;
-    transition: background var(--tr);
-}
-
-/* ══════════ CONTENT TABS (imágenes / categorías) ══════════ */
+/* ══════════ CONTENT TABS ══════════ */
 .content-tabs {
     display: flex; gap: 2px; margin-bottom: 20px;
     border-bottom: 2px solid var(--border);
@@ -337,16 +357,12 @@
     width:100%; height:100%; display:flex; align-items:center; justify-content:center;
     font-size:28px; color: var(--accent-mid);
 }
+/* Ya no hay year-badge — la fecha está en img-body */
 .cat-badge {
     position:absolute; top:8px; left:8px;
     background: rgba(0,0,0,0.50); color:#fff;
     font-size:10px; font-weight:600; padding:3px 9px; border-radius:10px;
     backdrop-filter:blur(4px);
-}
-.year-badge {
-    position:absolute; top:8px; right:8px;
-    background: var(--accent); color:#fff;
-    font-size:10px; font-weight:700; padding:3px 9px; border-radius:10px;
 }
 .img-overlay {
     position:absolute; inset:0; background:rgba(125,63,106,0.58);
@@ -362,7 +378,14 @@
 }
 .overlay-details-btn:hover { background:rgba(255,255,255,0.26); }
 
-.img-body { padding: 11px 12px; }
+.img-body { padding: 10px 12px 11px; }
+/* Fecha de la imagen */
+.img-date {
+    font-size:11px; color:var(--accent); font-weight:600;
+    margin-bottom:5px; display:flex; align-items:center; gap:5px;
+    transition: color var(--tr);
+}
+.img-date i { opacity:0.7; }
 .img-desc {
     font-size:12px; color:var(--text-sub); margin-bottom:9px; line-height:1.5; min-height:32px;
     display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
@@ -507,15 +530,6 @@
 }
 .btn-change-img:hover { border-color:var(--accent); color:var(--accent); }
 
-/* Modal year display */
-.modal-year-display {
-    display:inline-flex; align-items:center; gap:9px;
-    background:var(--accent-light); border:1.5px solid var(--accent-mid);
-    padding:10px 16px; border-radius:10px;
-    font-size:15px; font-weight:700; color:var(--accent);
-    transition:background var(--tr), border-color var(--tr), color var(--tr);
-}
-
 /* Featured checkbox */
 .check-row { display:flex; align-items:center; gap:9px; cursor:pointer; }
 .custom-check {
@@ -559,7 +573,8 @@
     to   { opacity:1; transform:translateY(0); }
 }
 @media (prefers-reduced-motion: reduce) {
-    .edit-container, .edit-header, .section-block, .img-modal { animation:none !important; transition:none !important; }
+    .edit-container, .edit-header, .section-block, .img-modal,
+    .year-accordion { animation:none !important; transition:none !important; }
 }
 
 /* ══════════ RESPONSIVE ══════════ */
@@ -568,8 +583,9 @@
     .subtitle { padding-left:0; }
     .subtitle-input-wrap { flex-direction:column; }
     .btn-save--inline { width:100%; justify-content:center; }
-    .year-manager { flex-direction:column; align-items:flex-start; }
+    .add-year-bar { flex-direction:column; align-items:flex-start; }
     .img-modal { padding:20px 16px; }
     .img-modal__footer { flex-direction:column; }
     .btn-save, .btn-cancel { width:100%; justify-content:center; }
+    .year-accordion__preview-sub { display:none; }
 }

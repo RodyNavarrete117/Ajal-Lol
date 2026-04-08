@@ -48,55 +48,111 @@
     }
 
     /* ════════════════════════════════════
-       ESTADO GLOBAL
+       FECHA DE HOY (formato YYYY-MM-DD)
     ════════════════════════════════════ */
-    let currentYear = document.querySelector('.year-tab.active')?.dataset.year || '2023';
-
-    /* ════════════════════════════════════
-       YEAR TABS
-    ════════════════════════════════════ */
-    const yearTabs = document.getElementById('yearTabs');
-
-    function setActiveYear(year) {
-        currentYear = year;
-
-        // Actualizar tabs
-        yearTabs?.querySelectorAll('.year-tab').forEach(t => {
-            const isActive = t.dataset.year === year;
-            t.classList.toggle('active', isActive);
-            t.setAttribute('aria-selected', String(isActive));
-        });
-
-        // Actualizar badge y etiquetas
-        const badge = document.getElementById('yearContentBadge');
-        if (badge) badge.textContent = year;
-        const catYearLabel = document.getElementById('catYearLabel');
-        if (catYearLabel) catYearLabel.textContent = year;
-
-        // Actualizar año en modal
-        const modalYearVal = document.getElementById('modalYearVal');
-        if (modalYearVal) modalYearVal.textContent = year;
-        const selectedYear = document.getElementById('selectedYear');
-        if (selectedYear) selectedYear.value = year;
+    function todayISO() {
+        const d = new Date();
+        return d.toISOString().split('T')[0];
     }
 
-    yearTabs?.addEventListener('click', e => {
-        // Clic en la etiqueta del año (no en el botón eliminar)
-        const tab = e.target.closest('.year-tab');
-        const delBtn = e.target.closest('.year-tab__del');
+    /* ════════════════════════════════════
+       ACORDEONES DE AÑO
+    ════════════════════════════════════ */
+    const accordionList = document.getElementById('yearAccordionList');
 
+    // Toggle abrir/cerrar al hacer clic en la cabecera
+    accordionList?.addEventListener('click', e => {
+        // Botón eliminar año
+        const delBtn = e.target.closest('.year-del-btn');
         if (delBtn) {
             e.stopPropagation();
             deleteYear(delBtn.dataset.year);
             return;
         }
-        if (tab) setActiveYear(tab.dataset.year);
+
+        // Clic en cabecera
+        const head = e.target.closest('.year-accordion__head');
+        if (!head) return;
+        const acc = head.closest('.year-accordion');
+        if (!acc) return;
+
+        const isOpen = acc.classList.contains('open');
+        // Cerrar todos primero (comportamiento acordeón)
+        accordionList.querySelectorAll('.year-accordion.open').forEach(a => {
+            if (a !== acc) {
+                a.classList.remove('open');
+                a.querySelector('.year-accordion__head')?.setAttribute('aria-expanded', 'false');
+            }
+        });
+        acc.classList.toggle('open', !isOpen);
+        head.setAttribute('aria-expanded', String(!isOpen));
     });
 
-    /* ── Agregar año ── */
-    const btnAddYear    = document.getElementById('btnAddYear');
-    const addYearForm   = document.getElementById('addYearForm');
-    const newYearInput  = document.getElementById('newYearInput');
+    // Teclado en cabecera
+    accordionList?.addEventListener('keydown', e => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        const head = e.target.closest('.year-accordion__head');
+        if (head) { e.preventDefault(); head.click(); }
+    });
+
+    /* ── Eliminar año ── */
+    function deleteYear(year) {
+        const accs = accordionList?.querySelectorAll('.year-accordion');
+        if (accs && accs.length <= 1) {
+            showToast('Debe existir al menos un año.', 'error');
+            return;
+        }
+        if (!confirm(`¿Eliminar el año ${year} y todo su contenido? Esta acción no se puede deshacer.`)) return;
+
+        const acc = accordionList?.querySelector(`.year-accordion[data-year="${year}"]`);
+        if (acc) {
+            acc.style.transition = 'opacity 0.22s, transform 0.22s';
+            acc.style.opacity = '0'; acc.style.transform = 'translateX(8px)';
+            setTimeout(() => acc.remove(), 230);
+        }
+        showToast(`Año ${year} eliminado.`);
+    }
+
+    /* ════════════════════════════════════
+       SUBTÍTULO DE AÑO — formularios
+    ════════════════════════════════════ */
+    accordionList?.addEventListener('submit', e => {
+        const form = e.target.closest('.year-subtitle-form');
+        if (!form) return;
+
+        if (!validateForm(form)) {
+            e.preventDefault();
+            showToast('Escribe un subtítulo para guardar.', 'error');
+            return;
+        }
+
+        // Actualizar el preview en la cabecera en tiempo real
+        const year  = form.dataset.year;
+        const input = form.querySelector('.year-subtitle-input');
+        const val   = input?.value.trim();
+        if (val) {
+            const preview = document.getElementById(`previewSub-${year}`);
+            if (preview) preview.textContent = val;
+        }
+        // Dejar que el form haga submit normalmente
+    });
+
+    // Preview en tiempo real mientras escribe
+    accordionList?.addEventListener('input', e => {
+        const input = e.target.closest('.year-subtitle-input');
+        if (!input) return;
+        const year = input.dataset.year;
+        const preview = document.getElementById(`previewSub-${year}`);
+        if (!preview) return;
+        preview.textContent = input.value.trim() || 'Sin subtítulo — haz clic para editar';
+    });
+
+    /* ════════════════════════════════════
+       AGREGAR NUEVO AÑO
+    ════════════════════════════════════ */
+    const btnAddYear     = document.getElementById('btnAddYear');
+    const addYearForm    = document.getElementById('addYearForm');
+    const newYearInput   = document.getElementById('newYearInput');
     const btnConfirmYear = document.getElementById('btnConfirmYear');
     const btnCancelYear  = document.getElementById('btnCancelYear');
 
@@ -117,16 +173,15 @@
     btnConfirmYear?.addEventListener('click', () => {
         const val = newYearInput?.value.trim();
         if (!val || isNaN(val) || val.length !== 4) {
-            showToast('Ingresa un año válido (ej: 2025).', 'error');
+            showToast('Ingresa un año válido (ej: 2026).', 'error');
             return;
         }
-        if (yearTabs?.querySelector(`.year-tab[data-year="${val}"]`)) {
+        if (accordionList?.querySelector(`.year-accordion[data-year="${val}"]`)) {
             showToast('Ese año ya existe.', 'error');
             return;
         }
-        addYearTab(val);
+        addYearAccordion(val);
         hideAddYearForm();
-        setActiveYear(val);
         showToast(`Año ${val} agregado.`);
     });
 
@@ -135,104 +190,147 @@
         if (e.key === 'Escape') hideAddYearForm();
     });
 
-    function addYearTab(year) {
-        const div = document.createElement('div');
-        div.className = 'year-tab';
-        div.dataset.year = year;
-        div.setAttribute('role', 'tab');
-        div.setAttribute('aria-selected', 'false');
-        div.innerHTML = `
-            <span class="year-tab__label">${year}</span>
-            <button class="year-tab__del" type="button" data-year="${year}" aria-label="Eliminar año ${year}">
-                <i class="fa fa-xmark"></i>
-            </button>`;
-        yearTabs?.appendChild(div);
-
-        // Agregar también al toggle del modal (si hay años en el modal)
-        addYearToModal(year);
-    }
-
-    function addYearToModal(year) {
-        // Solo actualiza el display, no el toggle — el año es fijo al del contexto
-    }
-
-    /* ── Eliminar año ── */
-    function deleteYear(year) {
-        const tabs = yearTabs?.querySelectorAll('.year-tab');
-        if (tabs && tabs.length <= 1) {
-            showToast('Debe existir al menos un año.', 'error');
-            return;
-        }
-        if (!confirm(`¿Eliminar el año ${year} y todo su contenido?`)) return;
-
-        const tab = yearTabs?.querySelector(`.year-tab[data-year="${year}"]`);
-        if (tab) {
-            tab.style.transition = 'opacity 0.2s, transform 0.2s';
-            tab.style.opacity = '0'; tab.style.transform = 'scale(0.88)';
-            setTimeout(() => {
-                tab.remove();
-                // Si era el activo, seleccionar el primero disponible
-                if (currentYear === year) {
-                    const first = yearTabs?.querySelector('.year-tab');
-                    if (first) setActiveYear(first.dataset.year);
-                }
-            }, 200);
-        }
-        showToast(`Año ${year} eliminado.`);
+    function addYearAccordion(year) {
+        const acc = document.createElement('div');
+        acc.className = 'year-accordion open';
+        acc.dataset.year = year;
+        acc.id = `acc-${year}`;
+        acc.innerHTML = `
+            <div class="year-accordion__head" role="button" tabindex="0" aria-expanded="true">
+                <div class="year-accordion__left">
+                    <span class="year-accordion__num">${year}</span>
+                    <span class="year-accordion__preview-sub" id="previewSub-${year}">Sin subtítulo — haz clic para editar</span>
+                </div>
+                <div class="year-accordion__right">
+                    <span class="year-img-count">0 img.</span>
+                    <button class="year-del-btn" type="button" data-year="${year}" title="Eliminar año ${year}">
+                        <i class="fa fa-trash-can"></i>
+                    </button>
+                    <span class="year-chevron"><i class="fa fa-chevron-down"></i></span>
+                </div>
+            </div>
+            <div class="year-accordion__body">
+                <div class="year-subtitle-form-wrap">
+                    <form method="POST" action="#" class="year-subtitle-form" data-year="${year}">
+                        <input type="hidden" name="_token" value="">
+                        <input type="hidden" name="_method" value="PUT">
+                        <input type="hidden" name="year" value="${year}">
+                        <div class="form-group subtitle-group">
+                            <label for="subtitulo-${year}">Subtítulo del año ${year}</label>
+                            <div class="subtitle-input-wrap">
+                                <input type="text" id="subtitulo-${year}" name="subtitulo"
+                                    value="" placeholder="Ej: Año en el que se ayudó a mucha gente..."
+                                    data-year="${year}" class="year-subtitle-input">
+                                <button type="submit" class="btn-save btn-save--inline">
+                                    <i class="fa fa-floppy-disk"></i> Guardar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="content-tabs" role="tablist" data-year="${year}">
+                    <button class="content-tab active" data-tab="images" data-year="${year}" type="button">
+                        <i class="fa fa-images"></i> Imágenes
+                    </button>
+                    <button class="content-tab" data-tab="categories" data-year="${year}" type="button">
+                        <i class="fa fa-tags"></i> Categorías
+                    </button>
+                </div>
+                <div class="tab-panel active" id="tabImages-${year}" data-year="${year}">
+                    <div class="img-toolbar">
+                        <div class="filter-wrap" id="catFilter-${year}" role="group">
+                            <button class="pill active" data-cat="todas" type="button">Todo</button>
+                        </div>
+                        <button class="btn-add-img" type="button" data-year="${year}">
+                            <i class="fa fa-plus"></i> Añadir imagen
+                        </button>
+                    </div>
+                    <div class="img-grid" id="imgGrid-${year}">
+                        <div class="img-empty" id="imgEmpty-${year}">
+                            <i class="fa fa-folder-open"></i>
+                            <p>No hay imágenes para ${year}. Añade la primera.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-panel" id="tabCategories-${year}" data-year="${year}" style="display:none">
+                    <div class="cat-manager">
+                        <p class="cat-manager__hint">Categorías del año <strong>${year}</strong>.</p>
+                        <div class="cat-list" id="catList-${year}"></div>
+                        <div class="cat-add-row">
+                            <input type="text" id="newCatInput-${year}" placeholder="Nueva categoría..."
+                                   class="new-cat-input" data-year="${year}">
+                            <button type="button" class="btn-save btn-save--sm btn-add-cat" data-year="${year}">
+                                <i class="fa fa-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        accordionList?.appendChild(acc);
     }
 
     /* ════════════════════════════════════
        CONTENT TABS (imágenes / categorías)
+       Delegado sobre accordionList
     ════════════════════════════════════ */
-    const tabPanels = {
-        images: document.getElementById('tabImages'),
-        categories: document.getElementById('tabCategories'),
-    };
+    accordionList?.addEventListener('click', e => {
+        const tab = e.target.closest('.content-tab');
+        if (!tab) return;
 
-    document.querySelectorAll('.content-tab').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.content-tab').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+        const year   = tab.dataset.year;
+        const target = tab.dataset.tab;
+        const acc    = document.getElementById(`acc-${year}`);
+        if (!acc) return;
 
-            const target = btn.dataset.tab;
-            Object.entries(tabPanels).forEach(([key, panel]) => {
-                if (!panel) return;
-                panel.style.display = key === target ? '' : 'none';
-                if (key === target) panel.classList.add('active');
-                else panel.classList.remove('active');
-            });
+        // Desactivar todos los tabs del mismo año
+        acc.querySelectorAll('.content-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Mostrar/ocultar paneles
+        const panels = { images: `tabImages-${year}`, categories: `tabCategories-${year}` };
+        Object.entries(panels).forEach(([key, id]) => {
+            const panel = document.getElementById(id);
+            if (!panel) return;
+            const show = key === target;
+            panel.style.display = show ? '' : 'none';
+            panel.classList.toggle('active', show);
         });
     });
 
     /* ════════════════════════════════════
-       FILTROS DE CATEGORÍA
+       FILTROS DE CATEGORÍA (delegado)
     ════════════════════════════════════ */
-    let activeCat = 'todas';
-
-    document.getElementById('catFilter')?.addEventListener('click', e => {
+    accordionList?.addEventListener('click', e => {
         const pill = e.target.closest('.pill');
-        if (!pill) return;
-        document.querySelectorAll('#catFilter .pill').forEach(p => p.classList.remove('active'));
+        if (!pill || e.target.closest('.content-tab')) return;
+
+        const filterWrap = pill.closest('[id^="catFilter-"]');
+        if (!filterWrap) return;
+
+        filterWrap.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
-        activeCat = pill.dataset.cat;
-        filterImages();
+
+        const year = filterWrap.id.replace('catFilter-', '');
+        const cat  = pill.dataset.cat;
+        filterImagesByYear(year, cat);
     });
 
-    function filterImages() {
-        const cards = document.querySelectorAll('#imgGrid .img-card');
+    function filterImagesByYear(year, cat) {
+        const grid  = document.getElementById(`imgGrid-${year}`);
+        if (!grid) return;
         let visible = 0;
-        cards.forEach(card => {
-            const show = activeCat === 'todas' || card.dataset.cat === activeCat;
+        grid.querySelectorAll('.img-card').forEach(card => {
+            const show = cat === 'todas' || card.dataset.cat === cat;
             card.style.display = show ? '' : 'none';
             if (show) visible++;
         });
-        let empty = document.getElementById('imgEmpty');
+        let empty = document.getElementById(`imgEmpty-${year}`);
         if (visible === 0) {
             if (!empty) {
                 empty = document.createElement('div');
-                empty.id = 'imgEmpty'; empty.className = 'img-empty';
+                empty.id = `imgEmpty-${year}`; empty.className = 'img-empty';
                 empty.innerHTML = '<i class="fa fa-folder-open"></i><p>No hay imágenes con este filtro.</p>';
-                document.getElementById('imgGrid')?.appendChild(empty);
+                grid.appendChild(empty);
             }
             empty.style.display = '';
         } else if (empty) {
@@ -241,45 +339,52 @@
     }
 
     /* ════════════════════════════════════
-       CATEGORY MANAGER
+       CATEGORY MANAGER (delegado)
     ════════════════════════════════════ */
-    const catList = document.getElementById('catList');
-
-    catList?.addEventListener('click', e => {
+    accordionList?.addEventListener('click', e => {
+        // Eliminar categoría
         const delBtn = e.target.closest('.cat-item__del');
-        if (!delBtn) return;
-        const item = delBtn.closest('.cat-item');
-        const catName = item?.dataset.cat;
-        if (!catName) return;
+        if (delBtn) {
+            const item    = delBtn.closest('.cat-item');
+            const catName = item?.dataset.cat;
+            const year    = item?.dataset.year;
+            if (!catName) return;
+            item.style.transition = 'opacity 0.2s, transform 0.2s';
+            item.style.opacity = '0'; item.style.transform = 'translateX(8px)';
+            setTimeout(() => {
+                item.remove();
+                document.querySelector(`#catFilter-${year} .pill[data-cat="${catName}"]`)?.remove();
+            }, 200);
+            showToast(`Categoría "${catName}" eliminada.`);
+            return;
+        }
 
-        item.style.transition = 'opacity 0.2s, transform 0.2s';
-        item.style.opacity = '0'; item.style.transform = 'translateX(8px)';
-        setTimeout(() => {
-            item.remove();
-            // Quitar también del filtro de imágenes
-            removePillFromFilter(catName);
-        }, 200);
-        showToast(`Categoría "${catName}" eliminada.`);
+        // Agregar categoría
+        const addBtn = e.target.closest('.btn-add-cat');
+        if (addBtn) {
+            addCategory(addBtn.dataset.year);
+            return;
+        }
     });
 
-    document.getElementById('btnAddCat')?.addEventListener('click', addCategory);
-    document.getElementById('newCatInput')?.addEventListener('keydown', e => {
-        if (e.key === 'Enter') addCategory();
+    accordionList?.addEventListener('keydown', e => {
+        if (e.key !== 'Enter') return;
+        const input = e.target.closest('.new-cat-input');
+        if (input) addCategory(input.dataset.year);
     });
 
-    function addCategory() {
-        const input = document.getElementById('newCatInput');
-        const val = input?.value.trim();
+    function addCategory(year) {
+        const input = document.getElementById(`newCatInput-${year}`);
+        const val   = input?.value.trim();
         if (!val) { showToast('Escribe un nombre de categoría.', 'error'); return; }
 
-        // Verificar duplicado
+        const catList = document.getElementById(`catList-${year}`);
         const exists = Array.from(catList?.querySelectorAll('.cat-item__name') || [])
-                            .some(el => el.textContent.toLowerCase() === val.toLowerCase());
+                           .some(el => el.textContent.toLowerCase() === val.toLowerCase());
         if (exists) { showToast('Esa categoría ya existe.', 'error'); return; }
 
-        // Añadir a la lista
         const item = document.createElement('div');
-        item.className = 'cat-item'; item.dataset.cat = val;
+        item.className = 'cat-item'; item.dataset.cat = val; item.dataset.year = year;
         item.innerHTML = `
             <span class="cat-item__dot"></span>
             <span class="cat-item__name">${val}</span>
@@ -288,50 +393,36 @@
             </button>`;
         catList?.appendChild(item);
 
-        // Añadir pill al filtro y al select del modal
-        addPillToFilter(val);
-        addOptionToSelect(val);
+        // Pill al filtro del año
+        const filterWrap = document.getElementById(`catFilter-${year}`);
+        if (filterWrap) {
+            const btn = document.createElement('button');
+            btn.className = 'pill'; btn.dataset.cat = val; btn.type = 'button'; btn.textContent = val;
+            filterWrap.appendChild(btn);
+        }
+
+        // Opción al select del modal si coincide con año activo
+        const selectedYear = document.getElementById('selectedYear');
+        if (selectedYear?.value === year) {
+            const sel = document.getElementById('catInput');
+            if (sel) {
+                const opt = document.createElement('option');
+                opt.value = val; opt.textContent = val;
+                sel.appendChild(opt);
+            }
+        }
 
         if (input) input.value = '';
         showToast(`Categoría "${val}" agregada.`);
     }
 
-    function addPillToFilter(val) {
-        const filter = document.getElementById('catFilter');
-        if (!filter) return;
-        const btn = document.createElement('button');
-        btn.className = 'pill'; btn.dataset.cat = val;
-        btn.type = 'button'; btn.textContent = val;
-        filter.appendChild(btn);
-    }
-    function removePillFromFilter(val) {
-        document.querySelector(`#catFilter .pill[data-cat="${val}"]`)?.remove();
-    }
-    function addOptionToSelect(val) {
-        const sel = document.getElementById('catInput');
-        if (!sel) return;
-        const opt = document.createElement('option');
-        opt.value = val; opt.textContent = val;
-        sel.appendChild(opt);
-    }
-
-    /* ════════════════════════════════════
-       TEXTOS FORM
-    ════════════════════════════════════ */
-    document.querySelector('.texts-form')?.addEventListener('submit', function (e) {
-        if (!validateForm(this)) {
-            e.preventDefault();
-            showToast('Por favor completa los campos obligatorios.', 'error');
-        }
-    });
-
     /* ════════════════════════════════════
        MODAL — abrir / cerrar
     ════════════════════════════════════ */
-    const modalBg    = document.getElementById('imgModalBg');
-    const modalForm  = document.getElementById('imgModalForm');
-    const modalTitle = document.getElementById('imgModalTitle');
-    const modalSub   = document.getElementById('imgModalSub');
+    const modalBg     = document.getElementById('imgModalBg');
+    const modalForm   = document.getElementById('imgModalForm');
+    const modalTitle  = document.getElementById('imgModalTitle');
+    const modalSub    = document.getElementById('imgModalSub');
     const methodField = document.getElementById('methodField');
 
     function openModal() {
@@ -355,23 +446,27 @@
     modalBg?.addEventListener('click', e => { if (e.target === modalBg) closeModal(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-    /* ── Añadir imagen ── */
-    document.getElementById('btnAddImage')?.addEventListener('click', () => {
+    /* ── Añadir imagen (delegado en accordionList) ── */
+    accordionList?.addEventListener('click', e => {
+        const addBtn = e.target.closest('.btn-add-img');
+        if (!addBtn) return;
+
+        const year = addBtn.dataset.year;
+        document.getElementById('selectedYear').value = year;
+
         if (modalTitle) modalTitle.textContent = 'Añadir Imagen del Proyecto';
-        if (modalSub)   modalSub.textContent   = `Nueva imagen para el año ${currentYear}`;
+        if (modalSub)   modalSub.textContent   = `Nueva imagen para el año ${year}`;
         if (methodField) methodField.innerHTML = '';
 
-        // Mostrar año actual en el modal
-        const modalYearVal = document.getElementById('modalYearVal');
-        if (modalYearVal) modalYearVal.textContent = currentYear;
-        const selectedYear = document.getElementById('selectedYear');
-        if (selectedYear) selectedYear.value = currentYear;
+        // Fecha por defecto: hoy
+        const dateInput = document.getElementById('eventDateInput');
+        if (dateInput) dateInput.value = todayISO();
 
         openModal();
     });
 
-    /* ── Editar imagen ── */
-    document.getElementById('imgGrid')?.addEventListener('click', e => {
+    /* ── Editar imagen (delegado en accordionList) ── */
+    accordionList?.addEventListener('click', e => {
         const editBtn = e.target.closest('.btn-edit-img');
         if (!editBtn) return;
 
@@ -379,29 +474,36 @@
         const card = document.querySelector(`.img-card[data-id="${id}"]`);
         if (!card) return;
 
+        const year = card.dataset.year;
+        document.getElementById('selectedYear').value = year;
+
         if (modalTitle) modalTitle.textContent = `Editar Imagen — ID: ${id}`;
-        if (modalSub)   modalSub.textContent   = 'Modifica los datos de esta imagen del proyecto';
+        if (modalSub)   modalSub.textContent   = 'Modifica los datos de esta imagen';
         if (methodField) methodField.innerHTML = `<input type="hidden" name="_method" value="PUT">`;
 
         const updateUrl = editBtn.dataset.updateUrl;
         if (updateUrl && modalForm) modalForm.action = updateUrl;
 
-        // Prellenar
+        // Prellenar descripción
         const desc = card.querySelector('.img-desc')?.textContent?.trim() ?? '';
-        const year = card.dataset.year;
-        const cat  = card.dataset.cat;
-        const imgEl = card.querySelector('.img-thumb img');
-
         const descInput = document.getElementById('imgDescInput');
         if (descInput) descInput.value = desc === 'Sin descripción.' ? '' : desc;
 
-        // Año fijo en modal
-        const modalYearVal = document.getElementById('modalYearVal');
-        if (modalYearVal) modalYearVal.textContent = year;
-        const selectedYear = document.getElementById('selectedYear');
-        if (selectedYear) selectedYear.value = year;
+        // Prellenar fecha — leer del badge de fecha de la card
+        const dateText = card.querySelector('.img-date')?.textContent?.trim().replace(/[^0-9/]/g, '') ?? '';
+        const dateInput = document.getElementById('eventDateInput');
+        if (dateInput) {
+            if (dateText && dateText.includes('/')) {
+                // Convertir DD/MM/YYYY → YYYY-MM-DD
+                const [dd, mm, yyyy] = dateText.split('/');
+                dateInput.value = `${yyyy}-${mm}-${dd}`;
+            } else {
+                dateInput.value = todayISO();
+            }
+        }
 
         // Categoría
+        const cat    = card.dataset.cat;
         const catSel = document.getElementById('catInput');
         if (catSel) {
             for (let i = 0; i < catSel.options.length; i++) {
@@ -409,6 +511,7 @@
             }
         }
 
+        const imgEl = card.querySelector('.img-thumb img');
         if (imgEl) showPreview(imgEl.src);
         else resetUploadZone();
 
@@ -482,9 +585,9 @@
     });
 
     /* ════════════════════════════════════
-       ELIMINAR IMAGEN
+       ELIMINAR IMAGEN (delegado)
     ════════════════════════════════════ */
-    document.getElementById('imgGrid')?.addEventListener('click', e => {
+    accordionList?.addEventListener('click', e => {
         const delBtn = e.target.closest('.btn-del-img');
         if (!delBtn) return;
 
@@ -493,34 +596,42 @@
 
         if (!confirm('¿Eliminar esta imagen? Esta acción no se puede deshacer.')) return;
 
-        if (!url || url === '#') {
-            // Sin backend aún: eliminar del DOM directamente
-            const card = document.querySelector(`.img-card[data-id="${id}"]`);
+        const card = document.querySelector(`.img-card[data-id="${id}"]`);
+        const year = card?.dataset.year;
+
+        const removeCard = () => {
             if (card) {
                 card.style.transition = 'opacity 0.22s, transform 0.22s';
                 card.style.opacity = '0'; card.style.transform = 'scale(0.95)';
-                setTimeout(() => { card.remove(); filterImages(); }, 230);
+                setTimeout(() => {
+                    card.remove();
+                    if (year) {
+                        const filter = document.getElementById(`catFilter-${year}`)
+                            ?.querySelector('.pill.active')?.dataset.cat || 'todas';
+                        filterImagesByYear(year, filter);
+                        updateImgCount(year);
+                    }
+                }, 230);
             }
             showToast('Imagen eliminada.');
-            return;
-        }
+        };
+
+        if (!url || url === '#') { removeCard(); return; }
 
         const token = document.querySelector('meta[name="csrf-token"]')?.content
                    || document.querySelector('input[name="_token"]')?.value || '';
-
         fetch(url, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' } })
             .then(res => { if (!res.ok) throw new Error(); return res.json(); })
-            .then(() => {
-                const card = document.querySelector(`.img-card[data-id="${id}"]`);
-                if (card) {
-                    card.style.transition = 'opacity 0.22s, transform 0.22s';
-                    card.style.opacity = '0'; card.style.transform = 'scale(0.95)';
-                    setTimeout(() => { card.remove(); filterImages(); }, 230);
-                }
-                showToast('Imagen eliminada.');
-            })
+            .then(removeCard)
             .catch(() => showToast('No se pudo eliminar la imagen.', 'error'));
     });
+
+    /* Actualizar contador de imágenes en cabecera del acordeón */
+    function updateImgCount(year) {
+        const count = document.getElementById(`imgGrid-${year}`)?.querySelectorAll('.img-card').length ?? 0;
+        const badge = document.querySelector(`#acc-${year} .year-img-count`);
+        if (badge) badge.textContent = `${count} img.`;
+    }
 
     /* ════════════════════════════════════
        ESTILOS JS — toast + errores

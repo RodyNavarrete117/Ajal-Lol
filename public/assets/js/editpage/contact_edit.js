@@ -2,6 +2,8 @@
 (function () {
     'use strict';
 
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
     /* ── Toast ─────────────────────────────────────────── */
     function showToast(message, type = 'success') {
         const existing = document.querySelector('.edit-toast');
@@ -40,7 +42,7 @@
         });
     });
 
-    /* ── Validación ──────────────────────────────────────── */
+    /* ── Validación ─────────────────────────────────────── */
     function validateForm(form) {
         let valid = true;
 
@@ -52,14 +54,12 @@
             }
         });
 
-        // Validar formato de email
         const correo = form.querySelector('#correo');
         if (correo && correo.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.value.trim())) {
             markError(correo, 'Ingresa un correo electrónico válido.');
             valid = false;
         }
 
-        // Validar URLs: solo Facebook, Instagram y LinkedIn
         ['facebook', 'instagram', 'linkedin'].forEach(red => {
             const input = form.querySelector(`#${red}`);
             if (input && input.value.trim()) {
@@ -79,7 +79,7 @@
         clearError(field);
         field.classList.add('field--error');
         const err = document.createElement('span');
-        err.className = 'field-error-msg';
+        err.className   = 'field-error-msg';
         err.textContent = msg;
         field.insertAdjacentElement('afterend', err);
         field.addEventListener('input', () => clearError(field), { once: true });
@@ -141,7 +141,7 @@
     const direccion = document.getElementById('direccion');
     if (direccion) {
         const counter = document.createElement('span');
-        counter.className = 'field-hint';
+        counter.className   = 'field-hint';
         counter.style.textAlign = 'right';
         counter.textContent = `${direccion.value.length} caracteres`;
         direccion.insertAdjacentElement('afterend', counter);
@@ -161,11 +161,11 @@
         });
     }
 
-    /* ── Submit ──────────────────────────────────────────── */
-    const form = document.querySelector('.edit-container form');
+    /* ── Submit con fetch ────────────────────────────────── */
+    const form = document.getElementById('contact-edit-form');
     if (!form) return;
 
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
         if (!validateForm(form)) {
@@ -184,8 +184,38 @@
             return;
         }
 
-        showToast('Cambios guardados correctamente.', 'success');
-        /* TODO: reemplazar con fetch/axios o form.submit() */
+        /* Estado: guardando */
+        const btns = form.querySelectorAll('.btn-save');
+        btns.forEach(btn => {
+            btn.disabled   = true;
+            btn.innerHTML  = '<i class="fa fa-spinner fa-spin" style="margin-right:7px;"></i> Guardando…';
+        });
+
+        try {
+            const response = await fetch(form.action, {
+                method:  'POST',
+                body:    new FormData(form),
+                headers: { 'X-CSRF-TOKEN': csrfToken },
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.message || 'Error al guardar.', 'error');
+            }
+
+        } catch (err) {
+            console.error('contact_edit error:', err);
+            showToast('Error de conexión. Intenta de nuevo.', 'error');
+
+        } finally {
+            btns.forEach(btn => {
+                btn.disabled  = false;
+                btn.innerHTML = '<i class="fa fa-floppy-disk" style="margin-right:7px;"></i> Guardar Cambios';
+            });
+        }
     });
 
 })();

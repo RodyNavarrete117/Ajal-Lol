@@ -13,6 +13,7 @@ use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\EditPageContactController; // ← NUEVO
 
 /* ── Rate limiter para el formulario de contacto ── */
 RateLimiter::for('contact', function (Request $request) {
@@ -99,14 +100,17 @@ Route::middleware(['admin'])->group(function () {
 
     /* ===== EDICIÓN DE PÁGINAS ===== */
     Route::prefix('admin/pages')->group(function () {
-        Route::get('/home/edit', fn() => view('admin.pages.home_edit'))->name('admin.pages.home.edit');
-        Route::get('/about/edit', fn() => view('admin.pages.about_edit'))->name('admin.pages.about.edit');
-        Route::get('/allies/edit', fn() => view('admin.pages.allies_edit'))->name('admin.pages.allies.edit');
+        Route::get('/home/edit',       fn() => view('admin.pages.home_edit'))->name('admin.pages.home.edit');
+        Route::get('/about/edit',      fn() => view('admin.pages.about_edit'))->name('admin.pages.about.edit');
+        Route::get('/allies/edit',     fn() => view('admin.pages.allies_edit'))->name('admin.pages.allies.edit');
         Route::get('/activities/edit', fn() => view('admin.pages.activities_edit'))->name('admin.pages.activities.edit');
-        Route::get('/projects/edit', fn() => view('admin.pages.projects_edit'))->name('admin.pages.projects.edit');
-        Route::get('/board/edit', fn() => view('admin.pages.board_edit'))->name('admin.pages.board.edit');
-        Route::get('/faq/edit', fn() => view('admin.pages.faq_edit'))->name('admin.pages.faq.edit');
-        Route::get('/contact/edit', fn() => view('admin.pages.contact_edit'))->name('admin.pages.contact.edit');
+        Route::get('/projects/edit',   fn() => view('admin.pages.projects_edit'))->name('admin.pages.projects.edit');
+        Route::get('/board/edit',      fn() => view('admin.pages.board_edit'))->name('admin.pages.board.edit');
+        Route::get('/faq/edit',        fn() => view('admin.pages.faq_edit'))->name('admin.pages.faq.edit');
+
+        /* ── Contacto: ahora usa controlador real ── */
+        Route::get('/contact/edit',    [EditPageContactController::class, 'index'])->name('admin.pages.contact.edit');
+        Route::put('/contact/update',  [EditPageContactController::class, 'update'])->name('admin.pages.contact.update');
     });
 
     /* ===== NOTIFICACIONES (API) ===== */

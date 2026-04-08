@@ -22,13 +22,24 @@
     <div class="footer-about">
       <span class="sitename">Ajal-lol A.C.</span>
       <address style="font-style:normal">
-        <p>Calle 24 # 99 x 21 y 19 Col. Centro, Hoctún, Yucatán.<br>
-           Lun–Vie · 9:00 a.m. – 1:00 p.m.</p>
+        <p>
+          {{ $contacto->direccion_contacto }}<br>
+          {{ $contacto->horario_contacto }}
+        </p>
         <p style="margin-top:.75rem">
+          @if($contacto->telefono_contacto)
           <i class="bi bi-telephone" aria-hidden="true"></i>&nbsp;
-          <a href="tel:+529991773532" style="color:inherit">+52 999 177 3532</a><br>
+          <a href="tel:{{ preg_replace('/\s+/', '', $contacto->telefono_contacto) }}"
+             style="color:inherit">
+            {{ $contacto->telefono_contacto }}
+          </a><br>
+          @endif
+          @if($contacto->email_contacto)
           <i class="bi bi-envelope" aria-hidden="true"></i>&nbsp;
-          <a href="mailto:ajal-lol@hotmail.com" style="color:inherit">ajal-lol@hotmail.com</a>
+          <a href="mailto:{{ $contacto->email_contacto }}" style="color:inherit">
+            {{ $contacto->email_contacto }}
+          </a>
+          @endif
         </p>
       </address>
     </div>
@@ -51,21 +62,27 @@
         Mantente informado de nuestras actividades.
       </p>
       <div class="social-row" role="list" aria-label="Redes sociales">
-        <a href="https://www.facebook.com/p/Ajal-Lol-AC-100064161455063/"
+        @if($contacto->facebook_url)
+        <a href="{{ $contacto->facebook_url }}"
            aria-label="Facebook de Ajal Lol" role="listitem"
            target="_blank" rel="noopener noreferrer">
           <i class="bi bi-facebook" aria-hidden="true"></i>
         </a>
-        <a href="https://www.instagram.com/ajal_lol/?hl=es-la"
+        @endif
+        @if($contacto->instagram_url)
+        <a href="{{ $contacto->instagram_url }}"
            aria-label="Instagram de Ajal Lol" role="listitem"
            target="_blank" rel="noopener noreferrer">
           <i class="bi bi-instagram" aria-hidden="true"></i>
         </a>
-        <a href="https://mx.linkedin.com/in/ajal-lol-a-c-103b811a0"
+        @endif
+        @if($contacto->linkedin_url)
+        <a href="{{ $contacto->linkedin_url }}"
            aria-label="LinkedIn de Ajal Lol" role="listitem"
            target="_blank" rel="noopener noreferrer">
           <i class="bi bi-linkedin" aria-hidden="true"></i>
         </a>
+        @endif
       </div>
     </div>
 

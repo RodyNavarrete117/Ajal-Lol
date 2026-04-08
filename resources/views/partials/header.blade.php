@@ -6,26 +6,36 @@
 
       <address class="contact-info" style="font-style:normal">
         <i class="bi bi-envelope" aria-hidden="true">
-          <a href="mailto:ajal-lol@hotmail.com">ajal-lol@hotmail.com</a>
+          <a href="mailto:{{ $contacto->email_contacto }}">
+            {{ $contacto->email_contacto }}
+          </a>
         </i>
         <i class="bi bi-telephone" aria-hidden="true">
-          <a href="tel:+529991773532">+52 999 177 3532</a>
+          <a href="tel:{{ preg_replace('/\s+/', '', $contacto->telefono_contacto) }}">
+            {{ $contacto->telefono_contacto }}
+          </a>
         </i>
       </address>
 
       <div class="social-links" role="list" aria-label="Redes sociales">
-        <a href="https://www.facebook.com/p/Ajal-Lol-AC-100064161455063/"
+        @if($contacto->facebook_url)
+        <a href="{{ $contacto->facebook_url }}"
            aria-label="Facebook" role="listitem" target="_blank" rel="noopener noreferrer">
           <i class="bi bi-facebook" aria-hidden="true"></i>
         </a>
-        <a href="https://www.instagram.com/ajal_lol/?hl=es-la"
+        @endif
+        @if($contacto->instagram_url)
+        <a href="{{ $contacto->instagram_url }}"
            aria-label="Instagram" role="listitem" target="_blank" rel="noopener noreferrer">
           <i class="bi bi-instagram" aria-hidden="true"></i>
         </a>
-        <a href="https://mx.linkedin.com/in/ajal-lol-a-c-103b811a0"
+        @endif
+        @if($contacto->linkedin_url)
+        <a href="{{ $contacto->linkedin_url }}"
            aria-label="LinkedIn" role="listitem" target="_blank" rel="noopener noreferrer">
           <i class="bi bi-linkedin" aria-hidden="true"></i>
         </a>
+        @endif
       </div>
 
     </div>
@@ -51,7 +61,6 @@
             </a>
           </li>
 
-          {{-- Nosotros con dropdown --}}
           <li class="nav-dropdown" role="none">
             <a href="{{ url('/#about') }}" class="nav-dropdown-toggle" role="menuitem"
                aria-haspopup="true" aria-expanded="false">
@@ -85,7 +94,6 @@
             </a>
           </li>
 
-          {{-- Proyectos con dropdown de años --}}
           <li class="nav-dropdown nav-dropdown-proyectos" role="none">
             <a href="{{ url('/#portfolio') }}" class="nav-dropdown-toggle" role="menuitem"
                aria-haspopup="true" aria-expanded="false">

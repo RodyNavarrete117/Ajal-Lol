@@ -41,11 +41,15 @@
             </button>
         </div>
 
-        <form method="POST" action="#">
+        <form id="contact-edit-form"
+              method="POST"
+              action="{{ route('admin.pages.contact.update') }}">
             @csrf
+            @method('PUT')
 
             {{-- ══ PANEL: Información general ══ --}}
             <div class="edit-panel active" id="panel-info">
+
                 <div class="panel-section-title">
                     <i class="fa fa-circle-info"></i>
                     Información general
@@ -63,7 +67,7 @@
                             type="email"
                             id="correo"
                             name="correo"
-                            value="{{ old('correo', 'ajal-lol@hotmail.com') }}"
+                            value="{{ old('correo', $contacto->email_contacto ?? '') }}"
                             placeholder="correo@ejemplo.com"
                             required
                         >
@@ -82,7 +86,7 @@
                             type="text"
                             id="telefono"
                             name="telefono"
-                            value="{{ old('telefono', '+52 999 177 3532') }}"
+                            value="{{ old('telefono', $contacto->telefono_contacto ?? '') }}"
                             placeholder="+52 000 000 0000"
                             required
                         >
@@ -102,7 +106,7 @@
                         name="direccion"
                         rows="2"
                         placeholder="Calle, número, colonia, ciudad..."
-                    >{{ old('direccion', 'Calle 24 # 99 × 21 y 19 Col. Centro, Hoctún, Yucatán.') }}</textarea>
+                    >{{ old('direccion', $contacto->direccion_contacto ?? '') }}</textarea>
                 </div>
 
                 <div class="form-group">
@@ -114,7 +118,7 @@
                         type="text"
                         id="horario"
                         name="horario"
-                        value="{{ old('horario', 'Lun–Vie · 9:00 a.m. – 1:00 p.m.') }}"
+                        value="{{ old('horario', $contacto->horario_contacto ?? '') }}"
                         placeholder="Ej: Lun–Vie · 9:00 a.m. – 1:00 p.m."
                     >
                 </div>
@@ -124,12 +128,15 @@
                         <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
                         Guardar Cambios
                     </button>
-                    <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
+                    <button type="button" class="btn-cancel" onclick="window.history.back()">
+                        Cancelar
+                    </button>
                 </div>
             </div>
 
-            {{-- ══ PANEL: Redes sociales (solo FB, IG, LinkedIn) ══ --}}
+            {{-- ══ PANEL: Redes sociales ══ --}}
             <div class="edit-panel" id="panel-redes">
+
                 <div class="panel-section-title">
                     <i class="fa fa-share-nodes"></i>
                     Redes sociales
@@ -144,12 +151,14 @@
                             Facebook
                         </label>
                         <div class="input-with-prefix">
-                            <span class="input-prefix"><i class="fa-brands fa-facebook"></i></span>
+                            <span class="input-prefix">
+                                <i class="fa-brands fa-facebook"></i>
+                            </span>
                             <input
                                 type="url"
                                 id="facebook"
                                 name="facebook"
-                                value="{{ old('facebook') }}"
+                                value="{{ old('facebook', $contacto->facebook_url ?? '') }}"
                                 placeholder="https://facebook.com/tu-pagina"
                             >
                         </div>
@@ -161,12 +170,14 @@
                             Instagram
                         </label>
                         <div class="input-with-prefix">
-                            <span class="input-prefix"><i class="fa-brands fa-instagram"></i></span>
+                            <span class="input-prefix">
+                                <i class="fa-brands fa-instagram"></i>
+                            </span>
                             <input
                                 type="url"
                                 id="instagram"
                                 name="instagram"
-                                value="{{ old('instagram') }}"
+                                value="{{ old('instagram', $contacto->instagram_url ?? '') }}"
                                 placeholder="https://instagram.com/tu-perfil"
                             >
                         </div>
@@ -178,12 +189,14 @@
                             LinkedIn
                         </label>
                         <div class="input-with-prefix">
-                            <span class="input-prefix"><i class="fa-brands fa-linkedin"></i></span>
+                            <span class="input-prefix">
+                                <i class="fa-brands fa-linkedin"></i>
+                            </span>
                             <input
                                 type="url"
                                 id="linkedin"
                                 name="linkedin"
-                                value="{{ old('linkedin') }}"
+                                value="{{ old('linkedin', $contacto->linkedin_url ?? '') }}"
                                 placeholder="https://linkedin.com/company/tu-empresa"
                             >
                         </div>
@@ -196,19 +209,21 @@
                         <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
                         Guardar Cambios
                     </button>
-                    <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
+                    <button type="button" class="btn-cancel" onclick="window.history.back()">
+                        Cancelar
+                    </button>
                 </div>
             </div>
 
-            {{-- ══ PANEL: Mapa (apilado, ancho completo) ══ --}}
+            {{-- ══ PANEL: Mapa ══ --}}
             <div class="edit-panel" id="panel-mapa">
+
                 <div class="panel-section-title">
                     <i class="fa fa-map"></i>
                     Mapa de Google
                     <span class="panel-section-hint">Copia el código embed desde Google Maps</span>
                 </div>
 
-                {{-- Instrucciones ── --}}
                 <div class="mapa-steps-bar">
                     <div class="mapa-step">
                         <span class="mapa-step__num">1</span>
@@ -224,7 +239,6 @@
                     </div>
                 </div>
 
-                {{-- Textarea código ── --}}
                 <div class="form-group">
                     <label for="mapa_embed">
                         <i class="fa fa-code"></i>
@@ -235,21 +249,29 @@
                         name="mapa_embed"
                         rows="5"
                         placeholder='&lt;iframe src="https://www.google.com/maps/embed?..." ...&gt;&lt;/iframe&gt;'
-                    >{{ old('mapa_embed') }}</textarea>
-                    <span class="field-hint">En Google Maps → Compartir → Incorporar un mapa → Copiar HTML</span>
+                    >{{ old('mapa_embed', $contacto->mapa_embed ?? '') }}</textarea>
+                    <span class="field-hint">
+                        En Google Maps → Compartir → Incorporar un mapa → Copiar HTML
+                    </span>
                 </div>
 
-                {{-- Vista previa ── --}}
                 <div class="mapa-preview-label">
                     <i class="fa fa-eye"></i>
                     Vista previa del mapa
                 </div>
+
                 <div class="map-preview" id="mapPreview">
-                    <div class="map-preview__empty" id="mapEmpty">
+                    <div class="map-preview__empty" id="mapEmpty"
+                         style="{{ ($contacto->mapa_embed ?? '') ? 'display:none' : 'display:flex' }}">
                         <i class="fa fa-map-location-dot"></i>
                         <span>La vista previa aparecerá aquí cuando pegues el código</span>
                     </div>
-                    <div class="map-preview__frame" id="mapFrame" style="display:none;"></div>
+                    <div class="map-preview__frame" id="mapFrame"
+                         style="{{ ($contacto->mapa_embed ?? '') ? 'display:block' : 'display:none' }}">
+                        @if(!empty($contacto->mapa_embed))
+                            {!! $contacto->mapa_embed !!}
+                        @endif
+                    </div>
                 </div>
 
                 <div class="form-actions">
@@ -257,7 +279,9 @@
                         <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
                         Guardar Cambios
                     </button>
-                    <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
+                    <button type="button" class="btn-cancel" onclick="window.history.back()">
+                        Cancelar
+                    </button>
                 </div>
             </div>
 

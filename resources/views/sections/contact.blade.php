@@ -13,42 +13,59 @@
         <h3>¿Cómo llegar a nosotros?</h3>
 
         <address style="font-style:normal">
+
+          @if($contacto->direccion_contacto)
           <div class="info-item">
             <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
             <div>
               <strong>Dirección</strong>
-              <p>Calle 24 # 99 x 21 y 19 Col. Centro<br>Hoctún, Yucatán.</p>
+              <p>{{ $contacto->direccion_contacto }}</p>
+              @if($contacto->horario_contacto)
               <p style="margin-top:.4rem;font-size:.82rem;color:rgba(255,255,255,.5)">
-                Lun–Vie · 9:00 a.m. – 1:00 p.m.
+                {{ $contacto->horario_contacto }}
               </p>
+              @endif
             </div>
           </div>
+          @endif
 
+          @if($contacto->telefono_contacto)
           <div class="info-item">
             <i class="bi bi-telephone-fill" aria-hidden="true"></i>
             <div>
               <strong>Teléfono</strong>
-              <p><a href="tel:+529991773532">+52 999 177 3532</a></p>
+              <p>
+                <a href="tel:{{ preg_replace('/\s+/', '', $contacto->telefono_contacto) }}">
+                  {{ $contacto->telefono_contacto }}
+                </a>
+              </p>
             </div>
           </div>
+          @endif
 
+          @if($contacto->email_contacto)
           <div class="info-item">
             <i class="bi bi-envelope-fill" aria-hidden="true"></i>
             <div>
               <strong>Correo electrónico</strong>
-              <p><a href="mailto:ajal-lol@hotmail.com">ajal-lol@hotmail.com</a></p>
+              <p>
+                <a href="mailto:{{ $contacto->email_contacto }}">
+                  {{ $contacto->email_contacto }}
+                </a>
+              </p>
             </div>
           </div>
+          @endif
+
         </address>
 
+        {{-- Mapa: solo se renderiza si hay embed guardado en BD --}}
+        @if($contacto->mapa_embed)
         <div class="contact-map">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3728.135541053421!2d-89.20775672497321!3d20.866586380742497!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f5691c180ca0e89%3A0x5b9e1228aa43b3ff!2sAjal-Lol%20AC!5e0!3m2!1ses-419!2smx!4v1721704139683!5m2!1ses-419!2smx"
-            title="Mapa de ubicación de Ajal Lol A.C. en Hoctún, Yucatán"
-            allowfullscreen="" loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade">
-          </iframe>
+          {!! $contacto->mapa_embed !!}
         </div>
+        @endif
+
       </div>
 
       <!-- Formulario -->
@@ -57,7 +74,7 @@
 
         <form id="contact-form" novalidate aria-label="Formulario de contacto">
 
-          {{-- Honeypot: oculto para humanos, visible para bots --}}
+          {{-- Honeypot --}}
           <div style="display:none" aria-hidden="true">
             <label for="website">No llenar</label>
             <input type="text" id="website" name="website"

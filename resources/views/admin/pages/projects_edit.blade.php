@@ -1,6 +1,6 @@
 @extends('admin.dashboard')
 
-@section('title', 'Editar Página - Proyectos')
+@section('title', 'Editor de Proyectos')
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/admincss/editpagescss/projects_edit.css') }}">
@@ -12,209 +12,297 @@
     $categories = $categories ?? ['Jornadas dentales', 'Jornadas de salud', 'Proyectos productivos', 'Adulto Mayor'];
     $images     = $images     ?? collect([]);
     $pageData   = $pageData   ?? null;
-    $activeYear = $activeYear ?? $years[0] ?? '2023';
 
-    // Subtítulos por año — en producción vendría de BD
-    $yearSubtitles = $yearSubtitles ?? [];
+    $yearsSorted    = collect($years)->sortDesc()->values()->toArray();
+    $activeYear     = $activeYear ?? $yearsSorted[0] ?? '2025';
+    $yearSubtitles  = $yearSubtitles  ?? [];
+    $yearVisibility = $yearVisibility ?? collect($yearsSorted)->mapWithKeys(fn($y) => [$y => true])->toArray();
+    $visCount       = collect($yearVisibility)->filter()->count();
 @endphp
 
 <div class="edit-page-wrapper">
-<div class="edit-container">
+<div class="edit-card">
 
-    {{-- HEADER --}}
-    <div class="edit-header">
-        <div class="edit-header-top">
-            <div class="edit-icon"><i class="fa fa-folder-open"></i></div>
-            <h2>Administración de Contenido de Proyectos</h2>
+    {{-- ══ HERO — título + selector de año en la misma banda ══ --}}
+    <div class="edit-hero">
+        <div class="edit-hero__deco edit-hero__deco--1"></div>
+        <div class="edit-hero__deco edit-hero__deco--2"></div>
+
+        <div class="edit-hero__inner">
+
+            {{-- Izquierda: icono + texto --}}
+            <div class="edit-hero__left">
+                <div class="edit-hero__icon"><i class="fa fa-folder-open"></i></div>
+                <div>
+                    <h1 class="edit-hero__title">Editor de Proyectos</h1>
+                    <p class="edit-hero__sub">Gestiona años, imágenes y visibilidad pública.</p>
+                </div>
+            </div>
+
+            {{-- Derecha: selector de año (píldora unificada) --}}
+            <div class="year-selector" id="yearSelector">
+
+                {{-- PÍLDORA: [‹ | 2025 ↓ | ›] --}}
+                <div class="year-pill">
+
+                    <button class="year-pill-nav" id="btnPrevYear" type="button"
+                            aria-label="Año anterior" title="Ir al año anterior">
+                        <i class="fa fa-chevron-left"></i>
+                    </button>
+
+                    <div class="year-pill-sep"></div>
+
+                    <div class="year-display-wrap" id="yearDisplayWrap">
+                        <button class="year-display-btn" id="yearDisplayBtn"
+                                type="button" aria-haspopup="listbox" aria-expanded="false">
+                            <span class="year-display-num" id="yearDisplayNum">{{ $activeYear }}</span>
+                            <span class="year-display-sub">AÑO ACTIVO</span>
+                            <i class="fa fa-chevron-down year-display-arrow" id="yearDisplayArrow"></i>
+                        </button>
+
+                        <div class="year-dropdown" id="yearDropdown" role="listbox"
+                             aria-label="Lista de años" style="display:none">
+                            @foreach($yearsSorted as $y)
+                            <div class="year-dropdown-item {{ $y == $activeYear ? 'active' : '' }}"
+                                 data-year="{{ $y }}" role="option"
+                                 aria-selected="{{ $y == $activeYear ? 'true' : 'false' }}">
+                                <span class="ydi-num">{{ $y }}</span>
+                                <span class="ydi-dot {{ ($yearVisibility[$y] ?? true) ? 'vis-on' : 'vis-off' }}"
+                                      title="{{ ($yearVisibility[$y] ?? true) ? 'Visible' : 'Oculto' }}"></span>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="year-pill-sep"></div>
+
+                    <button class="year-pill-nav" id="btnNextYear" type="button"
+                            aria-label="Año siguiente" title="Ir al año siguiente">
+                        <i class="fa fa-chevron-right"></i>
+                    </button>
+
+                </div>{{-- /.year-pill --}}
+
+                <button class="btn-add-year-icon" type="button" id="btnAddYear"
+                        title="Agregar nuevo año" aria-label="Agregar año">
+                    <i class="fa fa-plus"></i>
+                </button>
+
+            </div>{{-- /.year-selector --}}
         </div>
-        <p class="subtitle">
-            Cada año es una sección independiente con su propio subtítulo e imágenes. Los cambios se reflejan en el sitio público.
-        </p>
+
+        {{-- Formulario agregar año (oculto) --}}
+        {{-- Formulario agregar año: select con años disponibles --}}
+        <div class="add-year-inline" id="addYearForm" style="display:none">
+            <i class="fa fa-calendar-plus add-year-inline__icon"></i>
+            <span class="add-year-inline__label">Nuevo año:</span>
+            <select id="newYearSelect" class="new-year-select">
+                {{-- Opciones generadas por JS según años ya registrados --}}
+            </select>
+            <button type="button" class="btn-hero-sm btn-hero-sm--confirm" id="btnConfirmYear">
+                <i class="fa fa-check"></i> Agregar
+            </button>
+            <button type="button" class="btn-hero-sm btn-hero-sm--cancel" id="btnCancelYear">
+                Cancelar
+            </button>
+        </div>
     </div>
 
-    {{-- BLOQUE: AÑOS COMO SECCIONES ACORDEÓN --}}
-    <div class="section-block" id="yearsBlock">
-        <div class="section-block__header">
-            <span class="section-block__icon"><i class="fa fa-calendar"></i></span>
-            <div>
-                <div class="section-block__title">Años y su contenido</div>
-                <div class="section-block__sub">Cada año tiene su subtítulo, categorías e imágenes. Expande para editar.</div>
+    {{-- ══ CONTENIDO ══ --}}
+    <div class="edit-container">
+
+        {{-- Subtítulo del año activo --}}
+        <div class="year-meta-row">
+
+            <form method="POST" action="#" class="year-subtitle-form" id="yearSubtitleForm">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="year" id="formYear" value="{{ $activeYear }}">
+                <div class="form-group subtitle-group">
+                    <label for="subtituloInput">
+                        Subtítulo de
+                        <span class="year-label-badge" id="yearLabelBadge">{{ $activeYear }}</span>
+                    </label>
+                    <div class="subtitle-input-wrap">
+                        <input
+                            type="text"
+                            id="subtituloInput"
+                            name="subtitulo"
+                            value="{{ old('subtitulo', $yearSubtitles[$activeYear] ?? '') }}"
+                            placeholder="Ej: Año en el que se ayudó a mucha gente..."
+                            data-subtitles='@json($yearSubtitles)'
+                        >
+                        {{-- Botón global — texto cambia según el estado del año --}}
+                        <button type="submit" class="btn-save btn-save--inline btn-global-save"
+                                id="btnGlobalSave" disabled>
+                            <i class="fa fa-floppy-disk" id="btnGlobalSaveIcon"></i>
+                            <span id="btnGlobalSaveLabel">Guardar</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+        {{-- TABS: imágenes / categorías / configuración --}}
+        <div class="content-tabs" role="tablist">
+            <button class="content-tab active" data-tab="images" type="button">
+                <i class="fa fa-images"></i> Imágenes
+            </button>
+            <button class="content-tab" data-tab="categories" type="button">
+                <i class="fa fa-tags"></i> Categorías
+            </button>
+            <button class="content-tab" data-tab="settings" type="button">
+                <i class="fa fa-sliders"></i> Configuración
+            </button>
+        </div>
+
+        {{-- TAB: IMÁGENES --}}
+        <div class="tab-panel active" id="tabImages">
+            <div class="img-toolbar" id="imgToolbar">
+                <div class="filter-wrap" id="catFilter" role="group" aria-label="Filtrar por categoría">
+                    <button class="pill active" data-cat="todas" type="button">Todo</button>
+                    @foreach($categories as $cat)
+                        <button class="pill" data-cat="{{ $cat }}" type="button">{{ $cat }}</button>
+                    @endforeach
+                </div>
+                <button class="btn-add-img" type="button" id="btnAddImage">
+                    <i class="fa fa-plus"></i> Añadir imagen
+                </button>
+            </div>
+
+            <div class="img-grid" id="imgGrid">
+                @forelse($images as $img)
+                    <div class="img-card"
+                         data-id="{{ $img->id }}"
+                         data-year="{{ $img->year }}"
+                         data-cat="{{ $img->category }}"
+                         style="{{ $img->year != $activeYear ? 'display:none' : '' }}">
+                        <div class="img-thumb">
+                            @if($img->image_path)
+                                <img src="{{ asset('storage/' . $img->image_path) }}"
+                                     alt="{{ $img->description }}" loading="lazy">
+                            @else
+                                <div class="thumb-placeholder"><i class="fa fa-image"></i></div>
+                            @endif
+                            <span class="cat-badge">{{ $img->category }}</span>
+                            <div class="img-overlay">
+                                <button class="overlay-details-btn" type="button"
+                                        data-id="{{ $img->id }}">Detalles</button>
+                            </div>
+                        </div>
+                        <div class="img-body">
+                            <p class="img-date">
+                                <i class="fa fa-calendar-day"></i>
+                                {{ optional($img->event_date)->format('d/m/Y') ?? 'Sin fecha' }}
+                            </p>
+                            <p class="img-desc">{{ $img->description ?: 'Sin descripción.' }}</p>
+                            <div class="img-actions">
+                                <button class="btn-edit-img" type="button"
+                                        data-id="{{ $img->id }}">Editar</button>
+                                <button class="btn-del-img" type="button"
+                                        data-id="{{ $img->id }}" data-url="#">Eliminar</button>
+                                <span class="img-id-tag">ID: {{ $img->id }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="img-empty" id="imgEmpty">
+                        <i class="fa fa-folder-open"></i>
+                        <p>No hay imágenes para este año. Añade la primera.</p>
+                    </div>
+                @endforelse
             </div>
         </div>
 
-        {{-- ACORDEONES POR AÑO --}}
-        <div class="year-accordion-list" id="yearAccordionList">
-            @foreach($years as $y)
-            @php
-                $yImages = $images->where('year', $y);
-                $ySub    = $yearSubtitles[$y] ?? '';
-            @endphp
-            <div class="year-accordion {{ $y == $activeYear ? 'open' : '' }}" data-year="{{ $y }}" id="acc-{{ $y }}">
+        {{-- TAB: CATEGORÍAS --}}
+        <div class="tab-panel" id="tabCategories" style="display:none">
+            <div class="cat-manager">
+                <p class="cat-manager__hint">
+                    Estas categorías son <strong>globales</strong> — se aplican a todos los años.
+                    Añade o elimina según lo que necesites.
+                </p>
+                <div class="cat-list" id="catList">
+                    @foreach($categories as $cat)
+                        <div class="cat-item" data-cat="{{ $cat }}">
+                            <span class="cat-item__dot"></span>
+                            <span class="cat-item__name">{{ $cat }}</span>
+                            <button class="cat-item__del" type="button" title="Eliminar categoría">
+                                <i class="fa fa-xmark"></i>
+                            </button>
+                        </div>
+                    @endforeach
+                </div>
+                <div class="cat-add-row">
+                    <input type="text" id="newCatInput" placeholder="Nueva categoría..."
+                           class="new-cat-input">
+                    <button type="button" class="btn-save btn-save--sm" id="btnAddCat">
+                        <i class="fa fa-plus"></i> Agregar
+                    </button>
+                </div>
+            </div>
+        </div>
 
-                {{-- Cabecera del acordeón --}}
-                <div class="year-accordion__head" role="button" tabindex="0" aria-expanded="{{ $y == $activeYear ? 'true' : 'false' }}">
-                    <div class="year-accordion__left">
-                        <span class="year-accordion__num">{{ $y }}</span>
-                        <span class="year-accordion__preview-sub" id="previewSub-{{ $y }}">
-                            {{ $ySub ?: 'Sin subtítulo — haz clic para editar' }}
-                        </span>
+        {{-- TAB: CONFIGURACIÓN --}}
+        <div class="tab-panel" id="tabSettings" style="display:none">
+            <div class="settings-panel">
+
+                {{-- Fila 1: Visibilidad --}}
+                <div class="settings-card">
+                    <div class="settings-card__icon settings-card__icon--vis">
+                        <i class="fa fa-eye"></i>
                     </div>
-                    <div class="year-accordion__right">
-                        <span class="year-img-count">{{ $yImages->count() }} img.</span>
-                        <button class="year-del-btn" type="button" data-year="{{ $y }}" title="Eliminar año {{ $y }}">
-                            <i class="fa fa-trash-can"></i>
+                    <div class="settings-card__text">
+                        <div class="settings-card__title">
+                            Visible en el sitio
+                            <div class="vis-counter" id="visCounter">
+                                <span id="visCounterTxt">{{ $visCount }} / 5</span>
+                                @if($visCount >= 5)<span class="vis-limit-badge">Límite</span>@endif
+                            </div>
+                        </div>
+                        <div class="settings-card__sub">
+                            Año <span class="year-label-badge" id="settingsYearBadge">{{ $activeYear }}</span>
+                            — controla si aparece en la página pública.
+                        </div>
+                    </div>
+                    <div class="settings-card__action">
+                        <button class="vis-toggle {{ ($yearVisibility[$activeYear] ?? true) ? 'on' : '' }}"
+                                id="visToggleBtn" type="button"
+                                data-visibilities='@json($yearVisibility)'
+                                aria-pressed="{{ ($yearVisibility[$activeYear] ?? true) ? 'true' : 'false' }}">
+                            <span class="vis-track"><span class="vis-thumb"></span></span>
                         </button>
-                        <span class="year-chevron"><i class="fa fa-chevron-down"></i></span>
+                        <span class="vis-status-txt" id="visStatusTxt">
+                            {{ ($yearVisibility[$activeYear] ?? true) ? 'Activo' : 'Oculto' }}
+                        </span>
                     </div>
                 </div>
 
-                {{-- Cuerpo del acordeón --}}
-                <div class="year-accordion__body">
-
-                    {{-- Subtítulo del año --}}
-                    <div class="year-subtitle-form-wrap">
-                        <form method="POST" action="#" class="year-subtitle-form" data-year="{{ $y }}">
-                            @csrf
-                            @method('PUT')
-                            <input type="hidden" name="year" value="{{ $y }}">
-                            <div class="form-group subtitle-group">
-                                <label for="subtitulo-{{ $y }}">Subtítulo del año {{ $y }}</label>
-                                <div class="subtitle-input-wrap">
-                                    <input
-                                        type="text"
-                                        id="subtitulo-{{ $y }}"
-                                        name="subtitulo"
-                                        value="{{ old('subtitulo', $ySub) }}"
-                                        placeholder="Ej: Año en el que se ayudó a mucha gente..."
-                                        data-year="{{ $y }}"
-                                        class="year-subtitle-input"
-                                    >
-                                    <button type="submit" class="btn-save btn-save--inline">
-                                        <i class="fa fa-floppy-disk"></i> Guardar
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                {{-- Fila 2: Eliminar año --}}
+                <div class="settings-card settings-card--danger">
+                    <div class="settings-card__icon settings-card__icon--danger">
+                        <i class="fa fa-trash-can"></i>
                     </div>
-
-                    {{-- Sub-tabs imágenes / categorías --}}
-                    <div class="content-tabs" role="tablist" data-year="{{ $y }}">
-                        <button class="content-tab active" data-tab="images" data-year="{{ $y }}" type="button">
-                            <i class="fa fa-images"></i> Imágenes
-                        </button>
-                        <button class="content-tab" data-tab="categories" data-year="{{ $y }}" type="button">
-                            <i class="fa fa-tags"></i> Categorías
+                    <div class="settings-card__text">
+                        <div class="settings-card__title settings-card__title--danger">Eliminar año</div>
+                        <div class="settings-card__sub">
+                            Borra el año <span class="year-label-badge settings-card__year-badge--danger" id="settingsYearBadgeDanger">{{ $activeYear }}</span>
+                            y todas sus imágenes. Acción irreversible.
+                        </div>
+                    </div>
+                    <div class="settings-card__action">
+                        <button class="btn-del-year-settings" type="button" id="btnDelYear"
+                                data-year="{{ $activeYear }}">
+                            <i class="fa fa-trash-can"></i> Eliminar
                         </button>
                     </div>
+                </div>
 
-                    {{-- TAB: IMÁGENES --}}
-                    <div class="tab-panel active" id="tabImages-{{ $y }}" data-year="{{ $y }}">
-                        <div class="img-toolbar">
-                            <div class="filter-wrap" id="catFilter-{{ $y }}" role="group" aria-label="Filtrar por categoría">
-                                <button class="pill active" data-cat="todas" type="button">Todo</button>
-                                @foreach($categories as $cat)
-                                    <button class="pill" data-cat="{{ $cat }}" type="button">{{ $cat }}</button>
-                                @endforeach
-                            </div>
-                            <button class="btn-add-img" type="button" data-year="{{ $y }}">
-                                <i class="fa fa-plus"></i> Añadir imagen
-                            </button>
-                        </div>
-
-                        <div class="img-grid" id="imgGrid-{{ $y }}">
-                            @forelse($yImages as $img)
-                                <div class="img-card"
-                                     data-id="{{ $img->id }}"
-                                     data-year="{{ $img->year }}"
-                                     data-cat="{{ $img->category }}">
-                                    <div class="img-thumb">
-                                        @if($img->image_path)
-                                            <img src="{{ asset('storage/' . $img->image_path) }}"
-                                                 alt="{{ $img->description }}" loading="lazy">
-                                        @else
-                                            <div class="thumb-placeholder"><i class="fa fa-image"></i></div>
-                                        @endif
-                                        <span class="cat-badge">{{ $img->category }}</span>
-                                        <div class="img-overlay">
-                                            <button class="overlay-details-btn" type="button" data-id="{{ $img->id }}">
-                                                Detalles
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="img-body">
-                                        <p class="img-date">
-                                            <i class="fa fa-calendar-day"></i>
-                                            {{ optional($img->event_date)->format('d/m/Y') ?? 'Sin fecha' }}
-                                        </p>
-                                        <p class="img-desc">{{ $img->description ?: 'Sin descripción.' }}</p>
-                                        <div class="img-actions">
-                                            <button class="btn-edit-img" type="button" data-id="{{ $img->id }}">Editar</button>
-                                            <button class="btn-del-img" type="button" data-id="{{ $img->id }}" data-url="#">Eliminar</button>
-                                            <span class="img-id-tag">ID: {{ $img->id }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="img-empty" id="imgEmpty-{{ $y }}">
-                                    <i class="fa fa-folder-open"></i>
-                                    <p>No hay imágenes para {{ $y }}. Añade la primera.</p>
-                                </div>
-                            @endforelse
-                        </div>
-                    </div>
-
-                    {{-- TAB: CATEGORÍAS --}}
-                    <div class="tab-panel" id="tabCategories-{{ $y }}" data-year="{{ $y }}" style="display:none">
-                        <div class="cat-manager">
-                            <p class="cat-manager__hint">
-                                Categorías del año <strong>{{ $y }}</strong>. Añade o elimina según lo necesites.
-                            </p>
-                            <div class="cat-list" id="catList-{{ $y }}">
-                                @foreach($categories as $cat)
-                                    <div class="cat-item" data-cat="{{ $cat }}" data-year="{{ $y }}">
-                                        <span class="cat-item__dot"></span>
-                                        <span class="cat-item__name">{{ $cat }}</span>
-                                        <button class="cat-item__del" type="button" title="Eliminar categoría">
-                                            <i class="fa fa-xmark"></i>
-                                        </button>
-                                    </div>
-                                @endforeach
-                            </div>
-                            <div class="cat-add-row">
-                                <input type="text" id="newCatInput-{{ $y }}" placeholder="Nueva categoría..." class="new-cat-input" data-year="{{ $y }}">
-                                <button type="button" class="btn-save btn-save--sm btn-add-cat" data-year="{{ $y }}">
-                                    <i class="fa fa-plus"></i> Agregar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>{{-- /.year-accordion__body --}}
-            </div>{{-- /.year-accordion --}}
-            @endforeach
-        </div>{{-- /#yearAccordionList --}}
-
-        {{-- Agregar nuevo año --}}
-        <div class="add-year-bar">
-            <button class="btn-add-year" type="button" id="btnAddYear">
-                <i class="fa fa-plus"></i> Agregar año
-            </button>
-            <div class="add-year-form" id="addYearForm" style="display:none">
-                <input type="number" id="newYearInput" placeholder="Ej: 2026"
-                       min="2000" max="2099" class="new-year-input">
-                <button type="button" class="btn-save btn-save--sm" id="btnConfirmYear">
-                    <i class="fa fa-check"></i> Confirmar
-                </button>
-                <button type="button" class="btn-cancel btn-cancel--sm" id="btnCancelYear">
-                    Cancelar
-                </button>
             </div>
         </div>
 
-    </div>{{-- /.section-block --}}
-
-</div>{{-- /.edit-container --}}
-</div>{{-- /.edit-page-wrapper --}}
+    </div>{{-- /.edit-container --}}
+</div>{{-- /.edit-card --}}
 
 
 {{-- MODAL — Añadir / Editar imagen --}}
@@ -238,8 +326,6 @@
             <input type="hidden" id="selectedYear" name="year" value="{{ $activeYear }}">
 
             <div class="img-modal__body">
-
-                {{-- Panel izquierdo --}}
                 <div class="img-modal__panel">
                     <div class="img-panel-label">Selección de imagen</div>
                     <div class="upload-zone" id="uploadZone" role="button" tabindex="0">
@@ -262,19 +348,18 @@
                     </div>
                 </div>
 
-                {{-- Panel derecho --}}
                 <div class="img-modal__panel">
-
-                    {{-- Fecha del evento (reemplaza al año en el modal) --}}
                     <div class="form-group">
                         <label for="eventDateInput">
                             Fecha
                             <span class="optional-tag">(por defecto: hoy)</span>
                         </label>
                         <input type="date" id="eventDateInput" name="event_date" required>
+                        {{-- Fecha legible generada por JS en el modal --}}
+                        <span class="date-readable" id="dateReadable"></span>
                     </div>
 
-                    <div class="form-group" style="margin-top:6px">
+                    <div class="form-group" style="margin-top:10px">
                         <label for="catInput">Categoría</label>
                         <select id="catInput" name="category" required>
                             @foreach($categories as $cat)
@@ -282,39 +367,51 @@
                             @endforeach
                         </select>
                     </div>
-
-                    <div class="img-panel-label" style="margin-top:18px">¿Proyecto destacado?</div>
-                    <label class="check-row" id="featuredRow">
-                        <span class="custom-check" id="featuredCheck"
-                              role="checkbox" aria-checked="false" tabindex="0"></span>
-                        <span class="check-label">Marcar como proyecto destacado</span>
-                    </label>
-                    <input type="hidden" id="featuredVal" name="featured" value="0">
-
-                    <div class="form-group" style="margin-top:18px">
-                        <label for="projSearch">
-                            Proyecto asociado
-                            <span class="optional-tag">(opcional)</span>
-                        </label>
-                        <div class="search-wrap">
-                            <i class="fa fa-magnifying-glass search-prefix-icon"></i>
-                            <input type="text" id="projSearch" name="related_project"
-                                   placeholder="Busca el proyecto...">
-                        </div>
-                    </div>
                 </div>
-
-            </div>{{-- /.img-modal__body --}}
+            </div>
 
             <div class="img-modal__footer">
-                <button type="submit" class="btn-save">
-                    <i class="fa fa-floppy-disk"></i> Guardar Cambios
-                </button>
                 <button type="button" class="btn-cancel" id="imgModalCancel">Cancelar</button>
+                <button type="submit" class="btn-save" id="btnModalSubmit">
+                    <i class="fa fa-arrow-right"></i>
+                    <span id="modalSubmitLabel">Continuar</span>
+                </button>
             </div>
         </form>
     </div>
 </div>
+
+    {{-- MODAL — Confirmar eliminación de año --}}
+<div class="confirm-modal-bg" id="confirmDelBg" role="dialog" aria-modal="true" aria-labelledby="confirmDelTitle">
+    <div class="confirm-modal" id="confirmDelModal">
+        <div class="confirm-modal__deco confirm-modal__deco--1"></div>
+        <div class="confirm-modal__deco confirm-modal__deco--2"></div>
+
+        <div class="confirm-modal__icon-wrap">
+            <div class="confirm-modal__icon">
+                <i class="fa fa-trash-can"></i>
+            </div>
+        </div>
+
+        <h2 class="confirm-modal__title" id="confirmDelTitle">¿Eliminar este año?</h2>
+        <p class="confirm-modal__year-display" id="confirmDelYear">2025</p>
+        <p class="confirm-modal__desc">
+            Esta acción eliminará el año y <strong>todas sus imágenes</strong> de forma permanente.
+            No podrás recuperar esta información.
+        </p>
+
+        <div class="confirm-modal__actions">
+            <button class="btn-confirm-cancel" type="button" id="btnConfirmDelCancel">
+                Cancelar
+            </button>
+            <button class="btn-confirm-delete" type="button" id="btnConfirmDelOk">
+                <i class="fa fa-trash-can"></i> Sí, eliminar
+            </button>
+        </div>
+    </div>
+</div>
+
+</div>{{-- /.edit-page-wrapper --}}
 
 @endsection
 

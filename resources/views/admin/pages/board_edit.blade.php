@@ -36,10 +36,8 @@
                     <input type="text" id="titulo_seccion" name="titulo_seccion"
                            value="{{ old('titulo_seccion', 'Directiva') }}"
                            placeholder="Escribe el título de la sección..." required>
-                    @error('titulo_seccion')
-                        <span class="field-error-msg">{{ $message }}</span>
-                    @enderror
                 </div>
+
                 <div class="form-group">
                     <label for="subtitulo">Subtítulo</label>
                     <input type="text" id="subtitulo" name="subtitulo"
@@ -57,17 +55,19 @@
                 <span class="members-label-hint">Foto · Nombre · Cargo</span>
             </div>
 
-            {{-- Grid de miembros --}}
+            {{-- Grid --}}
             <div class="members-grid" id="membersGrid">
                 @for ($i = 1; $i <= 3; $i++)
                 <div class="member-card" id="member-{{ $i }}">
 
-                    {{-- Head --}}
-                    <div class="member-card__head" data-member="{{ $i }}">
+                    {{-- HEAD --}}
+                    <div class="member-card__head">
                         <div class="member-card__num">{{ $i }}</div>
+
                         <div class="member-card__thumb" id="thumb-{{ $i }}">
                             <i class="fa fa-user"></i>
                         </div>
+
                         <div class="member-card__head-info">
                             <div class="member-card__head-name" id="head-name-{{ $i }}">
                                 <span class="member-card__head-empty">Sin nombre</span>
@@ -76,67 +76,74 @@
                                 <span style="color:var(--text-placeholder);font-style:italic">Sin cargo</span>
                             </div>
                         </div>
+
                         <div class="member-card__head-actions">
-                            <button type="button" class="member-card__chevron" title="Expandir / contraer">
+                            <button type="button" class="member-card__chevron">
                                 <i class="fa fa-chevron-down"></i>
                             </button>
-                            <button type="button" class="btn-remove-member" data-member="{{ $i }}" title="Quitar miembro">
+                            <button type="button" class="btn-remove-member">
                                 <i class="fa fa-xmark"></i>
                             </button>
                         </div>
                     </div>
 
-                    {{-- Body --}}
+                    {{-- BODY --}}
                     <div class="member-card__body">
 
-                        {{-- Columna izquierda: foto --}}
+                        {{-- FOTO --}}
                         <div class="member-photo-col">
                             <div class="member-photo" id="photo-preview-{{ $i }}">
                                 <div class="member-photo__empty">
                                     <i class="fa fa-user"></i>
-                                    <span>Subir foto</span>
+                                    <span class="photo-text">Subir foto</span>
                                 </div>
                             </div>
+
                             <div class="member-photo-actions">
                                 <label class="btn-photo-upload" for="foto_{{ $i }}">
                                     <i class="fa fa-camera"></i>
                                     Subir foto
                                 </label>
-                                <button type="button" class="btn-photo-clear" data-member="{{ $i }}">
+
+                                <button type="button" class="btn-photo-clear">
                                     <i class="fa fa-xmark"></i>
                                     Quitar
                                 </button>
+
                                 <input type="file" id="foto_{{ $i }}"
                                        name="foto_{{ $i }}"
+                                       class="photo-input"
                                        accept="image/png,image/jpeg,image/webp"
-                                       class="photo-input" data-member="{{ $i }}"
                                        style="display:none;">
                             </div>
                         </div>
 
-                        {{-- Columna derecha: campos --}}
+                        {{-- CAMPOS --}}
                         <div class="member-fields-col">
                             <div class="member-fields">
+
                                 <div class="form-group">
                                     <label for="miembro_nombre_{{ $i }}">Nombre completo</label>
-                                    <input type="text" id="miembro_nombre_{{ $i }}"
+                                    <input type="text"
+                                           id="miembro_nombre_{{ $i }}"
                                            name="miembro_nombre_{{ $i }}"
-                                           value="{{ old('miembro_nombre_' . $i) }}"
                                            placeholder="Ej: Ing. Paula Guadalupe Pech Puc"
-                                           class="nombre-input" data-member="{{ $i }}">
+                                           class="nombre-input">
                                 </div>
+
                                 <div class="form-group">
                                     <label for="miembro_cargo_{{ $i }}">Cargo</label>
-                                    <input type="text" id="miembro_cargo_{{ $i }}"
+                                    <input type="text"
+                                           id="miembro_cargo_{{ $i }}"
                                            name="miembro_cargo_{{ $i }}"
-                                           value="{{ old('miembro_cargo_' . $i) }}"
                                            placeholder="Ej: Presidenta, Secretaria..."
-                                           class="cargo-input" data-member="{{ $i }}">
+                                           class="cargo-input">
                                 </div>
+
                             </div>
                         </div>
 
-                    </div>{{-- /body --}}
+                    </div>
                 </div>
                 @endfor
             </div>
@@ -148,9 +155,10 @@
 
             <div class="form-actions">
                 <button type="submit" class="btn-save">
-                    <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
+                    <i class="fa fa-floppy-disk"></i>
                     Guardar Cambios
                 </button>
+
                 <button type="button" class="btn-cancel" onclick="window.history.back()">
                     Cancelar
                 </button>

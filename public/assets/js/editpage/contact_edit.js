@@ -43,34 +43,87 @@
     });
 
     /* ── Validación ─────────────────────────────────────── */
-    function validateForm(form) {
-        let valid = true;
 
+    // Mensajes específicos por campo
+    const fieldMessages = {
+        'correo':    'El correo electrónico es obligatorio.',
+        'telefono':  'El teléfono es obligatorio.',
+        'direccion': 'La dirección es obligatoria.',
+        'horario':   'El horario de atención es obligatorio.',
+        'facebook':  'El enlace de Facebook no puede estar vacío.',
+        'instagram': 'El enlace de Instagram no puede estar vacío.',
+        'linkedin':  'El enlace de LinkedIn no puede estar vacío.',
+        'mapa_embed':'El código embed del mapa no puede estar vacío.',
+    };
+
+    function getFieldLabel(field) {
+        return fieldMessages[field.id] || 'Este campo es obligatorio.';
+    }
+
+    function validateForm(form) {
+        let valid        = true;
+        let firstError   = null;
+        const errores    = [];
+
+        // Campos requeridos
         form.querySelectorAll('input[required], textarea[required]').forEach(field => {
             clearError(field);
             if (!field.value.trim()) {
-                markError(field, 'Este campo es obligatorio.');
+                markError(field, getFieldLabel(field));
+                errores.push(getFieldLabel(field));
+                if (!firstError) firstError = field;
                 valid = false;
             }
         });
 
+        // Validar formato de correo
         const correo = form.querySelector('#correo');
         if (correo && correo.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.value.trim())) {
-            markError(correo, 'Ingresa un correo electrónico válido.');
+            markError(correo, 'Ingresa un correo electrónico válido (ej: contacto@ejemplo.com).');
+            errores.push('El correo electrónico no tiene un formato válido.');
+            if (!firstError) firstError = correo;
             valid = false;
         }
 
-        ['facebook', 'instagram', 'linkedin'].forEach(red => {
+        // Validar URLs de redes sociales
+        const redesLabels = {
+            facebook:  'El enlace de Facebook debe iniciar con https://',
+            instagram: 'El enlace de Instagram debe iniciar con https://',
+            linkedin:  'El enlace de LinkedIn debe iniciar con https://',
+        };
+
+        Object.entries(redesLabels).forEach(([red, msg]) => {
             const input = form.querySelector(`#${red}`);
             if (input && input.value.trim()) {
                 try {
                     new URL(input.value.trim());
                 } catch {
-                    markError(input, 'Ingresa una URL válida (debe iniciar con https://).');
+                    markError(input, msg);
+                    errores.push(msg);
+                    if (!firstError) firstError = input;
                     valid = false;
                 }
             }
         });
+
+        // Si hay errores, mostrar toast con resumen
+        if (!valid) {
+            const resumen = errores.length === 1
+                ? errores[0]
+                : `Revisa ${errores.length} campos: ${errores.join(' · ')}`;
+            showToast(resumen, 'error');
+
+            // Cambiar al tab donde está el primer error
+            if (firstError) {
+                const panel = firstError.closest('.edit-panel');
+                if (panel && !panel.classList.contains('active')) {
+                    const panelId = panel.id.replace('panel-', '');
+                    const tab = document.querySelector(`.edit-tab[data-target="${panelId}"]`);
+                    if (tab) tab.click();
+                }
+                setTimeout(() => firstError.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+            }
+        }
 
         return valid;
     }
@@ -78,7 +131,7 @@
     function markError(field, msg) {
         clearError(field);
         field.classList.add('field--error');
-        const err = document.createElement('span');
+        const err       = document.createElement('span');
         err.className   = 'field-error-msg';
         err.textContent = msg;
         field.insertAdjacentElement('afterend', err);
@@ -140,7 +193,7 @@
     /* ── Contador de caracteres en dirección ─────────────── */
     const direccion = document.getElementById('direccion');
     if (direccion) {
-        const counter = document.createElement('span');
+        const counter       = document.createElement('span');
         counter.className   = 'field-hint';
         counter.style.textAlign = 'right';
         counter.textContent = `${direccion.value.length} caracteres`;
@@ -154,7 +207,7 @@
     const telefono = document.getElementById('telefono');
     if (telefono) {
         telefono.addEventListener('blur', () => {
-            let val = telefono.value.trim().replace(/\s/g, '');
+            const val = telefono.value.trim().replace(/\s/g, '');
             if (/^\d{10}$/.test(val)) {
                 telefono.value = '+52 ' + val;
             }
@@ -168,27 +221,14 @@
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
-        if (!validateForm(form)) {
-            showToast('Por favor revisa los campos marcados.', 'error');
-
-            const errorField = form.querySelector('.field--error');
-            if (errorField) {
-                const panel = errorField.closest('.edit-panel');
-                if (panel && !panel.classList.contains('active')) {
-                    const panelId = panel.id.replace('panel-', '');
-                    const tab = document.querySelector(`.edit-tab[data-target="${panelId}"]`);
-                    if (tab) tab.click();
-                }
-                setTimeout(() => errorField.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
-            }
-            return;
-        }
+        // validateForm ya muestra el toast de error internamente
+        if (!validateForm(form)) return;
 
         /* Estado: guardando */
         const btns = form.querySelectorAll('.btn-save');
         btns.forEach(btn => {
-            btn.disabled   = true;
-            btn.innerHTML  = '<i class="fa fa-spinner fa-spin" style="margin-right:7px;"></i> Guardando…';
+            btn.disabled  = true;
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin" style="margin-right:7px;"></i> Guardando…';
         });
 
         try {

@@ -125,6 +125,8 @@
 
         // Subtítulo
         if (subtitleInput) subtitleInput.value = subtitles[y] ?? '';
+        const subtitleBadge = document.getElementById('subtitleYearBadge');
+        if (subtitleBadge) subtitleBadge.textContent = y;
 
         // Visibilidad
         updateVisUI(y);
@@ -559,29 +561,49 @@
 
     function updateGlobalSaveBtn() {
         if (!btnGlobalSave) return;
-        const y          = currentYear();
-        const hasImages  = cardsOfYear(y).length > 0;
+        const y           = currentYear();
         const subtitleVal = subtitleInput?.value.trim() ?? '';
         const savedSub    = subtitles[y] ?? '';
-        const hasChanges  = subtitleVal !== savedSub;
+        const hasSubChange = subtitleVal !== savedSub;
+        const hasImages    = cardsOfYear(y).length > 0;
 
-        if (!hasChanges) {
-            // Sin cambios — desactivar
+        // Sin imágenes: siempre desactivado sin importar el subtítulo
+        if (!hasImages) {
             btnGlobalSave.disabled = true;
+            btnGlobalSave.title    = 'Agrega al menos una imagen antes de guardar';
             if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = 'Guardar';
             if (btnGlobalSaveIcon)  btnGlobalSaveIcon.className    = 'fa fa-floppy-disk';
-        } else if (!hasImages) {
-            // Año sin imágenes, hay cambios en subtítulo — "Subir"
-            btnGlobalSave.disabled = false;
-            if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = 'Subir';
-            if (btnGlobalSaveIcon)  btnGlobalSaveIcon.className    = 'fa fa-cloud-arrow-up';
-        } else {
-            // Año con imágenes, hay cambios — "Guardar cambios"
-            btnGlobalSave.disabled = false;
-            if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = 'Guardar cambios';
-            if (btnGlobalSaveIcon)  btnGlobalSaveIcon.className    = 'fa fa-floppy-disk';
+            return;
         }
+
+        btnGlobalSave.disabled = !hasSubChange;
+        btnGlobalSave.title    = '';
+        if (btnGlobalSaveLabel)
+            btnGlobalSaveLabel.textContent = hasSubChange ? 'Guardar cambios' : 'Guardar';
+        if (btnGlobalSaveIcon)
+            btnGlobalSaveIcon.className = 'fa fa-floppy-disk';
     }
+
+    document.getElementById('btnGlobalSave')?.addEventListener('click', () => {
+        const y   = currentYear();
+        const sub = subtitleInput?.value.trim() ?? '';
+
+        fetch('/admin/projects/year-update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? ''
+            },
+            body: JSON.stringify({ year: y, subtitulo: sub, visible: visibilities[y] ?? true })
+        })
+        .then(res => { if (!res.ok) throw new Error(); return res.json(); })
+        .then(() => {
+            subtitles[y] = sub;
+            updateGlobalSaveBtn();
+            showToast(`Año ${y} guardado.`);
+        })
+        .catch(() => showToast('Error al guardar.', 'error'));
+    });
 
     // Escuchar cambios en el input de subtítulo
     subtitleInput?.addEventListener('input', updateGlobalSaveBtn);
@@ -589,16 +611,7 @@
     // Llamar al cambiar de año
     const origRenderYear = renderYear;
 
-    document.getElementById('yearSubtitleForm')?.addEventListener('submit', function (e) {
-        if (!validateForm(this)) {
-            e.preventDefault();
-            showToast('Escribe un subtítulo antes de guardar.', 'error');
-            return;
-        }
-        subtitles[currentYear()] = subtitleInput?.value.trim() ?? '';
-        // Tras guardar, actualizar el botón
-        setTimeout(updateGlobalSaveBtn, 100);
-    });
+
 
     /* ════════════════════════════════════
        CONTENT TABS (imágenes / categorías)

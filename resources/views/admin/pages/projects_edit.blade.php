@@ -89,9 +89,14 @@
                 </button>
 
             </div>{{-- /.year-selector --}}
+
+            {{-- Dentro de .edit-hero__inner, después del .year-selector --}}
+            <button type="button" class="btn-hero-save" id="btnGlobalSave" disabled>
+                <i class="fa fa-floppy-disk" id="btnGlobalSaveIcon"></i>
+                <span id="btnGlobalSaveLabel">Guardar</span>
+            </button>
         </div>
 
-        {{-- Formulario agregar año (oculto) --}}
         {{-- Formulario agregar año: select con años disponibles --}}
         <div class="add-year-inline" id="addYearForm" style="display:none">
             <i class="fa fa-calendar-plus add-year-inline__icon"></i>
@@ -106,43 +111,28 @@
                 Cancelar
             </button>
         </div>
+
+    </div>
+
+    {{-- ══ BANDA SUBTÍTULO (entre hero y contenido) ══ --}}
+    <div class="subtitle-band" id="heroSubtitleBand">
+        <span class="subtitle-band__label">
+            <i class="fa fa-pen"></i> Subtítulo del 
+            <span class="year-label-badge" id="subtitleYearBadge">{{ $activeYear }}</span>
+        </span>
+        <input
+            type="text"
+            id="subtituloInput"
+            name="subtitulo"
+            class="subtitle-band__input"
+            value="{{ old('subtitulo', $yearSubtitles[$activeYear] ?? '') }}"
+            placeholder="Ej: Año en el que se ayudó a mucha gente..."
+            data-subtitles='@json($yearSubtitles)'
+        >
     </div>
 
     {{-- ══ CONTENIDO ══ --}}
     <div class="edit-container">
-
-        {{-- Subtítulo del año activo --}}
-        <div class="year-meta-row">
-
-            <form method="POST" action="#" class="year-subtitle-form" id="yearSubtitleForm">
-                @csrf
-                @method('PUT')
-                <input type="hidden" name="year" id="formYear" value="{{ $activeYear }}">
-                <div class="form-group subtitle-group">
-                    <label for="subtituloInput">
-                        Subtítulo de
-                        <span class="year-label-badge" id="yearLabelBadge">{{ $activeYear }}</span>
-                    </label>
-                    <div class="subtitle-input-wrap">
-                        <input
-                            type="text"
-                            id="subtituloInput"
-                            name="subtitulo"
-                            value="{{ old('subtitulo', $yearSubtitles[$activeYear] ?? '') }}"
-                            placeholder="Ej: Año en el que se ayudó a mucha gente..."
-                            data-subtitles='@json($yearSubtitles)'
-                        >
-                        {{-- Botón global — texto cambia según el estado del año --}}
-                        <button type="submit" class="btn-save btn-save--inline btn-global-save"
-                                id="btnGlobalSave" disabled>
-                            <i class="fa fa-floppy-disk" id="btnGlobalSaveIcon"></i>
-                            <span id="btnGlobalSaveLabel">Guardar</span>
-                        </button>
-                    </div>
-                </div>
-            </form>
-
-        </div>
 
         {{-- TABS: imágenes / categorías / configuración --}}
         <div class="content-tabs" role="tablist">
@@ -304,6 +294,7 @@
     </div>{{-- /.edit-container --}}
 </div>{{-- /.edit-card --}}
 
+</div>{{-- /.edit-page-wrapper --}}
 
 {{-- MODAL — Añadir / Editar imagen --}}
 <div class="img-modal-bg" id="imgModalBg" role="dialog" aria-modal="true" aria-labelledby="imgModalTitle">
@@ -410,8 +401,6 @@
         </div>
     </div>
 </div>
-
-</div>{{-- /.edit-page-wrapper --}}
 
 @endsection
 

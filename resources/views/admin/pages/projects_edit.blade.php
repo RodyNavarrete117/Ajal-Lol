@@ -167,6 +167,7 @@
                          data-id="{{ $img->id }}"
                          data-year="{{ $img->year }}"
                          data-cat="{{ $img->category }}"
+                         data-date="{{ optional($img->event_date)?->format('Y-m-d') ?? '' }}"
                          style="{{ $img->year != $activeYear ? 'display:none' : '' }}">
                         <div class="img-thumb">
                             @if($img->image_path)
@@ -184,7 +185,15 @@
                         <div class="img-body">
                             <p class="img-date">
                                 <i class="fa fa-calendar-day"></i>
-                                {{ optional($img->event_date)->format('d/m/Y') ?? 'Sin fecha' }}
+                                @if($img->event_date)
+                                    @php
+                                        $meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+                                        $d = \Carbon\Carbon::parse($img->event_date);
+                                    @endphp
+                                    {{ $d->day }} de {{ $meses[$d->month - 1] }}
+                                @else
+                                    Sin fecha
+                                @endif
                             </p>
                             <p class="img-desc">{{ $img->description ?: 'Sin descripción.' }}</p>
                             <div class="img-actions">
@@ -316,7 +325,12 @@
             <span id="methodField"></span>
             <input type="hidden" id="selectedYear" name="year" value="{{ $activeYear }}">
 
+            {{-- Grid 2 columnas:
+                 Col izq: upload (arriba) + fecha (abajo)
+                 Col der: descripción (arriba) + categoría (abajo) --}}
             <div class="img-modal__body">
+
+                {{-- COLUMNA IZQUIERDA --}}
                 <div class="img-modal__panel">
                     <div class="img-panel-label">Selección de imagen</div>
                     <div class="upload-zone" id="uploadZone" role="button" tabindex="0">
@@ -332,25 +346,34 @@
                     <button class="btn-change-img" type="button" id="btnChangeImg">
                         <i class="fa fa-arrow-rotate-left"></i> Cambiar imagen
                     </button>
-                    <div class="form-group" style="margin-top:14px">
-                        <label for="imgDescInput">Descripción de la imagen</label>
-                        <textarea id="imgDescInput" name="description" rows="4"
-                                  placeholder="Describe brevemente esta imagen..." required></textarea>
-                    </div>
-                </div>
 
-                <div class="img-modal__panel">
-                    <div class="form-group">
-                        <label for="eventDateInput">
+                    <div class="form-group date-picker-group" style="margin-top:16px">
+                        <label>
                             Fecha
                             <span class="optional-tag">(por defecto: hoy)</span>
                         </label>
-                        <input type="date" id="eventDateInput" name="event_date" required>
-                        {{-- Fecha legible generada por JS en el modal --}}
-                        <span class="date-readable" id="dateReadable"></span>
+                        {{-- Input nativo oculto — maneja el valor ISO y las restricciones de fecha --}}
+                        <input type="date" id="eventDateInput" name="event_date"
+                               required style="position:absolute;opacity:0;pointer-events:none;width:0;height:0">
+                        {{-- Botón visible que muestra la fecha en español --}}
+                        <button type="button" class="date-picker-btn" id="datePickerBtn">
+                            <i class="fa fa-calendar-day"></i>
+                            <span id="datePickerLabel">Selecciona una fecha</span>
+                            <i class="fa fa-chevron-down date-picker-arrow"></i>
+                        </button>
+                    </div>
+                </div>
+
+                {{-- COLUMNA DERECHA --}}
+                <div class="img-modal__panel">
+                    <div class="form-group img-modal__desc-group">
+                        <label for="imgDescInput">Descripción de la imagen</label>
+                        <textarea id="imgDescInput" name="description"
+                                  class="img-modal__textarea-tall"
+                                  placeholder="Describe brevemente esta imagen..." required></textarea>
                     </div>
 
-                    <div class="form-group" style="margin-top:10px">
+                    <div class="form-group" style="margin-top:16px">
                         <label for="catInput">Categoría</label>
                         <select id="catInput" name="category" required>
                             @foreach($categories as $cat)
@@ -359,7 +382,8 @@
                         </select>
                     </div>
                 </div>
-            </div>
+
+            </div>{{-- /.img-modal__body --}}
 
             <div class="img-modal__footer">
                 <button type="button" class="btn-cancel" id="imgModalCancel">Cancelar</button>

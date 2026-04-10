@@ -2,9 +2,6 @@
 (function () {
     'use strict';
 
-    /* ════════════════════════════════════
-       TOAST
-    ════════════════════════════════════ */
     function showToast(message, type = 'success') {
         const existing = document.querySelector('.edit-toast');
         if (existing) existing.remove();
@@ -23,9 +20,6 @@
         }, 3400);
     }
 
-    /* ════════════════════════════════════
-       VALIDACIÓN
-    ════════════════════════════════════ */
     function validateForm(form) {
         let valid = true;
         form.querySelectorAll('input[required], textarea[required], select[required]').forEach(field => {
@@ -46,11 +40,13 @@
         field.parentElement?.querySelector('.field-error-msg')?.remove();
     }
 
-    /* ════════════════════════════════════
-       HELPERS
-    ════════════════════════════════════ */
+    /* Fecha local en ISO (YYYY-MM-DD) — sin depender de UTC */
     function todayISO() {
-        return new Date().toISOString().split('T')[0];
+        const t = new Date();
+        const y = t.getFullYear();
+        const m = String(t.getMonth() + 1).padStart(2, '0');
+        const d = String(t.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
     }
 
     const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
@@ -63,28 +59,25 @@
     }
 
     function updateDateReadable(val) {
-        const el = document.getElementById('dateReadable');
-        if (el) el.textContent = val ? toReadableDate(val) : '';
+        const btn   = document.getElementById('datePickerBtn');
+        const label = document.getElementById('datePickerLabel');
+        if (label) label.textContent = val ? toReadableDate(val) : 'Selecciona una fecha';
+        if (btn)   btn.classList.toggle('has-date', !!val);
+        const input = document.getElementById('eventDateInput');
+        if (input && val) input.value = val;
     }
 
-    /* ════════════════════════════════════
-       ESTADO GLOBAL
-    ════════════════════════════════════ */
-    // Lista de años ordenados de más reciente a más antiguo
     let years = Array.from(
         document.querySelectorAll('.year-dropdown-item')
     ).map(el => el.dataset.year);
 
-    // Índice del año actualmente mostrado
     let currentIdx = 0;
 
-    // Visibilidades: { '2023': true, '2024': false, ... }
     const visToggle  = document.getElementById('visToggleBtn');
     let visibilities = visToggle
         ? JSON.parse(visToggle.dataset.visibilities || '{}')
         : {};
 
-    // Subtítulos: { '2023': 'Texto...', ... }
     const subtitleInput = document.getElementById('subtituloInput');
     let subtitles = subtitleInput
         ? JSON.parse(subtitleInput.dataset.subtitles || '{}')
@@ -92,9 +85,6 @@
 
     function currentYear() { return years[currentIdx]; }
 
-    /* ════════════════════════════════════
-       YEAR SELECTOR — RENDER
-    ════════════════════════════════════ */
     const yearDisplayNum  = document.getElementById('yearDisplayNum');
     const yearLabelBadge  = document.getElementById('yearLabelBadge');
     const formYearInput   = document.getElementById('formYear');
@@ -106,55 +96,31 @@
     function renderYear() {
         const y = currentYear();
         if (!y) return;
-
-        // Display central
         if (yearDisplayNum) yearDisplayNum.textContent = y;
         if (yearLabelBadge) yearLabelBadge.textContent = y;
         if (formYearInput)  formYearInput.value         = y;
         if (btnDelYear)     btnDelYear.dataset.year     = y;
         if (selectedYearHid) selectedYearHid.value      = y;
-        // Badges del tab de configuración
         const sb1 = document.getElementById('settingsYearBadge');
         const sb2 = document.getElementById('settingsYearBadgeDanger');
         if (sb1) sb1.textContent = y;
         if (sb2) sb2.textContent = y;
-
-        // Botones prev/next
         if (btnPrev) btnPrev.disabled = currentIdx >= years.length - 1;
         if (btnNext) btnNext.disabled = currentIdx <= 0;
-
-        // Subtítulo
         if (subtitleInput) subtitleInput.value = subtitles[y] ?? '';
         const subtitleBadge = document.getElementById('subtitleYearBadge');
         if (subtitleBadge) subtitleBadge.textContent = y;
-
-        // Visibilidad
         updateVisUI(y);
-
-        // Dropdown — marcar activo
         document.querySelectorAll('.year-dropdown-item').forEach(item => {
             const active = item.dataset.year === y;
             item.classList.toggle('active', active);
             item.setAttribute('aria-selected', String(active));
         });
-
-        // Grid de imágenes — mostrar solo las del año activo
         filterImagesByYear(y);
-
-        // Filtro pills — resetear a "todas"
         document.querySelectorAll('#catFilter .pill').forEach(p => p.classList.remove('active'));
         document.querySelector('#catFilter .pill[data-cat="todas"]')?.classList.add('active');
-
-        // Actualizar botón global
         updateGlobalSaveBtn?.();
     }
-
-    /* ════════════════════════════════════
-       YEAR SELECTOR — NAVEGACIÓN
-    ════════════════════════════════════ */
-    // El array está ordenado de reciente (idx 0) a antiguo (idx n-1)
-    // "Siguiente" (más reciente) = idx disminuye
-    // "Anterior" (más antiguo) = idx aumenta
 
     btnNext?.addEventListener('click', () => {
         if (currentIdx > 0) { currentIdx--; renderYear(); closeDropdown(); }
@@ -163,14 +129,9 @@
         if (currentIdx < years.length - 1) { currentIdx++; renderYear(); closeDropdown(); }
     });
 
-    /* ════════════════════════════════════
-       YEAR DROPDOWN
-    ════════════════════════════════════ */
     const yearDisplayBtn  = document.getElementById('yearDisplayBtn');
     const yearDropdown    = document.getElementById('yearDropdown');
 
-    /* Mover el dropdown al <body> para que position:fixed
-       no sea afectado por transforms de ancestros */
     if (yearDropdown) {
         document.body.appendChild(yearDropdown);
         yearDropdown.style.display = 'none';
@@ -179,10 +140,7 @@
     function positionDropdown() {
         if (!yearDropdown || !yearDisplayBtn) return;
         const rect = yearDisplayBtn.getBoundingClientRect();
-        // El dropdown tiene el mismo ancho que el botón central del año
-        // con un mínimo de 120px para que quepan los números
         const ddW = Math.max(rect.width, 120);
-        // Alinear al centro del botón
         let left = rect.left + (rect.width / 2) - (ddW / 2);
         left = Math.max(8, Math.min(left, window.innerWidth - ddW - 8));
         yearDropdown.style.top   = (rect.bottom + 6) + 'px';
@@ -192,7 +150,6 @@
 
     function openDropdown() {
         if (!yearDropdown) return;
-        // Mostrar invisible primero para medir ancho real
         yearDropdown.style.visibility = 'hidden';
         yearDropdown.style.display    = 'block';
         positionDropdown();
@@ -220,19 +177,10 @@
     document.addEventListener('click', e => {
         if (!e.target.closest('#yearDisplayWrap') && !e.target.closest('#yearDropdown')) closeDropdown();
     });
-    document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') closeDropdown();
-    });
-    window.addEventListener('scroll', () => {
-        if (yearDropdown?.style.display !== 'none') positionDropdown();
-    }, { passive: true });
-    window.addEventListener('resize', () => {
-        if (yearDropdown?.style.display !== 'none') positionDropdown();
-    }, { passive: true });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDropdown(); });
+    window.addEventListener('scroll', () => { if (yearDropdown?.style.display !== 'none') positionDropdown(); }, { passive: true });
+    window.addEventListener('resize', () => { if (yearDropdown?.style.display !== 'none') positionDropdown(); }, { passive: true });
 
-    /* ════════════════════════════════════
-       AGREGAR NUEVO AÑO
-    ════════════════════════════════════ */
     const btnAddYear     = document.getElementById('btnAddYear');
     const addYearForm    = document.getElementById('addYearForm');
     const yearSelect     = document.getElementById('newYearSelect');
@@ -275,9 +223,8 @@
 
     btnAddYear?.addEventListener('click', () => {
         const isOpen = addYearForm?.style.display !== 'none';
-        if (isOpen) {
-            hideAddYearForm();
-        } else {
+        if (isOpen) { hideAddYearForm(); }
+        else {
             populateYearSelect();
             addYearForm.style.display = 'flex';
             yearSelect?.focus();
@@ -299,23 +246,14 @@
 
     function confirmAddYear() {
         const val = yearSelect?.value?.trim();
-        if (!val) {
-            showToast('Selecciona un año.', 'error'); return;
-        }
-        if (years.includes(val)) {
-            showToast('Ese año ya existe.', 'error'); return;
-        }
-        // Agregar al array en orden descendente
+        if (!val) { showToast('Selecciona un año.', 'error'); return; }
+        if (years.includes(val)) { showToast('Ese año ya existe.', 'error'); return; }
         years.push(val);
         years.sort((a, b) => Number(b) - Number(a));
         currentIdx = years.indexOf(val);
-
-        // Visibilidad por defecto: oculto si ya hay 5 visibles
         const visCount = Object.values(visibilities).filter(Boolean).length;
         visibilities[val] = visCount < 5;
         subtitles[val] = '';
-
-        // Añadir al dropdown y cerrar
         addYearToDropdown(val);
         hideAddYearForm();
         renderYear();
@@ -340,10 +278,6 @@
         });
     }
 
-    /* ════════════════════════════════════
-       ELIMINAR AÑO
-    ════════════════════════════════════ */
-    /* ── Modal de confirmación para eliminar año ── */
     const confirmDelBg     = document.getElementById('confirmDelBg');
     const confirmDelYearEl = document.getElementById('confirmDelYear');
     const btnConfirmDelOk  = document.getElementById('btnConfirmDelOk');
@@ -370,21 +304,17 @@
         const y = yearPendingDelete;
         if (!y) return;
         closeConfirmDel();
-
         years.splice(years.indexOf(y), 1);
         delete visibilities[y];
         delete subtitles[y];
         if (currentIdx >= years.length) currentIdx = years.length - 1;
-
         addYearToDropdown(currentYear());
         document.querySelectorAll(`.img-card[data-year="${y}"]`).forEach(c => c.remove());
-
         renderYear();
         updateVisCounter();
         showToast(`Año ${y} eliminado.`);
     });
 
-    // El botón de eliminar ahora abre el modal
     document.addEventListener('click', e => {
         const delBtn = e.target.closest('#btnDelYear');
         if (!delBtn) return;
@@ -393,9 +323,6 @@
         openConfirmDel(y);
     });
 
-    /* ════════════════════════════════════
-       VISIBILIDAD DEL AÑO
-    ════════════════════════════════════ */
     const visStatusTxt   = document.getElementById('visStatusTxt');
     const visCounterTxt  = document.getElementById('visCounterTxt');
     const visCounter     = document.getElementById('visCounter');
@@ -404,19 +331,14 @@
         const y        = currentYear();
         const isOn     = visibilities[y] ?? true;
         const visCount = Object.values(visibilities).filter(Boolean).length;
-
         if (!isOn && visCount >= 5) {
             showToast('Límite de 5 años visibles alcanzado. Oculta otro año primero.', 'error');
             return;
         }
-
         visibilities[y] = !isOn;
         updateVisUI(y);
         updateVisCounter();
         updateDropdownVisItem(y);
-
-        // Persistir en backend (fetch)
-        // fetch('/admin/projects/year-visibility', { method:'POST', ... })
         showToast(!isOn ? `Año ${y} activado en el sitio.` : `Año ${y} ocultado del sitio.`);
     });
 
@@ -431,10 +353,7 @@
 
     function updateVisCounter() {
         const count = Object.values(visibilities).filter(Boolean).length;
-        const total = years.length;
         if (visCounterTxt) visCounterTxt.textContent = `${count} / 5 visibles`;
-
-        // Badge límite
         const existing = visCounter?.querySelector('.vis-limit-badge');
         if (count >= 5) {
             if (!existing) {
@@ -442,9 +361,7 @@
                 badge.className = 'vis-limit-badge'; badge.textContent = 'Límite';
                 visCounter?.appendChild(badge);
             }
-        } else {
-            existing?.remove();
-        }
+        } else { existing?.remove(); }
     }
 
     function updateDropdownVisItem(year) {
@@ -458,34 +375,21 @@
         }
     }
 
-    /* ════════════════════════════════════
-       FILTRAR IMÁGENES POR AÑO
-    ════════════════════════════════════ */
-    /* Retorna las cards visibles del año activo */
     function cardsOfYear(year) {
         return Array.from(document.querySelectorAll(`#imgGrid .img-card[data-year="${year}"]`));
     }
 
-    /* Actualiza las pills del filtro mostrando solo las categorías
-       que realmente tienen imágenes en el año activo */
     function refreshFilterPills(year) {
-        const cards    = cardsOfYear(year);
-        const toolbar  = document.getElementById('imgToolbar');
+        const cards     = cardsOfYear(year);
+        const toolbar   = document.getElementById('imgToolbar');
         const catFilter = document.getElementById('catFilter');
         if (!catFilter || !toolbar) return;
-
-        if (cards.length === 0) {
-            // Sin imágenes: ocultar toolbar de filtros
-            toolbar.style.display = 'none';
-            return;
-        }
-
-        // Con imágenes: mostrar toolbar y activar solo pills con contenido
+        if (cards.length === 0) { toolbar.style.display = 'none'; return; }
         toolbar.style.display = '';
         const usedCats = new Set(cards.map(c => c.dataset.cat));
         catFilter.querySelectorAll('.pill[data-cat]').forEach(pill => {
             const cat = pill.dataset.cat;
-            if (cat === 'todas') return; // "Todo" siempre visible
+            if (cat === 'todas') return;
             pill.style.display = usedCats.has(cat) ? '' : 'none';
         });
     }
@@ -515,16 +419,12 @@
 
     function refreshEmptyState(visible, year) {
         const grid = document.getElementById('imgGrid');
-        // Eliminar empty state anterior
         grid?.querySelector('.img-empty')?.remove();
-
         if (visible === 0) {
             const empty = document.createElement('div');
             empty.className = 'img-empty';
             const totalOfYear = cardsOfYear(year ?? currentYear()).length;
-
             if (totalOfYear === 0) {
-                // Año completamente vacío — estado de inicio con botón
                 empty.innerHTML = `
                     <i class="fa fa-folder-open"></i>
                     <p>Aún no hay imágenes para este año.</p>
@@ -532,42 +432,28 @@
                         <i class="fa fa-plus"></i> Subir primera imagen
                     </button>`;
             } else {
-                // Hay imágenes pero el filtro activo no tiene resultados
                 empty.innerHTML = `
                     <i class="fa fa-magnifying-glass"></i>
                     <p>Ninguna imagen coincide con este filtro.</p>`;
             }
             grid?.appendChild(empty);
-
-            // El botón del estado vacío también abre el modal
             document.getElementById('btnEmptyUpload')?.addEventListener('click', () => {
                 document.getElementById('btnAddImage')?.click();
             });
         }
     }
 
-    /* ════════════════════════════════════
-       SUBTÍTULO DEL AÑO
-    ════════════════════════════════════ */
-    /* ════════════════════════════════════
-       BOTÓN GLOBAL DE GUARDAR
-       — "Guardar" (disabled) cuando no hay cambios
-       — "Subir" cuando el año no tiene imágenes aún
-       — "Guardar cambios" cuando ya hay imágenes registradas
-    ════════════════════════════════════ */
     const btnGlobalSave      = document.getElementById('btnGlobalSave');
     const btnGlobalSaveLabel = document.getElementById('btnGlobalSaveLabel');
     const btnGlobalSaveIcon  = document.getElementById('btnGlobalSaveIcon');
 
     function updateGlobalSaveBtn() {
         if (!btnGlobalSave) return;
-        const y           = currentYear();
-        const subtitleVal = subtitleInput?.value.trim() ?? '';
-        const savedSub    = subtitles[y] ?? '';
+        const y            = currentYear();
+        const subtitleVal  = subtitleInput?.value.trim() ?? '';
+        const savedSub     = subtitles[y] ?? '';
         const hasSubChange = subtitleVal !== savedSub;
         const hasImages    = cardsOfYear(y).length > 0;
-
-        // Sin imágenes: siempre desactivado sin importar el subtítulo
         if (!hasImages) {
             btnGlobalSave.disabled = true;
             btnGlobalSave.title    = 'Agrega al menos una imagen antes de guardar';
@@ -575,19 +461,15 @@
             if (btnGlobalSaveIcon)  btnGlobalSaveIcon.className    = 'fa fa-floppy-disk';
             return;
         }
-
         btnGlobalSave.disabled = !hasSubChange;
         btnGlobalSave.title    = '';
-        if (btnGlobalSaveLabel)
-            btnGlobalSaveLabel.textContent = hasSubChange ? 'Guardar cambios' : 'Guardar';
-        if (btnGlobalSaveIcon)
-            btnGlobalSaveIcon.className = 'fa fa-floppy-disk';
+        if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = hasSubChange ? 'Guardar cambios' : 'Guardar';
+        if (btnGlobalSaveIcon)  btnGlobalSaveIcon.className    = 'fa fa-floppy-disk';
     }
 
     document.getElementById('btnGlobalSave')?.addEventListener('click', () => {
         const y   = currentYear();
         const sub = subtitleInput?.value.trim() ?? '';
-
         fetch('/admin/projects/year-update', {
             method: 'PUT',
             headers: {
@@ -597,25 +479,12 @@
             body: JSON.stringify({ year: y, subtitulo: sub, visible: visibilities[y] ?? true })
         })
         .then(res => { if (!res.ok) throw new Error(); return res.json(); })
-        .then(() => {
-            subtitles[y] = sub;
-            updateGlobalSaveBtn();
-            showToast(`Año ${y} guardado.`);
-        })
+        .then(() => { subtitles[y] = sub; updateGlobalSaveBtn(); showToast(`Año ${y} guardado.`); })
         .catch(() => showToast('Error al guardar.', 'error'));
     });
 
-    // Escuchar cambios en el input de subtítulo
     subtitleInput?.addEventListener('input', updateGlobalSaveBtn);
 
-    // Llamar al cambiar de año
-    const origRenderYear = renderYear;
-
-
-
-    /* ════════════════════════════════════
-       CONTENT TABS (imágenes / categorías)
-    ════════════════════════════════════ */
     const tabPanels = {
         images:     document.getElementById('tabImages'),
         categories: document.getElementById('tabCategories'),
@@ -632,18 +501,14 @@
                 panel.style.display = show ? '' : 'none';
                 panel.classList.toggle('active', show);
                 if (show) {
-                    // Disparar animación de entrada
                     panel.classList.remove('tab-entering');
-                    void panel.offsetWidth; // forzar reflow para reiniciar la animación
+                    void panel.offsetWidth;
                     panel.classList.add('tab-entering');
                 }
             });
         });
     });
 
-    /* ════════════════════════════════════
-       FILTROS DE CATEGORÍA (pills)
-    ════════════════════════════════════ */
     document.getElementById('catFilter')?.addEventListener('click', e => {
         const pill = e.target.closest('.pill');
         if (!pill) return;
@@ -652,9 +517,6 @@
         filterImagesByCat(pill.dataset.cat);
     });
 
-    /* ════════════════════════════════════
-       CATEGORY MANAGER
-    ════════════════════════════════════ */
     document.getElementById('catList')?.addEventListener('click', e => {
         const delBtn = e.target.closest('.cat-item__del');
         if (!delBtn) return;
@@ -665,32 +527,24 @@
         item.style.opacity = '0'; item.style.transform = 'translateX(8px)';
         setTimeout(() => {
             item.remove();
-            // Categorías globales: quitar la pill del filtro Y la opción del modal
             document.querySelector(`#catFilter .pill[data-cat="${catName}"]`)?.remove();
             const sel = document.getElementById('catInput');
-            if (sel) {
-                Array.from(sel.options).forEach(o => { if (o.value === catName) o.remove(); });
-            }
+            if (sel) Array.from(sel.options).forEach(o => { if (o.value === catName) o.remove(); });
         }, 200);
         showToast(`Categoría "${catName}" eliminada de todos los años.`);
     });
 
     document.getElementById('btnAddCat')?.addEventListener('click', addCategory);
-    document.getElementById('newCatInput')?.addEventListener('keydown', e => {
-        if (e.key === 'Enter') addCategory();
-    });
+    document.getElementById('newCatInput')?.addEventListener('keydown', e => { if (e.key === 'Enter') addCategory(); });
 
     function addCategory() {
         const input = document.getElementById('newCatInput');
         const val   = input?.value.trim();
         if (!val) { showToast('Escribe un nombre de categoría.', 'error'); return; }
-
         const catList = document.getElementById('catList');
         const exists = Array.from(catList?.querySelectorAll('.cat-item__name') || [])
                            .some(el => el.textContent.toLowerCase() === val.toLowerCase());
         if (exists) { showToast('Esa categoría ya existe.', 'error'); return; }
-
-        // ── Añadir a la lista de gestión ──
         const item = document.createElement('div');
         item.className = 'cat-item'; item.dataset.cat = val;
         item.innerHTML = `
@@ -700,27 +554,18 @@
                 <i class="fa fa-xmark"></i>
             </button>`;
         catList?.appendChild(item);
-
-        // ── Categorías globales: añadir pill al filtro ──
         const filter = document.getElementById('catFilter');
         const btn = document.createElement('button');
-        btn.className = 'pill'; btn.dataset.cat = val;
-        btn.type = 'button'; btn.textContent = val;
+        btn.className = 'pill'; btn.dataset.cat = val; btn.type = 'button'; btn.textContent = val;
         filter?.appendChild(btn);
-
-        // ── Añadir al select del modal ──
         const sel = document.getElementById('catInput');
         const opt = document.createElement('option');
         opt.value = val; opt.textContent = val;
         sel?.appendChild(opt);
-
         if (input) input.value = '';
         showToast(`Categoría "${val}" disponible para todos los años.`);
     }
 
-    /* ════════════════════════════════════
-       MODAL — abrir / cerrar
-    ════════════════════════════════════ */
     const modalBg     = document.getElementById('imgModalBg');
     const modalForm   = document.getElementById('imgModalForm');
     const modalTitle  = document.getElementById('imgModalTitle');
@@ -739,6 +584,7 @@
         modalForm?.reset();
         if (methodField) methodField.innerHTML = '';
         updateDateReadable('');
+        document.getElementById('dpCalendar')?.remove();
     }
 
     document.getElementById('imgModalClose')?.addEventListener('click', closeModal);
@@ -746,14 +592,12 @@
     modalBg?.addEventListener('click', e => { if (e.target === modalBg) closeModal(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && modalBg?.classList.contains('open')) closeModal(); });
 
-    /* Abrir modal para añadir */
     document.getElementById('btnAddImage')?.addEventListener('click', () => {
         const y = currentYear();
         if (selectedYearHid) selectedYearHid.value = y;
         if (modalTitle) modalTitle.textContent = 'Añadir Imagen del Proyecto';
         if (modalSub)   modalSub.textContent   = `Nueva imagen para el año ${y}`;
         if (methodField) methodField.innerHTML = '';
-        // Label del botón submit del modal
         const submitLabel = document.getElementById('modalSubmitLabel');
         if (submitLabel) submitLabel.textContent = 'Continuar';
         const dateInput = document.getElementById('eventDateInput');
@@ -764,44 +608,27 @@
         openModal();
     });
 
-    /* Abrir modal para editar */
     document.getElementById('imgGrid')?.addEventListener('click', e => {
         const editBtn = e.target.closest('.btn-edit-img');
         if (!editBtn) return;
-
         const id   = editBtn.dataset.id;
         const card = document.querySelector(`.img-card[data-id="${id}"]`);
         if (!card) return;
-
         if (modalTitle) modalTitle.textContent = `Editar Imagen — ID: ${id}`;
         if (modalSub)   modalSub.textContent   = 'Modifica los datos de esta imagen';
         if (methodField) methodField.innerHTML = `<input type="hidden" name="_method" value="PUT">`;
-        // Label del botón submit del modal en edición
         const submitLabel = document.getElementById('modalSubmitLabel');
         if (submitLabel) submitLabel.textContent = 'Guardar cambios';
-
         const updateUrl = editBtn.dataset.updateUrl;
         if (updateUrl && modalForm) modalForm.action = updateUrl;
-
-        // Prellenar descripción
         const desc = card.querySelector('.img-desc')?.textContent?.trim() ?? '';
         const descInput = document.getElementById('imgDescInput');
         if (descInput) descInput.value = desc === 'Sin descripción.' ? '' : desc;
-
-        // Prellenar fecha
-        const dateText  = card.querySelector('.img-date')?.textContent?.replace(/[^0-9/]/g, '').trim() ?? '';
         const dateInput = document.getElementById('eventDateInput');
         if (dateInput) {
-            if (dateText.includes('/')) {
-                const [dd, mm, yyyy] = dateText.split('/');
-                dateInput.value = `${yyyy}-${mm}-${dd}`;
-            } else {
-                dateInput.value = todayISO();
-            }
+            dateInput.value = card.dataset.date || todayISO();
             updateDateReadable(dateInput.value);
         }
-
-        // Categoría
         const cat    = card.dataset.cat;
         const catSel = document.getElementById('catInput');
         if (catSel) {
@@ -809,16 +636,199 @@
                 if (catSel.options[i].value === cat) { catSel.selectedIndex = i; break; }
             }
         }
-
         const imgEl = card.querySelector('.img-thumb img');
         if (imgEl) showPreview(imgEl.src); else resetUploadZone();
-
         openModal();
     });
 
     /* ════════════════════════════════════
-       UPLOAD DE IMAGEN
+       DATE PICKER CUSTOM
+       — muestra "10 de Abril" sin año
+       — restringe al año activo
+       — no permite fechas futuras
+       — < > usan stopPropagation para no cerrar el calendario
+       — se abre arriba si no cabe abajo
     ════════════════════════════════════ */
+    (function initDatePicker() {
+        const btn      = document.getElementById('datePickerBtn');
+        const hiddenIn = document.getElementById('eventDateInput');
+        if (!btn || !hiddenIn) return;
+
+        let dpViewMonth = new Date().getMonth(); // 0-based
+
+        const DIAS = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
+
+        function getActiveYear() {
+            const num = document.getElementById('yearDisplayNum');
+            return parseInt(num?.textContent?.trim() || new Date().getFullYear(), 10);
+        }
+
+        function buildCalendar() {
+            const activeYear = getActiveYear();
+            const now        = new Date();
+            const todayYear  = now.getFullYear();
+            const todayMonth = now.getMonth();
+            const todayDay   = now.getDate();
+            const todayStr   = todayISO(); // YYYY-MM-DD local, sin UTC
+
+            const canGoPrev = dpViewMonth > 0;
+            const canGoNext = dpViewMonth < 11 &&
+                              (activeYear < todayYear ||
+                              (activeYear === todayYear && dpViewMonth < todayMonth));
+
+            const cal = document.createElement('div');
+            cal.className = 'date-picker-calendar';
+            cal.id = 'dpCalendar';
+
+            /* ── Navegación ── */
+            const nav = document.createElement('div');
+            nav.className = 'dp-nav';
+
+            const navPrev = document.createElement('button');
+            navPrev.type = 'button'; navPrev.className = 'dp-nav-btn';
+            navPrev.innerHTML = '<i class="fa fa-chevron-left"></i>';
+            navPrev.disabled = !canGoPrev;
+            navPrev.addEventListener('click', e => {
+                e.stopPropagation(); /* ← no dispara cierre global */
+                if (canGoPrev) { dpViewMonth--; refreshCalendar(); }
+            });
+
+            const monthLabel = document.createElement('span');
+            monthLabel.className = 'dp-month-label';
+            monthLabel.textContent = `${MESES[dpViewMonth]} ${activeYear}`;
+
+            const navNext = document.createElement('button');
+            navNext.type = 'button'; navNext.className = 'dp-nav-btn';
+            navNext.innerHTML = '<i class="fa fa-chevron-right"></i>';
+            navNext.disabled = !canGoNext;
+            navNext.addEventListener('click', e => {
+                e.stopPropagation(); /* ← ídem */
+                if (canGoNext) { dpViewMonth++; refreshCalendar(); }
+            });
+
+            nav.append(navPrev, monthLabel, navNext);
+
+            /* ── Cabecera días ── */
+            const header = document.createElement('div');
+            header.className = 'dp-days-header';
+            DIAS.forEach(d => {
+                const dn = document.createElement('div');
+                dn.className = 'dp-day-name'; dn.textContent = d;
+                header.appendChild(dn);
+            });
+
+            /* ── Días del mes ── */
+            const grid = document.createElement('div');
+            grid.className = 'dp-days';
+
+            const firstDay    = new Date(activeYear, dpViewMonth, 1).getDay();
+            const offset      = (firstDay === 0) ? 6 : firstDay - 1;
+            const daysInMonth = new Date(activeYear, dpViewMonth + 1, 0).getDate();
+            const selectedISO = hiddenIn.value;
+
+            for (let i = 0; i < offset; i++) {
+                const empty = document.createElement('button');
+                empty.type = 'button'; empty.className = 'dp-day empty';
+                empty.disabled = true;
+                grid.appendChild(empty);
+            }
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const mm     = String(dpViewMonth + 1).padStart(2, '0');
+                const dd     = String(d).padStart(2, '0');
+                const isoStr = `${activeYear}-${mm}-${dd}`;
+
+                const dayBtn = document.createElement('button');
+                dayBtn.type = 'button'; dayBtn.className = 'dp-day';
+                dayBtn.textContent = d;
+
+                if (isoStr > todayStr) {
+                    /* Día futuro — deshabilitado */
+                    dayBtn.disabled = true;
+                    dayBtn.classList.add('future');
+                } else {
+                    if (isoStr === selectedISO) dayBtn.classList.add('selected');
+                    if (activeYear === todayYear && dpViewMonth === todayMonth && d === todayDay) {
+                        dayBtn.classList.add('today');
+                    }
+                    dayBtn.addEventListener('click', e => {
+                        e.stopPropagation(); /* ← no dispara cierre global */
+                        hiddenIn.value = isoStr;
+                        updateDateReadable(isoStr);
+                        closeCalendar();
+                    });
+                }
+
+                grid.appendChild(dayBtn);
+            } /* ← cierre correcto del for */
+
+            /* También detener propagación en el propio contenedor del calendario */
+            cal.addEventListener('click', e => e.stopPropagation());
+
+            cal.append(nav, header, grid);
+            return cal;
+        }
+
+        function refreshCalendar() {
+            const old = document.getElementById('dpCalendar');
+            if (!old) return;
+            const parent  = old.parentElement;
+            const wasAbove = old.style.bottom !== '';
+            old.remove();
+            const cal = buildCalendar();
+            parent.appendChild(cal);
+            if (wasAbove) {
+                cal.style.top    = 'auto';
+                cal.style.bottom = 'calc(100% + 6px)';
+            }
+        }
+
+        function openCalendar() {
+            if (document.getElementById('dpCalendar')) { closeCalendar(); return; }
+
+            const activeYear = getActiveYear();
+            const now        = new Date();
+
+            if (hiddenIn.value) {
+                const [, m] = hiddenIn.value.split('-');
+                dpViewMonth = parseInt(m, 10) - 1;
+            } else {
+                dpViewMonth = (activeYear === now.getFullYear()) ? now.getMonth() : 0;
+            }
+
+            const cal    = buildCalendar();
+            const parent = btn.closest('.date-picker-group') || btn.parentElement;
+            parent.style.position = 'relative';
+            parent.appendChild(cal);
+
+            /* Abrir arriba si se sale del viewport por abajo */
+            requestAnimationFrame(() => {
+                const rect       = cal.getBoundingClientRect();
+                const spaceBelow = window.innerHeight - rect.bottom;
+                if (spaceBelow < 0) {
+                    cal.style.top    = 'auto';
+                    cal.style.bottom = 'calc(100% + 6px)';
+                }
+            });
+        }
+
+        function closeCalendar() {
+            document.getElementById('dpCalendar')?.remove();
+        }
+
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            openCalendar();
+        });
+
+        /* Cerrar solo al hacer click FUERA del date-picker-group completo */
+        document.addEventListener('click', () => closeCalendar());
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeCalendar();
+        });
+    })();
+
     const uploadZone    = document.getElementById('uploadZone');
     const fileInput     = document.getElementById('imgFile');
     const uploadInner   = document.getElementById('uploadInner');
@@ -846,9 +856,6 @@
         if (file && file.type.startsWith('image/')) handleFile(file);
     });
     fileInput?.addEventListener('change', () => { if (fileInput.files?.[0]) handleFile(fileInput.files[0]); });
-    document.getElementById('eventDateInput')?.addEventListener('change', e => {
-        updateDateReadable(e.target.value);
-    });
     document.getElementById('btnChangeImg')?.addEventListener('click', e => {
         e.stopPropagation(); resetUploadZone(); fileInput?.click();
     });
@@ -860,15 +867,8 @@
         reader.readAsDataURL(file);
     }
 
-    /* ════════════════════════════════════
-       DESTACADO
-    ════════════════════════════════════ */
-    /* Featured y projSearch eliminados del modal */
-    function setFeatured() {}  /* stub para compatibilidad con closeModal */
+    function setFeatured() {}
 
-    /* ════════════════════════════════════
-       MODAL FORM — submit
-    ════════════════════════════════════ */
     modalForm?.addEventListener('submit', function (e) {
         if (!validateForm(this)) {
             e.preventDefault();
@@ -876,36 +876,24 @@
         }
     });
 
-    /* ════════════════════════════════════
-       ELIMINAR IMAGEN
-    ════════════════════════════════════ */
     document.getElementById('imgGrid')?.addEventListener('click', e => {
         const delBtn = e.target.closest('.btn-del-img');
         if (!delBtn) return;
-
         const id  = delBtn.dataset.id;
         const url = delBtn.dataset.url;
-
         if (!confirm('¿Eliminar esta imagen? Esta acción no se puede deshacer.')) return;
-
         const card = document.querySelector(`.img-card[data-id="${id}"]`);
         const activeCat = document.querySelector('#catFilter .pill.active')?.dataset.cat || 'todas';
-
         const removeCard = () => {
             if (card) {
                 card.style.transition = 'opacity 0.22s, transform 0.22s';
                 card.style.opacity = '0'; card.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    card.remove();
-                    filterImagesByCat(activeCat);
-                }, 230);
+                setTimeout(() => { card.remove(); filterImagesByCat(activeCat); }, 230);
             }
             showToast('Imagen eliminada.');
             updateGlobalSaveBtn?.();
         };
-
         if (!url || url === '#') { removeCard(); return; }
-
         const token = document.querySelector('meta[name="csrf-token"]')?.content
                    || document.querySelector('input[name="_token"]')?.value || '';
         fetch(url, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' } })
@@ -914,48 +902,27 @@
             .catch(() => showToast('No se pudo eliminar la imagen.', 'error'));
     });
 
-    /* ════════════════════════════════════
-       INIT
-    ════════════════════════════════════ */
     const initialYear = yearDisplayNum?.textContent?.trim();
     if (initialYear) {
         const idx = years.indexOf(initialYear);
         if (idx !== -1) currentIdx = idx;
     }
     renderYear();
-    // Botón global — estado inicial
     setTimeout(updateGlobalSaveBtn, 0);
 
-    /* ════════════════════════════════════
-       ESTILOS JS — toast + errores
-    ════════════════════════════════════ */
     if (!document.getElementById('edit-page-js-styles')) {
         const style = document.createElement('style');
         style.id = 'edit-page-js-styles';
         style.textContent = `
-            .edit-toast {
-                position:fixed; bottom:26px; right:26px;
-                display:flex; align-items:center; gap:10px;
-                padding:12px 18px; border-radius:11px;
-                font-size:13px; font-weight:500; color:#fff;
-                box-shadow:0 8px 26px rgba(0,0,0,0.18);
-                opacity:0; transform:translateY(12px);
-                transition:opacity 0.28s ease, transform 0.28s ease;
-                z-index:9999; pointer-events:none; max-width:320px;
-            }
+            .edit-toast { position:fixed; bottom:26px; right:26px; display:flex; align-items:center; gap:10px; padding:12px 18px; border-radius:11px; font-size:13px; font-weight:500; color:#fff; box-shadow:0 8px 26px rgba(0,0,0,0.18); opacity:0; transform:translateY(12px); transition:opacity 0.28s ease, transform 0.28s ease; z-index:9999; pointer-events:none; max-width:320px; }
             .edit-toast--show  { opacity:1; transform:translateY(0); }
             .edit-toast--success { background:#2d7d46; }
             .edit-toast--error   { background:#c0392b; }
             .edit-toast__icon  { font-size:15px; flex-shrink:0; }
-            .field--error {
-                border-color:#c0392b !important;
-                box-shadow:0 0 0 3px rgba(192,57,43,0.14) !important;
-            }
+            .field--error { border-color:#c0392b !important; box-shadow:0 0 0 3px rgba(192,57,43,0.14) !important; }
             .field-error-msg { margin-top:4px; font-size:12px; color:#c0392b; font-weight:500; }
-            .upload-zone.dragover {
-                border-color:var(--accent) !important;
-                background:var(--accent-light) !important;
-            }
+            .upload-zone.dragover { border-color:var(--accent) !important; background:var(--accent-light) !important; }
+            .dp-day.future { opacity:0.22; cursor:not-allowed; pointer-events:none; }
         `;
         document.head.appendChild(style);
     }

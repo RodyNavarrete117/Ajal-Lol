@@ -13,7 +13,8 @@ use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\EditPageContactController; // ← NUEVO
+use App\Http\Controllers\EditPageContactController;
+use App\Http\Controllers\EditPageBoardController;
 
 /* ── Rate limiter para el formulario de contacto ── */
 RateLimiter::for('contact', function (Request $request) {
@@ -105,10 +106,13 @@ Route::middleware(['admin'])->group(function () {
         Route::get('/allies/edit',     fn() => view('admin.pages.allies_edit'))->name('admin.pages.allies.edit');
         Route::get('/activities/edit', fn() => view('admin.pages.activities_edit'))->name('admin.pages.activities.edit');
         Route::get('/projects/edit',   fn() => view('admin.pages.projects_edit'))->name('admin.pages.projects.edit');
-        Route::get('/board/edit',      fn() => view('admin.pages.board_edit'))->name('admin.pages.board.edit');
         Route::get('/faq/edit',        fn() => view('admin.pages.faq_edit'))->name('admin.pages.faq.edit');
 
-        /* ── Contacto: ahora usa controlador real ── */
+        /* ── Directiva: controlador real ── */
+        Route::get('/board/edit',   [EditPageBoardController::class, 'index'])->name('admin.pages.board.edit');
+        Route::put('/board/update', [EditPageBoardController::class, 'update'])->name('admin.pages.board.update');
+
+        /* ── Contacto: controlador real ── */
         Route::get('/contact/edit',    [EditPageContactController::class, 'index'])->name('admin.pages.contact.edit');
         Route::put('/contact/update',  [EditPageContactController::class, 'update'])->name('admin.pages.contact.update');
     });

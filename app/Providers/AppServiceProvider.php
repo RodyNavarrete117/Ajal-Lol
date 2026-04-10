@@ -12,8 +12,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Comparte $contacto con los 3 blades públicos que lo necesitan
-        // Se ejecuta automáticamente cada vez que se renderiza cualquiera de estas vistas
+        // ── Contacto: header, footer y sección contacto ──
         View::composer(
             [
                 'partials.header',
@@ -21,13 +20,10 @@ class AppServiceProvider extends ServiceProvider
                 'sections.contact',
             ],
             function ($view) {
-                // Consulta una sola vez la fila de contacto ligada a id_pagina = 8
                 $contacto = DB::table('contacto')
                     ->where('id_pagina', 8)
                     ->first();
 
-                // Si no existe aún el registro en BD, pasa un objeto vacío
-                // para que los blades no fallen con "Undefined property"
                 $view->with('contacto', $contacto ?? (object)[
                     'email_contacto'     => '',
                     'telefono_contacto'  => '',
@@ -40,5 +36,27 @@ class AppServiceProvider extends ServiceProvider
                 ]);
             }
         );
+
+        // ── Directiva: sección team ──
+        View::composer('sections.team', function ($view) {
+            // Título y subtítulo del primer registro (orden_directiva = 1)
+            $config = DB::table('directiva')
+                ->where('id_pagina', 6)
+                ->orderBy('orden_directiva', 'asc')
+                ->first();
+
+            // Todos los miembros ordenados
+            $miembros = DB::table('directiva')
+                ->where('id_pagina', 6)
+                ->orderBy('orden_directiva', 'asc')
+                ->get();
+
+            $view->with('directivaConfig', $config ?? (object)[
+                'titulo_directiva'    => 'Directiva',
+                'subtitulo_directiva' => 'Comité Directivo',
+            ]);
+
+            $view->with('directiva', $miembros);
+        });
     }
 }

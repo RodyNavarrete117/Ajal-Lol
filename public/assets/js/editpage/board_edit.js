@@ -2,6 +2,7 @@
 (function () {
     'use strict';
 
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     let memberCount = document.querySelectorAll('.member-card').length;
 
     /* ── Toast ─────────────────────────────────────────── */
@@ -68,23 +69,25 @@
 
     /* ── Quitar foto ────────────────────────────────────── */
     function clearPhoto(memberNum) {
-        const preview   = document.getElementById(`photo-preview-${memberNum}`);
-        const thumb     = document.getElementById(`thumb-${memberNum}`);
-        const fileInput = document.getElementById(`foto_${memberNum}`);
+        const preview    = document.getElementById(`photo-preview-${memberNum}`);
+        const thumb      = document.getElementById(`thumb-${memberNum}`);
+        const fileInput  = document.getElementById(`foto_${memberNum}`);
+        const fotoExist  = document.querySelector(`#member-${memberNum} .foto-existente`);
 
         if (preview) {
-            preview.innerHTML = `<div class="member-photo__empty"><i class="fa fa-user"></i><span>Subir foto</span></div>`;
+            preview.innerHTML = `<div class="member-photo__empty"><i class="fa fa-user"></i></div>`;
             preview.classList.remove('has-image');
         }
-        if (thumb)     thumb.innerHTML = `<i class="fa fa-user"></i>`;
-        if (fileInput) fileInput.value = '';
+        if (thumb)      thumb.innerHTML   = `<i class="fa fa-user"></i>`;
+        if (fileInput)  fileInput.value   = '';
+        if (fotoExist)  fotoExist.value   = ''; // limpiar foto existente en BD
     }
 
     /* ── Inicializar listeners de un card ───────────────── */
     function initCard(card) {
         const memberNum = card.id.replace('member-', '');
 
-        /* Toggle colapsar */
+        /* Toggle colapsar al hacer clic en el head */
         const head = card.querySelector('.member-card__head');
         if (head) {
             head.addEventListener('click', (e) => {
@@ -94,6 +97,7 @@
             });
         }
 
+        /* Chevron */
         const chevron = card.querySelector('.member-card__chevron');
         if (chevron) {
             chevron.addEventListener('click', (e) => {
@@ -113,7 +117,7 @@
             });
         }
 
-        /* Cambio de archivo → previsualizar directamente */
+        /* Cambio de archivo → previsualizar */
         if (inputEl) {
             inputEl.addEventListener('change', function () {
                 const file = this.files[0];
@@ -153,7 +157,7 @@
             btnClear.addEventListener('click', () => clearPhoto(memberNum));
         }
 
-        /* Actualizar head al escribir */
+        /* Actualizar head al escribir nombre o cargo */
         const nombreInput = card.querySelector('.nombre-input');
         const cargoInput  = card.querySelector('.cargo-input');
         if (nombreInput) nombreInput.addEventListener('input', () => updateHead(memberNum));
@@ -204,21 +208,24 @@
 
             const fileInput = card.querySelector('.photo-input');
             if (fileInput) {
-                fileInput.id   = `foto_${n}`;
-                fileInput.name = `foto_${n}`;
+                fileInput.id             = `foto_${n}`;
+                fileInput.name           = `foto_${n}`;
                 fileInput.dataset.member = n;
             }
 
             const uploadLabel = card.querySelector('.btn-photo-upload');
             if (uploadLabel) uploadLabel.setAttribute('for', `foto_${n}`);
 
+            const fotoExist = card.querySelector('.foto-existente');
+            if (fotoExist) fotoExist.name = `foto_existente_${n}`;
+
             const clearBtn = card.querySelector('.btn-photo-clear');
             if (clearBtn) clearBtn.dataset.member = n;
 
             const nombreInput = card.querySelector('.nombre-input');
             if (nombreInput) {
-                nombreInput.id   = `miembro_nombre_${n}`;
-                nombreInput.name = `miembro_nombre_${n}`;
+                nombreInput.id             = `miembro_nombre_${n}`;
+                nombreInput.name           = `miembro_nombre_${n}`;
                 nombreInput.dataset.member = n;
                 card.querySelector(`label[for^="miembro_nombre_"]`)
                     ?.setAttribute('for', `miembro_nombre_${n}`);
@@ -226,12 +233,15 @@
 
             const cargoInput = card.querySelector('.cargo-input');
             if (cargoInput) {
-                cargoInput.id   = `miembro_cargo_${n}`;
-                cargoInput.name = `miembro_cargo_${n}`;
+                cargoInput.id             = `miembro_cargo_${n}`;
+                cargoInput.name           = `miembro_cargo_${n}`;
                 cargoInput.dataset.member = n;
                 card.querySelector(`label[for^="miembro_cargo_"]`)
                     ?.setAttribute('for', `miembro_cargo_${n}`);
             }
+
+            const headEl = card.querySelector('.member-card__head');
+            if (headEl) headEl.dataset.member = n;
 
             const removeBtn = card.querySelector('.btn-remove-member');
             if (removeBtn) removeBtn.dataset.member = n;
@@ -273,7 +283,6 @@
                     <div class="member-photo" id="photo-preview-${n}">
                         <div class="member-photo__empty">
                             <i class="fa fa-user"></i>
-                            <span>Subir foto</span>
                         </div>
                     </div>
                     <div class="member-photo-actions">
@@ -289,6 +298,7 @@
                                accept="image/png,image/jpeg,image/webp"
                                class="photo-input" data-member="${n}" style="display:none;">
                     </div>
+                    <input type="hidden" name="foto_existente_${n}" class="foto-existente" value="">
                 </div>
 
                 <div class="member-fields-col">
@@ -358,17 +368,48 @@
         return valid;
     }
 
-    /* ── Submit ──────────────────────────────────────────── */
-    const form = document.querySelector('.edit-container form');
+    /* ── Submit con fetch real ───────────────────────────── */
+    const form = document.getElementById('board-edit-form');
     if (form) {
-        form.addEventListener('submit', function (e) {
+        form.addEventListener('submit', async function (e) {
             e.preventDefault();
+
             if (!validateForm(form)) {
                 showToast('Por favor completa los campos obligatorios.', 'error');
                 return;
             }
-            showToast('Cambios guardados correctamente.', 'success');
-            /* TODO: reemplazar con fetch real */
+
+            const btns = form.querySelectorAll('.btn-save');
+            btns.forEach(btn => {
+                btn.disabled  = true;
+                btn.innerHTML = '<i class="fa fa-spinner fa-spin" style="margin-right:7px;"></i> Guardando…';
+            });
+
+            try {
+                const response = await fetch(form.action, {
+                    method:  'POST',
+                    body:    new FormData(form),
+                    headers: { 'X-CSRF-TOKEN': csrfToken },
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showToast(data.message, 'success');
+                } else {
+                    showToast(data.message || 'Error al guardar.', 'error');
+                }
+
+            } catch (err) {
+                console.error('board_edit error:', err);
+                showToast('Error de conexión. Intenta de nuevo.', 'error');
+
+            } finally {
+                btns.forEach(btn => {
+                    btn.disabled  = false;
+                    btn.innerHTML = '<i class="fa fa-floppy-disk" style="margin-right:7px;"></i> Guardar Cambios';
+                });
+            }
         });
     }
 

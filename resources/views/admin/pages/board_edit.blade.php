@@ -84,7 +84,7 @@
 
                         <div class="member-card__thumb" id="thumb-{{ $i }}">
                             @if($miembro->foto_directiva)
-                                <img src="{{ asset('assets/img/team/' . $miembro->foto_directiva) }}"
+                                <img src="{{ asset('storage/' . $miembro->foto_directiva) }}"
                                      alt="{{ $miembro->nombre_directiva }}">
                             @else
                                 <i class="fa fa-user"></i>
@@ -126,7 +126,7 @@
                             <div class="member-photo {{ $miembro->foto_directiva ? 'has-image' : '' }}"
                                  id="photo-preview-{{ $i }}">
                                 @if($miembro->foto_directiva)
-                                    <img src="{{ asset('assets/img/team/' . $miembro->foto_directiva) }}"
+                                    <img src="{{ asset('storage/' . $miembro->foto_directiva) }}"
                                          alt="{{ $miembro->nombre_directiva }}">
                                 @else
                                     <div class="member-photo__empty">

@@ -16,9 +16,10 @@
                data-anim="zoom-in"
                data-delay="{{ $index * 100 }}"
                role="listitem">
+
         <div class="member-img">
           @if($miembro->foto_directiva)
-            <img src="{{ asset('assets/img/team/' . $miembro->foto_directiva) }}"
+            <img src="{{ asset('storage/' . $miembro->foto_directiva) }}"
                  alt="Fotografía de {{ $miembro->nombre_directiva }}, {{ $miembro->cargo_directiva }}"
                  loading="lazy">
           @else
@@ -27,10 +28,12 @@
             </div>
           @endif
         </div>
+
         <div class="member-info">
           <h3>{{ $miembro->nombre_directiva }}</h3>
           <span>{{ $miembro->cargo_directiva }}</span>
         </div>
+
       </article>
       @empty
       <p style="text-align:center;color:var(--text-light)">

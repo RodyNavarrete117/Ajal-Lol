@@ -61,4 +61,4 @@
 //
 //         return response()->json(['success' => true, 'message' => 'Bloque eliminado.']);
 //     }
-// }
+// }Q

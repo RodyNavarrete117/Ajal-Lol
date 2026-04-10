@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class EditPageBoardController extends Controller
 {
     /**
-     * Muestra el formulario con los datos actuales de BD.
-     * Tabla: directiva, id_pagina = 6
+     * Mostrar datos actuales
      */
     public function index()
     {
@@ -25,7 +25,7 @@ class EditPageBoardController extends Controller
     }
 
     /**
-     * Guarda los cambios: título, subtítulo, miembros y fotos.
+     * Guardar cambios
      */
     public function update(Request $request)
     {
@@ -37,7 +37,7 @@ class EditPageBoardController extends Controller
         ]);
 
         try {
-            // Determinar cuántos miembros vienen en el request
+            // 🔢 Detectar número de miembros
             $totalMiembros = 0;
             foreach ($request->all() as $key => $value) {
                 if (preg_match('/^miembro_nombre_(\d+)$/', $key, $m)) {
@@ -45,32 +45,50 @@ class EditPageBoardController extends Controller
                 }
             }
 
-            // Eliminar todos los miembros actuales y reinsertar
+            // 🔥 Obtener imágenes actuales ANTES de borrar
+            $imagenesActuales = DB::table('directiva')
+                ->where('id_pagina', 6)
+                ->pluck('foto_directiva')
+                ->toArray();
+
+            // 🗑️ Borrar registros actuales
             DB::table('directiva')->where('id_pagina', 6)->delete();
 
+            $imagenesUsadas = [];
+
             for ($i = 1; $i <= $totalMiembros; $i++) {
+
                 $nombre = trim($request->input("miembro_nombre_{$i}", ''));
                 $cargo  = trim($request->input("miembro_cargo_{$i}", ''));
 
-                // Saltar filas completamente vacías
+                // 🚫 Saltar vacíos
                 if ($nombre === '' && $cargo === '') continue;
 
-                // Manejar foto
                 $fotoNombre = null;
 
-                // Mantener foto existente si no se sube una nueva
+                // Foto existente
                 if ($request->filled("foto_existente_{$i}")) {
                     $fotoNombre = $request->input("foto_existente_{$i}");
+                    $imagenesUsadas[] = $fotoNombre;
                 }
 
-                // Si viene archivo nuevo lo sobreescribe
+                // Nueva imagen
                 if ($request->hasFile("foto_{$i}") && $request->file("foto_{$i}")->isValid()) {
-                    $archivo    = $request->file("foto_{$i}");
-                    $extension  = $archivo->getClientOriginalExtension();
-                    $fotoNombre = 'directiva_' . $i . '_' . time() . '.' . $extension;
-                    $archivo->move(public_path('assets/img/team'), $fotoNombre);
+
+                    // eliminar anterior si existe
+                    if (!empty($fotoNombre)) {
+                        Storage::disk('public')->delete($fotoNombre);
+                    }
+
+                    // guardar nueva
+                    $path = $request->file("foto_{$i}")
+                        ->store('directiva', 'public');
+
+                    $fotoNombre = $path;
+                    $imagenesUsadas[] = $fotoNombre;
                 }
 
+                // Insertar en BD
                 DB::table('directiva')->insert([
                     'id_pagina'           => 6,
                     'titulo_directiva'    => $i === 1 ? $request->input('titulo_seccion') : null,
@@ -82,6 +100,13 @@ class EditPageBoardController extends Controller
                 ]);
             }
 
+            // 🧹 Eliminar imágenes que ya no se usan
+            foreach ($imagenesActuales as $img) {
+                if (!in_array($img, $imagenesUsadas) && !empty($img)) {
+                    Storage::disk('public')->delete($img);
+                }
+            }
+
             Log::info('Directiva actualizada', ['user_id' => session('user_id')]);
 
             return response()->json([
@@ -90,7 +115,10 @@ class EditPageBoardController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Error al guardar directiva', ['error' => $e->getMessage()]);
+
+            Log::error('Error al guardar directiva', [
+                'error' => $e->getMessage()
+            ]);
 
             return response()->json([
                 'success' => false,

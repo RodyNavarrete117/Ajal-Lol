@@ -494,6 +494,10 @@
         btn.addEventListener('click', () => {
             document.querySelectorAll('.content-tab').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+
+              if (window.innerWidth <= 680) {
+                    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
             const target = btn.dataset.tab;
             Object.entries(tabPanels).forEach(([key, panel]) => {
                 if (!panel) return;
@@ -803,7 +807,6 @@
             const [savedY, m] = hiddenIn.value.split('-');
             const savedYM = parseInt(savedY, 10) * 12 + (parseInt(m, 10) - 1);
             dpViewMonth = parseInt(m, 10) - 1;
-            // Si el mes guardado es futuro o es de otro año, usar mes seguro
             if (savedYM > tYM || parseInt(savedY, 10) !== activeYear) {
                 dpViewMonth = Math.min(now.getMonth(), 11);
                 if (activeYear * 12 + dpViewMonth > tYM) {
@@ -819,7 +822,27 @@
         const parent = btn.closest('.date-picker-group') || btn.parentElement;
         parent.style.position = 'relative';
         parent.appendChild(cal);
-        renderGrid(); // ← poblar inmediatamente
+        renderGrid();
+
+        // Overlay + blur en móvil
+        // Overlay + blur en móvil
+        if (window.innerWidth <= 680) {
+            const overlay = document.createElement('div');
+            overlay.id = 'dpOverlay';
+            overlay.style.cssText = `
+                position: fixed; inset: 0;
+                background: rgba(0,0,0,0.5);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                z-index: 9998;
+                animation: fadeIn 0.2s ease;
+            `;
+            overlay.addEventListener('click', closeCalendar);
+            document.body.appendChild(overlay);
+            
+            // Mover el calendario al body para que quede ENCIMA del overlay
+            document.body.appendChild(cal);
+        }
 
         requestAnimationFrame(() => {
             if (window.innerWidth > 680) {
@@ -836,20 +859,23 @@
 
     function closeCalendar() {
         document.getElementById('dpCalendar')?.remove();
+        document.getElementById('dpOverlay')?.remove();
+        const modal = document.getElementById('imgModal');
+        if (modal) modal.style.filter = '';
     }
 
-    btn.addEventListener('click', e => { e.stopPropagation(); openCalendar(); });
+        btn.addEventListener('click', e => { e.stopPropagation(); openCalendar(); });
 
-    document.addEventListener('click', e => {
-        const cal = document.getElementById('dpCalendar');
-        if (!cal) return;
-        if (!cal.contains(e.target) && !btn.contains(e.target)) closeCalendar();
-    });
+        document.addEventListener('click', e => {
+            const cal = document.getElementById('dpCalendar');
+            if (!cal) return;
+            if (!cal.contains(e.target) && !btn.contains(e.target)) closeCalendar();
+        });
 
-    document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') closeCalendar();
-    });
-})();
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeCalendar();
+        });
+    })();
 
     const uploadZone    = document.getElementById('uploadZone');
     const fileInput     = document.getElementById('imgFile');

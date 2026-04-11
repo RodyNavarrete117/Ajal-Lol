@@ -412,6 +412,23 @@
 
 /* ══════════ RESPONSIVE ══════════ */
 @media(max-width:680px){
+      .content-tabs {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        scroll-snap-type: x mandatory;
+    }
+
+    .content-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .content-tab {
+        flex-shrink: 0;
+        scroll-snap-align: start;
+        white-space: nowrap;
+    }
+
     .edit-hero { padding: 16px 16px 14px; }
     .edit-hero__inner { gap: 10px; flex-wrap: wrap; }
     .edit-hero__title { font-size: 16px; }

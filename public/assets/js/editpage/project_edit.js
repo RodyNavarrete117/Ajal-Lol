@@ -649,185 +649,207 @@
        — < > usan stopPropagation para no cerrar el calendario
        — se abre arriba si no cabe abajo
     ════════════════════════════════════ */
-    (function initDatePicker() {
-        const btn      = document.getElementById('datePickerBtn');
-        const hiddenIn = document.getElementById('eventDateInput');
-        if (!btn || !hiddenIn) return;
+(function initDatePicker() {
+    const btn      = document.getElementById('datePickerBtn');
+    const hiddenIn = document.getElementById('eventDateInput');
+    if (!btn || !hiddenIn) return;
 
-        let dpViewMonth = new Date().getMonth(); // 0-based
+    let dpViewMonth = new Date().getMonth();
 
-        const DIAS = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
+    const DIAS = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
 
-        function getActiveYear() {
-            const num = document.getElementById('yearDisplayNum');
-            return parseInt(num?.textContent?.trim() || new Date().getFullYear(), 10);
+    function getActiveYear() {
+        const num = document.getElementById('yearDisplayNum');
+        return parseInt(num?.textContent?.trim() || new Date().getFullYear(), 10);
+    }
+
+    function todayYM() {
+        const n = new Date();
+        return n.getFullYear() * 12 + n.getMonth();
+    }
+
+    function renderGrid(direction = null) {
+        const cal = document.getElementById('dpCalendar');
+        if (!cal) return;
+
+        const activeYear = getActiveYear();
+        const now        = new Date();
+        const todayStr   = todayISO();
+        const tYM        = todayYM();
+        const curYM      = activeYear * 12 + dpViewMonth;
+
+        cal.querySelector('.dp-month-label').textContent = `${MESES[dpViewMonth]} ${activeYear}`;
+        cal.querySelector('#dpBtnPrev').disabled = dpViewMonth <= 0;
+        cal.querySelector('#dpBtnNext').disabled = (curYM + 1) > tYM;
+
+        const grid = cal.querySelector('.dp-days');
+        grid.innerHTML = '';
+
+        // Animación de dirección
+        if (direction) {
+            grid.classList.remove('slide-left', 'slide-right');
+            void grid.offsetWidth; // reflow para reiniciar animación
+            grid.classList.add(direction === 'next' ? 'slide-left' : 'slide-right');
         }
 
-        function buildCalendar() {
-            const activeYear = getActiveYear();
-            const now        = new Date();
-            const todayYear  = now.getFullYear();
-            const todayMonth = now.getMonth();
-            const todayDay   = now.getDate();
-            const todayStr   = todayISO(); // YYYY-MM-DD local, sin UTC
+        const firstDay    = new Date(activeYear, dpViewMonth, 1).getDay();
+        const offset      = firstDay === 0 ? 6 : firstDay - 1;
+        const daysInMonth = new Date(activeYear, dpViewMonth + 1, 0).getDate();
+        const selectedISO = hiddenIn.value;
+        const todayYear   = now.getFullYear();
+        const todayMonth  = now.getMonth();
+        const todayDay    = now.getDate();
 
-            const canGoPrev = dpViewMonth > 0;
-            const canGoNext = dpViewMonth < 11 &&
-                              (activeYear < todayYear ||
-                              (activeYear === todayYear && dpViewMonth < todayMonth));
+        for (let i = 0; i < 42; i++) {
+            const d = i - offset + 1;
+            const btn2 = document.createElement('button');
+            btn2.type = 'button';
+            btn2.className = 'dp-day';
 
-            const cal = document.createElement('div');
-            cal.className = 'date-picker-calendar';
-            cal.id = 'dpCalendar';
-
-            /* ── Navegación ── */
-            const nav = document.createElement('div');
-            nav.className = 'dp-nav';
-
-            const navPrev = document.createElement('button');
-            navPrev.type = 'button'; navPrev.className = 'dp-nav-btn';
-            navPrev.innerHTML = '<i class="fa fa-chevron-left"></i>';
-            navPrev.disabled = !canGoPrev;
-            navPrev.addEventListener('click', e => {
-                e.stopPropagation(); /* ← no dispara cierre global */
-                if (canGoPrev) { dpViewMonth--; refreshCalendar(); }
-            });
-
-            const monthLabel = document.createElement('span');
-            monthLabel.className = 'dp-month-label';
-            monthLabel.textContent = `${MESES[dpViewMonth]} ${activeYear}`;
-
-            const navNext = document.createElement('button');
-            navNext.type = 'button'; navNext.className = 'dp-nav-btn';
-            navNext.innerHTML = '<i class="fa fa-chevron-right"></i>';
-            navNext.disabled = !canGoNext;
-            navNext.addEventListener('click', e => {
-                e.stopPropagation(); /* ← ídem */
-                if (canGoNext) { dpViewMonth++; refreshCalendar(); }
-            });
-
-            nav.append(navPrev, monthLabel, navNext);
-
-            /* ── Cabecera días ── */
-            const header = document.createElement('div');
-            header.className = 'dp-days-header';
-            DIAS.forEach(d => {
-                const dn = document.createElement('div');
-                dn.className = 'dp-day-name'; dn.textContent = d;
-                header.appendChild(dn);
-            });
-
-            /* ── Días del mes ── */
-            const grid = document.createElement('div');
-            grid.className = 'dp-days';
-
-            const firstDay    = new Date(activeYear, dpViewMonth, 1).getDay();
-            const offset      = (firstDay === 0) ? 6 : firstDay - 1;
-            const daysInMonth = new Date(activeYear, dpViewMonth + 1, 0).getDate();
-            const selectedISO = hiddenIn.value;
-
-            for (let i = 0; i < offset; i++) {
-                const empty = document.createElement('button');
-                empty.type = 'button'; empty.className = 'dp-day empty';
-                empty.disabled = true;
-                grid.appendChild(empty);
-            }
-
-            for (let d = 1; d <= daysInMonth; d++) {
+            if (d < 1 || d > daysInMonth) {
+                btn2.disabled = true;
+                btn2.style.visibility = 'hidden';
+            } else {
                 const mm     = String(dpViewMonth + 1).padStart(2, '0');
                 const dd     = String(d).padStart(2, '0');
                 const isoStr = `${activeYear}-${mm}-${dd}`;
-
-                const dayBtn = document.createElement('button');
-                dayBtn.type = 'button'; dayBtn.className = 'dp-day';
-                dayBtn.textContent = d;
+                btn2.textContent = d;
 
                 if (isoStr > todayStr) {
-                    /* Día futuro — deshabilitado */
-                    dayBtn.disabled = true;
-                    dayBtn.classList.add('future');
+                    btn2.disabled = true;
+                    btn2.style.visibility = 'hidden';
                 } else {
-                    if (isoStr === selectedISO) dayBtn.classList.add('selected');
-                    if (activeYear === todayYear && dpViewMonth === todayMonth && d === todayDay) {
-                        dayBtn.classList.add('today');
-                    }
-                    dayBtn.addEventListener('click', e => {
-                        e.stopPropagation(); /* ← no dispara cierre global */
+                    if (isoStr === selectedISO) btn2.classList.add('selected');
+                    if (isoStr === todayStr)    btn2.classList.add('today');
+                    btn2.addEventListener('click', e => {
+                        e.stopPropagation();
                         hiddenIn.value = isoStr;
                         updateDateReadable(isoStr);
                         closeCalendar();
                     });
                 }
-
-                grid.appendChild(dayBtn);
-            } /* ← cierre correcto del for */
-
-            /* También detener propagación en el propio contenedor del calendario */
-            cal.addEventListener('click', e => e.stopPropagation());
-
-            cal.append(nav, header, grid);
-            return cal;
-        }
-
-        function refreshCalendar() {
-            const old = document.getElementById('dpCalendar');
-            if (!old) return;
-            const parent  = old.parentElement;
-            const wasAbove = old.style.bottom !== '';
-            old.remove();
-            const cal = buildCalendar();
-            parent.appendChild(cal);
-            if (wasAbove) {
-                cal.style.top    = 'auto';
-                cal.style.bottom = 'calc(100% + 6px)';
             }
+            grid.appendChild(btn2);
         }
+    }
 
-        function openCalendar() {
-            if (document.getElementById('dpCalendar')) { closeCalendar(); return; }
+    function createShell() {
+        const cal = document.createElement('div');
+        cal.className = 'date-picker-calendar';
+        cal.id = 'dpCalendar';
 
+        // Nav
+        const nav = document.createElement('div');
+        nav.className = 'dp-nav';
+
+        const btnPrev = document.createElement('button');
+        btnPrev.type = 'button'; btnPrev.className = 'dp-nav-btn'; btnPrev.id = 'dpBtnPrev';
+        btnPrev.innerHTML = '<i class="fa fa-chevron-left"></i>';
+        btnPrev.addEventListener('click', e => {
+            e.stopPropagation();
             const activeYear = getActiveYear();
-            const now        = new Date();
-
-            if (hiddenIn.value) {
-                const [, m] = hiddenIn.value.split('-');
-                dpViewMonth = parseInt(m, 10) - 1;
-            } else {
-                dpViewMonth = (activeYear === now.getFullYear()) ? now.getMonth() : 0;
+            // No ir antes de enero (mes 0) ni antes del inicio del año activo
+            if (dpViewMonth > 0) { 
+                dpViewMonth--; 
+                renderGrid(); 
             }
+        });
 
-            const cal    = buildCalendar();
-            const parent = btn.closest('.date-picker-group') || btn.parentElement;
-            parent.style.position = 'relative';
-            parent.appendChild(cal);
+        const label = document.createElement('span');
+        label.className = 'dp-month-label';
 
-            /* Abrir arriba si se sale del viewport por abajo */
-            requestAnimationFrame(() => {
-                const rect       = cal.getBoundingClientRect();
-                const spaceBelow = window.innerHeight - rect.bottom;
-                if (spaceBelow < 0) {
+        const btnNext = document.createElement('button');
+        btnNext.type = 'button'; btnNext.className = 'dp-nav-btn'; btnNext.id = 'dpBtnNext';
+        btnNext.innerHTML = '<i class="fa fa-chevron-right"></i>';
+        btnNext.addEventListener('click', e => {
+            e.stopPropagation();
+            const activeYear = getActiveYear();
+            const nextYM     = activeYear * 12 + (dpViewMonth + 1);
+            const tYM        = todayYM();
+            // No pasar de diciembre (mes 11) NI pasar del mes actual de hoy
+            if (dpViewMonth < 11 && nextYM <= tYM) { 
+                dpViewMonth++; 
+                renderGrid(); 
+            }
+        });
+
+        nav.append(btnPrev, label, btnNext);
+
+        // Header días
+        const header = document.createElement('div');
+        header.className = 'dp-days-header';
+        DIAS.forEach(d => {
+            const dn = document.createElement('div');
+            dn.className = 'dp-day-name'; dn.textContent = d;
+            header.appendChild(dn);
+        });
+
+        // Grid vacío
+        const grid = document.createElement('div');
+        grid.className = 'dp-days';
+
+        cal.append(nav, header, grid);
+        return cal;
+    }
+
+    function openCalendar() {
+        if (document.getElementById('dpCalendar')) { closeCalendar(); return; }
+
+        const activeYear = getActiveYear();
+        const now        = new Date();
+        const tYM        = todayYM();
+
+        if (hiddenIn.value) {
+            const [savedY, m] = hiddenIn.value.split('-');
+            const savedYM = parseInt(savedY, 10) * 12 + (parseInt(m, 10) - 1);
+            dpViewMonth = parseInt(m, 10) - 1;
+            // Si el mes guardado es futuro o es de otro año, usar mes seguro
+            if (savedYM > tYM || parseInt(savedY, 10) !== activeYear) {
+                dpViewMonth = Math.min(now.getMonth(), 11);
+                if (activeYear * 12 + dpViewMonth > tYM) {
+                    dpViewMonth = tYM - activeYear * 12;
+                }
+            }
+        } else {
+            const maxMonth = tYM - activeYear * 12;
+            dpViewMonth = Math.max(0, Math.min(maxMonth, 11));
+        }
+
+        const cal    = createShell();
+        const parent = btn.closest('.date-picker-group') || btn.parentElement;
+        parent.style.position = 'relative';
+        parent.appendChild(cal);
+        renderGrid(); // ← poblar inmediatamente
+
+        requestAnimationFrame(() => {
+            if (window.innerWidth > 680) {
+                cal.style.left  = 'auto';
+                cal.style.right = '0';
+                const rect = cal.getBoundingClientRect();
+                if (window.innerHeight - rect.bottom < 0) {
                     cal.style.top    = 'auto';
                     cal.style.bottom = 'calc(100% + 6px)';
                 }
-            });
-        }
-
-        function closeCalendar() {
-            document.getElementById('dpCalendar')?.remove();
-        }
-
-        btn.addEventListener('click', e => {
-            e.stopPropagation();
-            openCalendar();
+            }
         });
+    }
 
-        /* Cerrar solo al hacer click FUERA del date-picker-group completo */
-        document.addEventListener('click', () => closeCalendar());
+    function closeCalendar() {
+        document.getElementById('dpCalendar')?.remove();
+    }
 
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') closeCalendar();
-        });
-    })();
+    btn.addEventListener('click', e => { e.stopPropagation(); openCalendar(); });
+
+    document.addEventListener('click', e => {
+        const cal = document.getElementById('dpCalendar');
+        if (!cal) return;
+        if (!cal.contains(e.target) && !btn.contains(e.target)) closeCalendar();
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeCalendar();
+    });
+})();
 
     const uploadZone    = document.getElementById('uploadZone');
     const fileInput     = document.getElementById('imgFile');

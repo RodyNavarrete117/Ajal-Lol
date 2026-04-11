@@ -350,11 +350,12 @@
                     <div class="form-group date-picker-group" style="margin-top:16px">
                         <label>
                             Fecha
-                            <span class="optional-tag">(por defecto: hoy)</span>
                         </label>
                         {{-- Input nativo oculto — maneja el valor ISO y las restricciones de fecha --}}
-                        <input type="date" id="eventDateInput" name="event_date"
-                               required style="position:absolute;opacity:0;pointer-events:none;width:0;height:0">
+                      <input type="date" id="eventDateInput" name="event_date"
+                        required
+                        max="{{ date('Y-m-d') }}"
+                        style="position:absolute;opacity:0;pointer-events:none;width:0;height:0">
                         {{-- Botón visible que muestra la fecha en español --}}
                         <button type="button" class="date-picker-btn" id="datePickerBtn">
                             <i class="fa fa-calendar-day"></i>

@@ -3,7 +3,6 @@
 @section('title', 'Editar Página - Aliados / Patrocinadores')
 
 @push('styles')
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap">
 <link rel="stylesheet" href="{{ asset('assets/css/admincss/editpagescss/allies_edit.css') }}">
 @endpush
 
@@ -12,8 +11,16 @@
 <div class="edit-page-wrapper">
     <div class="edit-container">
 
-        {{-- Header --}}
+        {{-- ── Hero Header ── --}}
         <div class="edit-header">
+            <div class="edit-header__bg">
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
             <div class="edit-header-top">
                 <div class="edit-icon">
                     <i class="fa fa-handshake"></i>
@@ -25,21 +32,16 @@
             </p>
         </div>
 
-        {{-- Form --}}
+        {{-- ── Form ── --}}
         <form method="POST" action="#" enctype="multipart/form-data">
             @csrf
 
             {{-- Título de sección --}}
             <div class="form-group">
                 <label for="titulo_aliados">Título de la sección</label>
-                <input
-                    type="text"
-                    id="titulo_aliados"
-                    name="titulo_aliados"
+                <input type="text" id="titulo_aliados" name="titulo_aliados"
                     value="{{ old('titulo_aliados', 'Nuestros Aliados') }}"
-                    placeholder="Ej. Nuestros Aliados, Patrocinadores..."
-                    required
-                >
+                    placeholder="Ej. Nuestros Aliados, Patrocinadores..." required>
                 @error('titulo_aliados')
                     <span class="field-error-msg">{{ $message }}</span>
                 @enderror
@@ -59,10 +61,10 @@
                 <div class="logos-progress-fill" id="logosProgressFill" style="width: 33.33%"></div>
             </div>
 
-            {{-- Grid de logos --}}
+            {{-- Grid de logos — 4 columnas --}}
             <div class="logos-grid" id="logosGrid">
 
-                @for ($i = 1; $i <= 6; $i++)
+                @for ($i = 1; $i <= 8; $i++)
                 <div class="logo-slot" id="slot-{{ $i }}">
                     <div class="logo-slot__preview" id="preview-{{ $i }}">
                         <div class="logo-slot__empty">
@@ -75,15 +77,13 @@
                             <i class="fa fa-arrow-up-from-bracket"></i>
                             Subir
                         </label>
-                        <input
-                            type="file"
+                        <input type="file"
                             id="logo_{{ $i }}"
                             name="logo_{{ $i }}"
                             accept="image/png,image/jpeg,image/svg+xml,image/webp"
                             class="logo-input"
                             data-slot="{{ $i }}"
-                            style="display:none;"
-                        >
+                            style="display:none;">
                         <button type="button" class="btn-clear" data-slot="{{ $i }}" title="Quitar imagen">
                             <i class="fa fa-xmark"></i>
                         </button>
@@ -94,21 +94,21 @@
 
             </div>
 
-            {{-- Botón agregar + máximo --}}
+            {{-- Botón agregar --}}
             <div class="logos-add-bar" id="logosAddBar">
                 <button type="button" class="btn-add-logo" id="btnAddLogo">
                     <i class="fa fa-plus"></i>
                     Agregar logo
                 </button>
                 <span class="logos-max-hint" id="logosMaxHint">
-                    Puedes agregar hasta <strong>18</strong> logos en total
+                    Hasta <strong>18</strong> logos en total
                 </span>
             </div>
 
             {{-- Form actions --}}
             <div class="form-actions">
                 <button type="submit" class="btn-save">
-                    <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
+                    <i class="fa fa-floppy-disk"></i>
                     Guardar Cambios
                 </button>
                 <button type="button" class="btn-cancel" onclick="window.history.back()">

@@ -3,7 +3,6 @@
 @section('title', 'Editar Página - Inicio')
 
 @push('styles')
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap">
 <link rel="stylesheet" href="{{ asset('assets/css/admincss/editpagescss/home_edit.css') }}">
 @endpush
 
@@ -12,8 +11,17 @@
 <div class="edit-page-wrapper">
     <div class="edit-container">
 
-        {{-- ── Header ── --}}
+        {{-- ── Hero Header ── --}}
         <div class="edit-header">
+            <div class="edit-header__bg">
+                {{-- Icono de archivo repetido como decoración de fondo --}}
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
             <div class="edit-header-top">
                 <div class="edit-icon">
                     <i class="fa fa-file-pen"></i>
@@ -54,77 +62,52 @@
 
                 <div class="form-group">
                     <label for="eyebrow">Etiqueta superior (eyebrow)</label>
-                    <input
-                        type="text"
-                        id="eyebrow"
-                        name="eyebrow"
+                    <input type="text" id="eyebrow" name="eyebrow"
                         value="{{ old('eyebrow', 'Organización sin fines de lucro') }}"
-                        placeholder="Ej: Organización sin fines de lucro"
-                    >
+                        placeholder="Ej: Organización sin fines de lucro">
                     <span class="field-hint">Texto pequeño que aparece arriba del título principal.</span>
                 </div>
 
                 <div class="form-group">
                     <label for="titulo_principal">Título principal <span class="req">*</span></label>
-                    <input
-                        type="text"
-                        id="titulo_principal"
-                        name="titulo_principal"
+                    <input type="text" id="titulo_principal" name="titulo_principal"
                         value="{{ old('titulo_principal', 'Portal informativo de') }}"
-                        placeholder="Ej: Portal informativo de"
-                        required
-                    >
+                        placeholder="Ej: Portal informativo de" required>
                 </div>
 
                 <div class="form-group">
                     <label for="titulo_em">Nombre en cursiva (parte destacada)</label>
-                    <input
-                        type="text"
-                        id="titulo_em"
-                        name="titulo_em"
+                    <input type="text" id="titulo_em" name="titulo_em"
                         value="{{ old('titulo_em', 'Ajal Lol A.C.') }}"
-                        placeholder="Ej: Ajal Lol A.C."
-                    >
+                        placeholder="Ej: Ajal Lol A.C.">
                     <span class="field-hint">Aparece en la segunda línea del título, en cursiva y color rosa.</span>
                 </div>
 
                 <div class="form-group">
                     <label for="descripcion">Descripción <span class="req">*</span></label>
-                    <textarea
-                        id="descripcion"
-                        name="descripcion"
-                        rows="3"
-                        placeholder="Escribe una descripción breve..."
-                        required
+                    <textarea id="descripcion" name="descripcion" rows="3"
+                        placeholder="Escribe una descripción breve..." required
                     >{{ old('descripcion', 'Transformando vidas en las comunidades mayas de Yucatán desde el año 2000, con amor, compromiso e interculturalidad.') }}</textarea>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="btn_primario">Botón primario (texto)</label>
-                        <input
-                            type="text"
-                            id="btn_primario"
-                            name="btn_primario"
+                        <input type="text" id="btn_primario" name="btn_primario"
                             value="{{ old('btn_primario', 'Conoce más') }}"
-                            placeholder="Ej: Conoce más"
-                        >
+                            placeholder="Ej: Conoce más">
                     </div>
                     <div class="form-group">
                         <label for="btn_primario_url">Botón primario (enlace)</label>
-                        <input
-                            type="text"
-                            id="btn_primario_url"
-                            name="btn_primario_url"
+                        <input type="text" id="btn_primario_url" name="btn_primario_url"
                             value="{{ old('btn_primario_url', '#about') }}"
-                            placeholder="Ej: #about o /nosotros"
-                        >
+                            placeholder="Ej: #about o /nosotros">
                     </div>
                 </div>
 
                 <div class="form-actions">
                     <button type="submit" class="btn-save">
-                        <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
+                        <i class="fa fa-floppy-disk"></i>
                         Guardar Cambios
                     </button>
                     <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
@@ -142,7 +125,7 @@
                 <div class="stats-grid">
 
                     <div class="stat-card">
-                        <div class="stat-card__icon" style="background:rgba(139,62,114,0.12);color:#8B3E72;">
+                        <div class="stat-card__icon" style="background:rgba(139,62,114,0.10);color:#8B3E72;">
                             <i class="fa fa-calendar"></i>
                         </div>
                         <div class="stat-card__fields">
@@ -158,7 +141,7 @@
                     </div>
 
                     <div class="stat-card">
-                        <div class="stat-card__icon" style="background:rgba(8,145,178,0.12);color:#0891b2;">
+                        <div class="stat-card__icon" style="background:rgba(8,145,178,0.10);color:#0891b2;">
                             <i class="fa fa-users"></i>
                         </div>
                         <div class="stat-card__fields">
@@ -174,7 +157,7 @@
                     </div>
 
                     <div class="stat-card">
-                        <div class="stat-card__icon" style="background:rgba(22,163,74,0.12);color:#16a34a;">
+                        <div class="stat-card__icon" style="background:rgba(22,163,74,0.10);color:#16a34a;">
                             <i class="fa fa-map-location-dot"></i>
                         </div>
                         <div class="stat-card__fields">
@@ -190,7 +173,7 @@
                     </div>
 
                     <div class="stat-card">
-                        <div class="stat-card__icon" style="background:rgba(217,119,6,0.12);color:#d97706;">
+                        <div class="stat-card__icon" style="background:rgba(217,119,6,0.10);color:#d97706;">
                             <i class="fa fa-handshake"></i>
                         </div>
                         <div class="stat-card__fields">
@@ -209,7 +192,7 @@
 
                 <div class="form-actions">
                     <button type="submit" class="btn-save">
-                        <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
+                        <i class="fa fa-floppy-disk"></i>
                         Guardar Cambios
                     </button>
                     <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
@@ -223,11 +206,10 @@
                     Videos de YouTube
                 </div>
                 <p class="panel-desc">
-                    Estos videos se muestran en el modal al presionar el botón <strong>Ver video</strong> del hero.
-                    Puedes agregar hasta <strong>10 videos</strong>.
+                    Videos que se muestran al presionar <strong>Ver video</strong> en el hero.
+                    Máximo <strong>10 videos</strong>.
                 </p>
 
-                {{-- Lista de videos --}}
                 <div class="videos-list" id="videosList">
 
                     @php
@@ -241,37 +223,29 @@
                     <div class="video-row" id="video-row-{{ $vi + 1 }}">
                         <div class="video-row__num">{{ $vi + 1 }}</div>
                         <div class="video-row__thumb" id="vthumb-{{ $vi + 1 }}">
-                            <img
-                                src="https://img.youtube.com/vi/{{ $vid['id'] }}/mqdefault.jpg"
-                                alt="Miniatura"
-                                loading="lazy"
-                            >
+                            <img src="https://img.youtube.com/vi/{{ $vid['id'] }}/mqdefault.jpg" alt="Miniatura" loading="lazy">
                             <span class="video-row__play"><i class="fa fa-play"></i></span>
                         </div>
                         <div class="video-row__fields">
                             <div class="form-group">
                                 <label for="vid_titulo_{{ $vi + 1 }}">Título del video</label>
-                                <input
-                                    type="text"
+                                <input type="text"
                                     id="vid_titulo_{{ $vi + 1 }}"
                                     name="vid_titulo_{{ $vi + 1 }}"
                                     value="{{ old('vid_titulo_' . ($vi+1), $vid['titulo']) }}"
                                     placeholder="Ej: Nuestra historia"
-                                    class="vid-title-input"
-                                >
+                                    class="vid-title-input">
                             </div>
                             <div class="form-group">
                                 <label for="vid_id_{{ $vi + 1 }}">ID o URL de YouTube</label>
-                                <input
-                                    type="text"
+                                <input type="text"
                                     id="vid_id_{{ $vi + 1 }}"
                                     name="vid_id_{{ $vi + 1 }}"
                                     value="{{ old('vid_id_' . ($vi+1), $vid['id']) }}"
-                                    placeholder="Ej: lRM7kJdDUM4 o https://youtube.com/watch?v=..."
+                                    placeholder="Ej: lRM7kJdDUM4"
                                     class="vid-id-input"
-                                    data-thumb="vthumb-{{ $vi + 1 }}"
-                                >
-                                <span class="field-hint">Pega el ID del video o la URL completa de YouTube.</span>
+                                    data-thumb="vthumb-{{ $vi + 1 }}">
+                                <span class="field-hint">ID del video o URL completa de YouTube.</span>
                             </div>
                         </div>
                         <button type="button" class="btn-remove-video" data-row="{{ $vi + 1 }}" title="Eliminar video">
@@ -282,20 +256,17 @@
 
                 </div>
 
-                {{-- Botón agregar --}}
                 <div class="video-add-bar" id="videoAddBar">
                     <button type="button" class="btn-add-video" id="btnAddVideo">
                         <i class="fa fa-plus"></i>
                         Agregar video
                     </button>
-                    <span class="video-max-hint">
-                        Máximo <strong>10 videos</strong> en total
-                    </span>
+                    <span class="video-max-hint">Máximo <strong>10 videos</strong> en total</span>
                 </div>
 
                 <div class="form-actions">
                     <button type="submit" class="btn-save">
-                        <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
+                        <i class="fa fa-floppy-disk"></i>
                         Guardar Cambios
                     </button>
                     <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>

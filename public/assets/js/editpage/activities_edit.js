@@ -2,9 +2,7 @@
 (function () {
     'use strict';
 
-    /* ════════════════════════════════════════════════════
-       CATÁLOGO DE ÍCONOS — organizados por categoría
-    ════════════════════════════════════════════════════ */
+    /* ════ CATÁLOGO DE ÍCONOS ════ */
     const ICON_CATALOG = {
         'Salud': [
             { cls: 'fa-heart-pulse',      label: 'Pulso cardíaco'   },
@@ -26,7 +24,6 @@
             { cls: 'fa-graduation-cap',   label: 'Graduación'       },
             { cls: 'fa-pencil',           label: 'Lápiz'            },
             { cls: 'fa-school',           label: 'Escuela'          },
-            { cls: 'fa-users-class',      label: 'Clase grupal'     },
             { cls: 'fa-laptop',           label: 'Computadora'      },
             { cls: 'fa-microscope',       label: 'Microscopio'      },
             { cls: 'fa-lightbulb',        label: 'Idea'             },
@@ -73,17 +70,17 @@
             { cls: 'fa-calendar-check',     label: 'Evento'       },
         ],
         'General': [
-            { cls: 'fa-star',             label: 'Estrella'     },
-            { cls: 'fa-trophy',           label: 'Trofeo'       },
-            { cls: 'fa-flag',             label: 'Bandera'      },
-            { cls: 'fa-circle-check',     label: 'Completado'   },
-            { cls: 'fa-calendar-days',    label: 'Calendario'   },
-            { cls: 'fa-map-location-dot', label: 'Ubicación'    },
-            { cls: 'fa-camera',           label: 'Fotografía'   },
-            { cls: 'fa-music',            label: 'Música / Arte'},
-            { cls: 'fa-palette',          label: 'Pintura'      },
-            { cls: 'fa-fire',             label: 'Urgente'      },
-            { cls: 'fa-shield-halved',    label: 'Protección'   },
+            { cls: 'fa-star',             label: 'Estrella'      },
+            { cls: 'fa-trophy',           label: 'Trofeo'        },
+            { cls: 'fa-flag',             label: 'Bandera'       },
+            { cls: 'fa-circle-check',     label: 'Completado'    },
+            { cls: 'fa-calendar-days',    label: 'Calendario'    },
+            { cls: 'fa-map-location-dot', label: 'Ubicación'     },
+            { cls: 'fa-camera',           label: 'Fotografía'    },
+            { cls: 'fa-music',            label: 'Música / Arte' },
+            { cls: 'fa-palette',          label: 'Pintura'       },
+            { cls: 'fa-fire',             label: 'Urgente'       },
+            { cls: 'fa-shield-halved',    label: 'Protección'    },
         ],
     };
 
@@ -92,14 +89,11 @@
     );
 
     /* ════ TABS ════ */
-    const tabs   = document.querySelectorAll('.edit-tab');
-    const panels = document.querySelectorAll('.edit-panel');
-
-    tabs.forEach(tab => {
+    document.querySelectorAll('.edit-tab').forEach(tab => {
         tab.addEventListener('click', () => {
             const target = tab.dataset.target;
-            tabs.forEach(t => t.classList.remove('active'));
-            panels.forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.edit-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.edit-panel').forEach(p => p.classList.remove('active'));
             tab.classList.add('active');
             const panel = document.getElementById('panel-' + target);
             if (panel) panel.classList.add('active');
@@ -111,39 +105,52 @@
     const yearInput   = document.getElementById('anio_activo');
     const yearDown    = document.getElementById('yearDown');
     const yearUp      = document.getElementById('yearUp');
-    const MIN_YEAR    = 2000;
-    const MAX_YEAR    = 2099;
+    const MIN_YEAR = 2000, MAX_YEAR = 2099;
 
-    function animateYear(el, direction) {
-        el.style.transition = 'none';
-        el.style.transform  = direction === 'up' ? 'translateY(12px)' : 'translateY(-12px)';
-        el.style.opacity    = '0';
+    function animateYear(el, dir) {
+        el.style.cssText = 'transition:none;transform:' + (dir === 'up' ? 'translateY(10px)' : 'translateY(-10px)') + ';opacity:0';
         requestAnimationFrame(() => {
-            el.style.transition = 'transform .18s ease, opacity .18s ease';
-            el.style.transform  = 'translateY(0)';
-            el.style.opacity    = '1';
+            el.style.cssText = 'transition:transform .18s ease,opacity .18s ease;transform:translateY(0);opacity:1';
         });
     }
 
     function updateYear(delta) {
         let val = parseInt(yearInput.value) + delta;
-        if (val < MIN_YEAR) val = MIN_YEAR;
-        if (val > MAX_YEAR) val = MAX_YEAR;
-        yearInput.value   = val;
+        val = Math.max(MIN_YEAR, Math.min(MAX_YEAR, val));
+        yearInput.value = val;
         yearDisplay.textContent = val;
         animateYear(yearDisplay, delta > 0 ? 'up' : 'down');
-        yearDown.disabled = val <= MIN_YEAR;
-        yearUp.disabled   = val >= MAX_YEAR;
+        if (yearDown) yearDown.disabled = val <= MIN_YEAR;
+        if (yearUp)   yearUp.disabled   = val >= MAX_YEAR;
     }
 
     yearDown?.addEventListener('click', () => updateYear(-1));
     yearUp?.addEventListener('click',   () => updateYear(1));
 
-    /* ════ ESTADO DEL PICKER ════ */
+    /* ════ ACORDEÓN ════ */
+    function initAccordion(card) {
+        const toggleBtn = card.querySelector('.activity-card__toggle');
+        if (!toggleBtn) return;
+        toggleBtn.addEventListener('click', function () {
+            const collapsed = card.getAttribute('data-collapsed') === 'true';
+            card.setAttribute('data-collapsed', collapsed ? 'false' : 'true');
+        });
+    }
+
+    /* Sincronizar título en el header al escribir */
+    function initTitleSync(card) {
+        const input = card.querySelector('.act-title-input');
+        if (!input) return;
+        input.addEventListener('input', function () {
+            const summaryEl = document.getElementById(this.dataset.summary);
+            if (summaryEl) summaryEl.textContent = this.value || 'Sin título';
+        });
+    }
+
+    /* ════ ICON PICKER ════ */
     let activeTarget   = null;
     let activeCategory = 'Todos';
 
-    /* ════ REFERENCIAS DOM ════ */
     const picker       = document.getElementById('iconPicker');
     const backdrop     = document.getElementById('iconPickerBackdrop');
     const closeBtn     = document.getElementById('iconPickerClose');
@@ -152,7 +159,6 @@
     const gridEl       = document.getElementById('iconGrid');
     const emptyEl      = document.getElementById('iconEmpty');
 
-    /* ════ RENDERIZAR CATEGORÍAS ════ */
     function renderCategories() {
         const cats = ['Todos', ...Object.keys(ICON_CATALOG)];
         categoriesEl.innerHTML = '';
@@ -172,7 +178,6 @@
         });
     }
 
-    /* ════ RENDERIZAR GRID ════ */
     function renderGrid(query = '') {
         const q = query.toLowerCase().trim();
         const currentValue = activeTarget?.hiddenInput.value || '';
@@ -181,16 +186,13 @@
             ? ALL_ICONS
             : ALL_ICONS.filter(ic => ic.cat === activeCategory);
 
-        if (q) {
-            icons = ALL_ICONS.filter(ic =>
-                ic.label.toLowerCase().includes(q) ||
-                ic.cls.toLowerCase().includes(q)
-            );
-        }
+        if (q) icons = ALL_ICONS.filter(ic =>
+            ic.label.toLowerCase().includes(q) || ic.cls.toLowerCase().includes(q)
+        );
 
         gridEl.innerHTML = '';
 
-        if (icons.length === 0) {
+        if (!icons.length) {
             gridEl.style.display = 'none';
             emptyEl.style.display = 'flex';
             return;
@@ -210,32 +212,35 @@
         });
     }
 
-    /* ════ SELECCIONAR ÍCONO ════ */
     function selectIcon(ic) {
         if (!activeTarget) return;
-        const { hiddenInput, previewEl, triggerEl, triggerNameEl, triggerClassEl } = activeTarget;
+        const { hiddenInput, previewEl, triggerEl, triggerNameEl, triggerClassEl, summaryIconEl } = activeTarget;
 
         hiddenInput.value = ic.cls;
 
+        // Actualizar preview del header de la card
         if (previewEl) previewEl.innerHTML = `<i class="fa ${ic.cls}"></i>`;
 
+        // Actualizar subtext del header (clase del ícono)
+        if (summaryIconEl) summaryIconEl.textContent = ic.cls;
+
+        // Actualizar trigger
         if (triggerEl) {
-            const triggerPreview = triggerEl.querySelector('.icon-selector-trigger__preview');
-            if (triggerPreview) triggerPreview.innerHTML = `<i class="fa ${ic.cls}"></i>`;
+            const tp = triggerEl.querySelector('.icon-selector-trigger__preview');
+            if (tp) tp.innerHTML = `<i class="fa ${ic.cls}"></i>`;
         }
-        if (triggerNameEl) triggerNameEl.textContent = ic.label;
+        if (triggerNameEl)  triggerNameEl.textContent  = ic.label;
         if (triggerClassEl) triggerClassEl.textContent = ic.cls;
 
-        document.querySelectorAll('.icon-item').forEach(el => {
-            el.classList.toggle('selected', el.dataset.cls === ic.cls);
-        });
+        document.querySelectorAll('.icon-item').forEach(el =>
+            el.classList.toggle('selected', el.dataset.cls === ic.cls)
+        );
 
         setTimeout(closePicker, 220);
     }
 
-    /* ════ ABRIR / CERRAR ════ */
     function openPicker(target) {
-        activeTarget = target;
+        activeTarget   = target;
         activeCategory = 'Todos';
         searchInput.value = '';
         renderCategories();
@@ -268,55 +273,62 @@
         }, 220);
     });
 
-    /* ════ INICIALIZAR TRIGGER ════ */
     function initTrigger(trigger) {
-        const targetId      = trigger.dataset.target;
-        const previewId     = trigger.dataset.preview;
-        const hiddenInput   = document.getElementById(targetId);
-        const previewEl     = document.getElementById(previewId);
-        const triggerNameEl = trigger.querySelector('.icon-selector-trigger__name');
-        const triggerClassEl= trigger.querySelector('.icon-selector-trigger__class');
+        const targetId       = trigger.dataset.target;
+        const previewId      = trigger.dataset.preview;
+        const summaryIconId  = trigger.dataset.summaryIcon;
+        const hiddenInput    = document.getElementById(targetId);
+        const previewEl      = document.getElementById(previewId);
+        const summaryIconEl  = summaryIconId ? document.getElementById(summaryIconId) : null;
+        const triggerNameEl  = trigger.querySelector('.icon-selector-trigger__name');
+        const triggerClassEl = trigger.querySelector('.icon-selector-trigger__class');
 
         if (!hiddenInput) return;
 
         trigger.addEventListener('click', () => {
             trigger.classList.add('open');
-            openPicker({ hiddenInput, previewEl, triggerEl: trigger, triggerNameEl, triggerClassEl });
+            openPicker({ hiddenInput, previewEl, triggerEl: trigger, triggerNameEl, triggerClassEl, summaryIconEl });
         });
     }
 
-    /* ════ AGREGAR / QUITAR TARJETAS ════ */
+    /* ════ AGREGAR / QUITAR CARDS ════ */
     let actCount = document.querySelectorAll('.activity-card').length;
 
     function renumber() {
         document.querySelectorAll('.activity-card').forEach((card, i) => {
             const n = i + 1;
             card.id = `act-${n}`;
-            card.querySelector('.activity-card__num').textContent = n;
 
-            const iconPreview = card.querySelector('.activity-card__icon-preview');
-            if (iconPreview) iconPreview.id = `icon-preview-${n}`;
+            const numEl = card.querySelector('.act-card-num');
+            if (numEl) numEl.textContent = n;
 
-            const triggerPreview = card.querySelector('[id^="trigger-preview-"]');
-            if (triggerPreview) triggerPreview.id = `trigger-preview-${n}`;
+            const toggle = card.querySelector('.activity-card__toggle');
+            if (toggle) toggle.dataset.card = `act-${n}`;
 
-            const triggerName = card.querySelector('[id^="trigger-name-"]');
-            if (triggerName) triggerName.id = `trigger-name-${n}`;
-
-            const triggerClass = card.querySelector('[id^="trigger-class-"]');
-            if (triggerClass) triggerClass.id = `trigger-class-${n}`;
+            // IDs numéricos
+            ['icon-preview-', 'trigger-preview-', 'trigger-name-', 'trigger-class-',
+             'summary-title-', 'summary-icon-'].forEach(prefix => {
+                const el = card.querySelector(`[id^="${prefix}"]`);
+                if (el) el.id = prefix + n;
+            });
 
             const hidden = card.querySelector('.icon-hidden-input');
             if (hidden) { hidden.id = `act_icono_${n}`; hidden.name = `act_icono_${n}`; }
 
             const trigger = card.querySelector('.icon-selector-trigger');
-            if (trigger) { trigger.dataset.target = `act_icono_${n}`; trigger.dataset.preview = `icon-preview-${n}`; }
+            if (trigger) {
+                trigger.dataset.target      = `act_icono_${n}`;
+                trigger.dataset.preview     = `icon-preview-${n}`;
+                trigger.dataset.summaryIcon = `summary-icon-${n}`;
+            }
 
             card.querySelectorAll('input[name^="act_titulo_"], textarea[name^="act_desc_"]').forEach(el => {
                 const base = el.name.replace(/_\d+$/, '');
-                el.name = `${base}_${n}`;
-                el.id   = `${base}_${n}`;
+                el.name = `${base}_${n}`; el.id = `${base}_${n}`;
             });
+
+            const titleInput = card.querySelector('.act-title-input');
+            if (titleInput) titleInput.dataset.summary = `summary-title-${n}`;
 
             const btnRemove = card.querySelector('.btn-remove-act');
             if (btnRemove) btnRemove.dataset.act = n;
@@ -328,16 +340,15 @@
             showToast('Debe haber al menos una actividad.', 'error');
             return;
         }
-        card.style.transition = 'opacity .2s ease, transform .2s ease';
-        card.style.opacity    = '0';
-        card.style.transform  = 'translateY(-8px)';
+        card.style.cssText = 'transition:opacity .2s,transform .2s;opacity:0;transform:translateY(-6px);';
         setTimeout(() => { card.remove(); renumber(); }, 220);
     }
 
     function initCard(card) {
+        initAccordion(card);
+        initTitleSync(card);
         const trigger = card.querySelector('.icon-selector-trigger');
         if (trigger) initTrigger(trigger);
-
         const btnRemove = card.querySelector('.btn-remove-act');
         if (btnRemove) btnRemove.addEventListener('click', () => removeCard(card));
     }
@@ -346,20 +357,36 @@
         const card = document.createElement('div');
         card.className = 'activity-card';
         card.id = `act-${n}`;
-        card.style.cssText = 'opacity:0;transform:translateY(10px);';
+        card.setAttribute('data-collapsed', 'false'); // nueva card abierta
+        card.style.cssText = 'opacity:0;transform:translateY(8px);';
         card.innerHTML = `
-            <div class="activity-card__side">
-                <div class="activity-card__num">${n}</div>
-                <div class="activity-card__icon-preview" id="icon-preview-${n}">
+            <button type="button" class="activity-card__toggle" data-card="act-${n}">
+                <span class="act-card-num">${n}</span>
+                <span class="act-card-icon" id="icon-preview-${n}">
                     <i class="fa fa-image"></i>
-                </div>
-            </div>
-            <div class="activity-card__fields">
+                </span>
+                <span class="act-card-summary">
+                    <span class="act-card-summary__title" id="summary-title-${n}">Nueva actividad</span>
+                    <span class="act-card-summary__sub" id="summary-icon-${n}">—</span>
+                </span>
+                <span class="act-card-actions">
+                    <span class="act-card-chevron"><i class="fa fa-chevron-down"></i></span>
+                    <button type="button" class="btn-remove-act" data-act="${n}"
+                        title="Eliminar actividad" onclick="event.stopPropagation()">
+                        <i class="fa fa-xmark"></i>
+                    </button>
+                </span>
+            </button>
+            <div class="act-card-divider"></div>
+            <div class="act-card-body">
                 <div class="act-fields-row">
                     <div class="form-group">
                         <label>Ícono</label>
                         <div class="icon-selector-wrap">
-                            <div class="icon-selector-trigger" data-target="act_icono_${n}" data-preview="icon-preview-${n}">
+                            <div class="icon-selector-trigger"
+                                 data-target="act_icono_${n}"
+                                 data-preview="icon-preview-${n}"
+                                 data-summary-icon="summary-icon-${n}">
                                 <div class="icon-selector-trigger__preview" id="trigger-preview-${n}">
                                     <i class="fa fa-image"></i>
                                 </div>
@@ -373,18 +400,18 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="act_titulo_${n}">Título de la actividad</label>
-                        <input type="text" id="act_titulo_${n}" name="act_titulo_${n}" placeholder="Nombre de la actividad...">
+                        <label for="act_titulo_${n}">Título</label>
+                        <input type="text" id="act_titulo_${n}" name="act_titulo_${n}"
+                            placeholder="Nombre de la actividad..."
+                            class="act-title-input" data-summary="summary-title-${n}">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="act_desc_${n}">Descripción</label>
-                    <textarea id="act_desc_${n}" name="act_desc_${n}" rows="3" placeholder="Describe la actividad, beneficiarios, alcance..."></textarea>
+                    <textarea id="act_desc_${n}" name="act_desc_${n}" rows="3"
+                        placeholder="Describe la actividad, beneficiarios, alcance..."></textarea>
                 </div>
             </div>
-            <button type="button" class="btn-remove-act" data-act="${n}" title="Eliminar actividad">
-                <i class="fa fa-xmark"></i>
-            </button>
         `;
         return card;
     }
@@ -394,25 +421,21 @@
         const card = buildCard(actCount);
         document.getElementById('activitiesList').appendChild(card);
         requestAnimationFrame(() => {
-            card.style.transition = 'opacity .3s ease, transform .3s ease';
-            card.style.opacity    = '1';
-            card.style.transform  = 'translateY(0)';
+            card.style.cssText = 'transition:opacity .3s,transform .3s;opacity:1;transform:translateY(0);';
         });
         initCard(card);
     });
 
     /* ════ TOAST ════ */
     function showToast(message, type = 'success') {
-        const existing = document.querySelector('.edit-toast');
-        if (existing) existing.remove();
+        document.querySelector('.edit-toast')?.remove();
         const toast = document.createElement('div');
         toast.className = `edit-toast edit-toast--${type}`;
         toast.innerHTML = `
             <span class="edit-toast__icon">
-                ${type === 'success' ? '<i class="fa fa-circle-check"></i>' : '<i class="fa fa-circle-exclamation"></i>'}
+                <i class="fa ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
             </span>
-            <span class="edit-toast__msg">${message}</span>
-        `;
+            <span>${message}</span>`;
         document.body.appendChild(toast);
         requestAnimationFrame(() => toast.classList.add('edit-toast--show'));
         setTimeout(() => {
@@ -421,17 +444,15 @@
         }, 3200);
     }
 
-    /* ════ VALIDACIÓN Y SUBMIT ════ */
+    /* ════ VALIDACIÓN ════ */
     const form = document.querySelector('.edit-container form');
     if (form) {
-        form.addEventListener('submit', function (e) {
+        form.addEventListener('submit', e => {
             e.preventDefault();
             let valid = true;
-
             form.querySelectorAll('input[required]').forEach(field => {
                 field.classList.remove('field--error');
                 field.parentElement.querySelector('.field-error-msg')?.remove();
-
                 if (!field.value.trim()) {
                     field.classList.add('field--error');
                     const msg = document.createElement('span');
@@ -445,24 +466,24 @@
                     valid = false;
                 }
             });
-
             if (!valid) {
                 showToast('Por favor completa los campos obligatorios.', 'error');
-
-                // Si el error está en un panel inactivo, activarlo
                 const errorField = form.querySelector('.field--error');
                 if (errorField) {
                     const panel = errorField.closest('.edit-panel');
                     if (panel && !panel.classList.contains('active')) {
                         const panelId = panel.id.replace('panel-', '');
-                        const tab = document.querySelector(`.edit-tab[data-target="${panelId}"]`);
-                        if (tab) tab.click();
+                        document.querySelector(`.edit-tab[data-target="${panelId}"]`)?.click();
+                    }
+                    // Abrir el card si está colapsado
+                    const card = errorField.closest('.activity-card');
+                    if (card && card.getAttribute('data-collapsed') === 'true') {
+                        card.setAttribute('data-collapsed', 'false');
                     }
                     setTimeout(() => errorField.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
                 }
                 return;
             }
-
             showToast('Cambios guardados correctamente.', 'success');
         });
     }

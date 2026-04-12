@@ -3,7 +3,6 @@
 @section('title', 'Editar Página - Contacto')
 
 @push('styles')
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap">
 <link rel="stylesheet" href="{{ asset('assets/css/admincss/editpagescss/contact_edit.css') }}">
 @endpush
 
@@ -12,12 +11,18 @@
 <div class="edit-page-wrapper">
     <div class="edit-container">
 
-        {{-- ── Header ── --}}
+        {{-- ── Hero Header ── --}}
         <div class="edit-header">
+            <div class="edit-header__bg">
+                <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l1.27-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l1.27-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l1.27-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l1.27-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l1.27-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l1.27-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
             <div class="edit-header-top">
-                <div class="edit-icon">
-                    <i class="fa fa-address-card"></i>
-                </div>
+                <div class="edit-icon"><i class="fa fa-address-card"></i></div>
                 <h2>Editar Página Contacto</h2>
             </div>
             <p class="subtitle">
@@ -41,15 +46,13 @@
             </button>
         </div>
 
-        <form id="contact-edit-form"
-              method="POST"
+        <form id="contact-edit-form" method="POST"
               action="{{ route('admin.pages.contact.update') }}">
             @csrf
             @method('PUT')
 
-            {{-- ══ PANEL: Información general ══ --}}
+            {{-- ══ PANEL: Información ══ --}}
             <div class="edit-panel active" id="panel-info">
-
                 <div class="panel-section-title">
                     <i class="fa fa-circle-info"></i>
                     Información general
@@ -60,39 +63,22 @@
                     <div class="form-group">
                         <label for="correo">
                             <i class="fa fa-envelope"></i>
-                            Correo electrónico
-                            <span class="req">*</span>
+                            Correo electrónico <span class="req">*</span>
                         </label>
-                        <input
-                            type="email"
-                            id="correo"
-                            name="correo"
+                        <input type="email" id="correo" name="correo"
                             value="{{ old('correo', $contacto->email_contacto ?? '') }}"
-                            placeholder="correo@ejemplo.com"
-                            required
-                        >
-                        @error('correo')
-                            <span class="field-error-msg">{{ $message }}</span>
-                        @enderror
+                            placeholder="correo@ejemplo.com" required>
+                        @error('correo')<span class="field-error-msg">{{ $message }}</span>@enderror
                     </div>
-
                     <div class="form-group">
                         <label for="telefono">
                             <i class="fa fa-phone"></i>
-                            Teléfono
-                            <span class="req">*</span>
+                            Teléfono <span class="req">*</span>
                         </label>
-                        <input
-                            type="text"
-                            id="telefono"
-                            name="telefono"
+                        <input type="text" id="telefono" name="telefono"
                             value="{{ old('telefono', $contacto->telefono_contacto ?? '') }}"
-                            placeholder="+52 000 000 0000"
-                            required
-                        >
-                        @error('telefono')
-                            <span class="field-error-msg">{{ $message }}</span>
-                        @enderror
+                            placeholder="+52 000 000 0000" required>
+                        @error('telefono')<span class="field-error-msg">{{ $message }}</span>@enderror
                     </div>
                 </div>
 
@@ -101,12 +87,8 @@
                         <i class="fa fa-location-dot"></i>
                         Dirección
                     </label>
-                    <textarea
-                        id="direccion"
-                        name="direccion"
-                        rows="2"
-                        placeholder="Calle, número, colonia, ciudad..."
-                    >{{ old('direccion', $contacto->direccion_contacto ?? '') }}</textarea>
+                    <textarea id="direccion" name="direccion" rows="2"
+                        placeholder="Calle, número, colonia, ciudad...">{{ old('direccion', $contacto->direccion_contacto ?? '') }}</textarea>
                 </div>
 
                 <div class="form-group">
@@ -114,29 +96,19 @@
                         <i class="fa fa-clock"></i>
                         Horario de atención
                     </label>
-                    <input
-                        type="text"
-                        id="horario"
-                        name="horario"
+                    <input type="text" id="horario" name="horario"
                         value="{{ old('horario', $contacto->horario_contacto ?? '') }}"
-                        placeholder="Ej: Lun–Vie · 9:00 a.m. – 1:00 p.m."
-                    >
+                        placeholder="Ej: Lun–Vie · 9:00 a.m. – 1:00 p.m.">
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn-save">
-                        <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
-                        Guardar Cambios
-                    </button>
-                    <button type="button" class="btn-cancel" onclick="window.history.back()">
-                        Cancelar
-                    </button>
+                    <button type="submit" class="btn-save"><i class="fa fa-floppy-disk"></i> Guardar Cambios</button>
+                    <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
                 </div>
             </div>
 
             {{-- ══ PANEL: Redes sociales ══ --}}
             <div class="edit-panel" id="panel-redes">
-
                 <div class="panel-section-title">
                     <i class="fa fa-share-nodes"></i>
                     Redes sociales
@@ -144,23 +116,16 @@
                 </div>
 
                 <div class="social-grid">
-
                     <div class="form-group social-group social-group--fb">
                         <label for="facebook">
                             <i class="fa-brands fa-facebook"></i>
                             Facebook
                         </label>
                         <div class="input-with-prefix">
-                            <span class="input-prefix">
-                                <i class="fa-brands fa-facebook"></i>
-                            </span>
-                            <input
-                                type="url"
-                                id="facebook"
-                                name="facebook"
+                            <span class="input-prefix"><i class="fa-brands fa-facebook"></i></span>
+                            <input type="url" id="facebook" name="facebook"
                                 value="{{ old('facebook', $contacto->facebook_url ?? '') }}"
-                                placeholder="https://facebook.com/tu-pagina"
-                            >
+                                placeholder="https://facebook.com/tu-pagina">
                         </div>
                     </div>
 
@@ -170,16 +135,10 @@
                             Instagram
                         </label>
                         <div class="input-with-prefix">
-                            <span class="input-prefix">
-                                <i class="fa-brands fa-instagram"></i>
-                            </span>
-                            <input
-                                type="url"
-                                id="instagram"
-                                name="instagram"
+                            <span class="input-prefix"><i class="fa-brands fa-instagram"></i></span>
+                            <input type="url" id="instagram" name="instagram"
                                 value="{{ old('instagram', $contacto->instagram_url ?? '') }}"
-                                placeholder="https://instagram.com/tu-perfil"
-                            >
+                                placeholder="https://instagram.com/tu-perfil">
                         </div>
                     </div>
 
@@ -189,35 +148,22 @@
                             LinkedIn
                         </label>
                         <div class="input-with-prefix">
-                            <span class="input-prefix">
-                                <i class="fa-brands fa-linkedin"></i>
-                            </span>
-                            <input
-                                type="url"
-                                id="linkedin"
-                                name="linkedin"
+                            <span class="input-prefix"><i class="fa-brands fa-linkedin"></i></span>
+                            <input type="url" id="linkedin" name="linkedin"
                                 value="{{ old('linkedin', $contacto->linkedin_url ?? '') }}"
-                                placeholder="https://linkedin.com/company/tu-empresa"
-                            >
+                                placeholder="https://linkedin.com/company/tu-empresa">
                         </div>
                     </div>
-
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn-save">
-                        <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
-                        Guardar Cambios
-                    </button>
-                    <button type="button" class="btn-cancel" onclick="window.history.back()">
-                        Cancelar
-                    </button>
+                    <button type="submit" class="btn-save"><i class="fa fa-floppy-disk"></i> Guardar Cambios</button>
+                    <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
                 </div>
             </div>
 
             {{-- ══ PANEL: Mapa ══ --}}
             <div class="edit-panel" id="panel-mapa">
-
                 <div class="panel-section-title">
                     <i class="fa fa-map"></i>
                     Mapa de Google
@@ -244,15 +190,9 @@
                         <i class="fa fa-code"></i>
                         Código embed del mapa
                     </label>
-                    <textarea
-                        id="mapa_embed"
-                        name="mapa_embed"
-                        rows="5"
-                        placeholder='&lt;iframe src="https://www.google.com/maps/embed?..." ...&gt;&lt;/iframe&gt;'
-                    >{{ old('mapa_embed', $contacto->mapa_embed ?? '') }}</textarea>
-                    <span class="field-hint">
-                        En Google Maps → Compartir → Incorporar un mapa → Copiar HTML
-                    </span>
+                    <textarea id="mapa_embed" name="mapa_embed" rows="5"
+                        placeholder='&lt;iframe src="https://www.google.com/maps/embed?..." ...&gt;&lt;/iframe&gt;'>{{ old('mapa_embed', $contacto->mapa_embed ?? '') }}</textarea>
+                    <span class="field-hint">Google Maps → Compartir → Incorporar un mapa → Copiar HTML</span>
                 </div>
 
                 <div class="mapa-preview-label">
@@ -275,13 +215,8 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn-save">
-                        <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
-                        Guardar Cambios
-                    </button>
-                    <button type="button" class="btn-cancel" onclick="window.history.back()">
-                        Cancelar
-                    </button>
+                    <button type="submit" class="btn-save"><i class="fa fa-floppy-disk"></i> Guardar Cambios</button>
+                    <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
                 </div>
             </div>
 

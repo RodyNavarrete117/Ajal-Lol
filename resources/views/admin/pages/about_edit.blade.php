@@ -3,7 +3,6 @@
 @section('title', 'Editar Página - Nosotros')
 
 @push('styles')
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap">
 <link rel="stylesheet" href="{{ asset('assets/css/admincss/editpagescss/about_edit.css') }}">
 @endpush
 
@@ -12,8 +11,16 @@
 <div class="edit-page-wrapper">
     <div class="edit-container">
 
-        {{-- ── Header banner ── --}}
+        {{-- ── Hero Header ── --}}
         <div class="edit-header">
+            <div class="edit-header__bg">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
             <div class="edit-header-top">
                 <div class="edit-icon">
                     <i class="fa fa-building-columns"></i>
@@ -76,7 +83,7 @@
 
                     <div class="form-actions">
                         <button type="submit" class="btn-save">
-                            <i class="fa fa-floppy-disk" style="margin-right:8px;"></i>
+                            <i class="fa fa-floppy-disk"></i>
                             Guardar Cambios
                         </button>
                         <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
@@ -90,7 +97,6 @@
                         Bloque historia — imagen y contenido
                     </div>
 
-                    {{-- Imagen --}}
                     <div class="form-group">
                         <label>Imagen principal</label>
                         <div class="image-upload-area" id="histImgArea">
@@ -148,13 +154,13 @@
 
                     <div class="form-group">
                         <label for="texto_descripcion">Texto descriptivo</label>
-                        <textarea id="texto_descripcion" name="texto_descripcion" rows="5"
+                        <textarea id="texto_descripcion" name="texto_descripcion" rows="4"
                             placeholder="Texto explicativo más amplio sobre la organización...">{{ old('texto_descripcion', 'Para nosotros como asociación es muy importante el papel que jugamos en la sociedad. Siempre hemos buscado que nuestras acciones tengan un impacto positivo llegando al mayor número posible de beneficiarios.') }}</textarea>
                     </div>
 
                     <div class="form-actions">
                         <button type="submit" class="btn-save">
-                            <i class="fa fa-floppy-disk" style="margin-right:8px;"></i>
+                            <i class="fa fa-floppy-disk"></i>
                             Guardar Cambios
                         </button>
                         <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
@@ -192,7 +198,7 @@
 
                     <div class="form-actions">
                         <button type="submit" class="btn-save">
-                            <i class="fa fa-floppy-disk" style="margin-right:8px;"></i>
+                            <i class="fa fa-floppy-disk"></i>
                             Guardar Cambios
                         </button>
                         <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
@@ -206,7 +212,6 @@
                         Identidad institucional
                     </div>
 
-                    {{-- Encabezado sección identidad --}}
                     <div class="identity-header-fields">
                         <div class="form-row">
                             <div class="form-group">
@@ -225,7 +230,7 @@
                     </div>
 
                     <p class="section-desc">
-                        Estos textos aparecen en la sección <strong>Nuestra Identidad</strong> del sitio público, distribuidos en 4 tarjetas.
+                        Textos de la sección <strong>Nuestra Identidad</strong> del sitio público, distribuidos en 4 tarjetas.
                     </p>
 
                     <div class="identity-grid">
@@ -237,9 +242,7 @@
                                     <div class="identity-card__icon"><i class="fa fa-circle-dot"></i></div>
                                     <span class="identity-card__label">Misión</span>
                                 </div>
-                                <div class="identity-card__chevron">
-                                    <i class="fa fa-chevron-down"></i>
-                                </div>
+                                <div class="identity-card__chevron"><i class="fa fa-chevron-down"></i></div>
                             </button>
                             <div class="identity-card__body">
                                 <div class="form-group">
@@ -262,9 +265,7 @@
                                     <div class="identity-card__icon"><i class="fa fa-eye"></i></div>
                                     <span class="identity-card__label">Visión</span>
                                 </div>
-                                <div class="identity-card__chevron">
-                                    <i class="fa fa-chevron-down"></i>
-                                </div>
+                                <div class="identity-card__chevron"><i class="fa fa-chevron-down"></i></div>
                             </button>
                             <div class="identity-card__body">
                                 <div class="form-group">
@@ -287,9 +288,7 @@
                                     <div class="identity-card__icon"><i class="fa fa-flag"></i></div>
                                     <span class="identity-card__label">Objetivo General</span>
                                 </div>
-                                <div class="identity-card__chevron">
-                                    <i class="fa fa-chevron-down"></i>
-                                </div>
+                                <div class="identity-card__chevron"><i class="fa fa-chevron-down"></i></div>
                             </button>
                             <div class="identity-card__body">
                                 <div class="form-group">
@@ -312,9 +311,7 @@
                                     <div class="identity-card__icon"><i class="fa fa-heart"></i></div>
                                     <span class="identity-card__label">Valores</span>
                                 </div>
-                                <div class="identity-card__chevron">
-                                    <i class="fa fa-chevron-down"></i>
-                                </div>
+                                <div class="identity-card__chevron"><i class="fa fa-chevron-down"></i></div>
                             </button>
                             <div class="identity-card__body">
                                 <div class="form-group">
@@ -331,11 +328,11 @@
                             </div>
                         </div>
 
-                    </div>
+                    </div>{{-- /identity-grid --}}
 
                     <div class="form-actions">
                         <button type="submit" class="btn-save">
-                            <i class="fa fa-floppy-disk" style="margin-right:8px;"></i>
+                            <i class="fa fa-floppy-disk"></i>
                             Guardar Cambios
                         </button>
                         <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>

@@ -3,7 +3,6 @@
 @section('title', 'Editar Página - Preguntas Frecuentes')
 
 @push('styles')
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap">
 <link rel="stylesheet" href="{{ asset('assets/css/admincss/editpagescss/faq_edit.css') }}">
 @endpush
 
@@ -12,12 +11,18 @@
 <div class="edit-page-wrapper">
     <div class="edit-container">
 
-        {{-- Header --}}
+        {{-- ── Hero Header ── --}}
         <div class="edit-header">
+            <div class="edit-header__bg">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
             <div class="edit-header-top">
-                <div class="edit-icon">
-                    <i class="fa fa-circle-question"></i>
-                </div>
+                <div class="edit-icon"><i class="fa fa-circle-question"></i></div>
                 <h2>Editar Página Preguntas Frecuentes</h2>
             </div>
             <p class="subtitle">
@@ -25,103 +30,100 @@
             </p>
         </div>
 
-        {{-- Form --}}
+        {{-- ── Form ── --}}
         <form method="POST" action="#">
             @csrf
 
-            {{-- Campos generales --}}
+            {{-- Campos generales ── --}}
             <div class="form-group">
                 <label for="titulo_seccion">Título de la sección</label>
-                <input
-                    type="text"
-                    id="titulo_seccion"
-                    name="titulo_seccion"
+                <input type="text" id="titulo_seccion" name="titulo_seccion"
                     value="{{ old('titulo_seccion', 'Preguntas Frecuentes') }}"
-                    placeholder="Escribe el título de la sección..."
-                    required
-                >
-                @error('titulo_seccion')
-                    <span class="field-error-msg">{{ $message }}</span>
-                @enderror
+                    placeholder="Ej: Preguntas Frecuentes" required>
+                @error('titulo_seccion')<span class="field-error-msg">{{ $message }}</span>@enderror
             </div>
 
             <div class="form-group">
                 <label for="descripcion">Descripción introductoria</label>
-                <textarea
-                    id="descripcion"
-                    name="descripcion"
-                    rows="3"
-                    placeholder="Escribe un texto introductorio para la sección..."
-                >{{ old('descripcion', 'Respuestas a las dudas más comunes sobre la organización, sus servicios y cómo colaborar.') }}</textarea>
-                @error('descripcion')
-                    <span class="field-error-msg">{{ $message }}</span>
-                @enderror
+                <textarea id="descripcion" name="descripcion" rows="2"
+                    placeholder="Texto introductorio para la sección...">{{ old('descripcion', 'Respuestas a las dudas más comunes sobre la organización, sus servicios y cómo colaborar.') }}</textarea>
+                @error('descripcion')<span class="field-error-msg">{{ $message }}</span>@enderror
             </div>
 
-            {{-- Divisor --}}
+            {{-- Label sección ── --}}
             <div class="faqs-label">
-                <span class="faqs-label-text">Preguntas y respuestas</span>
-                <span class="faqs-label-hint">PNG, JPG, SVG · Máx. 2MB</span>
+                <span class="faqs-label-text">
+                    <i class="fa fa-circle-question"></i>
+                    Preguntas y respuestas
+                </span>
+                <span class="faqs-label-hint">Haz clic en una pregunta para expandirla</span>
             </div>
 
-            {{-- Lista de pares pregunta/respuesta --}}
+            {{-- Lista de FAQs ── --}}
             <div class="faq-list" id="faqList">
 
-                @for ($i = 1; $i <= 2; $i++)
-                <div class="faq-card" id="faq-{{ $i }}">
+                @php
+                    $faqs_default = [
+                        ['pregunta' => '¿Cómo puedo colaborar con la organización?', 'respuesta' => 'Puedes colaborar como voluntario, donante o aliado institucional. Contáctanos a través del formulario de contacto o directamente por correo electrónico.'],
+                        ['pregunta' => '¿Dónde opera Ajal Lol A.C.?', 'respuesta' => 'Operamos en comunidades mayas del estado de Yucatán, principalmente en los municipios de Hoctún y alrededores.'],
+                    ];
+                @endphp
 
-                    <div class="faq-card__drag" title="Arrastrar para reordenar">
-                        <i class="fa fa-grip-vertical"></i>
+                @foreach($faqs_default as $i => $faq)
+                @php $n = $i + 1; @endphp
+                <div class="faq-card" id="faq-{{ $n }}" data-collapsed="true">
+
+                    {{-- Header (siempre visible) ── --}}
+                    <div class="faq-card__header" data-card="faq-{{ $n }}">
+                        <span class="faq-card__drag" title="Arrastrar para reordenar">
+                            <i class="fa fa-grip-vertical"></i>
+                        </span>
+                        <span class="faq-card__num">{{ $n }}</span>
+                        <span class="faq-card__summary" id="summary-{{ $n }}">{{ $faq['pregunta'] }}</span>
+                        <span class="faq-card__header-right">
+                            <span class="faq-card__chevron"><i class="fa fa-chevron-down"></i></span>
+                            <button type="button" class="faq-card__remove" data-faq="{{ $n }}"
+                                title="Eliminar pregunta" onclick="event.stopPropagation()">
+                                <i class="fa fa-xmark"></i>
+                            </button>
+                        </span>
                     </div>
 
-                    <div class="faq-card__num">{{ $i }}</div>
+                    {{-- Separador ── --}}
+                    <div class="faq-card__divider"></div>
 
-                    <div class="faq-card__fields">
+                    {{-- Body colapsable ── --}}
+                    <div class="faq-card__body">
                         <div class="form-group">
-                            <label for="pregunta_{{ $i }}">Pregunta</label>
-                            <input
-                                type="text"
-                                id="pregunta_{{ $i }}"
-                                name="pregunta_{{ $i }}"
-                                value="{{ old('pregunta_' . $i) }}"
+                            <label for="pregunta_{{ $n }}">Pregunta</label>
+                            <input type="text" id="pregunta_{{ $n }}" name="pregunta_{{ $n }}"
+                                value="{{ old('pregunta_' . $n, $faq['pregunta']) }}"
                                 placeholder="Escribe la pregunta frecuente..."
-                            >
+                                class="faq-pregunta-input" data-summary="summary-{{ $n }}">
                         </div>
                         <div class="form-group">
-                            <label for="respuesta_{{ $i }}">Respuesta</label>
-                            <textarea
-                                id="respuesta_{{ $i }}"
-                                name="respuesta_{{ $i }}"
-                                rows="3"
-                                placeholder="Escribe la respuesta detallada..."
-                            >{{ old('respuesta_' . $i) }}</textarea>
+                            <label for="respuesta_{{ $n }}">Respuesta</label>
+                            <textarea id="respuesta_{{ $n }}" name="respuesta_{{ $n }}" rows="3"
+                                placeholder="Escribe la respuesta detallada...">{{ old('respuesta_' . $n, $faq['respuesta']) }}</textarea>
                         </div>
                     </div>
-
-                    <button type="button" class="faq-card__remove" data-faq="{{ $i }}" title="Eliminar pregunta">
-                        <i class="fa fa-xmark"></i>
-                    </button>
 
                 </div>
-                @endfor
+                @endforeach
 
-            </div>
+            </div>{{-- /faqList --}}
 
-            {{-- Botón agregar --}}
             <button type="button" class="btn-add-faq" id="btnAddFaq">
                 <i class="fa fa-plus"></i>
                 Agregar pregunta
             </button>
 
-            {{-- Acciones --}}
             <div class="form-actions">
                 <button type="submit" class="btn-save">
-                    <i class="fa fa-floppy-disk" style="margin-right:7px;"></i>
+                    <i class="fa fa-floppy-disk"></i>
                     Guardar Cambios
                 </button>
-                <button type="button" class="btn-cancel" onclick="window.history.back()">
-                    Cancelar
-                </button>
+                <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
             </div>
 
         </form>

@@ -10,12 +10,12 @@ use Illuminate\Support\Facades\Storage;
 
 class ProjectEditController extends Controller
 {
-    // Vista principal
     public function index()
     {
-        $anos       = ProyectoAno::where('id_pagina', 5)->orderByDesc('ano')->get();
-        $categories = ProyectoCategoria::orderBy('orden')->pluck('nombre')->toArray();
-        $activeYear = $anos->first()?->ano ?? date('Y');
+        $anos          = ProyectoAno::where('id_pagina', 5)->orderByDesc('ano')->get();
+        $categoriesObj = ProyectoCategoria::orderBy('orden')->get();
+        $categories    = $categoriesObj->pluck('nombre')->toArray();
+        $activeYear    = $anos->first()?->ano ?? date('Y');
 
         $images = ProyectoImagen::whereHas('ano', fn($q) => $q->where('id_pagina', 5))
             ->with('categoria')
@@ -34,7 +34,7 @@ class ProjectEditController extends Controller
         $yearsArr       = $anos->pluck('ano')->map(fn($y) => (string)$y)->toArray();
 
         return view('admin.pages.projects_edit', compact(
-            'yearsArr', 'categories', 'images',
+            'yearsArr', 'categories', 'categoriesObj', 'images',
             'activeYear', 'yearSubtitles', 'yearVisibility'
         ));
     }

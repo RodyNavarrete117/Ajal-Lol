@@ -9,7 +9,7 @@
 @section('content')
 @php
     $yearsArr       = $yearsArr       ?? [];
-    $categories     = $categories     ?? [];
+    $categoriesObj = $categoriesObj ?? collect([]);
     $images         = $images         ?? collect([]);
     $activeYear     = $activeYear     ?? date('Y');
     $yearSubtitles  = $yearSubtitles  ?? [];
@@ -235,10 +235,10 @@
                     Añade o elimina según lo que necesites.
                 </p>
                 <div class="cat-list" id="catList">
-                    @foreach($categories as $cat)
-                        <div class="cat-item" data-cat="{{ $cat }}">
+                    @foreach($categoriesObj as $cat)
+                        <div class="cat-item" data-cat="{{ $cat->nombre }}" data-id="{{ $cat->id_categoria }}">
                             <span class="cat-item__dot"></span>
-                            <span class="cat-item__name">{{ $cat }}</span>
+                            <span class="cat-item__name">{{ $cat->nombre }}</span>
                             <button class="cat-item__del" type="button" title="Eliminar categoría">
                                 <i class="fa fa-xmark"></i>
                             </button>

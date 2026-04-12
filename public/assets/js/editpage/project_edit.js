@@ -364,11 +364,28 @@
             showToast('Límite de 5 años visibles alcanzado. Oculta otro año primero.', 'error');
             return;
         }
-        visibilities[y] = !isOn;
-        updateVisUI(y);
-        updateVisCounter();
-        updateDropdownVisItem(y);
-        showToast(!isOn ? `Año ${y} activado en el sitio.` : `Año ${y} ocultado del sitio.`);
+
+        const newVal = !isOn;
+        const token  = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
+        fetch('/admin/pages/projects/year-update', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
+            body: JSON.stringify({ 
+                year:      y, 
+                subtitulo: subtitleInput?.value.trim() ?? '', 
+                visible:   newVal 
+            })
+        })
+        .then(res => { if (!res.ok) throw new Error(); return res.json(); })
+        .then(() => {
+            visibilities[y] = newVal;
+            updateVisUI(y);
+            updateVisCounter();
+            updateDropdownVisItem(y);
+            showToast(newVal ? `Año ${y} ahora es visible en el sitio.` : `Año ${y} ocultado del sitio.`);
+        })
+        .catch(() => showToast('Error al actualizar visibilidad.', 'error'));
     });
 
     function updateVisUI(year) {
@@ -599,16 +616,28 @@ btnGlobalSave?.addEventListener('click', async function () {
         if (!delBtn) return;
         const item    = delBtn.closest('.cat-item');
         const catName = item?.dataset.cat;
+        const catId   = item?.dataset.id;
         if (!catName) return;
-        item.style.transition = 'opacity 0.2s, transform 0.2s';
-        item.style.opacity = '0'; item.style.transform = 'translateX(8px)';
-        setTimeout(() => {
-            item.remove();
-            document.querySelector(`#catFilter .pill[data-cat="${catName}"]`)?.remove();
-            const sel = document.getElementById('catInput');
-            if (sel) Array.from(sel.options).forEach(o => { if (o.value === catName) o.remove(); });
-        }, 200);
-        showToast(`Categoría "${catName}" eliminada de todos los años.`);
+
+        const token = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
+        fetch(`/admin/pages/projects/category/${catId}`, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' }
+        })
+        .then(res => { if (!res.ok) throw new Error(); return res.json(); })
+        .then(() => {
+            item.style.transition = 'opacity 0.2s, transform 0.2s';
+            item.style.opacity = '0'; item.style.transform = 'translateX(8px)';
+            setTimeout(() => {
+                item.remove();
+                document.querySelector(`#catFilter .pill[data-cat="${catName}"]`)?.remove();
+                const sel = document.getElementById('catInput');
+                if (sel) Array.from(sel.options).forEach(o => { if (o.value === catName) o.remove(); });
+            }, 200);
+            showToast(`Categoría "${catName}" eliminada.`);
+        })
+        .catch(() => showToast('Error al eliminar la categoría.', 'error'));
     });
 
     document.getElementById('btnAddCat')?.addEventListener('click', addCategory);
@@ -618,29 +647,47 @@ btnGlobalSave?.addEventListener('click', async function () {
         const input = document.getElementById('newCatInput');
         const val   = input?.value.trim();
         if (!val) { showToast('Escribe un nombre de categoría.', 'error'); return; }
+
         const catList = document.getElementById('catList');
         const exists = Array.from(catList?.querySelectorAll('.cat-item__name') || [])
-                           .some(el => el.textContent.toLowerCase() === val.toLowerCase());
+                        .some(el => el.textContent.toLowerCase() === val.toLowerCase());
         if (exists) { showToast('Esa categoría ya existe.', 'error'); return; }
-        const item = document.createElement('div');
-        item.className = 'cat-item'; item.dataset.cat = val;
-        item.innerHTML = `
-            <span class="cat-item__dot"></span>
-            <span class="cat-item__name">${val}</span>
-            <button class="cat-item__del" type="button" title="Eliminar categoría">
-                <i class="fa fa-xmark"></i>
-            </button>`;
-        catList?.appendChild(item);
-        const filter = document.getElementById('catFilter');
-        const btn = document.createElement('button');
-        btn.className = 'pill'; btn.dataset.cat = val; btn.type = 'button'; btn.textContent = val;
-        filter?.appendChild(btn);
-        const sel = document.getElementById('catInput');
-        const opt = document.createElement('option');
-        opt.value = val; opt.textContent = val;
-        sel?.appendChild(opt);
-        if (input) input.value = '';
-        showToast(`Categoría "${val}" disponible para todos los años.`);
+
+        const token = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
+        fetch('/admin/pages/projects/category', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
+            body: JSON.stringify({ nombre: val })
+        })
+        .then(res => { if (!res.ok) throw new Error(); return res.json(); })
+        .then(data => {
+            const item = document.createElement('div');
+            item.className = 'cat-item'; 
+            item.dataset.cat = val;
+            item.dataset.id  = data.id;
+            item.innerHTML = `
+                <span class="cat-item__dot"></span>
+                <span class="cat-item__name">${val}</span>
+                <button class="cat-item__del" type="button" title="Eliminar categoría">
+                    <i class="fa fa-xmark"></i>
+                </button>`;
+            catList?.appendChild(item);
+
+            const filter = document.getElementById('catFilter');
+            const btn = document.createElement('button');
+            btn.className = 'pill'; btn.dataset.cat = val; btn.type = 'button'; btn.textContent = val;
+            filter?.appendChild(btn);
+
+            const sel = document.getElementById('catInput');
+            const opt = document.createElement('option');
+            opt.value = val; opt.textContent = val;
+            sel?.appendChild(opt);
+
+            if (input) input.value = '';
+            showToast(`Categoría "${val}" agregada.`);
+        })
+        .catch(() => showToast('Error al guardar la categoría.', 'error'));
     }
 
     const modalBg     = document.getElementById('imgModalBg');

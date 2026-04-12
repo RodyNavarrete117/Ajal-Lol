@@ -13,8 +13,8 @@ use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\EditPageContactController;
-use App\Http\Controllers\EditPageBoardController;
+use App\Http\Controllers\Admin\EditPageContactController;
+use App\Http\Controllers\Admin\EditPageBoardController;
 use App\Http\Controllers\Admin\ProjectEditController;
 
 /* ── Rate limiter para el formulario de contacto ── */
@@ -55,78 +55,83 @@ Route::get('/reset-password/{token}', [PasswordResetController::class, 'showRese
 Route::post('/reset-password',        [PasswordResetController::class, 'resetPassword'])->name('password.reset');
 
 /* ===== RUTAS PROTEGIDAS (requieren sesión) ===== */
-Route::middleware(['admin'])->group(function () {
+Route::middleware(['admin'])->prefix('admin')->group(function () {
 
-    /* Home y páginas generales */
-    Route::get('/admin/home', [HomeController::class, 'index'])->name('admin.home');
-    Route::get('/admin/page', fn() => view('admin.page'));
-    Route::get('/admin/manual', fn() => view('admin.manual'));
+    /* ── Home y páginas generales ── */
+    Route::get('/home',   [HomeController::class, 'index'])->name('admin.home');
+    Route::get('/page',   fn() => view('admin.page'));
+    Route::get('/manual', fn() => view('admin.manual'));
 
     /* ===== INFORMES ===== */
-    Route::prefix('admin')->group(function () {
-        Route::get('/report', [ReportsController::class, 'index'])->name('admin.reports');
-        Route::post('/report', [ReportsController::class, 'store'])->name('admin.reports.store');
-        Route::get('/report/blank/report', [ReportsController::class, 'blankReportPdf'])->name('admin.reports.blankReport');
-        Route::get('/report/blank/attendance', [ReportsController::class, 'blankAttendancePdf'])->name('admin.reports.blankAttendance');
-        Route::post('/report/preview-pdf', [ReportsController::class, 'previewPdf'])->name('admin.reports.previewPdf');
-        Route::get('/api/report/{id}', [ReportsController::class, 'apiShow'])->name('admin.reports.api');
-        Route::get('/report/{id}/edit', [ReportsController::class, 'edit'])->name('admin.reports.edit');
-        Route::put('/report/{id}', [ReportsController::class, 'update'])->name('admin.reports.update');
-        Route::delete('/report/{id}', [ReportsController::class, 'destroy'])->name('admin.reports.destroy');
-        Route::get('/report/{id}/pdf', [ReportsController::class, 'pdf'])->name('admin.reports.pdf');
+    Route::prefix('report')->group(function () {
+        Route::get('/',                    [ReportsController::class, 'index'])->name('admin.reports');
+        Route::post('/',                   [ReportsController::class, 'store'])->name('admin.reports.store');
+        Route::get('/blank/report',        [ReportsController::class, 'blankReportPdf'])->name('admin.reports.blankReport');
+        Route::get('/blank/attendance',    [ReportsController::class, 'blankAttendancePdf'])->name('admin.reports.blankAttendance');
+        Route::post('/preview-pdf',        [ReportsController::class, 'previewPdf'])->name('admin.reports.previewPdf');
+        Route::get('/{id}',                [ReportsController::class, 'apiShow'])->name('admin.reports.api')->where('id', '[0-9]+');
+        Route::get('/{id}/edit',           [ReportsController::class, 'edit'])->name('admin.reports.edit');
+        Route::put('/{id}',                [ReportsController::class, 'update'])->name('admin.reports.update');
+        Route::delete('/{id}',             [ReportsController::class, 'destroy'])->name('admin.reports.destroy');
+        Route::get('/{id}/pdf',            [ReportsController::class, 'pdf'])->name('admin.reports.pdf');
     });
 
     /* ===== FORMULARIOS ===== */
-    Route::prefix('admin')->group(function () {
-        Route::get('/forms', [FormController::class, 'index'])->name('admin.forms');
-        Route::get('/forms/export', [FormController::class, 'export'])->name('admin.forms.export');
-        Route::get('/forms/export/pdf', [FormController::class, 'exportPdf'])->name('admin.forms.export.pdf');
-        Route::get('/forms/{id}', [FormController::class, 'show'])->name('admin.forms.show');
-        Route::delete('/forms/{id}', [FormController::class, 'destroy'])->name('admin.forms.destroy');
+    Route::prefix('forms')->group(function () {
+        Route::get('/',           [FormController::class, 'index'])->name('admin.forms');
+        Route::get('/export',     [FormController::class, 'export'])->name('admin.forms.export');
+        Route::get('/export/pdf', [FormController::class, 'exportPdf'])->name('admin.forms.export.pdf');
+        Route::get('/{id}',       [FormController::class, 'show'])->name('admin.forms.show');
+        Route::delete('/{id}',    [FormController::class, 'destroy'])->name('admin.forms.destroy');
     });
 
     /* ===== CONFIGURACIÓN ===== */
-    Route::prefix('admin')->group(function () {
-        Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings');
-        Route::post('/settings/change-password', [SettingsController::class, 'changePassword'])->name('admin.settings.change-password');
-        Route::post('/settings/update-profile', [SettingsController::class, 'updateProfile'])->name('admin.settings.update-profile');
-        Route::post('/settings/keep-session', [SettingsController::class, 'keepSession']);
+    Route::prefix('settings')->group(function () {
+        Route::get('/',               [SettingsController::class, 'index'])->name('admin.settings');
+        Route::post('/change-password', [SettingsController::class, 'changePassword'])->name('admin.settings.change-password');
+        Route::post('/update-profile',  [SettingsController::class, 'updateProfile'])->name('admin.settings.update-profile');
+        Route::post('/keep-session',    [SettingsController::class, 'keepSession']);
     });
 
     /* ===== USUARIOS ===== */
-    Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
-    Route::post('/admin/users', [UserController::class, 'store'])->name('admin.users.store');
-    Route::get('/admin/users/{id}', [UserController::class, 'show'])->name('admin.users.show');
-    Route::put('/admin/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
-    Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+    Route::prefix('users')->group(function () {
+        Route::get('/',        [UserController::class, 'index'])->name('admin.users');
+        Route::post('/',       [UserController::class, 'store'])->name('admin.users.store');
+        Route::get('/{id}',    [UserController::class, 'show'])->name('admin.users.show');
+        Route::put('/{id}',    [UserController::class, 'update'])->name('admin.users.update');
+        Route::delete('/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+    });
 
     /* ===== EDICIÓN DE PÁGINAS ===== */
-    Route::prefix('admin/pages')->group(function () {
+    Route::prefix('pages')->group(function () {
+
+        /* Páginas simples (solo vista) */
         Route::get('/home/edit',       fn() => view('admin.pages.home_edit'))->name('admin.pages.home.edit');
         Route::get('/about/edit',      fn() => view('admin.pages.about_edit'))->name('admin.pages.about.edit');
         Route::get('/allies/edit',     fn() => view('admin.pages.allies_edit'))->name('admin.pages.allies.edit');
         Route::get('/activities/edit', fn() => view('admin.pages.activities_edit'))->name('admin.pages.activities.edit');
-        Route::get('/projects/edit',   fn() => view('admin.pages.projects_edit'))->name('admin.pages.projects.edit');
         Route::get('/faq/edit',        fn() => view('admin.pages.faq_edit'))->name('admin.pages.faq.edit');
 
-         /* ── Proyectos: controlador real ── */
-        Route::get('/projects/edit',          [ProjectEditController::class, 'index'])->name('admin.pages.projects.edit');
-        Route::put('/projects/year-update',   [ProjectEditController::class, 'yearUpdate'])->name('admin.projects.year.update');
-        Route::post('/projects/year-store',   [ProjectEditController::class, 'yearStore'])->name('admin.projects.year.store');
-        Route::delete('/projects/year-destroy', [ProjectEditController::class, 'yearDestroy'])->name('admin.projects.year.destroy');
-        Route::post('/projects/image',        [ProjectEditController::class, 'imageStore'])->name('admin.projects.image.store');
-        Route::post('/projects/image/{id}',   [ProjectEditController::class, 'imageUpdate'])->name('admin.projects.image.update');
-        Route::delete('/projects/image/{id}', [ProjectEditController::class, 'imageDestroy'])->name('admin.projects.image.destroy');
-        Route::post('/projects/category',     [ProjectEditController::class, 'categoryStore'])->name('admin.projects.category.store');
-        Route::delete('/projects/category/{id}', [ProjectEditController::class, 'categoryDestroy'])->name('admin.projects.category.destroy');
+        /* ── Proyectos ── */
+        Route::prefix('projects')->group(function () {
+            Route::get('/edit',                      [ProjectEditController::class, 'index'])->name('admin.pages.projects.edit');
+            Route::put('/year-update',               [ProjectEditController::class, 'yearUpdate'])->name('admin.projects.year.update');
+            Route::post('/year-store',               [ProjectEditController::class, 'yearStore'])->name('admin.projects.year.store');
+            Route::delete('/year-destroy',           [ProjectEditController::class, 'yearDestroy'])->name('admin.projects.year.destroy');
+            Route::post('/image',                    [ProjectEditController::class, 'imageStore'])->name('admin.projects.image.store');
+            Route::post('/image/{id}',               [ProjectEditController::class, 'imageUpdate'])->name('admin.projects.image.update');
+            Route::delete('/image/{id}',             [ProjectEditController::class, 'imageDestroy'])->name('admin.projects.image.destroy');
+            Route::post('/category',                 [ProjectEditController::class, 'categoryStore'])->name('admin.projects.category.store');
+            Route::delete('/category/{id}',          [ProjectEditController::class, 'categoryDestroy'])->name('admin.projects.category.destroy');
+        });
 
-        /* ── Directiva: controlador real ── */
-        Route::get('/board/edit',   [EditPageBoardController::class, 'index'])->name('admin.pages.board.edit');
-        Route::put('/board/update', [EditPageBoardController::class, 'update'])->name('admin.pages.board.update');
+        /* ── Directiva ── */
+        Route::get('/board/edit',    [EditPageBoardController::class, 'index'])->name('admin.pages.board.edit');
+        Route::put('/board/update',  [EditPageBoardController::class, 'update'])->name('admin.pages.board.update');
 
-        /* ── Contacto: controlador real ── */
-        Route::get('/contact/edit',    [EditPageContactController::class, 'index'])->name('admin.pages.contact.edit');
-        Route::put('/contact/update',  [EditPageContactController::class, 'update'])->name('admin.pages.contact.update');
+        /* ── Contacto ── */
+        Route::get('/contact/edit',   [EditPageContactController::class, 'index'])->name('admin.pages.contact.edit');
+        Route::put('/contact/update', [EditPageContactController::class, 'update'])->name('admin.pages.contact.update');
     });
 
     /* ===== NOTIFICACIONES (API) ===== */

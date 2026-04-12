@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -37,16 +38,15 @@ class EditPageContactController extends Controller
             'instagram'   => 'nullable|url|max:255',
             'linkedin'    => 'nullable|url|max:255',
         ], [
-            'correo.required' => 'El correo electrónico es obligatorio.',
-            'correo.email'    => 'Ingresa un correo electrónico válido.',
+            'correo.required'   => 'El correo electrónico es obligatorio.',
+            'correo.email'      => 'Ingresa un correo electrónico válido.',
             'telefono.required' => 'El teléfono es obligatorio.',
-            'facebook.url'    => 'El enlace de Facebook debe ser una URL válida.',
-            'instagram.url'   => 'El enlace de Instagram debe ser una URL válida.',
-            'linkedin.url'    => 'El enlace de LinkedIn debe ser una URL válida.',
+            'facebook.url'      => 'El enlace de Facebook debe ser una URL válida.',
+            'instagram.url'     => 'El enlace de Instagram debe ser una URL válida.',
+            'linkedin.url'      => 'El enlace de LinkedIn debe ser una URL válida.',
         ]);
 
         try {
-            // Verificar si ya existe un registro para id_pagina = 8
             $existe = DB::table('contacto')
                 ->where('id_pagina', 8)
                 ->exists();
@@ -63,20 +63,16 @@ class EditPageContactController extends Controller
             ];
 
             if ($existe) {
-                // Actualizar registro existente
                 DB::table('contacto')
                     ->where('id_pagina', 8)
                     ->update($datos);
             } else {
-                // Crear registro si no existe aún
                 DB::table('contacto')->insert(
                     array_merge($datos, ['id_pagina' => 8, 'activo' => 1])
                 );
             }
 
-            Log::info('Contacto actualizado', [
-                'user_id' => session('user_id'),
-            ]);
+            Log::info('Contacto actualizado', ['user_id' => session('user_id')]);
 
             return response()->json([
                 'success' => true,

@@ -248,16 +248,32 @@
         const val = yearSelect?.value?.trim();
         if (!val) { showToast('Selecciona un año.', 'error'); return; }
         if (years.includes(val)) { showToast('Ese año ya existe.', 'error'); return; }
-        years.push(val);
-        years.sort((a, b) => Number(b) - Number(a));
-        currentIdx = years.indexOf(val);
-        const visCount = Object.values(visibilities).filter(Boolean).length;
-        visibilities[val] = visCount < 5;
-        subtitles[val] = '';
-        addYearToDropdown(val);
-        hideAddYearForm();
-        renderYear();
-        showToast(`Año ${val} agregado.`);
+
+        const token = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
+        fetch('/admin/pages/projects/year-store', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token
+            },
+            body: JSON.stringify({ year: val })
+        })
+        .then(res => { if (!res.ok) throw new Error(); return res.json(); })
+        .then(() => {
+            years.push(val);
+            years.sort((a, b) => Number(b) - Number(a));
+            currentIdx = years.indexOf(val);
+            const visCount = Object.values(visibilities).filter(Boolean).length;
+            visibilities[val] = visCount < 5;
+            subtitles[val] = '';
+            addYearToDropdown(val);
+            hideAddYearForm();
+            renderYear();
+            updateVisCounter(); 
+            showToast(`Año ${val} agregado.`);
+        })
+        .catch(() => showToast('Error al agregar el año.', 'error'));
     }
 
     function addYearToDropdown(year) {
@@ -303,18 +319,31 @@
     btnConfirmDelOk?.addEventListener('click', () => {
         const y = yearPendingDelete;
         if (!y) return;
-        closeConfirmDel();
-        years.splice(years.indexOf(y), 1);
-        delete visibilities[y];
-        delete subtitles[y];
-        if (currentIdx >= years.length) currentIdx = years.length - 1;
-        addYearToDropdown(currentYear());
-        document.querySelectorAll(`.img-card[data-year="${y}"]`).forEach(c => c.remove());
-        renderYear();
-        updateVisCounter();
-        showToast(`Año ${y} eliminado.`);
-    });
+        const token = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
+        fetch('/admin/pages/projects/year-destroy', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token
+            },
+            body: JSON.stringify({ year: y })
+        })
+        .then(res => { if (!res.ok) throw new Error(); return res.json(); })
+        .then(() => {
+            closeConfirmDel();
+            years.splice(years.indexOf(y), 1);
+            delete visibilities[y];
+            delete subtitles[y];
+            if (currentIdx >= years.length) currentIdx = years.length - 1;
+            addYearToDropdown(currentYear());
+            document.querySelectorAll(`.img-card[data-year="${y}"]`).forEach(c => c.remove());
+            renderYear();
+            updateVisCounter();
+            showToast(`Año ${y} eliminado.`);
+        })
+        .catch(() => showToast('Error al eliminar el año.', 'error'));
+    });
     document.addEventListener('click', e => {
         const delBtn = e.target.closest('#btnDelYear');
         if (!delBtn) return;
@@ -467,22 +496,66 @@
         if (btnGlobalSaveIcon)  btnGlobalSaveIcon.className    = 'fa fa-floppy-disk';
     }
 
-    document.getElementById('btnGlobalSave')?.addEventListener('click', () => {
-        const y   = currentYear();
-        const sub = subtitleInput?.value.trim() ?? '';
-        fetch('/admin/projects/year-update', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? ''
-            },
-            body: JSON.stringify({ year: y, subtitulo: sub, visible: visibilities[y] ?? true })
-        })
-        .then(res => { if (!res.ok) throw new Error(); return res.json(); })
-        .then(() => { subtitles[y] = sub; updateGlobalSaveBtn(); showToast(`Año ${y} guardado.`); })
-        .catch(() => showToast('Error al guardar.', 'error'));
-    });
+btnGlobalSave?.addEventListener('click', async function () {
+    console.log('Guardar clicked');
+    const toUpload = pendingImages.filter(Boolean);
+    console.log('toUpload:', toUpload.length);
+    const y     = currentYear();
+    const sub   = subtitleInput?.value.trim() ?? '';
+    const token = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+    console.log('token:', token);
+    console.log('year:', y);
 
+    if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = 'Guardando...';
+    if (btnGlobalSaveIcon)  btnGlobalSaveIcon.className    = 'fa fa-spinner fa-spin';
+    btnGlobalSave.disabled = true;
+
+    for (const item of toUpload) {
+        const fd = new FormData();
+        fd.append('_token',      token);
+        fd.append('year',        y);
+        fd.append('image',       item.file);
+        fd.append('description', item.description);
+        fd.append('category',    item.category);
+        fd.append('event_date',  item.date);
+
+        console.log('Enviando:', { year: y, description: item.description, category: item.category, date: item.date });
+
+        try {
+            const res = await fetch('/admin/pages/projects/image', {
+                method: 'POST', body: fd
+            });
+            const data = await res.json();
+            console.log('Respuesta POST:', res.status, data);
+            if (!res.ok) throw new Error(data.error || 'Error');
+        } catch(err) {
+            console.error('Error imagen:', err);
+            showToast('Error: ' + err.message, 'error');
+            // NO recargar si hay error
+            if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = 'Guardar';
+            if (btnGlobalSaveIcon)  btnGlobalSaveIcon.className    = 'fa fa-floppy-disk';
+            btnGlobalSave.disabled = false;
+            return; // detener aquí
+        }
+    }
+
+    // Guardar subtítulo
+    try {
+        const res2 = await fetch('/admin/pages/projects/year-update', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
+            body: JSON.stringify({ year: y, subtitulo: sub, visible: visibilities[y] ?? true })
+        });
+        const data2 = await res2.json();
+        console.log('Respuesta PUT:', res2.status, data2);
+    } catch(err) {
+        console.error('Error year-update:', err);
+    }
+
+    pendingImages = [];
+    showToast(`Año ${y} guardado correctamente.`);
+    setTimeout(() => window.location.reload(), 1200);
+});
     subtitleInput?.addEventListener('input', updateGlobalSaveBtn);
 
     const tabPanels = {
@@ -917,11 +990,87 @@
 
     function setFeatured() {}
 
+    // Array de imágenes pendientes
+    let pendingImages = [];
+
     modalForm?.addEventListener('submit', function (e) {
+        e.preventDefault(); // siempre prevenir el submit nativo
+
         if (!validateForm(this)) {
-            e.preventDefault();
             showToast('Por favor completa los campos obligatorios.', 'error');
+            return;
         }
+
+        const file        = fileInput?.files?.[0];
+        const description = document.getElementById('imgDescInput')?.value.trim();
+        const category    = document.getElementById('catInput')?.value;
+        const date        = document.getElementById('eventDateInput')?.value;
+        const dateLabel   = document.getElementById('datePickerLabel')?.textContent;
+
+        if (!file) { showToast('Selecciona una imagen.', 'error'); return; }
+        if (!date) { showToast('Selecciona una fecha.', 'error'); return; }
+
+        // Guardar en pendientes
+        const pending = { file, description, category, date, dateLabel };
+        pendingImages.push(pending);
+
+        // Crear tarjeta visual en el grid
+        const previewUrl = URL.createObjectURL(file);
+        const card = document.createElement('div');
+        card.className = 'img-card pending-card';
+        card.dataset.year = currentYear();
+        card.dataset.cat  = category;
+        card.dataset.pendingIndex = pendingImages.length - 1;
+        card.innerHTML = `
+            <div class="img-thumb">
+                <img src="${previewUrl}" alt="${description}">
+                <span class="cat-badge">${category}</span>
+                <span class="pending-badge">
+                    <i class="fa fa-clock"></i> Pendiente
+                </span>
+            </div>
+            <div class="img-body">
+                <p class="img-date"><i class="fa fa-calendar-day"></i> ${dateLabel}</p>
+                <p class="img-desc">${description}</p>
+                <div class="img-actions">
+                    <button class="btn-del-img btn-remove-pending" type="button"
+                            data-index="${pendingImages.length - 1}">
+                        <i class="fa fa-xmark"></i> Quitar
+                    </button>
+                </div>
+            </div>`;
+
+        document.getElementById('imgGrid')?.querySelector('.img-empty')?.remove();
+        document.getElementById('imgGrid')?.appendChild(card);
+
+        // Activar guardar
+        if (btnGlobalSave) btnGlobalSave.disabled = false;
+        if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = 'Guardar';
+
+        // Mostrar botón agregar más si hay menos de 9
+        const gridEl = document.getElementById('imgGrid');
+        const addMore = document.getElementById('imgAddMore');
+        const totalCards = gridEl?.querySelectorAll('.img-card').length ?? 0;
+        if (addMore) addMore.style.display = totalCards < 9 ? 'flex' : 'none';
+
+        closeModal();
+        showToast('Imagen lista para guardar.');
+    });
+
+    // Quitar pendiente del grid
+    document.getElementById('imgGrid')?.addEventListener('click', e => {
+        const btn = e.target.closest('.btn-remove-pending');
+        if (!btn) return;
+        const idx = parseInt(btn.dataset.index);
+        pendingImages[idx] = null;
+        btn.closest('.img-card')?.remove();
+        const remaining = pendingImages.filter(Boolean).length;
+        if (remaining === 0 && btnGlobalSave) {
+            btnGlobalSave.disabled = true;
+        }
+        const totalCards2 = document.getElementById('imgGrid')?.querySelectorAll('.img-card').length ?? 0;
+        const addMore2 = document.getElementById('imgAddMore');
+        if (addMore2) addMore2.style.display = totalCards2 < 9 ? 'flex' : 'none';
     });
 
     document.getElementById('imgGrid')?.addEventListener('click', e => {
@@ -974,5 +1123,9 @@
         `;
         document.head.appendChild(style);
     }
+
+        document.getElementById('btnAddMore')?.addEventListener('click', () => {
+        document.getElementById('btnAddImage')?.click();
+    });
 
 })();

@@ -8,16 +8,16 @@
 
 @section('content')
 @php
-    $years      = $years      ?? ['2023', '2024', '2025'];
-    $categories = $categories ?? ['Jornadas dentales', 'Jornadas de salud', 'Proyectos productivos', 'Adulto Mayor'];
-    $images     = $images     ?? collect([]);
-    $pageData   = $pageData   ?? null;
-
-    $yearsSorted    = collect($years)->sortDesc()->values()->toArray();
-    $activeYear     = $activeYear ?? $yearsSorted[0] ?? '2025';
+    $yearsArr       = $yearsArr       ?? [];
+    $categories     = $categories     ?? [];
+    $images         = $images         ?? collect([]);
+    $activeYear     = $activeYear     ?? date('Y');
     $yearSubtitles  = $yearSubtitles  ?? [];
-    $yearVisibility = $yearVisibility ?? collect($yearsSorted)->mapWithKeys(fn($y) => [$y => true])->toArray();
+    $yearVisibility = $yearVisibility ?? [];
     $visCount       = collect($yearVisibility)->filter()->count();
+
+    $yearsSorted    = collect($yearsArr)->sortDesc()->values()->toArray();
+    $activeYear     = $yearsSorted[0] ?? $activeYear;
 @endphp
 
 <div class="edit-page-wrapper">
@@ -219,6 +219,11 @@
                         <p>No hay imágenes para este año. Añade la primera.</p>
                     </div>
                 @endforelse
+            </div>
+            <div class="img-add-more" id="imgAddMore" style="display:none">
+                <button class="btn-add-more" type="button" id="btnAddMore">
+                    <i class="fa fa-plus"></i> Agregar más imágenes
+                </button>
             </div>
         </div>
 

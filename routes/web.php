@@ -15,6 +15,7 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EditPageContactController;
 use App\Http\Controllers\EditPageBoardController;
+use App\Http\Controllers\Admin\ProjectEditController;
 
 /* ── Rate limiter para el formulario de contacto ── */
 RateLimiter::for('contact', function (Request $request) {
@@ -107,6 +108,17 @@ Route::middleware(['admin'])->group(function () {
         Route::get('/activities/edit', fn() => view('admin.pages.activities_edit'))->name('admin.pages.activities.edit');
         Route::get('/projects/edit',   fn() => view('admin.pages.projects_edit'))->name('admin.pages.projects.edit');
         Route::get('/faq/edit',        fn() => view('admin.pages.faq_edit'))->name('admin.pages.faq.edit');
+
+         /* ── Proyectos: controlador real ── */
+        Route::get('/projects/edit',          [ProjectEditController::class, 'index'])->name('admin.pages.projects.edit');
+        Route::put('/projects/year-update',   [ProjectEditController::class, 'yearUpdate'])->name('admin.projects.year.update');
+        Route::post('/projects/year-store',   [ProjectEditController::class, 'yearStore'])->name('admin.projects.year.store');
+        Route::delete('/projects/year-destroy', [ProjectEditController::class, 'yearDestroy'])->name('admin.projects.year.destroy');
+        Route::post('/projects/image',        [ProjectEditController::class, 'imageStore'])->name('admin.projects.image.store');
+        Route::post('/projects/image/{id}',   [ProjectEditController::class, 'imageUpdate'])->name('admin.projects.image.update');
+        Route::delete('/projects/image/{id}', [ProjectEditController::class, 'imageDestroy'])->name('admin.projects.image.destroy');
+        Route::post('/projects/category',     [ProjectEditController::class, 'categoryStore'])->name('admin.projects.category.store');
+        Route::delete('/projects/category/{id}', [ProjectEditController::class, 'categoryDestroy'])->name('admin.projects.category.destroy');
 
         /* ── Directiva: controlador real ── */
         Route::get('/board/edit',   [EditPageBoardController::class, 'index'])->name('admin.pages.board.edit');

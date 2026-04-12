@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 10-04-2026 a las 17:35:07
+-- Tiempo de generación: 12-04-2026 a las 01:30:48
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `prueba7`
+-- Base de datos: `prueba1`
 --
 
 -- --------------------------------------------------------
@@ -175,19 +175,6 @@ CREATE TABLE `cache_locks` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `categoria_proyectos`
---
-
-CREATE TABLE `categoria_proyectos` (
-  `id_categoria` int NOT NULL,
-  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `descripcion` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `orden` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `contacto`
 --
 
@@ -197,11 +184,11 @@ CREATE TABLE `contacto` (
   `direccion_contacto` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `telefono_contacto` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `email_contacto` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `horario_contacto` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mapa_embed` text COLLATE utf8mb4_unicode_ci,
-  `facebook_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `instagram_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `linkedin_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `horario_contacto` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mapa_embed` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `facebook_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `instagram_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `linkedin_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `activo` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -221,10 +208,10 @@ INSERT INTO `contacto` (`id_contacto`, `id_pagina`, `direccion_contacto`, `telef
 CREATE TABLE `directiva` (
   `id_directiva` int NOT NULL,
   `id_pagina` int NOT NULL,
-  `titulo_directiva` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT 'Directiva',
-  `subtitulo_directiva` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT 'Comité Directivo',
+  `titulo_directiva` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'Directiva',
+  `subtitulo_directiva` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'Comité Directivo',
   `nombre_directiva` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `cargo_directiva` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cargo_directiva` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `foto_directiva` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `orden_directiva` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -309,20 +296,6 @@ CREATE TRIGGER `notificar_nuevo_contacto` AFTER INSERT ON `formulario_contacto` 
 END
 $$
 DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `imagenes_proyectos`
---
-
-CREATE TABLE `imagenes_proyectos` (
-  `id_imagen` int NOT NULL,
-  `proyecto` int NOT NULL,
-  `ruta` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `descripcion` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `fecha_creacion` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -571,17 +544,72 @@ CREATE TABLE `preguntas_frecuentes` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `proyectos`
+-- Estructura de tabla para la tabla `proyecto_anos`
 --
 
-CREATE TABLE `proyectos` (
-  `id_proyecto` int NOT NULL,
+CREATE TABLE `proyecto_anos` (
+  `id_ano` int NOT NULL,
   `id_pagina` int NOT NULL,
-  `categoria` int NOT NULL,
-  `titulo_proyecto` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `descripcion_proyecto` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `año_proyecto` int DEFAULT NULL
+  `ano` int NOT NULL,
+  `subtitulo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `visible` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `proyecto_anos`
+--
+
+INSERT INTO `proyecto_anos` (`id_ano`, `id_pagina`, `ano`, `subtitulo`, `visible`, `created_at`, `updated_at`) VALUES
+(2, 5, 2026, NULL, 1, '2026-04-12 07:29:13', '2026-04-12 07:29:28');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `proyecto_categorias`
+--
+
+CREATE TABLE `proyecto_categorias` (
+  `id_categoria` int NOT NULL,
+  `nombre` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `orden` int DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `proyecto_categorias`
+--
+
+INSERT INTO `proyecto_categorias` (`id_categoria`, `nombre`, `orden`, `created_at`) VALUES
+(1, 'Jornadas dentales', 1, '2026-04-12 01:28:37'),
+(2, 'Jornadas de salud', 2, '2026-04-12 01:28:37'),
+(3, 'Proyectos productivos', 3, '2026-04-12 01:28:37'),
+(4, 'Adulto Mayor', 4, '2026-04-12 01:28:37');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `proyecto_imagenes`
+--
+
+CREATE TABLE `proyecto_imagenes` (
+  `id_imagen` int NOT NULL,
+  `id_ano` int NOT NULL,
+  `id_categoria` int NOT NULL,
+  `image_path` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `event_date` date DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `proyecto_imagenes`
+--
+
+INSERT INTO `proyecto_imagenes` (`id_imagen`, `id_ano`, `id_categoria`, `image_path`, `description`, `event_date`, `created_at`, `updated_at`) VALUES
+(1, 2, 1, 'proyectos/HpwavWy2RqYbVi0k6g93bq6tnhJX2f0tS4ZhDCnJ.jpg', 'adsfaf', '2026-04-11', '2026-04-12 07:29:28', '2026-04-12 07:29:28');
 
 -- --------------------------------------------------------
 
@@ -810,7 +838,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('2T6j1CspgXb5cdEnATJH89nORAEe8Obr4LjiBHtz', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo4OntzOjY6Il90b2tlbiI7czo0MDoiWE5FSWdURjdjMDRneEZtb0hVWUpVQjNnMGlXYWR4bkRybENvbEZsbiI7czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO3M6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjQ1OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL25vdGlmaWNhdGlvbnMvY291bnQiO3M6NToicm91dGUiO047fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6MTA6ImV4cGlyZXNfYXQiO2k6MTc3NTg0ODI1MTt9', 1775842498);
+('2T6j1CspgXb5cdEnATJH89nORAEe8Obr4LjiBHtz', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo4OntzOjY6Il90b2tlbiI7czo0MDoiWE5FSWdURjdjMDRneEZtb0hVWUpVQjNnMGlXYWR4bkRybENvbEZsbiI7czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO3M6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjQ1OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL25vdGlmaWNhdGlvbnMvY291bnQiO3M6NToicm91dGUiO047fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6MTA6ImV4cGlyZXNfYXQiO2k6MTc3NTg0ODI1MTt9', 1775842498),
+('NFUvpUxLnJJRof8WR3lg70AyVPmiCDVhOuQSmXOu', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiR1NkNWF6bGlHR0tQN3Y5T2tjQkxhcXAxQzhXbHFZZWY2bmE1UEdiayI7czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO3M6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjQ1OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL25vdGlmaWNhdGlvbnMvY291bnQiO3M6NToicm91dGUiO047fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1775957440);
 
 -- --------------------------------------------------------
 
@@ -907,12 +936,6 @@ ALTER TABLE `cache_locks`
   ADD KEY `cache_locks_expiration_index` (`expiration`);
 
 --
--- Indices de la tabla `categoria_proyectos`
---
-ALTER TABLE `categoria_proyectos`
-  ADD PRIMARY KEY (`id_categoria`);
-
---
 -- Indices de la tabla `contacto`
 --
 ALTER TABLE `contacto`
@@ -938,13 +961,6 @@ ALTER TABLE `failed_jobs`
 --
 ALTER TABLE `formulario_contacto`
   ADD PRIMARY KEY (`id_formcontacto`);
-
---
--- Indices de la tabla `imagenes_proyectos`
---
-ALTER TABLE `imagenes_proyectos`
-  ADD PRIMARY KEY (`id_imagen`),
-  ADD KEY `proyecto` (`proyecto`);
 
 --
 -- Indices de la tabla `informe`
@@ -1017,12 +1033,26 @@ ALTER TABLE `preguntas_frecuentes`
   ADD KEY `id_pagina` (`id_pagina`);
 
 --
--- Indices de la tabla `proyectos`
+-- Indices de la tabla `proyecto_anos`
 --
-ALTER TABLE `proyectos`
-  ADD PRIMARY KEY (`id_proyecto`),
-  ADD KEY `id_pagina` (`id_pagina`),
-  ADD KEY `categoria` (`categoria`);
+ALTER TABLE `proyecto_anos`
+  ADD PRIMARY KEY (`id_ano`),
+  ADD UNIQUE KEY `unique_ano_pagina` (`ano`,`id_pagina`),
+  ADD KEY `id_pagina` (`id_pagina`);
+
+--
+-- Indices de la tabla `proyecto_categorias`
+--
+ALTER TABLE `proyecto_categorias`
+  ADD PRIMARY KEY (`id_categoria`);
+
+--
+-- Indices de la tabla `proyecto_imagenes`
+--
+ALTER TABLE `proyecto_imagenes`
+  ADD PRIMARY KEY (`id_imagen`),
+  ADD KEY `id_ano` (`id_ano`),
+  ADD KEY `id_categoria` (`id_categoria`);
 
 --
 -- Indices de la tabla `redes_sociales`
@@ -1096,12 +1126,6 @@ ALTER TABLE `asistenciabeneficiarios`
   MODIFY `id_asistenciabeneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
 
 --
--- AUTO_INCREMENT de la tabla `categoria_proyectos`
---
-ALTER TABLE `categoria_proyectos`
-  MODIFY `id_categoria` int NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `contacto`
 --
 ALTER TABLE `contacto`
@@ -1124,12 +1148,6 @@ ALTER TABLE `failed_jobs`
 --
 ALTER TABLE `formulario_contacto`
   MODIFY `id_formcontacto` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
---
--- AUTO_INCREMENT de la tabla `imagenes_proyectos`
---
-ALTER TABLE `imagenes_proyectos`
-  MODIFY `id_imagen` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `informe`
@@ -1180,10 +1198,22 @@ ALTER TABLE `preguntas_frecuentes`
   MODIFY `id_preguntasfrecuentes` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `proyectos`
+-- AUTO_INCREMENT de la tabla `proyecto_anos`
 --
-ALTER TABLE `proyectos`
-  MODIFY `id_proyecto` int NOT NULL AUTO_INCREMENT;
+ALTER TABLE `proyecto_anos`
+  MODIFY `id_ano` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `proyecto_categorias`
+--
+ALTER TABLE `proyecto_categorias`
+  MODIFY `id_categoria` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `proyecto_imagenes`
+--
+ALTER TABLE `proyecto_imagenes`
+  MODIFY `id_imagen` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `redes_sociales`
@@ -1256,12 +1286,6 @@ ALTER TABLE `directiva`
   ADD CONSTRAINT `directiva_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
 
 --
--- Filtros para la tabla `imagenes_proyectos`
---
-ALTER TABLE `imagenes_proyectos`
-  ADD CONSTRAINT `imagenes_proyectos_ibfk_1` FOREIGN KEY (`proyecto`) REFERENCES `proyectos` (`id_proyecto`);
-
---
 -- Filtros para la tabla `inicio`
 --
 ALTER TABLE `inicio`
@@ -1293,11 +1317,17 @@ ALTER TABLE `preguntas_frecuentes`
   ADD CONSTRAINT `preguntas_frecuentes_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
 
 --
--- Filtros para la tabla `proyectos`
+-- Filtros para la tabla `proyecto_anos`
 --
-ALTER TABLE `proyectos`
-  ADD CONSTRAINT `proyectos_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`),
-  ADD CONSTRAINT `proyectos_ibfk_2` FOREIGN KEY (`categoria`) REFERENCES `categoria_proyectos` (`id_categoria`);
+ALTER TABLE `proyecto_anos`
+  ADD CONSTRAINT `proyecto_anos_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
+
+--
+-- Filtros para la tabla `proyecto_imagenes`
+--
+ALTER TABLE `proyecto_imagenes`
+  ADD CONSTRAINT `proyecto_imagenes_ibfk_1` FOREIGN KEY (`id_ano`) REFERENCES `proyecto_anos` (`id_ano`) ON DELETE CASCADE,
+  ADD CONSTRAINT `proyecto_imagenes_ibfk_2` FOREIGN KEY (`id_categoria`) REFERENCES `proyecto_categorias` (`id_categoria`);
 
 --
 -- Filtros para la tabla `reportebeneficiarios`
@@ -1321,3 +1351,4 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+

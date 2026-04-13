@@ -5,82 +5,82 @@
     /* ════ CATÁLOGO DE ÍCONOS ════ */
     const ICON_CATALOG = {
         'Salud': [
-            { cls: 'fa-heart-pulse',      label: 'Pulso cardíaco'   },
-            { cls: 'fa-stethoscope',      label: 'Estetoscopio'     },
-            { cls: 'fa-syringe',          label: 'Jeringa'          },
-            { cls: 'fa-pills',            label: 'Pastillas'        },
-            { cls: 'fa-tooth',            label: 'Diente'           },
-            { cls: 'fa-eye',              label: 'Ojo / Visión'     },
-            { cls: 'fa-brain',            label: 'Cerebro'          },
-            { cls: 'fa-lungs',            label: 'Pulmones'         },
-            { cls: 'fa-hospital',         label: 'Hospital'         },
-            { cls: 'fa-kit-medical',      label: 'Kit médico'       },
-            { cls: 'fa-weight-scale',     label: 'Báscula'          },
-            { cls: 'fa-person-walking',   label: 'Ejercicio'        },
+            { cls: 'fa-heart-pulse',    label: 'Pulso cardíaco'   },
+            { cls: 'fa-stethoscope',    label: 'Estetoscopio'     },
+            { cls: 'fa-syringe',        label: 'Jeringa'          },
+            { cls: 'fa-pills',          label: 'Pastillas'        },
+            { cls: 'fa-tooth',          label: 'Diente'           },
+            { cls: 'fa-eye',            label: 'Ojo / Visión'     },
+            { cls: 'fa-brain',          label: 'Cerebro'          },
+            { cls: 'fa-lungs',          label: 'Pulmones'         },
+            { cls: 'fa-hospital',       label: 'Hospital'         },
+            { cls: 'fa-kit-medical',    label: 'Kit médico'       },
+            { cls: 'fa-weight-scale',   label: 'Báscula'          },
+            { cls: 'fa-person-walking', label: 'Ejercicio'        },
         ],
         'Educación': [
-            { cls: 'fa-chalkboard',       label: 'Pizarrón'         },
-            { cls: 'fa-book-open',        label: 'Libro abierto'    },
-            { cls: 'fa-graduation-cap',   label: 'Graduación'       },
-            { cls: 'fa-pencil',           label: 'Lápiz'            },
-            { cls: 'fa-school',           label: 'Escuela'          },
-            { cls: 'fa-laptop',           label: 'Computadora'      },
-            { cls: 'fa-microscope',       label: 'Microscopio'      },
-            { cls: 'fa-lightbulb',        label: 'Idea'             },
-            { cls: 'fa-certificate',      label: 'Certificado'      },
+            { cls: 'fa-chalkboard',     label: 'Pizarrón'        },
+            { cls: 'fa-book-open',      label: 'Libro abierto'   },
+            { cls: 'fa-graduation-cap', label: 'Graduación'      },
+            { cls: 'fa-pencil',         label: 'Lápiz'           },
+            { cls: 'fa-school',         label: 'Escuela'         },
+            { cls: 'fa-laptop',         label: 'Computadora'     },
+            { cls: 'fa-microscope',     label: 'Microscopio'     },
+            { cls: 'fa-lightbulb',      label: 'Idea'            },
+            { cls: 'fa-certificate',    label: 'Certificado'     },
         ],
         'Naturaleza': [
-            { cls: 'fa-tree',             label: 'Árbol'            },
-            { cls: 'fa-leaf',             label: 'Hoja'             },
-            { cls: 'fa-seedling',         label: 'Planta'           },
-            { cls: 'fa-droplet',          label: 'Agua / Tinaco'    },
-            { cls: 'fa-sun',              label: 'Sol'              },
-            { cls: 'fa-wind',             label: 'Viento'           },
-            { cls: 'fa-mountain-sun',     label: 'Montaña'          },
-            { cls: 'fa-earth-americas',   label: 'Tierra'           },
-            { cls: 'fa-recycle',          label: 'Reciclaje'        },
-            { cls: 'fa-paw',              label: 'Animal / Mascota' },
-            { cls: 'fa-feather',          label: 'Pluma / Ave'      },
-            { cls: 'fa-fish',             label: 'Pez'              },
+            { cls: 'fa-tree',           label: 'Árbol'           },
+            { cls: 'fa-leaf',           label: 'Hoja'            },
+            { cls: 'fa-seedling',       label: 'Planta'          },
+            { cls: 'fa-droplet',        label: 'Agua / Tinaco'   },
+            { cls: 'fa-sun',            label: 'Sol'             },
+            { cls: 'fa-wind',           label: 'Viento'          },
+            { cls: 'fa-mountain',       label: 'Montaña'         },
+            { cls: 'fa-globe',          label: 'Tierra'          },
+            { cls: 'fa-recycle',        label: 'Reciclaje'       },
+            { cls: 'fa-paw',            label: 'Animal / Mascota'},
+            { cls: 'fa-feather',        label: 'Pluma / Ave'     },
+            { cls: 'fa-fish',           label: 'Pez'             },
         ],
         'Comunidad': [
-            { cls: 'fa-people-group',        label: 'Grupo de personas' },
-            { cls: 'fa-hands-holding-heart', label: 'Apoyo'             },
-            { cls: 'fa-house',               label: 'Casa'              },
-            { cls: 'fa-utensils',            label: 'Alimentación'      },
-            { cls: 'fa-shirt',               label: 'Ropa'              },
-            { cls: 'fa-gift',                label: 'Donación'          },
-            { cls: 'fa-hand-holding-hand',   label: 'Solidaridad'       },
-            { cls: 'fa-church',              label: 'Iglesia'           },
-            { cls: 'fa-store',               label: 'Comercio local'    },
-            { cls: 'fa-children',            label: 'Niños'             },
-            { cls: 'fa-person-cane',         label: 'Adulto mayor'      },
-            { cls: 'fa-baby',                label: 'Bebé'              },
+            { cls: 'fa-people-group',   label: 'Grupo de personas'},
+            { cls: 'fa-heart',          label: 'Apoyo'     },
+            { cls: 'fa-house',          label: 'Casa'             },
+            { cls: 'fa-utensils',       label: 'Alimentación'     },
+            { cls: 'fa-shirt',          label: 'Ropa'             },
+            { cls: 'fa-gift',           label: 'Donación'         },
+            { cls: 'fa-handshake',      label: 'Solidaridad'      },
+            { cls: 'fa-church',         label: 'Iglesia'          },
+            { cls: 'fa-store',          label: 'Comercio local'   },
+            { cls: 'fa-user-group',     label: 'Familias'         },
+            { cls: 'fa-wheelchair',     label: 'Adulto mayor'     },
+            { cls: 'fa-baby-carriage',  label: 'Bebé'             },
         ],
         'Trabajo': [
-            { cls: 'fa-briefcase',          label: 'Maletín'      },
-            { cls: 'fa-hammer',             label: 'Martillo'     },
-            { cls: 'fa-screwdriver-wrench', label: 'Herramientas' },
-            { cls: 'fa-tractor',            label: 'Tractor'      },
-            { cls: 'fa-industry',           label: 'Industria'    },
-            { cls: 'fa-money-bill-wave',    label: 'Dinero'       },
-            { cls: 'fa-chart-line',         label: 'Crecimiento'  },
-            { cls: 'fa-handshake',          label: 'Acuerdo'      },
-            { cls: 'fa-bullhorn',           label: 'Anuncio'      },
-            { cls: 'fa-calendar-check',     label: 'Evento'       },
+            { cls: 'fa-briefcase',      label: 'Maletín'         },
+            { cls: 'fa-hammer',         label: 'Martillo'        },
+            { cls: 'fa-wrench',         label: 'Herramientas'    },
+            { cls: 'fa-tractor',        label: 'Tractor'         },
+            { cls: 'fa-industry',       label: 'Industria'       },
+            { cls: 'fa-money-bill-wave',label: 'Dinero'          },
+            { cls: 'fa-chart-line',     label: 'Crecimiento'     },
+            { cls: 'fa-handshake',      label: 'Acuerdo'         },
+            { cls: 'fa-bullhorn',       label: 'Anuncio'         },
+            { cls: 'fa-calendar-check', label: 'Evento'          },
         ],
         'General': [
-            { cls: 'fa-star',             label: 'Estrella'      },
-            { cls: 'fa-trophy',           label: 'Trofeo'        },
-            { cls: 'fa-flag',             label: 'Bandera'       },
-            { cls: 'fa-circle-check',     label: 'Completado'    },
-            { cls: 'fa-calendar-days',    label: 'Calendario'    },
-            { cls: 'fa-map-location-dot', label: 'Ubicación'     },
-            { cls: 'fa-camera',           label: 'Fotografía'    },
-            { cls: 'fa-music',            label: 'Música / Arte' },
-            { cls: 'fa-palette',          label: 'Pintura'       },
-            { cls: 'fa-fire',             label: 'Urgente'       },
-            { cls: 'fa-shield-halved',    label: 'Protección'    },
+            { cls: 'fa-star',           label: 'Estrella'        },
+            { cls: 'fa-trophy',         label: 'Trofeo'          },
+            { cls: 'fa-flag',           label: 'Bandera'         },
+            { cls: 'fa-circle-check',   label: 'Completado'      },
+            { cls: 'fa-calendar-days',  label: 'Calendario'      },
+            { cls: 'fa-location-dot',   label: 'Ubicación'       },
+            { cls: 'fa-camera',         label: 'Fotografía'      },
+            { cls: 'fa-music',          label: 'Música / Arte'   },
+            { cls: 'fa-palette',        label: 'Pintura'         },
+            { cls: 'fa-fire',           label: 'Urgente'         },
+            { cls: 'fa-shield-halved',  label: 'Protección'      },
         ],
     };
 
@@ -129,9 +129,11 @@
 
     /* ════ ACORDEÓN ════ */
     function initAccordion(card) {
-        const toggleBtn = card.querySelector('.activity-card__toggle');
-        if (!toggleBtn) return;
-        toggleBtn.addEventListener('click', function () {
+        const toggleDiv = card.querySelector('.activity-card__toggle');
+        if (!toggleDiv) return;
+        toggleDiv.addEventListener('click', function (e) {
+            // No colapsar si se hizo click en el botón eliminar
+            if (e.target.closest('.btn-remove-act')) return;
             const collapsed = card.getAttribute('data-collapsed') === 'true';
             card.setAttribute('data-collapsed', collapsed ? 'false' : 'true');
         });
@@ -357,10 +359,10 @@
         const card = document.createElement('div');
         card.className = 'activity-card';
         card.id = `act-${n}`;
-        card.setAttribute('data-collapsed', 'false'); // nueva card abierta
+        card.setAttribute('data-collapsed', 'false');
         card.style.cssText = 'opacity:0;transform:translateY(8px);';
         card.innerHTML = `
-            <button type="button" class="activity-card__toggle" data-card="act-${n}">
+            <div class="activity-card__toggle" data-card="act-${n}">
                 <span class="act-card-num">${n}</span>
                 <span class="act-card-icon" id="icon-preview-${n}">
                     <i class="fa fa-image"></i>
@@ -372,11 +374,11 @@
                 <span class="act-card-actions">
                     <span class="act-card-chevron"><i class="fa fa-chevron-down"></i></span>
                     <button type="button" class="btn-remove-act" data-act="${n}"
-                        title="Eliminar actividad" onclick="event.stopPropagation()">
+                        title="Eliminar actividad">
                         <i class="fa fa-xmark"></i>
                     </button>
                 </span>
-            </button>
+            </div>
             <div class="act-card-divider"></div>
             <div class="act-card-body">
                 <div class="act-fields-row">

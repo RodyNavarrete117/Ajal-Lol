@@ -34,7 +34,7 @@
                 <i class="fa fa-heading"></i> Encabezado
             </button>
             <button class="edit-tab" data-target="actividades">
-                <i class="fa fa-grid-2"></i> Actividades
+                <i class="fa fa-list-check"></i> Actividades
             </button>
         </div>
 
@@ -87,7 +87,7 @@
             {{-- ══ PANEL: Actividades ══ --}}
             <div class="edit-panel" id="panel-actividades">
                 <div class="act-section-title">
-                    <i class="fa fa-grid-2"></i>
+                    <span class="section-icon"><i class="fa fa-list-check"></i></span>
                     Tarjetas de actividades
                 </div>
                 <p class="act-section__desc">Cada tarjeta aparece en el grid de la página pública con ícono, título y descripción.</p>
@@ -109,7 +109,7 @@
                     <div class="activity-card" id="act-{{ $i + 1 }}" data-collapsed="true">
 
                         {{-- ── Toggle header (siempre visible) ── --}}
-                        <button type="button" class="activity-card__toggle" data-card="act-{{ $i + 1 }}">
+                        <div class="activity-card__toggle" data-card="act-{{ $i + 1 }}">
                             <span class="act-card-num">{{ $i + 1 }}</span>
                             <span class="act-card-icon" id="icon-preview-{{ $i + 1 }}">
                                 <i class="fa {{ $act['icono'] }}"></i>
@@ -121,11 +121,11 @@
                             <span class="act-card-actions">
                                 <span class="act-card-chevron"><i class="fa fa-chevron-down"></i></span>
                                 <button type="button" class="btn-remove-act" data-act="{{ $i + 1 }}"
-                                    title="Eliminar actividad" onclick="event.stopPropagation()">
+                                    title="Eliminar actividad">
                                     <i class="fa fa-xmark"></i>
                                 </button>
                             </span>
-                        </button>
+                        </div>
 
                         {{-- Separador ── --}}
                         <div class="act-card-divider"></div>

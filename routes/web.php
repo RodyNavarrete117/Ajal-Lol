@@ -16,6 +16,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\EditPageContactController;
 use App\Http\Controllers\Admin\EditPageBoardController;
 use App\Http\Controllers\Admin\ProjectEditController;
+use App\Http\Controllers\Admin\FaqEditController;
 
 /* ── Rate limiter para el formulario de contacto ── */
 RateLimiter::for('contact', function (Request $request) {
@@ -110,19 +111,22 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::get('/about/edit',      fn() => view('admin.pages.about_edit'))->name('admin.pages.about.edit');
         Route::get('/allies/edit',     fn() => view('admin.pages.allies_edit'))->name('admin.pages.allies.edit');
         Route::get('/activities/edit', fn() => view('admin.pages.activities_edit'))->name('admin.pages.activities.edit');
-        Route::get('/faq/edit',        fn() => view('admin.pages.faq_edit'))->name('admin.pages.faq.edit');
+
+        /* ── FAQ ── */
+        Route::get('/faq/edit',    [FaqEditController::class, 'edit'])->name('admin.pages.faq.edit');
+        Route::put('/faq/update',  [FaqEditController::class, 'update'])->name('admin.pages.faq.update');
 
         /* ── Proyectos ── */
         Route::prefix('projects')->group(function () {
-            Route::get('/edit',                      [ProjectEditController::class, 'index'])->name('admin.pages.projects.edit');
-            Route::put('/year-update',               [ProjectEditController::class, 'yearUpdate'])->name('admin.projects.year.update');
-            Route::post('/year-store',               [ProjectEditController::class, 'yearStore'])->name('admin.projects.year.store');
-            Route::delete('/year-destroy',           [ProjectEditController::class, 'yearDestroy'])->name('admin.projects.year.destroy');
-            Route::post('/image',                    [ProjectEditController::class, 'imageStore'])->name('admin.projects.image.store');
-            Route::post('/image/{id}',               [ProjectEditController::class, 'imageUpdate'])->name('admin.projects.image.update');
-            Route::delete('/image/{id}',             [ProjectEditController::class, 'imageDestroy'])->name('admin.projects.image.destroy');
-            Route::post('/category',                 [ProjectEditController::class, 'categoryStore'])->name('admin.projects.category.store');
-            Route::delete('/category/{id}',          [ProjectEditController::class, 'categoryDestroy'])->name('admin.projects.category.destroy');
+            Route::get('/edit',             [ProjectEditController::class, 'index'])->name('admin.pages.projects.edit');
+            Route::put('/year-update',      [ProjectEditController::class, 'yearUpdate'])->name('admin.projects.year.update');
+            Route::post('/year-store',      [ProjectEditController::class, 'yearStore'])->name('admin.projects.year.store');
+            Route::delete('/year-destroy',  [ProjectEditController::class, 'yearDestroy'])->name('admin.projects.year.destroy');
+            Route::post('/image',           [ProjectEditController::class, 'imageStore'])->name('admin.projects.image.store');
+            Route::post('/image/{id}',      [ProjectEditController::class, 'imageUpdate'])->name('admin.projects.image.update');
+            Route::delete('/image/{id}',    [ProjectEditController::class, 'imageDestroy'])->name('admin.projects.image.destroy');
+            Route::post('/category',        [ProjectEditController::class, 'categoryStore'])->name('admin.projects.category.store');
+            Route::delete('/category/{id}', [ProjectEditController::class, 'categoryDestroy'])->name('admin.projects.category.destroy');
         });
 
         /* ── Directiva ── */

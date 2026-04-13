@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 12-04-2026 a las 01:30:48
+-- Tiempo de generación: 13-04-2026 a las 01:05:14
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `prueba1`
+-- Base de datos: `prueba9`
 --
 
 -- --------------------------------------------------------
@@ -221,10 +221,9 @@ CREATE TABLE `directiva` (
 --
 
 INSERT INTO `directiva` (`id_directiva`, `id_pagina`, `titulo_directiva`, `subtitulo_directiva`, `nombre_directiva`, `cargo_directiva`, `foto_directiva`, `orden_directiva`) VALUES
-(16, 6, 'Directiva', 'Comité Directivo', 'Alfredo Alfonso Montero Goméz', 'Secretario', 'directiva_1_1775842474.jpg', 1),
-(17, 6, NULL, NULL, 'Delia Alejandra Torres Navarro', 'Presidenta', 'directiva_2_1775842115.jpg', 2),
-(18, 6, NULL, NULL, 'Alex José Carrillo Sosa', 'Contador', 'directiva_3_1775842115.jpg', 3),
-(19, 6, NULL, NULL, 'Mariana Federica Montalvo López', 'Secretaria', 'directiva_4_1775842474.jpg', 4);
+(24, 6, 'Directiva', 'Comité Directivo', 'Alfredo Alfonso Montero Goméz', 'Secretario', 'directiva/vsSntzelJlf3wZcIGs1U5n5OaVw0nm1mD3GBFJvi.jpg', 1),
+(25, 6, NULL, NULL, 'Delia Alejandra Torres Navarro', 'Presidenta', 'directiva/iYiEE84jLmNrEEEmCyNqTxFbTnYqu1UoLiZ5wTus.jpg', 2),
+(26, 6, NULL, NULL, 'Alex José Carrillo Sosa', 'Contador', 'directiva/8aS3BvHAgrzBWSFa3IGqkErRauMFHXZnOyowUps4.jpg', 3);
 
 -- --------------------------------------------------------
 
@@ -537,9 +536,17 @@ CREATE TABLE `preguntas_frecuentes` (
   `id_preguntasfrecuentes` int NOT NULL,
   `id_pagina` int NOT NULL,
   `titulo_pregunta` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `texto_respuesta` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `orden` int NOT NULL DEFAULT '0'
+  `texto_respuesta` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `preguntas_frecuentes`
+--
+
+INSERT INTO `preguntas_frecuentes` (`id_preguntasfrecuentes`, `id_pagina`, `titulo_pregunta`, `texto_respuesta`) VALUES
+(1, 7, '¿Te interesa apoyar como colaborador?', 'En Ajal Lol creemos en el trabajo en equipo y en la participación activa de nuestra comunidad. Si te interesa apoyar como colaborador, esta es tu oportunidad para aportar tus ideas, tiempo y talento, y ser parte de un proyecto que busca generar un impacto positivo y duradero.'),
+(2, 7, '¿Estás interesado en donar?', 'Desde el corazón, te invitamos a donar. Tu apoyo nos permite seguir ayudando, acompañando y generando esperanza donde más se necesita. Cada donación, por pequeña que sea, transforma vidas.'),
+(3, 7, '¿Eres profesionista y quisieras aportar con tus conocimientos?', 'Si eres un profesional y deseas aportar tus conocimientos y servicios, ¡te damos la bienvenida! Tu experiencia es valiosa para nuestro equipo en áreas como educación, salud, tecnología o cualquier campo que nos ayude a alcanzar nuestros objetivos.');
 
 -- --------------------------------------------------------
 
@@ -551,7 +558,7 @@ CREATE TABLE `proyecto_anos` (
   `id_ano` int NOT NULL,
   `id_pagina` int NOT NULL,
   `ano` int NOT NULL,
-  `subtitulo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `subtitulo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `visible` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -572,7 +579,7 @@ INSERT INTO `proyecto_anos` (`id_ano`, `id_pagina`, `ano`, `subtitulo`, `visible
 
 CREATE TABLE `proyecto_categorias` (
   `id_categoria` int NOT NULL,
-  `nombre` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `orden` int DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -597,8 +604,8 @@ CREATE TABLE `proyecto_imagenes` (
   `id_imagen` int NOT NULL,
   `id_ano` int NOT NULL,
   `id_categoria` int NOT NULL,
-  `image_path` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
+  `image_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `event_date` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -838,8 +845,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('2T6j1CspgXb5cdEnATJH89nORAEe8Obr4LjiBHtz', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo4OntzOjY6Il90b2tlbiI7czo0MDoiWE5FSWdURjdjMDRneEZtb0hVWUpVQjNnMGlXYWR4bkRybENvbEZsbiI7czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO3M6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjQ1OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL25vdGlmaWNhdGlvbnMvY291bnQiO3M6NToicm91dGUiO047fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6MTA6ImV4cGlyZXNfYXQiO2k6MTc3NTg0ODI1MTt9', 1775842498),
-('NFUvpUxLnJJRof8WR3lg70AyVPmiCDVhOuQSmXOu', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiR1NkNWF6bGlHR0tQN3Y5T2tjQkxhcXAxQzhXbHFZZWY2bmE1UEdiayI7czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO3M6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjQ1OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL25vdGlmaWNhdGlvbnMvY291bnQiO3M6NToicm91dGUiO047fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1775957440);
+('08MGg9Txybi4I3f5xYCpQZOoKmYf9rCv01fcNjZe', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36', 'YTo4OntzOjY6Il90b2tlbiI7czo0MDoiV2E3ZXhIWVBwVzhTUVVPbGVacTlDUnc4Z09pbjd1MjBvTE9HUzAxcSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO3M6MTA6ImV4cGlyZXNfYXQiO2k6MTc3NjA0OTAyMjt9', 1776042256);
 
 -- --------------------------------------------------------
 
@@ -1135,7 +1141,7 @@ ALTER TABLE `contacto`
 -- AUTO_INCREMENT de la tabla `directiva`
 --
 ALTER TABLE `directiva`
-  MODIFY `id_directiva` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id_directiva` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de la tabla `failed_jobs`
@@ -1195,7 +1201,7 @@ ALTER TABLE `paginas`
 -- AUTO_INCREMENT de la tabla `preguntas_frecuentes`
 --
 ALTER TABLE `preguntas_frecuentes`
-  MODIFY `id_preguntasfrecuentes` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_preguntasfrecuentes` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `proyecto_anos`
@@ -1351,4 +1357,3 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-

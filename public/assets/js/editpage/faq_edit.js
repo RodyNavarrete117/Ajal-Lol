@@ -36,7 +36,7 @@
 
     /* ════ SYNC RESUMEN ════ */
     function initSummarySync(card) {
-        const input = card.querySelector('.faq-pregunta-input');
+        const input     = card.querySelector('.faq-pregunta-input');
         const summaryId = input?.dataset.summary;
         if (!input || !summaryId) return;
 
@@ -53,49 +53,57 @@
         });
     }
 
+    /* ════ ACTUALIZAR CONTADOR total_faqs ════ */
+    function updateTotal() {
+        const total = document.getElementById('totalFaqs');
+        if (total) total.value = document.querySelectorAll('.faq-card').length;
+    }
+
     /* ════ RENUMERAR ════ */
     function renumber() {
         document.querySelectorAll('.faq-card').forEach((card, i) => {
             const n = i + 1;
             card.id = `faq-${n}`;
 
-            // Header data-card
             const hdr = card.querySelector('.faq-card__header');
             if (hdr) hdr.dataset.card = `faq-${n}`;
 
-            // Número
             const badge = card.querySelector('.faq-card__num');
             if (badge) badge.textContent = n;
 
-            // Resumen
             const sum = card.querySelector('[id^="summary-"]');
             if (sum) sum.id = `summary-${n}`;
 
-            // Inputs: pregunta
+            // ID de BD (hidden)
+            const idInput = card.querySelector('.faq-id-input');
+            if (idInput) idInput.name = `id_${n}`;
+
+            // titulo_pregunta (input text)
             const pInp = card.querySelector('.faq-pregunta-input');
             if (pInp) {
                 const oldId = pInp.id;
-                pInp.id   = `pregunta_${n}`;
-                pInp.name = `pregunta_${n}`;
+                pInp.id   = `titulo_pregunta_${n}`;
+                pInp.name = `titulo_pregunta_${n}`;
                 pInp.dataset.summary = `summary-${n}`;
                 const lbl = card.querySelector(`label[for="${oldId}"]`);
-                if (lbl) lbl.setAttribute('for', `pregunta_${n}`);
+                if (lbl) lbl.setAttribute('for', `titulo_pregunta_${n}`);
             }
 
-            // Textarea: respuesta
+            // texto_respuesta (textarea)
             const rInp = card.querySelector('textarea');
             if (rInp) {
                 const oldId = rInp.id;
-                rInp.id   = `respuesta_${n}`;
-                rInp.name = `respuesta_${n}`;
+                rInp.id   = `texto_respuesta_${n}`;
+                rInp.name = `texto_respuesta_${n}`;
                 const lbl = card.querySelector(`label[for="${oldId}"]`);
-                if (lbl) lbl.setAttribute('for', `respuesta_${n}`);
+                if (lbl) lbl.setAttribute('for', `texto_respuesta_${n}`);
             }
 
-            // Botón eliminar
             const btnRemove = card.querySelector('.faq-card__remove');
             if (btnRemove) btnRemove.dataset.faq = n;
         });
+
+        updateTotal();
     }
 
     /* ════ ELIMINAR ════ */
@@ -143,7 +151,6 @@
             srcIdx < destIdx ? card.after(dragSrc) : card.before(dragSrc);
         });
 
-        // Solo el grip activa draggable
         if (grip) {
             grip.addEventListener('mousedown', () => { card.draggable = true; });
             grip.addEventListener('mouseup',   () => { card.draggable = false; });
@@ -153,16 +160,13 @@
 
     /* ════ INIT CARD ════ */
     function initCard(card) {
-        // Acordeón
         const hdr = card.querySelector('.faq-card__header');
         if (hdr) {
             hdr.addEventListener('click', () => toggleFaq(card));
         }
 
-        // Sync resumen
         initSummarySync(card);
 
-        // Eliminar (stopPropagation para no disparar el toggle)
         const btnRemove = card.querySelector('.faq-card__remove');
         if (btnRemove) {
             btnRemove.addEventListener('click', (e) => {
@@ -171,18 +175,18 @@
             });
         }
 
-        // Drag & drop
         initDrag(card);
     }
 
-    /* ════ BUILD CARD ════ */
+    /* ════ BUILD CARD (nueva — id=0) ════ */
     function buildCard(n) {
         const card = document.createElement('div');
         card.className = 'faq-card';
         card.id = `faq-${n}`;
-        card.setAttribute('data-collapsed', 'false'); // nueva: abierta
+        card.setAttribute('data-collapsed', 'false');
         card.style.cssText = 'opacity:0;transform:translateY(8px);';
         card.innerHTML = `
+            <input type="hidden" name="id_${n}" class="faq-id-input" value="0">
             <div class="faq-card__header" data-card="faq-${n}">
                 <span class="faq-card__drag" title="Arrastrar para reordenar">
                     <i class="fa fa-grip-vertical"></i>
@@ -200,15 +204,20 @@
             <div class="faq-card__divider"></div>
             <div class="faq-card__body">
                 <div class="form-group">
-                    <label for="pregunta_${n}">Pregunta</label>
-                    <input type="text" id="pregunta_${n}" name="pregunta_${n}"
-                        placeholder="Escribe la pregunta frecuente..."
-                        class="faq-pregunta-input" data-summary="summary-${n}">
+                    <label for="titulo_pregunta_${n}">Pregunta</label>
+                    <input type="text"
+                           id="titulo_pregunta_${n}"
+                           name="titulo_pregunta_${n}"
+                           placeholder="Escribe la pregunta frecuente..."
+                           class="faq-pregunta-input"
+                           data-summary="summary-${n}">
                 </div>
                 <div class="form-group">
-                    <label for="respuesta_${n}">Respuesta</label>
-                    <textarea id="respuesta_${n}" name="respuesta_${n}" rows="3"
-                        placeholder="Escribe la respuesta detallada..."></textarea>
+                    <label for="texto_respuesta_${n}">Respuesta</label>
+                    <textarea id="texto_respuesta_${n}"
+                              name="texto_respuesta_${n}"
+                              rows="3"
+                              placeholder="Escribe la respuesta detallada..."></textarea>
                 </div>
             </div>
         `;
@@ -225,29 +234,34 @@
             card.querySelector('.faq-pregunta-input')?.focus();
         });
         initCard(card);
+        updateTotal();
     });
 
     /* ════ VALIDACIÓN ════ */
     function validateForm(form) {
         let valid = true;
-        form.querySelectorAll('input[required]').forEach(field => {
+        form.querySelectorAll('.faq-pregunta-input').forEach(field => {
             field.classList.remove('field--error');
             field.parentElement.querySelector('.field-error-msg')?.remove();
+
             if (!field.value.trim()) {
                 field.classList.add('field--error');
                 const msg = document.createElement('span');
                 msg.className = 'field-error-msg';
-                msg.textContent = 'Este campo es obligatorio.';
+                msg.textContent = 'La pregunta no puede estar vacía.';
                 field.insertAdjacentElement('afterend', msg);
-                // Expandir el card si está colapsado
+
+                // Expandir card si está colapsado
                 const faqCard = field.closest('.faq-card');
                 if (faqCard && faqCard.getAttribute('data-collapsed') === 'true') {
                     expandFaq(faqCard);
                 }
+
                 field.addEventListener('input', () => {
                     field.classList.remove('field--error');
                     field.parentElement.querySelector('.field-error-msg')?.remove();
                 }, { once: true });
+
                 valid = false;
             }
         });
@@ -255,24 +269,22 @@
     }
 
     /* ════ SUBMIT ════ */
-    const form = document.querySelector('.edit-container form');
+    const form = document.getElementById('faq-edit-form');
     if (form) {
         form.addEventListener('submit', function (e) {
-            e.preventDefault();
             if (!validateForm(form)) {
-                showToast('Por favor completa los campos obligatorios.', 'error');
+                e.preventDefault();
+                showToast('Por favor completa todas las preguntas.', 'error');
                 const errorField = form.querySelector('.field--error');
                 if (errorField) {
                     setTimeout(() => errorField.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
                 }
-                return;
             }
-            showToast('Cambios guardados correctamente.', 'success');
-            /* TODO: reemplazar con fetch/axios real o form.submit() */
         });
     }
 
     /* ════ INIT ════ */
     document.querySelectorAll('.faq-card').forEach(card => initCard(card));
+    updateTotal();
 
 })();

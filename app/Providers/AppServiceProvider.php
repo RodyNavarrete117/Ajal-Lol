@@ -39,13 +39,11 @@ class AppServiceProvider extends ServiceProvider
 
         // ── Directiva: sección team ──
         View::composer('sections.team', function ($view) {
-            // Título y subtítulo del primer registro (orden_directiva = 1)
             $config = DB::table('directiva')
                 ->where('id_pagina', 6)
                 ->orderBy('orden_directiva', 'asc')
                 ->first();
 
-            // Todos los miembros ordenados
             $miembros = DB::table('directiva')
                 ->where('id_pagina', 6)
                 ->orderBy('orden_directiva', 'asc')
@@ -57,6 +55,16 @@ class AppServiceProvider extends ServiceProvider
             ]);
 
             $view->with('directiva', $miembros);
+        });
+
+        // ── FAQ: sección pública ──
+        View::composer('sections.faq', function ($view) {
+            $preguntas = DB::table('preguntas_frecuentes')
+                ->where('id_pagina', 7)
+                ->orderBy('id_preguntasfrecuentes', 'asc')
+                ->get();
+
+            $view->with('preguntas', $preguntas);
         });
     }
 }

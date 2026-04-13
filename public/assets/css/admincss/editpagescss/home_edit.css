@@ -29,7 +29,7 @@
     --shadow-focus:     0 0 0 3px rgba(139, 62, 114, 0.15);
     --tr:               0.22s cubic-bezier(0.4, 0, 0.2, 1);
     --card-radius:      16px;
-    --hero-gradient:    linear-gradient(135deg, #6b2e57 0%, #8B3E72 48%, #b05090 100%);
+    --hero-gradient:    linear-gradient(135deg, #c2185b 0%, #9c1048 48%, #880e4f 100%);
 }
 
 [data-theme="dark"] {
@@ -57,7 +57,7 @@
     --hint-color:       #4a5878;
     --shadow-card:      0 4px 24px rgba(0,0,0,0.36);
     --shadow-focus:     0 0 0 3px rgba(212, 107, 168, 0.18);
-    --hero-gradient:    linear-gradient(135deg, #3a1630 0%, #5a2848 48%, #8B3E72 100%);
+    --hero-gradient:    linear-gradient(135deg, #7a0d30 0%, #9c1048 48%, #c2185b 100%);
 }
 
 *, *::before, *::after { box-sizing: border-box; }

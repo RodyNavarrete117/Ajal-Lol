@@ -31,7 +31,7 @@
     --shadow-focus:     0 0 0 3px rgba(108, 63, 196, 0.15);
     --tr:               0.22s cubic-bezier(0.4, 0, 0.2, 1);
     --card-radius:      16px;
-    --hero-gradient:    linear-gradient(135deg, #3a1f8a 0%, #6c3fc4 48%, #9060e0 100%);
+    --hero-gradient:    linear-gradient(135deg, #4c1d95 0%, #6d28d9 48%, #7c3aed 100%);
 }
 
 [data-theme="dark"] {
@@ -61,7 +61,7 @@
     --upload-border:    #2d4070;
     --shadow-card:      0 4px 24px rgba(0,0,0,0.36);
     --shadow-focus:     0 0 0 3px rgba(144, 96, 224, 0.18);
-    --hero-gradient:    linear-gradient(135deg, #1a0a50 0%, #3a1f8a 48%, #6c3fc4 100%);
+    --hero-gradient:    linear-gradient(135deg, #2e1065 0%, #4c1d95 48%, #6d28d9 100%);
 }
 
 *, *::before, *::after { box-sizing: border-box; }

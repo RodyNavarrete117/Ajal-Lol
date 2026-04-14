@@ -24,6 +24,7 @@ class ProjectEditController extends Controller
                 'id'          => $img->id_imagen,
                 'year'        => $img->ano->ano,
                 'category'    => $img->categoria->nombre,
+                'titulo'      => $img->titulo,
                 'image_path'  => $img->image_path,
                 'description' => $img->description,
                 'event_date'  => $img->event_date,
@@ -100,6 +101,7 @@ public function yearDestroy(Request $request)
             $request->validate([
                 'year'        => 'required|integer',
                 'category'    => 'required|string',
+                'titulo'      => 'required|string|max:150',
                 'description' => 'required|string',
                 'event_date'  => 'required|date',
                 'image'       => 'required|image|max:5120',
@@ -116,6 +118,7 @@ public function yearDestroy(Request $request)
             $img = ProyectoImagen::create([
                 'id_ano'       => $ano->id_ano,  // ← sin ñ
                 'id_categoria' => $cat->id_categoria,
+                'titulo'       => $request->titulo,
                 'image_path'   => $path,
                 'description'  => $request->description,
                 'event_date'   => $request->event_date,
@@ -139,6 +142,7 @@ public function yearDestroy(Request $request)
 
         $request->validate([
             'category'    => 'required|string',
+            'titulo'      => 'required|string|max:150',
             'description' => 'required|string',
             'event_date'  => 'required|date',
         ]);
@@ -152,6 +156,7 @@ public function yearDestroy(Request $request)
 
         $img->update([
             'id_categoria' => $cat->id_categoria,
+            'titulo'       => $request->titulo,
             'description'  => $request->description,
             'event_date'   => $request->event_date,
             'image_path'   => $img->image_path,

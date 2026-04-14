@@ -532,6 +532,7 @@ btnGlobalSave?.addEventListener('click', async function () {
         fd.append('_token',      token);
         fd.append('year',        y);
         fd.append('image',       item.file);
+        fd.append('titulo',      item.titulo);
         fd.append('description', item.description);
         fd.append('category',    item.category);
         fd.append('event_date',  item.date);
@@ -555,6 +556,22 @@ btnGlobalSave?.addEventListener('click', async function () {
             return; // detener aquí
         }
     }
+
+        // Eliminar imágenes marcadas
+    for (const id of pendingDeletes) {
+        try {
+            const res = await fetch(`/admin/pages/projects/image/${id}`, {
+                method: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' }
+            });
+            if (!res.ok) throw new Error();
+            // Quitar la tarjeta del DOM
+            document.querySelector(`.img-card[data-id="${id}"]`)?.remove();
+        } catch {
+            showToast('Error al eliminar una imagen.', 'error');
+        }
+    }
+    pendingDeletes = [];
 
     // Guardar subtítulo
     try {
@@ -732,39 +749,69 @@ btnGlobalSave?.addEventListener('click', async function () {
         openModal();
     });
 
+    // Array de imágenes pendientes de eliminar
+    let pendingDeletes = [];
+
     document.getElementById('imgGrid')?.addEventListener('click', e => {
-        const editBtn = e.target.closest('.btn-edit-img');
-        if (!editBtn) return;
-        const id   = editBtn.dataset.id;
+        const delBtn = e.target.closest('.btn-del-img');
+        if (!delBtn) return;
+
+        // Si es una tarjeta pendiente (aún no guardada) solo la quita
+        if (delBtn.classList.contains('btn-remove-pending')) return;
+
+        const id   = delBtn.dataset.id;
         const card = document.querySelector(`.img-card[data-id="${id}"]`);
         if (!card) return;
-        if (modalTitle) modalTitle.textContent = `Editar Imagen — ID: ${id}`;
-        if (modalSub)   modalSub.textContent   = 'Modifica los datos de esta imagen';
-        if (methodField) methodField.innerHTML = `<input type="hidden" name="_method" value="PUT">`;
-        const submitLabel = document.getElementById('modalSubmitLabel');
-        if (submitLabel) submitLabel.textContent = 'Guardar cambios';
-        const updateUrl = editBtn.dataset.updateUrl;
-        if (updateUrl && modalForm) modalForm.action = updateUrl;
-        const desc = card.querySelector('.img-desc')?.textContent?.trim() ?? '';
-        const descInput = document.getElementById('imgDescInput');
-        if (descInput) descInput.value = desc === 'Sin descripción.' ? '' : desc;
-        const dateInput = document.getElementById('eventDateInput');
-        if (dateInput) {
-            dateInput.value = card.dataset.date || todayISO();
-            updateDateReadable(dateInput.value);
-        }
-        const cat    = card.dataset.cat;
-        const catSel = document.getElementById('catInput');
-        if (catSel) {
-            for (let i = 0; i < catSel.options.length; i++) {
-                if (catSel.options[i].value === cat) { catSel.selectedIndex = i; break; }
-            }
-        }
-        const imgEl = card.querySelector('.img-thumb img');
-        if (imgEl) showPreview(imgEl.src); else resetUploadZone();
-        openModal();
+
+        // Marcar visualmente como "pendiente de eliminar"
+        card.style.opacity = '0.4';
+        card.style.outline = '2px dashed #c0392b';
+        card.style.transition = 'opacity 0.2s, outline 0.2s';
+
+        // Cambiar botón eliminar por "Deshacer"
+        delBtn.textContent = 'Deshacer';
+        delBtn.style.background = 'transparent';
+        delBtn.style.color = '#c0392b';
+        delBtn.classList.add('btn-undo-del');
+        delBtn.classList.remove('btn-del-img');
+
+        // Agregar a pendientes de eliminar
+        pendingDeletes.push(id);
+
+        // Activar guardar
+        if (btnGlobalSave) btnGlobalSave.disabled = false;
+        if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = 'Guardar';
+
+        showToast('Imagen marcada para eliminar. Da clic en Guardar para confirmar.', 'error');
     });
 
+    // Deshacer eliminación
+    document.getElementById('imgGrid')?.addEventListener('click', e => {
+        const undoBtn = e.target.closest('.btn-undo-del');
+        if (!undoBtn) return;
+
+        const card = undoBtn.closest('.img-card');
+        const id   = card?.dataset.id;
+
+        // Quitar de pendientes
+        pendingDeletes = pendingDeletes.filter(d => d !== id);
+
+        // Restaurar visual
+        card.style.opacity = '1';
+        card.style.outline = 'none';
+        undoBtn.textContent = 'Eliminar';
+        undoBtn.style.background = '';
+        undoBtn.style.color = '';
+        undoBtn.classList.add('btn-del-img');
+        undoBtn.classList.remove('btn-undo-del');
+
+        // Si no hay nada pendiente deshabilitar guardar
+        if (pendingImages.filter(Boolean).length === 0 && pendingDeletes.length === 0) {
+            btnGlobalSave.disabled = true;
+        }
+
+        showToast('Eliminación cancelada.');
+    });
     /* ════════════════════════════════════
        DATE PICKER CUSTOM
        — muestra "10 de Abril" sin año
@@ -1049,6 +1096,7 @@ btnGlobalSave?.addEventListener('click', async function () {
         }
 
         const file        = fileInput?.files?.[0];
+        const titulo      = document.getElementById('imgTituloInput')?.value.trim()
         const description = document.getElementById('imgDescInput')?.value.trim();
         const category    = document.getElementById('catInput')?.value;
         const date        = document.getElementById('eventDateInput')?.value;
@@ -1058,7 +1106,7 @@ btnGlobalSave?.addEventListener('click', async function () {
         if (!date) { showToast('Selecciona una fecha.', 'error'); return; }
 
         // Guardar en pendientes
-        const pending = { file, description, category, date, dateLabel };
+        const pending = { file, titulo, description, category, date, dateLabel };
         pendingImages.push(pending);
 
         // Crear tarjeta visual en el grid
@@ -1078,6 +1126,7 @@ btnGlobalSave?.addEventListener('click', async function () {
             </div>
             <div class="img-body">
                 <p class="img-date"><i class="fa fa-calendar-day"></i> ${dateLabel}</p>
+                <p class="img-title" style="font-weight:600; font-size:13px; color:var(--text-heading); margin-bottom:4px;">${titulo}</p>
                 <p class="img-desc">${description}</p>
                 <div class="img-actions">
                     <button class="btn-del-img btn-remove-pending" type="button"
@@ -1132,10 +1181,16 @@ btnGlobalSave?.addEventListener('click', async function () {
             if (card) {
                 card.style.transition = 'opacity 0.22s, transform 0.22s';
                 card.style.opacity = '0'; card.style.transform = 'scale(0.95)';
-                setTimeout(() => { card.remove(); filterImagesByCat(activeCat); }, 230);
+                setTimeout(() => { 
+                    card.remove(); 
+                    filterImagesByCat(activeCat);
+                    refreshEmptyState(
+                        document.querySelectorAll(`#imgGrid .img-card[data-year="${currentYear()}"]`).length,
+                        currentYear()
+                    );
+                }, 230);
             }
-            showToast('Imagen eliminada.');
-            updateGlobalSaveBtn?.();
+            showToast('Imagen eliminada correctamente.');
         };
         if (!url || url === '#') { removeCard(); return; }
         const token = document.querySelector('meta[name="csrf-token"]')?.content

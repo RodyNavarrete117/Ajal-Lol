@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 13-04-2026 a las 01:05:14
+-- Tiempo de generación: 14-04-2026 a las 16:52:17
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `prueba9`
+-- Base de datos: `prueba1`
 --
 
 -- --------------------------------------------------------
@@ -569,7 +569,7 @@ CREATE TABLE `proyecto_anos` (
 --
 
 INSERT INTO `proyecto_anos` (`id_ano`, `id_pagina`, `ano`, `subtitulo`, `visible`, `created_at`, `updated_at`) VALUES
-(2, 5, 2026, NULL, 1, '2026-04-12 07:29:13', '2026-04-12 07:29:28');
+(3, 5, 2024, 'Estos son algunos de nuestros proyectos que realizamos en este año.', 1, '2026-04-14 20:18:57', '2026-04-14 20:27:59');
 
 -- --------------------------------------------------------
 
@@ -592,7 +592,8 @@ INSERT INTO `proyecto_categorias` (`id_categoria`, `nombre`, `orden`, `created_a
 (1, 'Jornadas dentales', 1, '2026-04-12 01:28:37'),
 (2, 'Jornadas de salud', 2, '2026-04-12 01:28:37'),
 (3, 'Proyectos productivos', 3, '2026-04-12 01:28:37'),
-(4, 'Adulto Mayor', 4, '2026-04-12 01:28:37');
+(4, 'Adulto Mayor', 4, '2026-04-12 01:28:37'),
+(5, 'Celebraciones', 0, '2026-04-14 14:23:05');
 
 -- --------------------------------------------------------
 
@@ -604,6 +605,7 @@ CREATE TABLE `proyecto_imagenes` (
   `id_imagen` int NOT NULL,
   `id_ano` int NOT NULL,
   `id_categoria` int NOT NULL,
+  `titulo` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `image_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `event_date` date DEFAULT NULL,
@@ -615,8 +617,8 @@ CREATE TABLE `proyecto_imagenes` (
 -- Volcado de datos para la tabla `proyecto_imagenes`
 --
 
-INSERT INTO `proyecto_imagenes` (`id_imagen`, `id_ano`, `id_categoria`, `image_path`, `description`, `event_date`, `created_at`, `updated_at`) VALUES
-(1, 2, 1, 'proyectos/HpwavWy2RqYbVi0k6g93bq6tnhJX2f0tS4ZhDCnJ.jpg', 'adsfaf', '2026-04-11', '2026-04-12 07:29:28', '2026-04-12 07:29:28');
+INSERT INTO `proyecto_imagenes` (`id_imagen`, `id_ano`, `id_categoria`, `titulo`, `image_path`, `description`, `event_date`, `created_at`, `updated_at`) VALUES
+(2, 3, 1, NULL, 'proyectos/TKeeRaHgTpjEX6PZVr9Fn5GFfqEXulPDyAtyJQCj.jpg', 'Es una de las muchas actividades que hacemos para ayudar a la comunidad.', '2026-04-14', '2026-04-14 20:27:59', '2026-04-14 20:27:59');
 
 -- --------------------------------------------------------
 
@@ -845,7 +847,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('08MGg9Txybi4I3f5xYCpQZOoKmYf9rCv01fcNjZe', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36', 'YTo4OntzOjY6Il90b2tlbiI7czo0MDoiV2E3ZXhIWVBwVzhTUVVPbGVacTlDUnc4Z09pbjd1MjBvTE9HUzAxcSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO3M6MTA6ImV4cGlyZXNfYXQiO2k6MTc3NjA0OTAyMjt9', 1776042256);
+('DaZpd5PmuQ5WyACBSHOyU28sH0nWPhfprA1nCfml', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiMllMRXJweWs1OWVhVllZemNKZFp6YWhUYWFvcElpZXo5ZHJra1Z3USI7czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO3M6OToiX3ByZXZpb3VzIjthOjI6e3M6MzoidXJsIjtzOjQ3OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYWRtaW4vcGFnZXMvcHJvamVjdHMvZWRpdCI7czo1OiJyb3V0ZSI7czoyNToiYWRtaW4ucGFnZXMucHJvamVjdHMuZWRpdCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1776185079);
 
 -- --------------------------------------------------------
 
@@ -1207,19 +1209,19 @@ ALTER TABLE `preguntas_frecuentes`
 -- AUTO_INCREMENT de la tabla `proyecto_anos`
 --
 ALTER TABLE `proyecto_anos`
-  MODIFY `id_ano` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_ano` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `proyecto_categorias`
 --
 ALTER TABLE `proyecto_categorias`
-  MODIFY `id_categoria` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_categoria` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `proyecto_imagenes`
 --
 ALTER TABLE `proyecto_imagenes`
-  MODIFY `id_imagen` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_imagen` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `redes_sociales`
@@ -1357,3 +1359,4 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+

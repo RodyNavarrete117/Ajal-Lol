@@ -208,7 +208,10 @@
                                 <button class="btn-edit-img" type="button"
                                         data-id="{{ $img->id }}">Editar</button>
                                 <button class="btn-del-img" type="button"
-                                        data-id="{{ $img->id }}" data-url="#">Eliminar</button>
+                                        data-id="{{ $img->id }}"
+                                        data-url="{{ route('admin.projects.image.destroy', $img->id) }}">
+                                    Eliminar
+                                </button>
                                 <span class="img-id-tag">ID: {{ $img->id }}</span>
                             </div>
                         </div>
@@ -380,6 +383,11 @@
 
                 {{-- COLUMNA DERECHA --}}
                 <div class="img-modal__panel">
+                    <div class="form-group">
+                        <label for="imgTituloInput">Título de la imagen</label>
+                        <input type="text" id="imgTituloInput" name="titulo"
+                            placeholder="Ej: Jornada dental gratuita" required>
+                    </div>
                     <div class="form-group img-modal__desc-group">
                         <label for="imgDescInput">Descripción de la imagen</label>
                         <textarea id="imgDescInput" name="description"

@@ -1,7 +1,7 @@
 <section id="portfolio" class="section light-bg">
   <div class="container">
 
-    <div class="section-title" data-anim="fade-up">
+    <div class="section-title" data-anim="fade-up" id="title-year">
       <h2>Proyectos</h2>
       <p class="sub">Nuestro <span>trabajo año con año</span></p>
     </div>
@@ -30,11 +30,6 @@
            class="year-panel {{ $i === 0 ? 'active' : '' }}"
            role="tabpanel">
 
-        {{-- Subtítulo del año --}}
-        @if($ano->subtitulo)
-          <p class="year-subtitle" data-anim="fade-up">{{ $ano->subtitulo }}</p>
-        @endif
-
         {{-- Filtros de categoría --}}
         <div class="portfolio-filters" role="tablist"
              aria-label="Filtrar proyectos {{ $ano->ano }}" data-anim="fade-up">
@@ -55,7 +50,7 @@
               <img src="{{ asset('storage/' . $img->image_path) }}"
                    alt="{{ $img->description }}" loading="lazy">
               <div class="portfolio-info">
-                <h3>{{ $img->categoria->nombre }}</h3>
+                <h3>{{ $img->titulo ?? $img->categoria->nombre }}</h3>
                 <p>
                   @if($img->event_date)
                     @php

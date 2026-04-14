@@ -7,7 +7,7 @@ class ProyectoImagen extends Model
 {
     protected $table      = 'proyecto_imagenes';
     protected $primaryKey = 'id_imagen'; // ← PK correcta
-    protected $fillable   = ['id_ano', 'id_categoria', 'image_path', 'description', 'event_date'];
+    protected $fillable = ['id_ano', 'id_categoria', 'titulo', 'image_path', 'description', 'event_date'];
     protected $casts      = ['event_date' => 'date'];
 
     public function ano()

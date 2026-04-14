@@ -51,7 +51,7 @@
                 {{ $meses[$d->month - 1] }} {{ $ano->ano }}
               @endif
             </p>
-            <h2>{{ $img->categoria->nombre }}</h2>
+            <h2>{{ $img->titulo ?? $img->categoria->nombre }}</h2>
             <p>{{ $img->description }}</p>
           </div>
         </article>

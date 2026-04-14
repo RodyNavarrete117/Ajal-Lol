@@ -95,32 +95,21 @@
           </li>
 
           <li class="nav-dropdown nav-dropdown-proyectos" role="none">
-            <a href="{{ url('/#portfolio') }}" class="nav-dropdown-toggle" role="menuitem"
-               aria-haspopup="true" aria-expanded="false">
-              <i class="nav-icon bi bi-folder2-open"></i>
-              Proyectos
-              <i class="bi bi-chevron-down nav-dropdown-arrow" aria-hidden="true"></i>
-            </a>
-            <ul class="nav-dropdown-menu" role="menu">
-              <li role="none">
-                <a href="{{ route('events.year', ['year' => 2023]) }}" role="menuitem"
-                   class="{{ request()->is('events/2023') ? 'active' : '' }}">
-                  <i class="bi bi-calendar3" aria-hidden="true"></i> 2023
-                </a>
-              </li>
-              <li role="none">
-                <a href="{{ route('events.year', ['year' => 2024]) }}" role="menuitem"
-                   class="{{ request()->is('events/2024') ? 'active' : '' }}">
-                  <i class="bi bi-calendar3" aria-hidden="true"></i> 2024
-                </a>
-              </li>
-              <li role="none">
-                <a href="{{ route('events.year', ['year' => 2025]) }}" role="menuitem"
-                   class="{{ request()->is('events/2025') ? 'active' : '' }}">
-                  <i class="bi bi-calendar3" aria-hidden="true"></i> 2025
-                </a>
-              </li>
-            </ul>
+              <a href="{{ url('/#portfolio') }}" class="nav-dropdown-toggle" role="menuitem"
+                aria-haspopup="true" aria-expanded="false">
+                  <i class="nav-icon bi bi-folder2-open"></i>
+                  Proyectos
+                  <i class="bi bi-chevron-down nav-dropdown-arrow" aria-hidden="true"></i>
+              </a>
+              <ul class="nav-dropdown-menu" role="menu">
+                  @foreach($anos as $ano)
+                  <li role="none">
+                      <a href="{{ route('events.year', ['year' => $ano->ano]) }}" role="menuitem">
+                          <i class="bi bi-calendar3" aria-hidden="true"></i> {{ $ano->ano }}
+                      </a>
+                  </li>
+                  @endforeach
+              </ul>
           </li>
 
           <li role="none">

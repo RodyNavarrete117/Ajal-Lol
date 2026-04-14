@@ -17,6 +17,8 @@ use App\Http\Controllers\Admin\EditPageContactController;
 use App\Http\Controllers\Admin\EditPageBoardController;
 use App\Http\Controllers\Admin\ProjectEditController;
 use App\Http\Controllers\Admin\FaqEditController;
+use App\Http\Controllers\Page\PublicPageController;
+use App\Http\Controllers\Page\EventsController;
 
 /* ── Rate limiter para el formulario de contacto ── */
 RateLimiter::for('contact', function (Request $request) {
@@ -24,20 +26,16 @@ RateLimiter::for('contact', function (Request $request) {
 });
 
 /* ===== RUTAS PÚBLICAS ===== */
-Route::get('/', fn() => view('index'));
-Route::get('/pagina', fn() => view('visualpage'));
+Route::get('/',       [PublicPageController::class, 'home'])->name('home');
+Route::get('/pagina', [PublicPageController::class, 'index'])->name('pagina');
 
 Route::post('/contact', [ContactController::class, 'store'])
      ->middleware('throttle:contact')
      ->name('contact.store');
 
-Route::get('/events/{year}', function ($year) {
-    $yearsAllowed = ['2023', '2024', '2025'];
-    if (!in_array($year, $yearsAllowed)) {
-        abort(404);
-    }
-    return view("events.{$year}");
-})->name('events.year')->where('year', '202[0-9]');
+Route::get('/events/{year}', [EventsController::class, 'show'])
+     ->name('events.year')
+     ->where('year', '[0-9]{4}');
 
 /* Login */
 Route::get('/login', fn() => view('login'))->name('login');

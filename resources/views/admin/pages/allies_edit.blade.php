@@ -46,6 +46,13 @@
                     <span class="field-error-msg">{{ $message }}</span>
                 @enderror
             </div>
+            {{-- Descripción de la sección --}}
+        <div class="form-group">
+            <label for="descripcion_aliados">Descripción</label>
+            <textarea id="descripcion_aliados" name="descripcion_aliados"
+                placeholder="Ej. Organizaciones que confían en nosotros..."
+                rows="3">{{ old('descripcion_aliados', 'Organizaciones que confían en nosotros') }}</textarea>
+        </div>
 
             {{-- Header de logos --}}
             <div class="logos-section-label">

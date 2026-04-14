@@ -82,6 +82,33 @@
             { cls: 'fa-fire',           label: 'Urgente'         },
             { cls: 'fa-shield-halved',  label: 'Protección'      },
         ],
+                'Animlaes': [
+            { cls: 'fa-kiwi-bird',    label: 'Ave de corral'     }, // alternativa genérica
+            { cls: 'fa-crow',         label: 'Gallo / Gallina'   },
+            { cls: 'fa-egg',          label: 'Huevo'             },
+            { cls: 'fa-drumstick-bite', label: 'Pollo'          },
+            { cls: 'fa-paw',          label: 'Animal de granja'  },
+            { cls: 'fa-horse',        label: 'Caballo'           },
+            { cls: 'fa-cow',          label: 'Vaca'              },
+            { cls: 'fa-dog',          label: 'Animal doméstico'  },
+            { cls: 'fa-wheat-awn',    label: 'Alimento animal'   },
+            { cls: 'fa-tractor',      label: 'Campo'    },
+            { cls: 'fa-bacon',        label: 'Cerdo'             }, // depende de versión FA
+        ],
+
+        'Campo': [
+            { cls: 'fa-tractor',        label: 'Agricultura'        },
+            { cls: 'fa-seedling',       label: 'Siembra'            },
+            { cls: 'fa-leaf',           label: 'Cultivo'            },
+            { cls: 'fa-wheat-awn',      label: 'Cosecha'            },
+            { cls: 'fa-water',          label: 'Riego'              },
+            { cls: 'fa-sun',            label: 'Jornada agrícola'   },
+            { cls: 'fa-cloud-sun',      label: 'Clima'              },
+            { cls: 'fa-bucket',         label: 'Recolección'        },
+            { cls: 'fa-hammer',         label: 'Herramientas'       },
+            { cls: 'fa-people-carry-box', label: 'Apoyo comunitario'},
+            { cls: 'fa-truck',          label: 'Transporte rural'   },
+        ],
     };
 
     const ALL_ICONS = Object.entries(ICON_CATALOG).flatMap(([cat, icons]) =>

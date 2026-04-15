@@ -15,6 +15,7 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\EditPageContactController;
 use App\Http\Controllers\Admin\EditPageBoardController;
+use App\Http\Controllers\Admin\EditPageAlliesController;
 use App\Http\Controllers\Admin\ProjectEditController;
 use App\Http\Controllers\Admin\FaqEditController;
 use App\Http\Controllers\Page\PublicPageController;
@@ -86,7 +87,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 
     /* ===== CONFIGURACIÓN ===== */
     Route::prefix('settings')->group(function () {
-        Route::get('/',               [SettingsController::class, 'index'])->name('admin.settings');
+        Route::get('/',                [SettingsController::class, 'index'])->name('admin.settings');
         Route::post('/change-password', [SettingsController::class, 'changePassword'])->name('admin.settings.change-password');
         Route::post('/update-profile',  [SettingsController::class, 'updateProfile'])->name('admin.settings.update-profile');
         Route::post('/keep-session',    [SettingsController::class, 'keepSession']);
@@ -107,8 +108,11 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
         /* Páginas simples (solo vista) */
         Route::get('/home/edit',       fn() => view('admin.pages.home_edit'))->name('admin.pages.home.edit');
         Route::get('/about/edit',      fn() => view('admin.pages.about_edit'))->name('admin.pages.about.edit');
-        Route::get('/allies/edit',     fn() => view('admin.pages.allies_edit'))->name('admin.pages.allies.edit');
         Route::get('/activities/edit', fn() => view('admin.pages.activities_edit'))->name('admin.pages.activities.edit');
+
+        /* ── Aliados ── */
+        Route::get('/allies/edit',    [EditPageAlliesController::class, 'index'])->name('admin.pages.allies.edit');
+        Route::put('/allies/update',  [EditPageAlliesController::class, 'update'])->name('admin.pages.allies.update');
 
         /* ── FAQ ── */
         Route::get('/faq/edit',    [FaqEditController::class, 'edit'])->name('admin.pages.faq.edit');

@@ -32,47 +32,164 @@
             </p>
         </div>
 
-        {{-- ── Form ── --}}
-        <form method="POST" action="#" enctype="multipart/form-data">
-            @csrf
+        {{-- ── Mensajes flash ── --}}
+        @if(session('success'))
+        <div style="
+            margin: 16px 28px 0;
+            padding: 12px 16px;
+            background: rgba(35,107,63,0.10);
+            border: 1px solid rgba(35,107,63,0.28);
+            border-radius: 10px;
+            color: #236b3f;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        ">
+            <i class="fa fa-circle-check"></i>
+            {{ session('success') }}
+        </div>
+        @endif
 
-            {{-- Título de sección --}}
+        @if(session('error'))
+        <div style="
+            margin: 16px 28px 0;
+            padding: 12px 16px;
+            background: rgba(184,48,48,0.10);
+            border: 1px solid rgba(184,48,48,0.28);
+            border-radius: 10px;
+            color: #b83030;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        ">
+            <i class="fa fa-circle-exclamation"></i>
+            {{ session('error') }}
+        </div>
+        @endif
+
+        {{--
+            Tablas:
+              aliados          → id_aliados, id_pagina(=3), titulo_seccion, descripcion
+              aliados_imagenes → id_imagen, id_aliados(FK), img_path
+        --}}
+        <form method="POST"
+              action="{{ route('admin.pages.allies.update') }}"
+              enctype="multipart/form-data"
+              id="allies-edit-form">
+            @csrf
+            @method('PUT')
+
+            <input type="hidden" name="id_pagina" value="{{ $id_pagina }}">
+            <input type="hidden" name="id_config" value="{{ $config->id_aliados ?? 0 }}">
+            <input type="hidden" name="total_logos" id="totalLogos" value="{{ count($logos) }}">
+
+            {{-- ── Título ── --}}
             <div class="form-group">
                 <label for="titulo_aliados">Título de la sección</label>
-                <input type="text" id="titulo_aliados" name="titulo_aliados"
-                    value="{{ old('titulo_aliados', 'Nuestros Aliados') }}"
-                    placeholder="Ej. Nuestros Aliados, Patrocinadores..." required>
+                <input type="text"
+                       id="titulo_aliados"
+                       name="titulo_aliados"
+                       value="{{ old('titulo_aliados', $config->titulo_seccion ?? '') }}"
+                       placeholder="Aún no hay título en este momento...">
                 @error('titulo_aliados')
                     <span class="field-error-msg">{{ $message }}</span>
                 @enderror
             </div>
-            {{-- Descripción de la sección --}}
-        <div class="form-group">
-            <label for="descripcion_aliados">Descripción</label>
-            <textarea id="descripcion_aliados" name="descripcion_aliados"
-                placeholder="Ej. Organizaciones que confían en nosotros..."
-                rows="3">{{ old('descripcion_aliados', 'Organizaciones que confían en nosotros') }}</textarea>
-        </div>
 
-            {{-- Header de logos --}}
+            {{-- ── Descripción ── --}}
+            <div class="form-group">
+                <label for="descripcion_aliados">Descripción</label>
+                <textarea id="descripcion_aliados"
+                          name="descripcion_aliados"
+                          rows="3"
+                          placeholder="Aún no hay descripción en este momento...">{{ old('descripcion_aliados', $config->descripcion ?? '') }}</textarea>
+            </div>
+
+            {{-- ── Header logos ── --}}
             <div class="logos-section-label">
                 <span class="logos-label-text">Logos de aliados</span>
                 <div class="logos-label-right">
-                    <span class="logos-counter" id="logosCounter">6 / 18</span>
+                    <span class="logos-counter" id="logosCounter">{{ count($logos) }} / 18</span>
                     <span class="logos-label-hint">PNG, JPG, SVG · Máx. 2MB c/u</span>
                 </div>
             </div>
 
-            {{-- Barra de progreso --}}
+            {{-- ── Barra de progreso ── --}}
             <div class="logos-progress-bar">
-                <div class="logos-progress-fill" id="logosProgressFill" style="width: 33.33%"></div>
+                <div class="logos-progress-fill"
+                     id="logosProgressFill"
+                     style="width: {{ count($logos) > 0 ? round((count($logos) / 18) * 100) : 0 }}%">
+                </div>
             </div>
 
-            {{-- Grid de logos — 4 columnas --}}
+            {{-- ── Grid desde BD ── --}}
             <div class="logos-grid" id="logosGrid">
 
-                @for ($i = 1; $i <= 8; $i++)
-                <div class="logo-slot" id="slot-{{ $i }}">
+                @forelse($logos as $i => $logo)
+                @php $n = $i + 1; @endphp
+                <div class="logo-slot" id="slot-{{ $n }}" data-slot="{{ $n }}">
+
+                    <input type="hidden"
+                           name="id_logo_{{ $n }}"
+                           class="logo-id-input"
+                           value="{{ $logo->id_imagen }}">
+
+                    <input type="hidden"
+                           name="eliminar_logo_{{ $n }}"
+                           id="eliminar_{{ $n }}"
+                           value="0">
+
+                    <div class="logo-slot__preview {{ $logo->img_path ? 'has-image' : '' }}"
+                         id="preview-{{ $n }}">
+                        @if($logo->img_path)
+                            <img src="{{ asset('storage/' . $logo->img_path) }}"
+                                 alt="Logo {{ $n }}">
+                        @else
+                            <div class="logo-slot__empty">
+                                <i class="fa fa-image"></i>
+                                <span>Logo {{ $n }}</span>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="logo-slot__actions">
+                        <label class="btn-upload" for="logo_{{ $n }}">
+                            <i class="fa fa-arrow-up-from-bracket"></i>
+                            Subir
+                        </label>
+                        <input type="file"
+                               id="logo_{{ $n }}"
+                               name="logo_{{ $n }}"
+                               accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                               class="logo-input"
+                               data-slot="{{ $n }}"
+                               style="display:none;">
+                        <button type="button"
+                                class="btn-clear"
+                                data-slot="{{ $n }}"
+                                data-has-image="{{ $logo->img_path ? '1' : '0' }}"
+                                title="Quitar imagen">
+                            <i class="fa fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="logo-slot__name {{ $logo->img_path ? 'has-file' : '' }}"
+                         id="name-{{ $n }}">
+                        {{ $logo->img_path ? basename($logo->img_path) : 'Sin imagen' }}
+                    </div>
+
+                </div>
+                @empty
+
+                {{-- Sin logos — 4 slots vacíos iniciales ── --}}
+                @for ($i = 1; $i <= 4; $i++)
+                <div class="logo-slot" id="slot-{{ $i }}" data-slot="{{ $i }}">
+                    <input type="hidden" name="id_logo_{{ $i }}" class="logo-id-input" value="0">
+                    <input type="hidden" name="eliminar_logo_{{ $i }}" id="eliminar_{{ $i }}" value="0">
                     <div class="logo-slot__preview" id="preview-{{ $i }}">
                         <div class="logo-slot__empty">
                             <i class="fa fa-image"></i>
@@ -85,13 +202,17 @@
                             Subir
                         </label>
                         <input type="file"
-                            id="logo_{{ $i }}"
-                            name="logo_{{ $i }}"
-                            accept="image/png,image/jpeg,image/svg+xml,image/webp"
-                            class="logo-input"
-                            data-slot="{{ $i }}"
-                            style="display:none;">
-                        <button type="button" class="btn-clear" data-slot="{{ $i }}" title="Quitar imagen">
+                               id="logo_{{ $i }}"
+                               name="logo_{{ $i }}"
+                               accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                               class="logo-input"
+                               data-slot="{{ $i }}"
+                               style="display:none;">
+                        <button type="button"
+                                class="btn-clear"
+                                data-slot="{{ $i }}"
+                                data-has-image="0"
+                                title="Quitar imagen">
                             <i class="fa fa-xmark"></i>
                         </button>
                     </div>
@@ -99,9 +220,11 @@
                 </div>
                 @endfor
 
-            </div>
+                @endforelse
 
-            {{-- Botón agregar --}}
+            </div>{{-- /logosGrid --}}
+
+            {{-- ── Botón agregar ── --}}
             <div class="logos-add-bar" id="logosAddBar">
                 <button type="button" class="btn-add-logo" id="btnAddLogo">
                     <i class="fa fa-plus"></i>
@@ -112,7 +235,7 @@
                 </span>
             </div>
 
-            {{-- Form actions --}}
+            {{-- ── Form actions ── --}}
             <div class="form-actions">
                 <button type="submit" class="btn-save">
                     <i class="fa fa-floppy-disk"></i>

@@ -66,5 +66,29 @@ class AppServiceProvider extends ServiceProvider
 
             $view->with('preguntas', $preguntas);
         });
+
+        // ── Aliados: sección clients ──
+        View::composer('sections.clients', function ($view) {
+            $aliados_config = DB::table('aliados')
+                ->where('id_pagina', 3)
+                ->first();
+
+            $aliados = collect();
+            if ($aliados_config) {
+                $aliados = DB::table('aliados_imagenes')
+                    ->where('id_aliados', $aliados_config->id_aliados)
+                    ->whereNotNull('img_path')
+                    ->where('img_path', '!=', '')
+                    ->orderBy('id_imagen', 'asc')
+                    ->get();
+            }
+
+            $view->with('aliados_config', $aliados_config ?? (object)[
+                'titulo_seccion' => '',
+                'descripcion'    => '',
+            ]);
+
+            $view->with('aliados', $aliados);
+        });
     }
 }

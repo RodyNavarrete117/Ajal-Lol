@@ -2,81 +2,70 @@
 
   <div class="container">
     <div class="section-title" data-anim="fade-up">
-      <h2>Aliados</h2>
-      <p class="sub">Organizaciones que <span>confían</span> en nosotros</p>
+      <h2>{{ $aliados_config->titulo_seccion ?? 'Aún no hay título en este momento' }}</h2>
+      <p class="sub">{{ $aliados_config->descripcion ?? 'Aún no hay descripción en este momento' }}</p>
     </div>
   </div>
+
+  @php
+    $logosList = isset($aliados)
+        ? $aliados->filter(fn($a) => !empty($a->img_path))->values()
+        : collect([]);
+
+    $total = $logosList->count();
+
+    // Repetir logos hasta tener al menos 8 para llenar las 6 columnas
+    $logosExtended = collect();
+    if ($total > 0) {
+        while ($logosExtended->count() < 8) {
+            $logosExtended = $logosExtended->concat($logosList);
+        }
+        $logosExtended = $logosExtended->values();
+    }
+
+    $sizes = ['card-lg', 'card-sm', 'card-md'];
+
+    $columns = [
+        ['col-up',   '22s', [0, 1, 2, 3]],
+        ['col-down', '18s', [4, 5, 6, 7]],
+        ['col-up',   '25s', [1, 5, 0, 4]],
+        ['col-down', '20s', [3, 2, 6, 7]],
+        ['col-up',   '23s', [3, 4, 0, 2]],
+        ['col-down', '19s', [6, 1, 5, 7]],
+    ];
+  @endphp
+
+  @if($total > 0)
 
   <div class="masonry-viewport" aria-label="Galería de aliados">
-
     <div class="masonry-columns">
 
-      <div class="col-track col-up" style="--dur:22s">
-        <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/DIFY.png" alt="DIF Yucatán" loading="lazy"><span class="logo-label">DIF Yucatán</span></div>
-        <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/oxxo.png" alt="OXXO" loading="lazy"><span class="logo-label">OXXO</span></div>
-        <div class="logo-card card-md"><img src="https://ajal-lol.org/assets/logos/mentors.png" alt="Mentors" loading="lazy"><span class="logo-label">Mentors</span></div>
-        <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/marinaTri.png" alt="Mariana Trinitaria" loading="lazy"><span class="logo-label">Mariana Trinitaria</span></div>
-        <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/DIFY.png" alt="DIF Yucatán" loading="lazy"><span class="logo-label">DIF Yucatán</span></div>
-        <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/oxxo.png" alt="OXXO" loading="lazy"><span class="logo-label">OXXO</span></div>
-        <div class="logo-card card-md"><img src="https://ajal-lol.org/assets/logos/mentors.png" alt="Mentors" loading="lazy"><span class="logo-label">Mentors</span></div>
-        <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/marinaTri.png" alt="Mariana Trinitaria" loading="lazy"><span class="logo-label">Mariana Trinitaria</span></div>
+      @foreach($columns as [$dir, $dur, $indices])
+      <div class="col-track {{ $dir }}" style="--dur:{{ $dur }}">
+        @php
+          $colLogos = collect($indices)->map(fn($idx) => $logosExtended[$idx]);
+          $colLogos = $colLogos->concat($colLogos);
+        @endphp
+        @foreach($colLogos as $j => $logo)
+        @php $size = $sizes[$j % count($sizes)]; @endphp
+        <div class="logo-card {{ $size }}">
+          <img src="{{ asset('storage/' . $logo->img_path) }}"
+               alt="Aliado"
+               loading="lazy">
+        </div>
+        @endforeach
       </div>
+      @endforeach
 
-      <div class="col-track col-down" style="--dur:18s">
-        <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/logo-kekenv3.png" alt="Kekén" loading="lazy"><span class="logo-label">Kekén</span></div>
-        <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/imagews-removebg-preview.png" alt="Smile" loading="lazy"><span class="logo-label">Smile</span></div>
-        <div class="logo-card card-md"><img src="https://ajal-lol.org/assets/logos/Days.png" alt="Days" loading="lazy"><span class="logo-label">Days</span></div>
-        <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/image_2024_7_31_201.png" alt="Aliado" loading="lazy"><span class="logo-label">Aliado</span></div>
-        <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/logo-kekenv3.png" alt="Kekén" loading="lazy"><span class="logo-label">Kekén</span></div>
-        <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/imagews-removebg-preview.png" alt="Smile" loading="lazy"><span class="logo-label">Smile</span></div>
-        <div class="logo-card card-md"><img src="https://ajal-lol.org/assets/logos/Days.png" alt="Days" loading="lazy"><span class="logo-label">Days</span></div>
-        <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/image_2024_7_31_201.png" alt="Aliado" loading="lazy"><span class="logo-label">Aliado</span></div>
-      </div>
-
-      <div class="col-track col-up" style="--dur:25s">
-        <div class="logo-card card-md"><img src="https://ajal-lol.org/assets/logos/oxxo.png" alt="OXXO" loading="lazy"><span class="logo-label">OXXO</span></div>
-        <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/Days.png" alt="Days" loading="lazy"><span class="logo-label">Days</span></div>
-        <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/DIFY.png" alt="DIF Yucatán" loading="lazy"><span class="logo-label">DIF Yucatán</span></div>
-        <div class="logo-card card-md"><img src="https://ajal-lol.org/assets/logos/logo-kekenv3.png" alt="Kekén" loading="lazy"><span class="logo-label">Kekén</span></div>
-        <div class="logo-card card-md"><img src="https://ajal-lol.org/assets/logos/oxxo.png" alt="OXXO" loading="lazy"><span class="logo-label">OXXO</span></div>
-        <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/Days.png" alt="Days" loading="lazy"><span class="logo-label">Days</span></div>
-        <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/DIFY.png" alt="DIF Yucatán" loading="lazy"><span class="logo-label">DIF Yucatán</span></div>
-        <div class="logo-card card-md"><img src="https://ajal-lol.org/assets/logos/logo-kekenv3.png" alt="Kekén" loading="lazy"><span class="logo-label">Kekén</span></div>
-      </div>
-
-      <div class="col-track col-down" style="--dur:20s">
-        <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/marinaTri.png" alt="Mariana Trinitaria" loading="lazy"><span class="logo-label">Mariana Trinitaria</span></div>
-        <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/mentors.png" alt="Mentors" loading="lazy"><span class="logo-label">Mentors</span></div>
-        <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/imagews-removebg-preview.png" alt="Smile" loading="lazy"><span class="logo-label">Smile</span></div>
-        <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/image_2024_7_31_201.png" alt="Aliado" loading="lazy"><span class="logo-label">Aliado</span></div>
-        <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/marinaTri.png" alt="Mariana Trinitaria" loading="lazy"><span class="logo-label">Mariana Trinitaria</span></div>
-        <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/mentors.png" alt="Mentors" loading="lazy"><span class="logo-label">Mentors</span></div>
-        <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/imagews-removebg-preview.png" alt="Smile" loading="lazy"><span class="logo-label">Smile</span></div>
-        <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/image_2024_7_31_201.png" alt="Aliado" loading="lazy"><span class="logo-label">Aliado</span></div>
-      </div>
-    <!-- Columna 5: sube -->
-      <div class="col-track col-up" style="--dur:23s">
-        <div class="logo-card card-md"><img src="https://ajal-lol.org/assets/logos/marinaTri.png" alt="Mariana Trinitaria" loading="lazy"></div>
-        <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/logo-kekenv3.png" alt="Kekén" loading="lazy"></div>
-        <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/DIFY.png" alt="DIF Yucatán" loading="lazy"></div>
-        <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/mentors.png" alt="Mentors" loading="lazy"></div>
-        <div class="logo-card card-md"><img src="https://ajal-lol.org/assets/logos/marinaTri.png" alt="Mariana Trinitaria" loading="lazy"></div>
-        <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/logo-kekenv3.png" alt="Kekén" loading="lazy"></div>
-        <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/DIFY.png" alt="DIF Yucatán" loading="lazy"></div>
-        <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/mentors.png" alt="Mentors" loading="lazy"></div>
-      </div>
-      <!-- Columna 6: baja -->
-      <div class="col-track col-down" style="--dur:19s">
-          <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/imagews-removebg-preview.png" alt="Smile" loading="lazy"></div>
-          <div class="logo-card card-md"><img src="https://ajal-lol.org/assets/logos/oxxo.png" alt="OXXO" loading="lazy"></div>
-          <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/Days.png" alt="Days" loading="lazy"></div>
-          <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/image_2024_7_31_201.png" alt="Aliado" loading="lazy"></div>
-          <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/imagews-removebg-preview.png" alt="Smile" loading="lazy"></div>
-          <div class="logo-card card-md"><img src="https://ajal-lol.org/assets/logos/oxxo.png" alt="OXXO" loading="lazy"></div>
-          <div class="logo-card card-sm"><img src="https://ajal-lol.org/assets/logos/Days.png" alt="Days" loading="lazy"></div>
-          <div class="logo-card card-lg"><img src="https://ajal-lol.org/assets/logos/image_2024_7_31_201.png" alt="Aliado" loading="lazy"></div>
-      </div>
     </div>
   </div>
+
+  @else
+  <div class="container">
+    <p style="text-align:center; color: var(--color-muted, #999); padding: 40px 0; font-size: 15px;">
+      Sin aliados de momento.
+    </p>
+  </div>
+  @endif
 
 </section>

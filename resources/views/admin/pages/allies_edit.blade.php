@@ -32,49 +32,22 @@
             </p>
         </div>
 
-        {{-- ── Mensajes flash ── --}}
+        {{-- ── Mensajes flash para toast ── --}}
         @if(session('success'))
-        <div style="
-            margin: 16px 28px 0;
-            padding: 12px 16px;
-            background: rgba(35,107,63,0.10);
-            border: 1px solid rgba(35,107,63,0.28);
-            border-radius: 10px;
-            color: #236b3f;
-            font-size: 13px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        ">
-            <i class="fa fa-circle-check"></i>
-            {{ session('success') }}
-        </div>
+        <span id="flash-success" data-msg="{{ session('success') }}" style="display:none;"></span>
         @endif
-
         @if(session('error'))
-        <div style="
-            margin: 16px 28px 0;
-            padding: 12px 16px;
-            background: rgba(184,48,48,0.10);
-            border: 1px solid rgba(184,48,48,0.28);
-            border-radius: 10px;
-            color: #b83030;
-            font-size: 13px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        ">
-            <i class="fa fa-circle-exclamation"></i>
-            {{ session('error') }}
-        </div>
+        <span id="flash-error" data-msg="{{ session('error') }}" style="display:none;"></span>
         @endif
 
         {{--
             Tablas:
               aliados          → id_aliados, id_pagina(=3), titulo_seccion, descripcion
               aliados_imagenes → id_imagen, id_aliados(FK), img_path
+            Variables del controller:
+              $config    → registro de aliados (titulo, descripcion)
+              $logos     → registros de aliados_imagenes
+              $id_pagina → 3
         --}}
         <form method="POST"
               action="{{ route('admin.pages.allies.update') }}"

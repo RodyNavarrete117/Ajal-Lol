@@ -84,7 +84,6 @@
         nameEl.classList.remove('has-file');
         input.value = '';
 
-        // Marcar para eliminar en BD si tenía imagen existente
         if (eliminar && btnClear?.dataset.hasImage === '1') {
             eliminar.value = '1';
             btnClear.dataset.hasImage = '0';
@@ -112,24 +111,34 @@
         const input    = slot.querySelector('.logo-input');
         const btnClear = slot.querySelector('.btn-clear');
 
-        // Click en preview → abrir file picker
         preview?.addEventListener('click', () => input?.click());
 
-        // Cambio de archivo
         input?.addEventListener('change', function () {
             const file = this.files[0];
             if (!file) return;
             if (!validateFile(file)) { this.value = ''; return; }
             setPreview(slotNum, file);
-            // Si se sube imagen nueva, cancelar el flag de eliminar
             const eliminar = document.getElementById(`eliminar_${slotNum}`);
             if (eliminar) eliminar.value = '0';
         });
 
-        // Botón limpiar
-        btnClear?.addEventListener('click', () => clearSlot(slotNum));
+        btnClear?.addEventListener('click', () => {
+            const hasImageBD = btnClear.dataset.hasImage === '1';
+            const hasFileNew = input && input.files && input.files.length > 0;
 
-        // Drag & Drop
+            if (!hasImageBD && !hasFileNew) {
+                // Sin imagen — eliminar slot del DOM
+                const slotEl = document.getElementById(`slot-${slotNum}`);
+                if (slotEl) {
+                    slotEl.style.cssText = 'transition:opacity .25s,transform .25s;opacity:0;transform:translateY(6px);';
+                    setTimeout(() => { slotEl.remove(); updateCounter(); }, 250);
+                }
+            } else {
+                // Con imagen — solo limpiar
+                clearSlot(slotNum);
+            }
+        });
+
         preview?.addEventListener('dragover', (e) => {
             e.preventDefault();
             preview.style.borderColor = 'var(--accent)';
@@ -233,12 +242,17 @@
                 e.preventDefault();
                 showToast('Por favor completa el título de la sección.', 'error');
             }
-            // Si pasa validación deja que el form haga submit normal al server
         });
     }
 
     /* ════ INIT ════ */
     logosGrid?.querySelectorAll('.logo-slot').forEach(slot => initSlot(slot));
     updateCounter();
+
+    // ── Toast automático desde mensajes del servidor ──
+    const flashSuccess = document.getElementById('flash-success');
+    const flashError   = document.getElementById('flash-error');
+    if (flashSuccess) showToast(flashSuccess.dataset.msg, 'success');
+    if (flashError)   showToast(flashError.dataset.msg,   'error');
 
 })();

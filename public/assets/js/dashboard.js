@@ -109,9 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     syncBodyClass(); // initial body class
 
-    // Quitar sidebar-start-collapsed en doble rAF:
-    // primer frame → browser pinta el estado colapsado sin transiciones
-    // segundo frame → se habilitan las transiciones normalmente
+    // Quitar sidebar-start-collapsed en doble rAF
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             document.documentElement.classList.remove('sidebar-start-collapsed');
@@ -145,17 +143,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     sidebarTitle.setAttribute('data-original-text', sidebarTitle.textContent);
 
-    // no-transition ya no se usa — manejado por sidebar-start-collapsed
-
     // ── NOTIFICATIONS ─────────────────────────────────────────────
 
     let notificationsData = [];
 
-    // Update badge count
+    // ── Update badge count ────────────────────────────────────────
+    // FIX: Ya no restaura desde localStorage al cargar —
+    // el badge siempre refleja el valor real del servidor.
     window.updateNotificationCount = function (count) {
-        // Guardar en localStorage para persistir entre páginas
-        localStorage.setItem('notifCount', count);
-        
+        if (count > 0) {
+            localStorage.setItem('notifCount', count);
+        } else {
+            localStorage.removeItem('notifCount');
+        }
+
         document.querySelectorAll('.notification-badge').forEach(badge => {
             if (count > 0) {
                 badge.textContent = count > 99 ? '99+' : count;
@@ -205,17 +206,14 @@ document.addEventListener('DOMContentLoaded', function () {
     function openNotificationsPanel() {
         if (!notificationsPanel) return;
 
-        // Sync collapsed class on body before opening
         syncBodyClass();
 
         document.body.classList.add('notif-open');
 
-        // Show overlay for: collapsed flyout or mobile (not expanded sidebar)
         if (isSidebarCollapsed() || isMobile()) {
             notificationsOverlay.classList.add('active');
         }
 
-        // Remove active state from menu links
         document.querySelectorAll('.menu a').forEach(l => l.classList.remove('active'));
 
         fetchNotificationsDetails();
@@ -256,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ── API ───────────────────────────────────────────────────────
     function fetchNotifications() {
-        fetch('/api/notifications/count')
+        fetch('/admin/api/notifications/count')
             .then(r => r.json())
             .then(d => window.updateNotificationCount(d.count))
             .catch(() => {});
@@ -273,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <p class="notif-empty-title">Cargando...</p>
             </div>`;
 
-        fetch('/api/notifications/list')
+        fetch('/admin/api/notifications/list')
             .then(r => r.json())
             .then(d => {
                 notificationsData = d.notifications || [];
@@ -283,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function markAsRead(id) {
-        fetch(`/api/notifications/${id}/read`, {
+        fetch(`/admin/api/notifications/${id}/read`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -305,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     document.getElementById('markAllRead')?.addEventListener('click', function () {
-        fetch('/api/notifications/read-all', {
+        fetch('/admin/api/notifications/read-all', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -319,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('clearAll')?.addEventListener('click', function () {
         if (!confirm('¿Estás seguro de que quieres eliminar todas las notificaciones?')) return;
 
-        fetch('/api/notifications/clear-all', {
+        fetch('/admin/api/notifications/clear-all', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -330,10 +328,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }).catch(() => {});
     });
 
-    // Restaurar conteo guardado antes del fetch
-    const savedCount = parseInt(localStorage.getItem('notifCount') || '0');
-    if (savedCount > 0) updateNotificationCount(savedCount);
-
+    // FIX: Se eliminó la restauración desde localStorage.
+    // El badge ahora siempre viene del servidor.
     fetchNotifications();
-    setInterval(fetchNotifications, 30000);
+    setInterval(fetchNotifications, 10000); // cada 10 segundos
+
+    // Fetch inmediato cuando el usuario regresa a la pestaña
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'visible') {
+            fetchNotifications();
+        }
+    });
+
+    // Fetch inmediato cuando la ventana recupera el foco
+    window.addEventListener('focus', fetchNotifications);
 });

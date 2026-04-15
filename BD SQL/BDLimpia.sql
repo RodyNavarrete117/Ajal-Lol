@@ -3,6 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
+-- Tiempo de generación: 15-04-2026 a las 21:55:02
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -10,152 +11,165 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
--- ============================================================
--- Base de datos: `prueba6`
--- ============================================================
-
-SET FOREIGN_KEY_CHECKS = 0;
+--
+-- Base de datos: `prueba11`
+--
 
 -- --------------------------------------------------------
--- Tabla `actividades`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `actividades`;
+
+--
+-- Estructura de tabla para la tabla `actividades`
+--
+
 CREATE TABLE `actividades` (
-  `id_actividad` int NOT NULL AUTO_INCREMENT,
-  `id_seccion` int NOT NULL,
+  `id_actividad` int NOT NULL,
+  `id_pagina` int NOT NULL,
   `año_actividad` int DEFAULT NULL,
   `titulo_actividad` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `texto_actividad` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  PRIMARY KEY (`id_actividad`),
-  KEY `id_seccion` (`id_seccion`)
+  `texto_actividad` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `aliados`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `aliados`;
+
+--
+-- Estructura de tabla para la tabla `aliados`
+--
+
 CREATE TABLE `aliados` (
-  `id_aliados` int NOT NULL AUTO_INCREMENT,
-  `id_seccion` int NOT NULL,
-  `img_aliados` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id_aliados`),
-  KEY `id_seccion` (`id_seccion`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `id_aliados` int NOT NULL,
+  `id_pagina` int NOT NULL,
+  `titulo_seccion` varchar(150) DEFAULT 'Aliados',
+  `descripcion` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
--- Tabla `asistenciabeneficiarios`
+
+--
+-- Estructura de tabla para la tabla `aliados_imagenes`
+--
+
+CREATE TABLE `aliados_imagenes` (
+  `id_imagen` int NOT NULL,
+  `id_aliados` int NOT NULL,
+  `img_path` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 -- --------------------------------------------------------
-DROP TABLE IF EXISTS `asistenciabeneficiarios`;
+
+--
+-- Estructura de tabla para la tabla `asistenciabeneficiarios`
+--
+
 CREATE TABLE `asistenciabeneficiarios` (
-  `id_asistenciabeneficiario` int NOT NULL AUTO_INCREMENT,
+  `id_asistenciabeneficiario` int NOT NULL,
   `id_informe` int NOT NULL,
   `asistencianombrebeneficiario` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `asistenciaedadbeneficiario` int DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id_asistenciabeneficiario`),
-  KEY `id_informe` (`id_informe`)
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `cache`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `cache`;
+
+--
+-- Estructura de tabla para la tabla `cache`
+--
+
 CREATE TABLE `cache` (
   `key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `value` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `expiration` int NOT NULL,
-  PRIMARY KEY (`key`),
-  KEY `cache_expiration_index` (`expiration`)
+  `expiration` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `cache_locks`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `cache_locks`;
+
+--
+-- Estructura de tabla para la tabla `cache_locks`
+--
+
 CREATE TABLE `cache_locks` (
   `key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `owner` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `expiration` int NOT NULL,
-  PRIMARY KEY (`key`),
-  KEY `cache_locks_expiration_index` (`expiration`)
+  `expiration` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `categoria_proyectos`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `categoria_proyectos`;
-CREATE TABLE `categoria_proyectos` (
-  `id_categoria` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `descripcion` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `orden` int DEFAULT NULL,
-  PRIMARY KEY (`id_categoria`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
--- Tabla `contacto`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `contacto`;
+--
+-- Estructura de tabla para la tabla `contacto`
+--
+
 CREATE TABLE `contacto` (
-  `id_contacto` int NOT NULL AUTO_INCREMENT,
-  `id_seccion` int NOT NULL,
+  `id_contacto` int NOT NULL,
+  `id_pagina` int NOT NULL,
   `direccion_contacto` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `telefono_contacto` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `email_contacto` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id_contacto`),
-  KEY `id_seccion` (`id_seccion`)
+  `horario_contacto` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mapa_embed` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `facebook_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `instagram_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `linkedin_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `directiva`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `directiva`;
+
+--
+-- Estructura de tabla para la tabla `directiva`
+--
+
 CREATE TABLE `directiva` (
-  `id_directiva` int NOT NULL AUTO_INCREMENT,
-  `id_seccion` int NOT NULL,
+  `id_directiva` int NOT NULL,
+  `id_pagina` int NOT NULL,
+  `titulo_directiva` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'Directiva',
+  `subtitulo_directiva` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'Comité Directivo',
   `nombre_directiva` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cargo_directiva` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `foto_directiva` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `orden_directiva` int DEFAULT NULL,
-  PRIMARY KEY (`id_directiva`),
-  KEY `id_seccion` (`id_seccion`)
+  `orden_directiva` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `failed_jobs`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `failed_jobs`;
+
+--
+-- Estructura de tabla para la tabla `failed_jobs`
+--
+
 CREATE TABLE `failed_jobs` (
-  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` bigint UNSIGNED NOT NULL,
   `uuid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `connection` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `queue` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `exception` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
+  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `formulario_contacto`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `formulario_contacto`;
+
+--
+-- Estructura de tabla para la tabla `formulario_contacto`
+--
+
 CREATE TABLE `formulario_contacto` (
-  `id_formcontacto` int NOT NULL AUTO_INCREMENT,
+  `id_formcontacto` int NOT NULL,
   `nombre_completo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `correo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `numero_telefonico` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `asunto` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mensaje` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `fecha_envio` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id_formcontacto`)
+  `fecha_envio` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Disparadores `formulario_contacto`
+--
 DELIMITER $$
 CREATE TRIGGER `notificar_nuevo_contacto` AFTER INSERT ON `formulario_contacto` FOR EACH ROW BEGIN
   INSERT INTO `notificaciones` (`id_usuario`, `id_formulario`, `titulo`, `mensaje`)
@@ -175,70 +189,88 @@ $$
 DELIMITER ;
 
 -- --------------------------------------------------------
--- Tabla `imagenes_proyectos`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `imagenes_proyectos`;
-CREATE TABLE `imagenes_proyectos` (
-  `id_imagen` int NOT NULL AUTO_INCREMENT,
-  `proyecto` int NOT NULL,
-  `ruta` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `descripcion` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `fecha_creacion` date DEFAULT NULL,
-  PRIMARY KEY (`id_imagen`),
-  KEY `proyecto` (`proyecto`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
--- Tabla `informe`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `informe`;
+--
+-- Estructura de tabla para la tabla `informe`
+--
+
 CREATE TABLE `informe` (
-  `id_informe` int NOT NULL AUTO_INCREMENT,
+  `id_informe` int NOT NULL,
   `nombre_organizacion` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `evento` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `lugar` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `fecha` date NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id_informe`),
-  UNIQUE KEY `unique_informe_evento` (`evento`,`lugar`,`fecha`)
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `informe`
+--
+
+INSERT INTO `informe` (`id_informe`, `nombre_organizacion`, `evento`, `lugar`, `fecha`, `created_at`, `updated_at`) VALUES
+(2, 'Ajal-lol AC', 'Actividad recreativa de Año Nuevo', 'Izamal, Yucatán', '2026-01-16', '2026-02-20 18:06:10', '2026-02-20 18:06:10'),
+(3, 'Ajal-lol AC', 'Entrega de juguetes Día de Reyes', 'Tekit, Yucatán', '2026-01-15', '2026-02-20 18:06:10', '2026-02-20 18:06:10'),
+(7, 'Ajal-lol AC', 'Distribución de despensas alimentarias', 'Akil, Yucatán', '2026-02-20', '2026-02-26 23:10:08', '2026-02-26 23:10:08'),
+(22, 'Ajal-lol AC', 'Entrega de canastas básicas de alimentos', 'Akil, Yucatán', '2026-02-20', '2026-03-03 00:05:35', '2026-03-03 00:05:35'),
+(30, 'Ajal-lol AC', 'Entrega de artículos de primera necesidad', 'Akil, Yucatán', '2026-03-01', '2026-03-03 00:20:28', '2026-03-03 00:20:28'),
+(31, 'Ajal-lol AC', 'Jornada de ayuda humanitaria comunitaria', 'Akil, Yucatán', '2026-03-21', '2026-03-03 00:22:21', '2026-03-03 00:22:21'),
+(32, 'Ajal-lol AC', 'Entrega de insumos para el hogar', 'Akil, Yucatán', '2026-03-02', '2026-03-03 00:25:03', '2026-03-03 00:25:03'),
+(37, 'Ajal-lol AC', 'Apoyo alimentario a familias vulnerables', 'Akil, Yucatán', '2026-02-22', '2026-03-03 00:28:43', '2026-03-03 00:28:43'),
+(43, 'Ajal-lol AC', 'Programa de nutrición infantil comunitaria', 'Akil, Yucatán', '2026-02-20', '2026-03-03 00:32:40', '2026-03-03 00:32:40'),
+(44, 'Ajal-lol AC', 'Jornada de salud preventiva', 'Akil, Yucatán', '2026-03-03', '2026-03-03 00:33:53', '2026-03-03 00:33:53'),
+(45, 'Ajal-lol AC', 'Distribución de suministros educativos', 'Akil, Yucatán', '2026-04-02', '2026-03-03 00:35:01', '2026-03-03 00:35:01'),
+(48, 'Ajal-lol AC', 'Entrega de kit de útiles escolares', 'Akil, Yucatán', '2026-04-15', '2026-03-03 00:37:39', '2026-03-03 00:37:39'),
+(49, 'Ajal-lol AC', 'Campaña de apoyo a adultos mayores', 'Akil, Yucatán', '2026-05-01', '2026-03-03 00:38:15', '2026-03-03 00:38:15'),
+(53, 'Ajal-lol AC', 'Brigada de asistencia social comunitaria', 'Akil, Yucatán', '2026-04-02', '2026-03-03 00:51:40', '2026-03-03 00:51:40'),
+(54, 'Ajal-lol AC', 'Taller de capacitación para el empleo', 'Akil, Yucatán', '2026-05-20', '2026-03-03 00:52:20', '2026-03-03 00:52:20'),
+(57, 'Ajal-lol AC', 'Jornada de reforestación comunitaria', 'Akil, Yucatán', '2026-06-05', '2026-03-03 00:53:34', '2026-03-03 00:53:34'),
+(58, 'Ajal-lol AC', 'Entrega de materiales de construcción', 'Akil, Yucatán', '2026-09-20', '2026-03-03 03:54:30', '2026-03-03 03:54:30'),
+(59, 'Ajal-lol AC', 'Programa de becas y apoyo educativo', 'Akil, Yucatán', '2026-07-20', '2026-03-03 04:09:53', '2026-03-03 04:09:53'),
+(60, 'Ajal-lol AC', 'Entrega de despensas y artículos del hogar', 'Akil, Yucatán', '2026-03-03', '2026-03-03 21:31:04', '2026-03-03 21:31:04'),
+(61, 'Ajal-lol AC', 'Brigada de Salud Integral \"Vida Sana\"', 'Izamal, Yucatán', '2026-03-10', '2026-03-11 00:05:21', '2026-03-11 00:05:21'),
+(62, 'Ajal-lol AC', 'Jornada de reforestación comunitaria', 'Akil, Yucatán', '2026-03-11', '2026-03-11 21:57:37', '2026-03-11 21:57:37'),
+(63, 'Ajal-lol AC', 'Jornada de reforestación comunitaria', 'Chikindzonot, Yucatán', '2026-03-11', '2026-03-11 22:50:10', '2026-03-11 22:50:10'),
+(64, 'Ajal-lol AC', 'Campaña de apoyo a adultos mayores', 'Acanceh, Yucatán', '2026-03-11', '2026-03-11 23:16:43', '2026-03-11 23:16:43'),
+(65, 'Ajal-lol AC', 'Taller de capacitación para el empleo', 'Abalá, Yucatán', '2026-03-20', '2026-03-12 21:45:11', '2026-03-12 21:45:11');
+
 -- --------------------------------------------------------
--- Tabla `inicio`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `inicio`;
+
+--
+-- Estructura de tabla para la tabla `inicio`
+--
+
 CREATE TABLE `inicio` (
-  `id_inicio` int NOT NULL AUTO_INCREMENT,
-  `id_seccion` int NOT NULL,
+  `id_inicio` int NOT NULL,
+  `id_pagina` int NOT NULL,
   `titulo_inicio` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `texto_inicio` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `img_inicio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `url_inicio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id_inicio`),
-  KEY `id_seccion` (`id_seccion`)
+  `url_inicio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `jobs`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `jobs`;
+
+--
+-- Estructura de tabla para la tabla `jobs`
+--
+
 CREATE TABLE `jobs` (
-  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` bigint UNSIGNED NOT NULL,
   `queue` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `attempts` tinyint UNSIGNED NOT NULL,
   `reserved_at` int UNSIGNED DEFAULT NULL,
   `available_at` int UNSIGNED NOT NULL,
-  `created_at` int UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `jobs_queue_index` (`queue`)
+  `created_at` int UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `job_batches`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `job_batches`;
+
+--
+-- Estructura de tabla para la tabla `job_batches`
+--
+
 CREATE TABLE `job_batches` (
   `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -249,20 +281,24 @@ CREATE TABLE `job_batches` (
   `options` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `cancelled_at` int DEFAULT NULL,
   `created_at` int NOT NULL,
-  `finished_at` int DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `finished_at` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `migrations`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `migrations`;
+
+--
+-- Estructura de tabla para la tabla `migrations`
+--
+
 CREATE TABLE `migrations` (
-  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` int UNSIGNED NOT NULL,
   `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `batch` int NOT NULL,
-  PRIMARY KEY (`id`)
+  `batch` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `migrations`
+--
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (1, '0001_01_01_000000_create_users_table', 1),
@@ -270,115 +306,180 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (3, '0001_01_01_000002_create_jobs_table', 1);
 
 -- --------------------------------------------------------
--- Tabla `nosotros`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `nosotros`;
+
+--
+-- Estructura de tabla para la tabla `nosotros`
+--
+
 CREATE TABLE `nosotros` (
-  `id_nosotros` int NOT NULL AUTO_INCREMENT,
-  `id_seccion` int NOT NULL,
+  `id_nosotros` int NOT NULL,
+  `id_pagina` int NOT NULL,
   `titulo_nosotros` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `imagen_nosotros` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `subtitulo_nosotros` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `texto_nosotros` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  PRIMARY KEY (`id_nosotros`),
-  KEY `id_seccion` (`id_seccion`)
+  `texto_nosotros` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `notificaciones`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `notificaciones`;
+
+--
+-- Estructura de tabla para la tabla `notificaciones`
+--
+
 CREATE TABLE `notificaciones` (
-  `id_notificacion` int NOT NULL AUTO_INCREMENT,
+  `id_notificacion` int NOT NULL,
   `id_usuario` int NOT NULL,
   `id_formulario` int DEFAULT NULL,
   `titulo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `mensaje` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `leido` tinyint(1) NOT NULL DEFAULT '0',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id_notificacion`),
-  KEY `id_usuario` (`id_usuario`),
-  KEY `id_formulario` (`id_formulario`),
-  KEY `leido_index` (`leido`)
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `password_reset_tokens`
+
+--
+-- Estructura de tabla para la tabla `paginas`
+--
+
+CREATE TABLE `paginas` (
+  `id_pagina` int NOT NULL,
+  `id_usuario` int NOT NULL,
+  `slug` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'URL amigable: /nosotros',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `paginas`
+--
+
+INSERT INTO `paginas` (`id_pagina`, `id_usuario`, `slug`, `created_at`, `updated_at`) VALUES
+(1, 1, 'inicio', '2026-03-25 17:24:08', '2026-03-25 17:24:08'),
+(2, 1, 'nosotros', '2026-03-25 17:24:08', '2026-03-25 17:24:08'),
+(3, 1, 'aliados', '2026-03-25 17:24:08', '2026-03-25 17:24:08'),
+(4, 1, 'actividades', '2026-03-25 17:24:08', '2026-03-25 17:24:08'),
+(5, 1, 'proyectos', '2026-03-25 17:24:08', '2026-03-25 17:24:08'),
+(6, 1, 'directiva', '2026-03-25 17:24:08', '2026-03-25 17:24:08'),
+(7, 1, 'preguntas-frecuentes', '2026-03-25 17:24:08', '2026-03-25 17:24:08'),
+(8, 1, 'contacto', '2026-03-25 17:24:08', '2026-03-25 17:24:08');
+
 -- --------------------------------------------------------
-DROP TABLE IF EXISTS `password_reset_tokens`;
+
+--
+-- Estructura de tabla para la tabla `password_reset_tokens`
+--
+
 CREATE TABLE `password_reset_tokens` (
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`email`)
+  `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `preguntas_frecuentes`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `preguntas_frecuentes`;
+
+--
+-- Estructura de tabla para la tabla `preguntas_frecuentes`
+--
+
 CREATE TABLE `preguntas_frecuentes` (
-  `id_preguntasfrecuentes` int NOT NULL AUTO_INCREMENT,
-  `id_seccion` int NOT NULL,
+  `id_preguntasfrecuentes` int NOT NULL,
+  `id_pagina` int NOT NULL,
   `titulo_pregunta` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `texto_respuesta` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  PRIMARY KEY (`id_preguntasfrecuentes`),
-  KEY `id_seccion` (`id_seccion`)
+  `texto_respuesta` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `proyectos`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `proyectos`;
-CREATE TABLE `proyectos` (
-  `id_proyecto` int NOT NULL AUTO_INCREMENT,
-  `id_seccion` int NOT NULL,
-  `categoria` int NOT NULL,
-  `titulo_proyecto` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `descripcion_proyecto` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `año_proyecto` int DEFAULT NULL,
-  PRIMARY KEY (`id_proyecto`),
-  KEY `id_seccion` (`id_seccion`),
-  KEY `categoria` (`categoria`)
+
+--
+-- Estructura de tabla para la tabla `proyecto_anos`
+--
+
+CREATE TABLE `proyecto_anos` (
+  `id_ano` int NOT NULL,
+  `id_pagina` int NOT NULL,
+  `ano` int NOT NULL,
+  `subtitulo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `visible` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `redes_sociales`
+
+--
+-- Estructura de tabla para la tabla `proyecto_categorias`
+--
+
+CREATE TABLE `proyecto_categorias` (
+  `id_categoria` int NOT NULL,
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `orden` int DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- --------------------------------------------------------
-DROP TABLE IF EXISTS `redes_sociales`;
+
+--
+-- Estructura de tabla para la tabla `proyecto_imagenes`
+--
+
+CREATE TABLE `proyecto_imagenes` (
+  `id_imagen` int NOT NULL,
+  `id_ano` int NOT NULL,
+  `id_categoria` int NOT NULL,
+  `titulo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `event_date` date DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `redes_sociales`
+--
+
 CREATE TABLE `redes_sociales` (
-  `id_redes_sociales` int NOT NULL AUTO_INCREMENT,
+  `id_redes_sociales` int NOT NULL,
   `nombre_redsocial` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `url_redsocial` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id_redes_sociales`)
+  `icono` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `reportebeneficiarios`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `reportebeneficiarios`;
+
+--
+-- Estructura de tabla para la tabla `reportebeneficiarios`
+--
+
 CREATE TABLE `reportebeneficiarios` (
-  `id_reportebeneficiario` int NOT NULL AUTO_INCREMENT,
+  `id_reportebeneficiario` int NOT NULL,
   `id_informe` int NOT NULL,
   `reportenombrebeneficiario` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `reportecurpbeneficiario` char(18) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `reporteedadbeneficiario` int DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id_reportebeneficiario`),
-  UNIQUE KEY `unique_reportebeneficiario_informe` (`id_informe`,`reportecurpbeneficiario`)
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `rol_usuario` — SE CONSERVAN LOS DATOS
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `rol_usuario`;
+
+--
+-- Estructura de tabla para la tabla `rol_usuario`
+--
+
 CREATE TABLE `rol_usuario` (
-  `id_rol_usuario` int NOT NULL AUTO_INCREMENT,
+  `id_rol_usuario` int NOT NULL,
   `id_usuario` int NOT NULL,
-  `cargo_usuario` enum('administrador','editor') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id_rol_usuario`),
-  KEY `id_usuario` (`id_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `cargo_usuario` enum('administrador','editor') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `rol_usuario`
+--
 
 INSERT INTO `rol_usuario` (`id_rol_usuario`, `id_usuario`, `cargo_usuario`) VALUES
 (1, 1, 'administrador'),
@@ -389,138 +490,544 @@ INSERT INTO `rol_usuario` (`id_rol_usuario`, `id_usuario`, `cargo_usuario`) VALU
 (8, 8, 'administrador');
 
 -- --------------------------------------------------------
--- Tabla `secciones_web`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `secciones_web`;
-CREATE TABLE `secciones_web` (
-  `id_seccion` int NOT NULL AUTO_INCREMENT,
-  `titulo_seccion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `estado_seccion` tinyint(1) DEFAULT '1',
-  `id_usuario` int NOT NULL,
-  PRIMARY KEY (`id_seccion`),
-  KEY `fk_seccion_usuario` (`id_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
--- Tabla `sessions`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `sessions`;
+--
+-- Estructura de tabla para la tabla `sessions`
+--
+
 CREATE TABLE `sessions` (
   `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_id` bigint UNSIGNED DEFAULT NULL,
   `ip_address` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `user_agent` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `last_activity` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `sessions_user_id_index` (`user_id`),
-  KEY `sessions_last_activity_index` (`last_activity`)
+  `last_activity` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `users`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `users`;
+
+--
+-- Estructura de tabla para la tabla `users`
+--
+
 CREATE TABLE `users` (
-  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` bigint UNSIGNED NOT NULL,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `remember_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `users_email_unique` (`email`)
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Tabla `usuario` — SE CONSERVAN LOS DATOS
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `usuario`;
+
+--
+-- Estructura de tabla para la tabla `usuario`
+--
+
 CREATE TABLE `usuario` (
-  `id_usuario` int NOT NULL AUTO_INCREMENT,
+  `id_usuario` int NOT NULL,
   `nombre_usuario` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `correo_usuario` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `contraseña_usuario` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id_usuario`),
-  UNIQUE KEY `correo_usuario` (`correo_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `usuario` (`id_usuario`, `nombre_usuario`, `correo_usuario`, `contraseña_usuario`) VALUES
-(1, 'Rodolfo Navarrete Ek',    'admin@ajallol.com',    'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
-(2, 'Editor General',          'editor@ajallol.com',   'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
-(5, 'Nintendo Xbox Sanchéz',   'Nintendo2@gmail.com',  '$2y$12$iLo8g7nF5zhGdVshUv3mYuKdmAQP5QWAyND84bOv58788ZGE8UOJi'),
-(6, 'Lorenzo Sánchez Martín',  'lorenzo@gmail.com',    'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
-(7, 'Jefe de Area',             'Nintendo@gmail.com',  'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
-(8, 'Oscar Alejandro Sanchéz', 'Martin@gmail.com',     '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92');
-
--- --------------------------------------------------------
--- Tabla `widgets_actividades`
--- --------------------------------------------------------
-DROP TABLE IF EXISTS `widgets_actividades`;
-CREATE TABLE `widgets_actividades` (
-  `id_widgetactividad` int NOT NULL AUTO_INCREMENT,
-  `actividad_id` int NOT NULL,
-  `titulo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `texto` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  PRIMARY KEY (`id_widgetactividad`),
-  KEY `actividad_id` (`actividad_id`)
+  `contraseña_usuario` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ============================================================
--- RESTRICCIONES DE CLAVES FORÁNEAS
--- ============================================================
+--
+-- Volcado de datos para la tabla `usuario`
+--
 
+INSERT INTO `usuario` (`id_usuario`, `nombre_usuario`, `correo_usuario`, `contraseña_usuario`) VALUES
+(1, 'Rodolfo Navarrete Ek', 'admin@ajallol.com', '$2y$12$BxrxEDu56qd3K16hbAT5TO7I9h9cdgNTY2FdzAhmEU9HoaPz/h9nu'),
+(2, 'Editor General', 'editor@ajallol.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
+(5, 'Nintendo Xbox Sanchéz', 'Nintendo2@gmail.com', '$2y$12$iLo8g7nF5zhGdVshUv3mYuKdmAQP5QWAyND84bOv58788ZGE8UOJi'),
+(6, 'Lorenzo Sánchez Martín', 'lorenzo@gmail.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
+(7, 'Jefe de Area', 'Nintendo@gmail.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
+(8, 'Oscar Alejandro Sanchéz', 'Martin@gmail.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `widgets_actividades`
+--
+
+CREATE TABLE `widgets_actividades` (
+  `id_widgetactividad` int NOT NULL,
+  `actividad_id` int NOT NULL,
+  `titulo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `texto` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `actividades`
+--
 ALTER TABLE `actividades`
-  ADD CONSTRAINT `actividades_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
+  ADD PRIMARY KEY (`id_actividad`),
+  ADD KEY `id_pagina` (`id_pagina`);
 
+--
+-- Indices de la tabla `aliados`
+--
 ALTER TABLE `aliados`
-  ADD CONSTRAINT `aliados_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
+  ADD PRIMARY KEY (`id_aliados`),
+  ADD KEY `id_pagina` (`id_pagina`);
 
+--
+-- Indices de la tabla `aliados_imagenes`
+--
+ALTER TABLE `aliados_imagenes`
+  ADD PRIMARY KEY (`id_imagen`),
+  ADD KEY `id_aliados` (`id_aliados`);
+
+--
+-- Indices de la tabla `asistenciabeneficiarios`
+--
+ALTER TABLE `asistenciabeneficiarios`
+  ADD PRIMARY KEY (`id_asistenciabeneficiario`),
+  ADD KEY `id_informe` (`id_informe`);
+
+--
+-- Indices de la tabla `cache`
+--
+ALTER TABLE `cache`
+  ADD PRIMARY KEY (`key`),
+  ADD KEY `cache_expiration_index` (`expiration`);
+
+--
+-- Indices de la tabla `cache_locks`
+--
+ALTER TABLE `cache_locks`
+  ADD PRIMARY KEY (`key`),
+  ADD KEY `cache_locks_expiration_index` (`expiration`);
+
+--
+-- Indices de la tabla `contacto`
+--
+ALTER TABLE `contacto`
+  ADD PRIMARY KEY (`id_contacto`),
+  ADD KEY `id_pagina` (`id_pagina`);
+
+--
+-- Indices de la tabla `directiva`
+--
+ALTER TABLE `directiva`
+  ADD PRIMARY KEY (`id_directiva`),
+  ADD KEY `id_pagina` (`id_pagina`);
+
+--
+-- Indices de la tabla `failed_jobs`
+--
+ALTER TABLE `failed_jobs`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
+
+--
+-- Indices de la tabla `formulario_contacto`
+--
+ALTER TABLE `formulario_contacto`
+  ADD PRIMARY KEY (`id_formcontacto`);
+
+--
+-- Indices de la tabla `informe`
+--
+ALTER TABLE `informe`
+  ADD PRIMARY KEY (`id_informe`),
+  ADD UNIQUE KEY `unique_informe_evento` (`evento`,`lugar`,`fecha`);
+
+--
+-- Indices de la tabla `inicio`
+--
+ALTER TABLE `inicio`
+  ADD PRIMARY KEY (`id_inicio`),
+  ADD KEY `id_pagina` (`id_pagina`);
+
+--
+-- Indices de la tabla `jobs`
+--
+ALTER TABLE `jobs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `jobs_queue_index` (`queue`);
+
+--
+-- Indices de la tabla `job_batches`
+--
+ALTER TABLE `job_batches`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `migrations`
+--
+ALTER TABLE `migrations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `nosotros`
+--
+ALTER TABLE `nosotros`
+  ADD PRIMARY KEY (`id_nosotros`),
+  ADD KEY `id_pagina` (`id_pagina`);
+
+--
+-- Indices de la tabla `notificaciones`
+--
+ALTER TABLE `notificaciones`
+  ADD PRIMARY KEY (`id_notificacion`),
+  ADD KEY `id_usuario` (`id_usuario`),
+  ADD KEY `id_formulario` (`id_formulario`),
+  ADD KEY `leido_index` (`leido`);
+
+--
+-- Indices de la tabla `paginas`
+--
+ALTER TABLE `paginas`
+  ADD PRIMARY KEY (`id_pagina`),
+  ADD UNIQUE KEY `slug` (`slug`),
+  ADD KEY `fk_paginas_usuario` (`id_usuario`);
+
+--
+-- Indices de la tabla `password_reset_tokens`
+--
+ALTER TABLE `password_reset_tokens`
+  ADD PRIMARY KEY (`email`);
+
+--
+-- Indices de la tabla `preguntas_frecuentes`
+--
+ALTER TABLE `preguntas_frecuentes`
+  ADD PRIMARY KEY (`id_preguntasfrecuentes`),
+  ADD KEY `id_pagina` (`id_pagina`);
+
+--
+-- Indices de la tabla `proyecto_anos`
+--
+ALTER TABLE `proyecto_anos`
+  ADD PRIMARY KEY (`id_ano`),
+  ADD UNIQUE KEY `unique_ano_pagina` (`ano`,`id_pagina`),
+  ADD KEY `id_pagina` (`id_pagina`);
+
+--
+-- Indices de la tabla `proyecto_categorias`
+--
+ALTER TABLE `proyecto_categorias`
+  ADD PRIMARY KEY (`id_categoria`);
+
+--
+-- Indices de la tabla `proyecto_imagenes`
+--
+ALTER TABLE `proyecto_imagenes`
+  ADD PRIMARY KEY (`id_imagen`),
+  ADD KEY `id_ano` (`id_ano`),
+  ADD KEY `id_categoria` (`id_categoria`);
+
+--
+-- Indices de la tabla `redes_sociales`
+--
+ALTER TABLE `redes_sociales`
+  ADD PRIMARY KEY (`id_redes_sociales`);
+
+--
+-- Indices de la tabla `reportebeneficiarios`
+--
+ALTER TABLE `reportebeneficiarios`
+  ADD PRIMARY KEY (`id_reportebeneficiario`),
+  ADD UNIQUE KEY `unique_reportebeneficiario_informe` (`id_informe`,`reportecurpbeneficiario`);
+
+--
+-- Indices de la tabla `rol_usuario`
+--
+ALTER TABLE `rol_usuario`
+  ADD PRIMARY KEY (`id_rol_usuario`),
+  ADD KEY `id_usuario` (`id_usuario`);
+
+--
+-- Indices de la tabla `sessions`
+--
+ALTER TABLE `sessions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `sessions_user_id_index` (`user_id`),
+  ADD KEY `sessions_last_activity_index` (`last_activity`);
+
+--
+-- Indices de la tabla `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `users_email_unique` (`email`);
+
+--
+-- Indices de la tabla `usuario`
+--
+ALTER TABLE `usuario`
+  ADD PRIMARY KEY (`id_usuario`),
+  ADD UNIQUE KEY `correo_usuario` (`correo_usuario`);
+
+--
+-- Indices de la tabla `widgets_actividades`
+--
+ALTER TABLE `widgets_actividades`
+  ADD PRIMARY KEY (`id_widgetactividad`),
+  ADD KEY `actividad_id` (`actividad_id`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `actividades`
+--
+ALTER TABLE `actividades`
+  MODIFY `id_actividad` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `aliados`
+--
+ALTER TABLE `aliados`
+  MODIFY `id_aliados` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `aliados_imagenes`
+--
+ALTER TABLE `aliados_imagenes`
+  MODIFY `id_imagen` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `asistenciabeneficiarios`
+--
+ALTER TABLE `asistenciabeneficiarios`
+  MODIFY `id_asistenciabeneficiario` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `contacto`
+--
+ALTER TABLE `contacto`
+  MODIFY `id_contacto` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `directiva`
+--
+ALTER TABLE `directiva`
+  MODIFY `id_directiva` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `failed_jobs`
+--
+ALTER TABLE `failed_jobs`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `formulario_contacto`
+--
+ALTER TABLE `formulario_contacto`
+  MODIFY `id_formcontacto` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `informe`
+--
+ALTER TABLE `informe`
+  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `inicio`
+--
+ALTER TABLE `inicio`
+  MODIFY `id_inicio` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `jobs`
+--
+ALTER TABLE `jobs`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `migrations`
+--
+ALTER TABLE `migrations`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `nosotros`
+--
+ALTER TABLE `nosotros`
+  MODIFY `id_nosotros` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `notificaciones`
+--
+ALTER TABLE `notificaciones`
+  MODIFY `id_notificacion` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `paginas`
+--
+ALTER TABLE `paginas`
+  MODIFY `id_pagina` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT de la tabla `preguntas_frecuentes`
+--
+ALTER TABLE `preguntas_frecuentes`
+  MODIFY `id_preguntasfrecuentes` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `proyecto_anos`
+--
+ALTER TABLE `proyecto_anos`
+  MODIFY `id_ano` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `proyecto_categorias`
+--
+ALTER TABLE `proyecto_categorias`
+  MODIFY `id_categoria` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `proyecto_imagenes`
+--
+ALTER TABLE `proyecto_imagenes`
+  MODIFY `id_imagen` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `redes_sociales`
+--
+ALTER TABLE `redes_sociales`
+  MODIFY `id_redes_sociales` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `reportebeneficiarios`
+--
+ALTER TABLE `reportebeneficiarios`
+  MODIFY `id_reportebeneficiario` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `rol_usuario`
+--
+ALTER TABLE `rol_usuario`
+  MODIFY `id_rol_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT de la tabla `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `usuario`
+--
+ALTER TABLE `usuario`
+  MODIFY `id_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT de la tabla `widgets_actividades`
+--
+ALTER TABLE `widgets_actividades`
+  MODIFY `id_widgetactividad` int NOT NULL AUTO_INCREMENT;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `actividades`
+--
+ALTER TABLE `actividades`
+  ADD CONSTRAINT `actividades_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
+
+--
+-- Filtros para la tabla `aliados`
+--
+ALTER TABLE `aliados`
+  ADD CONSTRAINT `aliados_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
+
+--
+-- Filtros para la tabla `aliados_imagenes`
+--
+ALTER TABLE `aliados_imagenes`
+  ADD CONSTRAINT `aliados_imagenes_ibfk_1` FOREIGN KEY (`id_aliados`) REFERENCES `aliados` (`id_aliados`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `asistenciabeneficiarios`
+--
 ALTER TABLE `asistenciabeneficiarios`
   ADD CONSTRAINT `asistenciabeneficiarios_ibfk_1` FOREIGN KEY (`id_informe`) REFERENCES `informe` (`id_informe`) ON DELETE CASCADE;
 
+--
+-- Filtros para la tabla `contacto`
+--
 ALTER TABLE `contacto`
-  ADD CONSTRAINT `contacto_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
+  ADD CONSTRAINT `contacto_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
 
+--
+-- Filtros para la tabla `directiva`
+--
 ALTER TABLE `directiva`
-  ADD CONSTRAINT `directiva_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
+  ADD CONSTRAINT `directiva_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
 
-ALTER TABLE `imagenes_proyectos`
-  ADD CONSTRAINT `imagenes_proyectos_ibfk_1` FOREIGN KEY (`proyecto`) REFERENCES `proyectos` (`id_proyecto`);
-
+--
+-- Filtros para la tabla `inicio`
+--
 ALTER TABLE `inicio`
-  ADD CONSTRAINT `inicio_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
+  ADD CONSTRAINT `inicio_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
 
+--
+-- Filtros para la tabla `nosotros`
+--
 ALTER TABLE `nosotros`
-  ADD CONSTRAINT `nosotros_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
+  ADD CONSTRAINT `nosotros_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
 
+--
+-- Filtros para la tabla `notificaciones`
+--
 ALTER TABLE `notificaciones`
   ADD CONSTRAINT `notificaciones_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE,
   ADD CONSTRAINT `notificaciones_ibfk_2` FOREIGN KEY (`id_formulario`) REFERENCES `formulario_contacto` (`id_formcontacto`) ON DELETE SET NULL;
 
+--
+-- Filtros para la tabla `paginas`
+--
+ALTER TABLE `paginas`
+  ADD CONSTRAINT `fk_paginas_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
+
+--
+-- Filtros para la tabla `preguntas_frecuentes`
+--
 ALTER TABLE `preguntas_frecuentes`
-  ADD CONSTRAINT `preguntas_frecuentes_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`);
+  ADD CONSTRAINT `preguntas_frecuentes_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
 
-ALTER TABLE `proyectos`
-  ADD CONSTRAINT `proyectos_ibfk_1` FOREIGN KEY (`id_seccion`) REFERENCES `secciones_web` (`id_seccion`),
-  ADD CONSTRAINT `proyectos_ibfk_2` FOREIGN KEY (`categoria`) REFERENCES `categoria_proyectos` (`id_categoria`);
+--
+-- Filtros para la tabla `proyecto_anos`
+--
+ALTER TABLE `proyecto_anos`
+  ADD CONSTRAINT `proyecto_anos_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
 
+--
+-- Filtros para la tabla `proyecto_imagenes`
+--
+ALTER TABLE `proyecto_imagenes`
+  ADD CONSTRAINT `proyecto_imagenes_ibfk_1` FOREIGN KEY (`id_ano`) REFERENCES `proyecto_anos` (`id_ano`) ON DELETE CASCADE,
+  ADD CONSTRAINT `proyecto_imagenes_ibfk_2` FOREIGN KEY (`id_categoria`) REFERENCES `proyecto_categorias` (`id_categoria`);
+
+--
+-- Filtros para la tabla `reportebeneficiarios`
+--
 ALTER TABLE `reportebeneficiarios`
   ADD CONSTRAINT `reportebeneficiarios_ibfk_1` FOREIGN KEY (`id_informe`) REFERENCES `informe` (`id_informe`) ON DELETE CASCADE;
 
+--
+-- Filtros para la tabla `rol_usuario`
+--
 ALTER TABLE `rol_usuario`
   ADD CONSTRAINT `rol_usuario_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
 
-ALTER TABLE `secciones_web`
-  ADD CONSTRAINT `fk_seccion_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
-
+--
+-- Filtros para la tabla `widgets_actividades`
+--
 ALTER TABLE `widgets_actividades`
   ADD CONSTRAINT `widgets_actividades_ibfk_1` FOREIGN KEY (`actividad_id`) REFERENCES `actividades` (`id_actividad`);
-
-SET FOREIGN_KEY_CHECKS = 1;
-
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

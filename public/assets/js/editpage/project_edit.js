@@ -190,7 +190,7 @@
     function buildAvailableYears() {
         const cur = new Date().getFullYear();
         const all = [];
-        for (let y = cur; y >= 2000; y--) {
+        for (let y = cur; y >= 2023; y--) {
             if (!years.includes(String(y))) all.push(String(y));
         }
         return all;

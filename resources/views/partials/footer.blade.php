@@ -23,22 +23,37 @@
       <span class="sitename">Ajal-lol A.C.</span>
       <address style="font-style:normal">
         <p>
-          {{ $contacto->direccion_contacto }}<br>
-          {{ $contacto->horario_contacto }}
+          @if(!empty($contacto->direccion_contacto))
+            {{ $contacto->direccion_contacto }}<br>
+          @else
+            <span style="opacity:.6">Dirección no disponible</span><br>
+          @endif
+          @if(!empty($contacto->horario_contacto))
+            {{ $contacto->horario_contacto }}
+          @else
+            <span style="opacity:.6">Horario no disponible</span>
+          @endif
         </p>
         <p style="margin-top:.75rem">
-          @if($contacto->telefono_contacto)
+          @if(!empty($contacto->telefono_contacto))
           <i class="bi bi-telephone" aria-hidden="true"></i>&nbsp;
           <a href="tel:{{ preg_replace('/\s+/', '', $contacto->telefono_contacto) }}"
              style="color:inherit">
             {{ $contacto->telefono_contacto }}
           </a><br>
+          @else
+          <i class="bi bi-telephone" aria-hidden="true"></i>&nbsp;
+          <span style="opacity:.6">Teléfono no disponible</span><br>
           @endif
-          @if($contacto->email_contacto)
+
+          @if(!empty($contacto->email_contacto))
           <i class="bi bi-envelope" aria-hidden="true"></i>&nbsp;
           <a href="mailto:{{ $contacto->email_contacto }}" style="color:inherit">
             {{ $contacto->email_contacto }}
           </a>
+          @else
+          <i class="bi bi-envelope" aria-hidden="true"></i>&nbsp;
+          <span style="opacity:.6">Correo no disponible</span>
           @endif
         </p>
       </address>
@@ -62,26 +77,29 @@
         Mantente informado de nuestras actividades.
       </p>
       <div class="social-row" role="list" aria-label="Redes sociales">
-        @if($contacto->facebook_url)
+        @if(!empty($contacto->facebook_url))
         <a href="{{ $contacto->facebook_url }}"
            aria-label="Facebook de Ajal Lol" role="listitem"
            target="_blank" rel="noopener noreferrer">
           <i class="bi bi-facebook" aria-hidden="true"></i>
         </a>
         @endif
-        @if($contacto->instagram_url)
+        @if(!empty($contacto->instagram_url))
         <a href="{{ $contacto->instagram_url }}"
            aria-label="Instagram de Ajal Lol" role="listitem"
            target="_blank" rel="noopener noreferrer">
           <i class="bi bi-instagram" aria-hidden="true"></i>
         </a>
         @endif
-        @if($contacto->linkedin_url)
+        @if(!empty($contacto->linkedin_url))
         <a href="{{ $contacto->linkedin_url }}"
            aria-label="LinkedIn de Ajal Lol" role="listitem"
            target="_blank" rel="noopener noreferrer">
           <i class="bi bi-linkedin" aria-hidden="true"></i>
         </a>
+        @endif
+        @if(empty($contacto->facebook_url) && empty($contacto->instagram_url) && empty($contacto->linkedin_url))
+          <span style="opacity:.6;font-size:.85rem">Redes no disponibles</span>
         @endif
       </div>
     </div>

@@ -30,6 +30,14 @@
             </p>
         </div>
 
+        {{-- ── Mensajes flash para toast ── --}}
+        @if(session('success'))
+        <span id="flash-success" data-msg="{{ session('success') }}" style="display:none;"></span>
+        @endif
+        @if(session('error'))
+        <span id="flash-error" data-msg="{{ session('error') }}" style="display:none;"></span>
+        @endif
+
         {{-- ── Form ── --}}
         <form id="board-edit-form"
               method="POST"
@@ -43,15 +51,15 @@
                 <div class="form-group">
                     <label for="titulo_seccion">Título de la sección</label>
                     <input type="text" id="titulo_seccion" name="titulo_seccion"
-                        value="{{ old('titulo_seccion', $config->titulo_directiva ?? 'Directiva') }}"
-                        placeholder="Ej: Directiva" required>
+                        value="{{ old('titulo_seccion', $config->titulo_directiva ?? '') }}"
+                        placeholder="Aún no hay título en este momento...">
                     @error('titulo_seccion')<span class="field-error-msg">{{ $message }}</span>@enderror
                 </div>
                 <div class="form-group">
                     <label for="subtitulo">Subtítulo</label>
                     <input type="text" id="subtitulo" name="subtitulo"
-                        value="{{ old('subtitulo', $config->subtitulo_directiva ?? 'Comité Directivo') }}"
-                        placeholder="Ej: Comité Directivo">
+                        value="{{ old('subtitulo', $config->subtitulo_directiva ?? '') }}"
+                        placeholder="Aún no hay subtítulo en este momento...">
                 </div>
             </div>
 

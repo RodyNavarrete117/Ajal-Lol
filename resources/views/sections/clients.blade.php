@@ -2,8 +2,8 @@
 
   <div class="container">
     <div class="section-title" data-anim="fade-up">
-      <h2>{{ $aliados_config->titulo_seccion ?? 'Aún no hay título en este momento' }}</h2>
-      <p class="sub">{{ $aliados_config->descripcion ?? 'Aún no hay descripción en este momento' }}</p>
+      <h2>{{ !empty($aliados_config->titulo_seccion) ? $aliados_config->titulo_seccion : 'Sin título disponible' }}</h2>
+      <p class="sub">{{ !empty($aliados_config->descripcion) ? $aliados_config->descripcion : 'Sin descripción aún' }}</p>
     </div>
   </div>
 

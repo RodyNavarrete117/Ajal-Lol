@@ -2,10 +2,15 @@
 
   <div class="container">
     <div class="section-title" data-anim="fade-up">
-      <h2>{{ $directivaConfig->titulo_directiva ?? 'Directiva' }}</h2>
+      <h2>{{ !empty($directivaConfig->titulo_directiva) ? $directivaConfig->titulo_directiva : 'Sin título disponible' }}</h2>
+      @php
+        $subtitulo = !empty($directivaConfig->subtitulo_directiva) ? $directivaConfig->subtitulo_directiva : 'Sin subtítulo disponible';
+        $palabras   = explode(' ', $subtitulo);
+        $primera    = array_shift($palabras);
+        $resto      = implode(' ', $palabras);
+      @endphp
       <p class="sub">
-        <span>{{ Str::words($directivaConfig->subtitulo_directiva ?? 'Comité Directivo', 1, '') }}</span>
-        {{ implode(' ', array_slice(explode(' ', $directivaConfig->subtitulo_directiva ?? 'Comité Directivo'), 1)) }}
+        <span>{{ $primera }}</span>{{ $resto ? ' ' . $resto : '' }}
       </p>
     </div>
 
@@ -30,8 +35,8 @@
         </div>
 
         <div class="member-info">
-          <h3>{{ $miembro->nombre_directiva }}</h3>
-          <span>{{ $miembro->cargo_directiva }}</span>
+          <h3>{{ !empty($miembro->nombre_directiva) ? $miembro->nombre_directiva : 'Sin nombre' }}</h3>
+          <span>{{ !empty($miembro->cargo_directiva) ? $miembro->cargo_directiva : 'Sin cargo' }}</span>
         </div>
 
       </article>

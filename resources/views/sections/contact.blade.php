@@ -14,55 +14,69 @@
 
         <address style="font-style:normal">
 
-          @if($contacto->direccion_contacto)
           <div class="info-item">
             <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
             <div>
               <strong>Dirección</strong>
-              <p>{{ $contacto->direccion_contacto }}</p>
-              @if($contacto->horario_contacto)
-              <p style="margin-top:.4rem;font-size:.82rem;color:rgba(255,255,255,.5)">
-                {{ $contacto->horario_contacto }}
-              </p>
+              @if(!empty($contacto->direccion_contacto))
+                <p>{{ $contacto->direccion_contacto }}</p>
+                @if(!empty($contacto->horario_contacto))
+                <p style="margin-top:.4rem;font-size:.82rem;color:rgba(255,255,255,.5)">
+                  {{ $contacto->horario_contacto }}
+                </p>
+                @else
+                <p style="margin-top:.4rem;font-size:.82rem;color:rgba(255,255,255,.4)">
+                  Horario no disponible
+                </p>
+                @endif
+              @else
+                <p style="color:rgba(255,255,255,.4)">Dirección no disponible</p>
               @endif
             </div>
           </div>
-          @endif
 
-          @if($contacto->telefono_contacto)
           <div class="info-item">
             <i class="bi bi-telephone-fill" aria-hidden="true"></i>
             <div>
               <strong>Teléfono</strong>
-              <p>
-                <a href="tel:{{ preg_replace('/\s+/', '', $contacto->telefono_contacto) }}">
-                  {{ $contacto->telefono_contacto }}
-                </a>
-              </p>
+              @if(!empty($contacto->telefono_contacto))
+                <p>
+                  <a href="tel:{{ preg_replace('/\s+/', '', $contacto->telefono_contacto) }}">
+                    {{ $contacto->telefono_contacto }}
+                  </a>
+                </p>
+              @else
+                <p style="color:rgba(255,255,255,.4)">Teléfono no disponible</p>
+              @endif
             </div>
           </div>
-          @endif
 
-          @if($contacto->email_contacto)
           <div class="info-item">
             <i class="bi bi-envelope-fill" aria-hidden="true"></i>
             <div>
               <strong>Correo electrónico</strong>
-              <p>
-                <a href="mailto:{{ $contacto->email_contacto }}">
-                  {{ $contacto->email_contacto }}
-                </a>
-              </p>
+              @if(!empty($contacto->email_contacto))
+                <p>
+                  <a href="mailto:{{ $contacto->email_contacto }}">
+                    {{ $contacto->email_contacto }}
+                  </a>
+                </p>
+              @else
+                <p style="color:rgba(255,255,255,.4)">Correo no disponible</p>
+              @endif
             </div>
           </div>
-          @endif
 
         </address>
 
         {{-- Mapa: solo se renderiza si hay embed guardado en BD --}}
-        @if($contacto->mapa_embed)
+        @if(!empty($contacto->mapa_embed))
         <div class="contact-map">
           {!! $contacto->mapa_embed !!}
+        </div>
+        @else
+        <div class="contact-map" style="display:flex;align-items:center;justify-content:center;min-height:180px;background:rgba(255,255,255,.05);border-radius:10px;">
+          <p style="color:rgba(255,255,255,.4);font-size:.9rem;">Mapa no disponible</p>
         </div>
         @endif
 

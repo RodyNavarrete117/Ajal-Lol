@@ -109,9 +109,14 @@
         <div class="add-year-inline" id="addYearForm" style="display:none">
             <i class="fa fa-calendar-plus add-year-inline__icon"></i>
             <span class="add-year-inline__label">Nuevo año:</span>
-            <select id="newYearSelect" class="new-year-select">
-                {{-- Opciones generadas por JS según años ya registrados --}}
-            </select>
+            <div class="elegant-select-container" id="newYearSelectContainer">
+                <div class="elegant-select-display" id="newYearDisplay">
+                    <span id="newYearValue"></span>
+                    <i class="fa fa-chevron-down" style="font-size: 11px; margin-left: 8px; color: #ffffff;"></i>
+                </div>
+                <div class="elegant-select-dropdown" id="newYearDropdown" style="display: none;">
+                    </div>
+            </div>
             <button type="button" class="btn-hero-sm btn-hero-sm--confirm" id="btnConfirmYear">
                 <i class="fa fa-check"></i> Agregar
             </button>
@@ -399,12 +404,19 @@
                     </div>
 
                     <div class="form-group" style="margin-top:16px">
-                        <label for="catInput">Categoría</label>
-                        <select id="catInput" name="category" required>
+                      <div style="display:flex; align-items:center; gap:8px; margin-bottom:7px;">
+                        <label style="margin-bottom:0;">Categoría</label>
+                        <span style="font-size:11px; color:var(--text-placeholder);">
+                            <i class="fa fa-angles-right"></i> Desliza para ver más
+                        </span>
+                    </div>
+                    <div class="cat-pills-wrap" id="catPillsWrap">
                             @foreach($categories as $cat)
-                                <option value="{{ $cat }}">{{ $cat }}</option>
+                                <button type="button"
+                                        class="cat-pill {{ $loop->first ? 'cat-pill--active' : '' }}"
+                                        data-value="{{ $cat }}">{{ $cat }}</button>
                             @endforeach
-                        </select>
+                        </div>
                     </div>
                 </div>
 

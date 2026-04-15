@@ -183,9 +183,30 @@
 
     const btnAddYear     = document.getElementById('btnAddYear');
     const addYearForm    = document.getElementById('addYearForm');
-    const yearSelect     = document.getElementById('newYearSelect');
     const btnConfirmYear = document.getElementById('btnConfirmYear');
     const btnCancelYear  = document.getElementById('btnCancelYear');
+
+    // Variables del nuevo dropdown personalizado
+    const yearSelectContainer = document.getElementById('newYearSelectContainer');
+    const yearDisplay         = document.getElementById('newYearDisplay');
+    const yearValueSpan       = document.getElementById('newYearValue');
+    const yearDropdownList    = document.getElementById('newYearDropdown');
+    let selectedNewYear       = ''; // Aquí se guarda el año elegido
+
+    if (yearDropdownList) {
+        document.body.appendChild(yearDropdownList);
+        yearDropdownList.style.position = 'fixed';
+        yearDropdownList.style.zIndex   = '99999';
+        yearDropdownList.style.display  = 'none';
+    }
+
+    function positionNewYearDropdown() {
+        if (!yearDropdownList || !yearDisplay) return;
+        const rect = yearDisplay.getBoundingClientRect();
+        yearDropdownList.style.top   = (rect.bottom + 4) + 'px';
+        yearDropdownList.style.left  = rect.left + 'px';
+        yearDropdownList.style.width = rect.width + 'px';
+    }
 
     function buildAvailableYears() {
         const cur = new Date().getFullYear();
@@ -197,22 +218,54 @@
     }
 
     function populateYearSelect() {
-        if (!yearSelect) return;
-        yearSelect.innerHTML = '';
+        if (!yearDropdownList || !yearValueSpan) return;
+        yearDropdownList.innerHTML = '';
         const available = buildAvailableYears();
+        
         if (available.length === 0) {
-            const opt = document.createElement('option');
-            opt.value = ''; opt.textContent = 'Todos los años ya están registrados';
-            opt.disabled = true;
-            yearSelect.appendChild(opt);
+            yearValueSpan.textContent = 'Vacío';
+            selectedNewYear = '';
+            const div = document.createElement('div');
+            div.className = 'elegant-select-option disabled';
+            div.textContent = 'Sin años';
+            yearDropdownList.appendChild(div);
         } else {
+            // Ponemos el primer año disponible por defecto
+            yearValueSpan.textContent = available[0];
+            selectedNewYear = available[0];
+            
             available.forEach(y => {
-                const opt = document.createElement('option');
-                opt.value = y; opt.textContent = y;
-                yearSelect.appendChild(opt);
+                const div = document.createElement('div');
+                div.className = 'elegant-select-option';
+                div.textContent = y;
+                div.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    selectedNewYear = y;
+                    yearValueSpan.textContent = y;
+                    yearDropdownList.style.display = 'none'; // Cerramos al elegir
+                });
+                yearDropdownList.appendChild(div);
             });
         }
     }
+
+    yearDisplay?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isHidden = yearDropdownList.style.display === 'none';
+        if (isHidden) {
+            positionNewYearDropdown();
+            yearDropdownList.style.display = 'block';
+        } else {
+            yearDropdownList.style.display = 'none';
+        }
+    });
+
+    // Cerrar el menú si hacen clic en otra parte de la pantalla
+    document.addEventListener('click', (e) => {
+        if (yearSelectContainer && !yearSelectContainer.contains(e.target)) {
+            if (yearDropdownList) yearDropdownList.style.display = 'none';
+        }
+    });
 
     function setAddYearIcon(isOpen) {
         const icon = btnAddYear?.querySelector('i');
@@ -227,25 +280,24 @@
         else {
             populateYearSelect();
             addYearForm.style.display = 'flex';
-            yearSelect?.focus();
-            closeDropdown();
+            closeDropdown(); // Cierra el menú principal de arriba si estaba abierto
             setAddYearIcon(true);
         }
     });
 
     function hideAddYearForm() {
         if (addYearForm) addYearForm.style.display = 'none';
+        if (yearDropdownList) yearDropdownList.style.display = 'none';
         setAddYearIcon(false);
     }
+
     btnCancelYear?.addEventListener('click', hideAddYearForm);
     btnConfirmYear?.addEventListener('click', confirmAddYear);
-    yearSelect?.addEventListener('keydown', e => {
-        if (e.key === 'Enter')  confirmAddYear();
-        if (e.key === 'Escape') hideAddYearForm();
-    });
 
     function confirmAddYear() {
-        const val = yearSelect?.value?.trim();
+        // En lugar del viejo select, usamos la variable 'selectedNewYear'
+        const val = selectedNewYear; 
+        
         if (!val) { showToast('Selecciona un año.', 'error'); return; }
         if (years.includes(val)) { showToast('Ese año ya existe.', 'error'); return; }
 
@@ -275,7 +327,7 @@
         })
         .catch(() => showToast('Error al agregar el año.', 'error'));
     }
-
+    
     function addYearToDropdown(year) {
         if (!yearDropdown) return;
         yearDropdown.innerHTML = '';
@@ -875,6 +927,9 @@
             const catInput = document.getElementById('catInput');
             if(catInput && cat !== 'todas') catInput.value = cat;
 
+            const catValueSpan = document.getElementById('catValue');
+            if(catValueSpan && cat !== 'todas') catValueSpan.textContent = cat;
+
             const dateInput = document.getElementById('eventDateInput');
             if (dateInput && dateISO) {
                 dateInput.value = dateISO;
@@ -1274,5 +1329,19 @@
     document.getElementById('btnAddMore')?.addEventListener('click', () => {
         document.getElementById('btnAddImage')?.click();
     });
+
+    (function() {
+        const wrap = document.getElementById('catPillsWrap');
+        const hidden = document.getElementById('catInput');
+        if (!wrap || !hidden) return;
+
+        wrap.addEventListener('click', e => {
+            const pill = e.target.closest('.cat-pill');
+            if (!pill) return;
+            wrap.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('cat-pill--active'));
+            pill.classList.add('cat-pill--active');
+            hidden.value = pill.dataset.value;
+        });
+    })();
 
 })();   

@@ -317,7 +317,12 @@
 @media(max-width:580px){ .img-modal__body{ grid-template-columns: 1fr; } }
 
 /* Panel = columna flex vertical */
-.img-modal__panel { display: flex; flex-direction: column; height: 100%; }
+.img-modal__panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-width: 0;  /* ← esto evita que el panel se expanda */
+}
 
 .img-panel-label { font-size: 11px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; display: flex; align-items: center; gap: 5px; transition: color var(--tr); }
 .img-panel-label::before { content: ''; display: inline-block; width: 3px; height: 11px; background: var(--label-accent); border-radius: 2px; transition: background var(--tr); }
@@ -532,3 +537,150 @@
 .img-add-more { margin-top: 16px; display: flex; justify-content: center; }
 .btn-add-more { display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border: 1.5px dashed var(--accent); background: transparent; color: var(--accent); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background var(--tr), color var(--tr); }
 .btn-add-more:hover { background: var(--accent); color: #fff; }
+
+/* ══════ ESTILO PARA EL SELECTOR PERSONALIZADO (TEMA OSCURO/VERDE) ══════ */
+.elegant-select-container {
+    position: relative;
+    width: 120px;
+    user-select: none;
+    z-index: 9999; /* Asegura que el contenedor base flote por encima del header */
+}
+
+.elegant-select-display {
+    /* 👇 Magia para mezclarlo con el verde: fondo semitransparente y letras blancas */
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.elegant-select-display:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: #ffffff;
+}
+
+.elegant-select-dropdown {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+.elegant-select-option {
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #4a4a4a;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.elegant-select-option:hover {
+    background-color: #845b7e; /* Hover morado */
+    color: #ffffff;
+}
+
+.elegant-select-option.disabled {
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.elegant-select-option.disabled:hover {
+    background-color: transparent;
+    color: #9ca3af;
+}
+
+.modal-select-display {
+    background: var(--bg-input) !important;
+    color: var(--text-input) !important;
+    border: 1.5px solid var(--border) !important;
+    border-radius: 10px !important;
+}
+.modal-select-display:hover {
+    border-color: var(--border-focus) !important;
+}
+.modal-select-dropdown {
+    background: var(--bg-container) !important;
+    border: 1px solid var(--border) !important;
+}
+.modal-select-dropdown .elegant-select-option {
+    color: var(--text-input) !important;
+}
+.modal-select-dropdown .elegant-select-option:hover {
+    background: var(--accent) !important;
+    color: #fff !important;
+}
+
+.cat-pills-wrap {
+    display: flex;
+    flex-wrap: nowrap;        /* una sola línea */
+    gap: 6px;
+    overflow-x: auto;         /* scroll horizontal */
+    overflow-y: hidden;
+    padding: 4px 2px;
+    scrollbar-width: none;    /* oculta el scrollbar (se desliza con el dedo/trackpad) */
+    -ms-overflow-style: none;
+}
+.cat-pills-wrap::-webkit-scrollbar {
+    display: none;
+}
+.cat-pills-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.cat-pill {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: var(--bg-input);
+    color: var(--text-label);
+    font-family: inherit;
+    transition: border-color var(--tr), background var(--tr), color var(--tr);
+    white-space: nowrap;
+}
+.cat-pill:hover { border-color: var(--accent); color: var(--accent); }
+.cat-pill--active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+.cat-pill--active:hover { color: #fff; }
+
+.cat-pills-container {
+    position: relative;
+}
+
+.cat-pills-container::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    background: linear-gradient(to right, transparent, var(--bg-container));
+    pointer-events: none;
+    border-radius: 0 20px 20px 0;
+}
+
+.cat-scroll-hint {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--text-placeholder);
+    margin-top: 5px;
+}
+
+.cat-scroll-hint i {
+    font-size: 10px;
+}

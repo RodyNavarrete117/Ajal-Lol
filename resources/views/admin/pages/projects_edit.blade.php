@@ -203,6 +203,9 @@
                                     Sin fecha
                                 @endif
                             </p>
+                            <p class="img-title" style="font-weight:600; font-size:13px; color:var(--text-heading); margin-bottom:4px;">
+                                {{ $img->titulo }} 
+                            </p>
                             <p class="img-desc">{{ $img->description ?: 'Sin descripción.' }}</p>
                             <div class="img-actions">
                                 <button class="btn-edit-img" type="button"

@@ -500,96 +500,131 @@
         const savedSub     = subtitles[y] ?? '';
         const hasSubChange = subtitleVal !== savedSub;
         const hasImages    = cardsOfYear(y).length > 0;
-        if (!hasImages) {
+        
+        // Verifica si hay imágenes pendientes, deletes o updates
+        const hasPendingWork = pendingImages.filter(Boolean).length > 0 || pendingDeletes.length > 0 || pendingUpdates.length > 0;
+
+        if (!hasImages && !hasPendingWork) {
             btnGlobalSave.disabled = true;
             btnGlobalSave.title    = 'Agrega al menos una imagen antes de guardar';
             if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = 'Guardar';
             if (btnGlobalSaveIcon)  btnGlobalSaveIcon.className    = 'fa fa-floppy-disk';
             return;
         }
-        btnGlobalSave.disabled = !hasSubChange;
+        
+        btnGlobalSave.disabled = !(hasSubChange || hasPendingWork);
         btnGlobalSave.title    = '';
-        if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = hasSubChange ? 'Guardar cambios' : 'Guardar';
+        if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = (hasSubChange || hasPendingWork) ? 'Guardar cambios' : 'Guardar';
         if (btnGlobalSaveIcon)  btnGlobalSaveIcon.className    = 'fa fa-floppy-disk';
     }
 
-btnGlobalSave?.addEventListener('click', async function () {
-    console.log('Guardar clicked');
-    const toUpload = pendingImages.filter(Boolean);
-    console.log('toUpload:', toUpload.length);
-    const y     = currentYear();
-    const sub   = subtitleInput?.value.trim() ?? '';
-    const token = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
-    console.log('token:', token);
-    console.log('year:', y);
+    // LISTAS PRINCIPALES DEL SISTEMA
+    let pendingImages = [];
+    let pendingUpdates = []; 
+    let pendingDeletes = [];
+    let editState = { isEditing: false, type: null, idOrIndex: null };
 
-    if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = 'Guardando...';
-    if (btnGlobalSaveIcon)  btnGlobalSaveIcon.className    = 'fa fa-spinner fa-spin';
-    btnGlobalSave.disabled = true;
+    btnGlobalSave?.addEventListener('click', async function () {
+            const toUpload = pendingImages.filter(Boolean);
+            const y     = currentYear();
+            const sub   = subtitleInput?.value.trim() ?? '';
+            const token = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
-    for (const item of toUpload) {
-        const fd = new FormData();
-        fd.append('_token',      token);
-        fd.append('year',        y);
-        fd.append('image',       item.file);
-        fd.append('titulo',      item.titulo);
-        fd.append('description', item.description);
-        fd.append('category',    item.category);
-        fd.append('event_date',  item.date);
+            if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = 'Guardando...';
+            if (btnGlobalSaveIcon)  btnGlobalSaveIcon.className    = 'fa fa-spinner fa-spin';
+            btnGlobalSave.disabled = true;
 
-        console.log('Enviando:', { year: y, description: item.description, category: item.category, date: item.date });
+            // 1. SUBIR IMÁGENES NUEVAS
+            for (const item of toUpload) {
+                const fd = new FormData();
+                fd.append('_token',      token);
+                fd.append('year',        y);
+                fd.append('image',       item.file);
+                fd.append('titulo',      item.titulo);
+                fd.append('description', item.description);
+                fd.append('category',    item.category);
+                fd.append('event_date',  item.date);
 
-        try {
-            const res = await fetch('/admin/pages/projects/image', {
-                method: 'POST', body: fd
-            });
-            const data = await res.json();
-            console.log('Respuesta POST:', res.status, data);
-            if (!res.ok) throw new Error(data.error || 'Error');
-        } catch(err) {
-            console.error('Error imagen:', err);
-            showToast('Error: ' + err.message, 'error');
-            // NO recargar si hay error
-            if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = 'Guardar';
-            if (btnGlobalSaveIcon)  btnGlobalSaveIcon.className    = 'fa fa-floppy-disk';
-            btnGlobalSave.disabled = false;
-            return; // detener aquí
-        }
-    }
+                try {
+                    const res = await fetch('/admin/pages/projects/image', { method: 'POST', body: fd });
+                    if (!res.ok) throw new Error();
+                } catch(err) {
+                    showToast('Error al subir una imagen.', 'error');
+                    if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = 'Guardar';
+                    if (btnGlobalSaveIcon)  btnGlobalSaveIcon.className    = 'fa fa-floppy-disk';
+                    btnGlobalSave.disabled = false;
+                    return; // Detiene todo y NO recarga
+                }
+            }
 
-        // Eliminar imágenes marcadas
-    for (const id of pendingDeletes) {
-        try {
-            const res = await fetch(`/admin/pages/projects/image/${id}`, {
-                method: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' }
-            });
-            if (!res.ok) throw new Error();
-            // Quitar la tarjeta del DOM
-            document.querySelector(`.img-card[data-id="${id}"]`)?.remove();
-        } catch {
-            showToast('Error al eliminar una imagen.', 'error');
-        }
-    }
-    pendingDeletes = [];
+            // 2. ELIMINAR IMÁGENES MARCADAS
+            for (const id of pendingDeletes) {
+                try {
+                    const res = await fetch(`/admin/pages/projects/image/${id}`, {
+                        method: 'DELETE',
+                        headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' }
+                    });
+                    if (!res.ok) throw new Error();
+                    document.querySelector(`.img-card[data-id="${id}"]`)?.remove();
+                } catch {
+                    showToast('Error al eliminar una imagen.', 'error');
+                }
+            }
 
-    // Guardar subtítulo
-    try {
-        const res2 = await fetch('/admin/pages/projects/year-update', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
-            body: JSON.stringify({ year: y, subtitulo: sub, visible: visibilities[y] ?? true })
-        });
-        const data2 = await res2.json();
-        console.log('Respuesta PUT:', res2.status, data2);
-    } catch(err) {
-        console.error('Error year-update:', err);
-    }
+            // 3. PROCESAR ACTUALIZACIONES (EDICIONES)
+            for (const update of pendingUpdates) {
+                const fd = new FormData();
+                fd.append('_token', token);
+                // 🔥 LE QUITAMOS EL _method = PUT PORQUE TU RUTA ES POST 🔥
+                if (update.file) fd.append('image', update.file); 
+                fd.append('titulo', update.titulo);
+                fd.append('description', update.description);
+                fd.append('category', update.category);
+                fd.append('event_date', update.date);
 
-    pendingImages = [];
-    showToast(`Año ${y} guardado correctamente.`);
-    setTimeout(() => window.location.reload(), 1200);
-});
+                try {
+                    const res = await fetch(`/admin/pages/projects/image/${update.id}`, {
+                        method: 'POST', // Tu web.php espera POST
+                        headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+                        body: fd
+                    });
+                    
+                    if (!res.ok) {
+                        const errorData = await res.json();
+                        console.error("DETALLES DEL ERROR:", errorData);
+                        let errorMsg = 'Error al actualizar.';
+                        if (errorData.errors) errorMsg = Object.values(errorData.errors).flat().join(' | ');
+                        else if (errorData.message) errorMsg = errorData.message;
+                        throw new Error(errorMsg);
+                    }
+                } catch(err) {
+                    showToast(err.message, 'error');
+                    if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = 'Guardar';
+                    if (btnGlobalSaveIcon)  btnGlobalSaveIcon.className    = 'fa fa-floppy-disk';
+                    btnGlobalSave.disabled = false;
+                    return; // Detiene la ejecución
+                }
+            }
+
+            // 4. GUARDAR SUBTÍTULO
+            try {
+                await fetch('/admin/pages/projects/year-update', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
+                    body: JSON.stringify({ year: y, subtitulo: sub, visible: visibilities[y] ?? true })
+                });
+            } catch(err) {
+                console.error('Error year-update:', err);
+            }
+
+            // LIMPIAR TODO AL FINALIZAR
+            pendingImages = [];
+            pendingDeletes = [];
+            pendingUpdates = [];
+            showToast(`Año ${y} guardado correctamente.`);
+            setTimeout(() => window.location.reload(), 1200);
+    });
+
     subtitleInput?.addEventListener('input', updateGlobalSaveBtn);
 
     const tabPanels = {
@@ -733,6 +768,7 @@ btnGlobalSave?.addEventListener('click', async function () {
     modalBg?.addEventListener('click', e => { if (e.target === modalBg) closeModal(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && modalBg?.classList.contains('open')) closeModal(); });
 
+    // ABRIR MODAL PARA AÑADIR
     document.getElementById('btnAddImage')?.addEventListener('click', () => {
         const y = currentYear();
         if (selectedYearHid) selectedYearHid.value = y;
@@ -746,290 +782,418 @@ btnGlobalSave?.addEventListener('click', async function () {
             dateInput.value = todayISO();
             updateDateReadable(dateInput.value);
         }
+        
+        editState = { isEditing: false, type: null, idOrIndex: null };
+        const uploadText = document.querySelector('.upload-text');
+        if(uploadText) uploadText.textContent = 'Haz clic o arrastra una imagen';
+
         openModal();
     });
 
-    // Array de imágenes pendientes de eliminar
-    let pendingDeletes = [];
-
+    // ══════ LÓGICA UNIFICADA PARA ELIMINAR / DESHACER / EDITAR EN EL GRID ══════
     document.getElementById('imgGrid')?.addEventListener('click', e => {
-        const delBtn = e.target.closest('.btn-del-img');
-        if (!delBtn) return;
+        const targetBtn = e.target.closest('button');
+        if (!targetBtn) return;
 
-        // Si es una tarjeta pendiente (aún no guardada) solo la quita
-        if (delBtn.classList.contains('btn-remove-pending')) return;
+        // 1. MARCAR PARA ELIMINAR
+        if (targetBtn.classList.contains('btn-del-img')) {
+            if (targetBtn.classList.contains('btn-remove-pending')) {
+                const idx = parseInt(targetBtn.dataset.index);
+                pendingImages[idx] = null;
+                targetBtn.closest('.img-card')?.remove();
+                updateGlobalSaveBtn();
+                const totalCards = document.getElementById('imgGrid')?.querySelectorAll('.img-card').length ?? 0;
+                const addMore = document.getElementById('imgAddMore');
+                if (addMore) addMore.style.display = totalCards < 9 ? 'flex' : 'none';
+                return;
+            }
 
-        const id   = delBtn.dataset.id;
-        const card = document.querySelector(`.img-card[data-id="${id}"]`);
-        if (!card) return;
+            const id = targetBtn.dataset.id;
+            const card = document.querySelector(`.img-card[data-id="${id}"]`);
+            if (!card) return;
 
-        // Marcar visualmente como "pendiente de eliminar"
-        card.style.opacity = '0.4';
-        card.style.outline = '2px dashed #c0392b';
-        card.style.transition = 'opacity 0.2s, outline 0.2s';
+            card.style.opacity = '0.4';
+            card.style.outline = '2px dashed #c0392b';
+            card.style.transition = 'opacity 0.2s, outline 0.2s';
 
-        // Cambiar botón eliminar por "Deshacer"
-        delBtn.textContent = 'Deshacer';
-        delBtn.style.background = 'transparent';
-        delBtn.style.color = '#c0392b';
-        delBtn.classList.add('btn-undo-del');
-        delBtn.classList.remove('btn-del-img');
+            targetBtn.textContent = 'Deshacer';
+            targetBtn.style.background = 'transparent';
+            targetBtn.style.color = '#c0392b';
+            targetBtn.classList.remove('btn-del-img');
+            targetBtn.classList.add('btn-undo-del');
 
-        // Agregar a pendientes de eliminar
-        pendingDeletes.push(id);
-
-        // Activar guardar
-        if (btnGlobalSave) btnGlobalSave.disabled = false;
-        if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = 'Guardar';
-
-        showToast('Imagen marcada para eliminar. Da clic en Guardar para confirmar.', 'error');
-    });
-
-    // Deshacer eliminación
-    document.getElementById('imgGrid')?.addEventListener('click', e => {
-        const undoBtn = e.target.closest('.btn-undo-del');
-        if (!undoBtn) return;
-
-        const card = undoBtn.closest('.img-card');
-        const id   = card?.dataset.id;
-
-        // Quitar de pendientes
-        pendingDeletes = pendingDeletes.filter(d => d !== id);
-
-        // Restaurar visual
-        card.style.opacity = '1';
-        card.style.outline = 'none';
-        undoBtn.textContent = 'Eliminar';
-        undoBtn.style.background = '';
-        undoBtn.style.color = '';
-        undoBtn.classList.add('btn-del-img');
-        undoBtn.classList.remove('btn-undo-del');
-
-        // Si no hay nada pendiente deshabilitar guardar
-        if (pendingImages.filter(Boolean).length === 0 && pendingDeletes.length === 0) {
-            btnGlobalSave.disabled = true;
+            pendingDeletes.push(id);
+            updateGlobalSaveBtn();
+            showToast('Imagen marcada para eliminar. Da clic en Guardar arriba para confirmar.', 'error');
+            return;
         }
 
-        showToast('Eliminación cancelada.');
+        // 2. DESHACER ELIMINACIÓN
+        if (targetBtn.classList.contains('btn-undo-del')) {
+            const card = targetBtn.closest('.img-card');
+            const id = card?.dataset.id;
+
+            pendingDeletes = pendingDeletes.filter(d => d !== id);
+
+            card.style.opacity = '1';
+            card.style.outline = 'none';
+
+            targetBtn.textContent = 'Eliminar';
+            targetBtn.style.background = '';
+            targetBtn.style.color = '';
+            targetBtn.classList.remove('btn-undo-del');
+            targetBtn.classList.add('btn-del-img');
+
+            updateGlobalSaveBtn();
+            showToast('Eliminación cancelada.', 'success');
+            return;
+        }
+
+        // 3. EDITAR
+        if (targetBtn.classList.contains('btn-edit-img')) {
+            const card = targetBtn.closest('.img-card');
+            const isPending = card.classList.contains('pending-card');
+
+            editState.isEditing = true;
+            editState.type = isPending ? 'pending' : 'saved';
+            editState.idOrIndex = isPending ? card.dataset.pendingIndex : card.dataset.id;
+
+            // CÓDIGO NUEVO (Ya trae el .trim() para limpiar los espacios)
+            const title = card.querySelector('.img-title')?.textContent?.trim() || '';
+            const desc = card.querySelector('.img-desc')?.textContent?.trim() || '';
+            const cat = card.querySelector('.cat-badge')?.textContent || document.getElementById('catFilter')?.querySelector('.active')?.dataset.cat || 'todas';
+            const dateISO = card.dataset.date || '';
+
+            if (modalTitle) modalTitle.textContent = 'Editar Imagen';
+            if (modalSub)   modalSub.textContent   = 'Modifica los datos sin necesidad de resubir la foto';
+            const submitLabel = document.getElementById('modalSubmitLabel');
+            if (submitLabel) submitLabel.textContent = 'Actualizar';
+
+            document.getElementById('imgTituloInput').value = title;
+            document.getElementById('imgDescInput').value = desc;
+            
+            const catInput = document.getElementById('catInput');
+            if(catInput && cat !== 'todas') catInput.value = cat;
+
+            const dateInput = document.getElementById('eventDateInput');
+            if (dateInput && dateISO) {
+                dateInput.value = dateISO;
+                updateDateReadable(dateISO);
+            }
+
+            resetUploadZone();
+            const imgSrc = card.querySelector('.img-thumb img')?.src;
+            if (imgSrc) {
+                showPreview(imgSrc);
+                const uploadText = document.querySelector('.upload-text');
+                if(uploadText) uploadText.textContent = 'Clic para cambiar la imagen (Opcional)';
+            }
+
+            openModal();
+            return;
+        }
     });
+
+    // ══════ SUBMIT DEL MODAL (AÑADIR O EDITAR) ══════
+    modalForm?.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        if (!validateForm(this)) {
+            showToast('Por favor completa los campos obligatorios.', 'error');
+            return;
+        }
+
+        const file        = fileInput?.files?.[0];
+        const titulo      = document.getElementById('imgTituloInput')?.value.trim();
+        const description = document.getElementById('imgDescInput')?.value.trim();
+        const category    = document.getElementById('catInput')?.value;
+        const date        = document.getElementById('eventDateInput')?.value;
+        const dateLabel   = document.getElementById('datePickerLabel')?.textContent;
+
+        if (!editState.isEditing && !file) { 
+            showToast('Selecciona una imagen.', 'error'); 
+            return; 
+        }
+        if (!date) { showToast('Selecciona una fecha.', 'error'); return; }
+
+        if (editState.isEditing) {
+            const card = editState.type === 'pending' 
+                ? document.querySelector(`.pending-card[data-pending-index="${editState.idOrIndex}"]`)
+                : document.querySelector(`.img-card:not(.pending-card)[data-id="${editState.idOrIndex}"]`);
+
+            if (card) {
+                if (file) card.querySelector('.img-thumb img').src = URL.createObjectURL(file);
+                const titleEl = card.querySelector('.img-title');
+                if (titleEl) titleEl.textContent = titulo;
+                card.querySelector('.img-desc').textContent = description;
+                card.querySelector('.cat-badge').textContent = category;
+                card.querySelector('.img-date').innerHTML = `<i class="fa fa-calendar-day"></i> ${dateLabel}`;
+                card.dataset.cat = category;
+                card.dataset.date = date; 
+                
+                if (editState.type === 'pending') {
+                    const pImg = pendingImages[editState.idOrIndex];
+                    if (file) pImg.file = file;
+                    pImg.titulo = titulo;
+                    pImg.description = description;
+                    pImg.category = category;
+                    pImg.date = date;
+                    pImg.dateLabel = dateLabel;
+                } else {
+                    pendingUpdates.push({
+                        id: editState.idOrIndex,
+                        file: file || null, 
+                        titulo: titulo,
+                        description: description,
+                        category: category,
+                        date: date
+                    });
+                    card.style.outline = '2px solid #2d7d46';
+                }
+            }
+            showToast('Cambios listos para guardar.');
+
+        } else {
+            const pending = { file, titulo, description, category, date, dateLabel };
+            pendingImages.push(pending);
+
+            const previewUrl = URL.createObjectURL(file);
+            const card = document.createElement('div');
+            card.className = 'img-card pending-card';
+            card.dataset.year = currentYear();
+            card.dataset.cat  = category;
+            card.dataset.date = date;
+            card.dataset.pendingIndex = pendingImages.length - 1;
+            card.innerHTML = `
+                <div class="img-thumb">
+                    <img src="${previewUrl}" alt="${description}">
+                    <span class="cat-badge">${category}</span>
+                    <span class="pending-badge"><i class="fa fa-clock"></i> Pendiente</span>
+                </div>
+                <div class="img-body">
+                    <p class="img-date"><i class="fa fa-calendar-day"></i> ${dateLabel}</p>
+                    <p class="img-title" style="font-weight:600; font-size:13px; color:var(--text-heading); margin-bottom:4px;">${titulo}</p>
+                    <p class="img-desc">${description}</p>
+                    <div class="img-actions">
+                        <button class="btn-edit-img" type="button">Editar</button>
+                        <button class="btn-del-img btn-remove-pending" type="button" data-index="${pendingImages.length - 1}">
+                            <i class="fa fa-xmark"></i> Quitar
+                        </button>
+                    </div>
+                </div>`;
+            document.getElementById('imgGrid')?.querySelector('.img-empty')?.remove();
+            document.getElementById('imgGrid')?.appendChild(card);
+            
+            const totalCards = document.getElementById('imgGrid')?.querySelectorAll('.img-card').length ?? 0;
+            const addMore = document.getElementById('imgAddMore');
+            if (addMore) addMore.style.display = totalCards < 9 ? 'flex' : 'none';
+            showToast('Imagen lista para guardar.');
+        }
+
+        updateGlobalSaveBtn();
+        closeModal();
+    });
+
+
     /* ════════════════════════════════════
        DATE PICKER CUSTOM
-       — muestra "10 de Abril" sin año
-       — restringe al año activo
-       — no permite fechas futuras
-       — < > usan stopPropagation para no cerrar el calendario
-       — se abre arriba si no cabe abajo
     ════════════════════════════════════ */
-(function initDatePicker() {
-    const btn      = document.getElementById('datePickerBtn');
-    const hiddenIn = document.getElementById('eventDateInput');
-    if (!btn || !hiddenIn) return;
+    (function initDatePicker() {
+        const btn      = document.getElementById('datePickerBtn');
+        const hiddenIn = document.getElementById('eventDateInput');
+        if (!btn || !hiddenIn) return;
 
-    let dpViewMonth = new Date().getMonth();
+        let dpViewMonth = new Date().getMonth();
 
-    const DIAS = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
+        const DIAS = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
 
-    function getActiveYear() {
-        const num = document.getElementById('yearDisplayNum');
-        return parseInt(num?.textContent?.trim() || new Date().getFullYear(), 10);
-    }
-
-    function todayYM() {
-        const n = new Date();
-        return n.getFullYear() * 12 + n.getMonth();
-    }
-
-    function renderGrid(direction = null) {
-        const cal = document.getElementById('dpCalendar');
-        if (!cal) return;
-
-        const activeYear = getActiveYear();
-        const now        = new Date();
-        const todayStr   = todayISO();
-        const tYM        = todayYM();
-        const curYM      = activeYear * 12 + dpViewMonth;
-
-        cal.querySelector('.dp-month-label').textContent = `${MESES[dpViewMonth]} ${activeYear}`;
-        cal.querySelector('#dpBtnPrev').disabled = dpViewMonth <= 0;
-        cal.querySelector('#dpBtnNext').disabled = (curYM + 1) > tYM;
-
-        const grid = cal.querySelector('.dp-days');
-        grid.innerHTML = '';
-
-        // Animación de dirección
-        if (direction) {
-            grid.classList.remove('slide-left', 'slide-right');
-            void grid.offsetWidth; // reflow para reiniciar animación
-            grid.classList.add(direction === 'next' ? 'slide-left' : 'slide-right');
+        function getActiveYear() {
+            const num = document.getElementById('yearDisplayNum');
+            return parseInt(num?.textContent?.trim() || new Date().getFullYear(), 10);
         }
 
-        const firstDay    = new Date(activeYear, dpViewMonth, 1).getDay();
-        const offset      = firstDay === 0 ? 6 : firstDay - 1;
-        const daysInMonth = new Date(activeYear, dpViewMonth + 1, 0).getDate();
-        const selectedISO = hiddenIn.value;
-        const todayYear   = now.getFullYear();
-        const todayMonth  = now.getMonth();
-        const todayDay    = now.getDate();
+        function todayYM() {
+            const n = new Date();
+            return n.getFullYear() * 12 + n.getMonth();
+        }
 
-        for (let i = 0; i < 42; i++) {
-            const d = i - offset + 1;
-            const btn2 = document.createElement('button');
-            btn2.type = 'button';
-            btn2.className = 'dp-day';
+        function renderGrid(direction = null) {
+            const cal = document.getElementById('dpCalendar');
+            if (!cal) return;
 
-            if (d < 1 || d > daysInMonth) {
-                btn2.disabled = true;
-                btn2.style.visibility = 'hidden';
-            } else {
-                const mm     = String(dpViewMonth + 1).padStart(2, '0');
-                const dd     = String(d).padStart(2, '0');
-                const isoStr = `${activeYear}-${mm}-${dd}`;
-                btn2.textContent = d;
+            const activeYear = getActiveYear();
+            const now        = new Date();
+            const todayStr   = todayISO();
+            const tYM        = todayYM();
+            const curYM      = activeYear * 12 + dpViewMonth;
 
-                if (isoStr > todayStr) {
+            cal.querySelector('.dp-month-label').textContent = `${MESES[dpViewMonth]} ${activeYear}`;
+            cal.querySelector('#dpBtnPrev').disabled = dpViewMonth <= 0;
+            cal.querySelector('#dpBtnNext').disabled = (curYM + 1) > tYM;
+
+            const grid = cal.querySelector('.dp-days');
+            grid.innerHTML = '';
+
+            if (direction) {
+                grid.classList.remove('slide-left', 'slide-right');
+                void grid.offsetWidth;
+                grid.classList.add(direction === 'next' ? 'slide-left' : 'slide-right');
+            }
+
+            const firstDay    = new Date(activeYear, dpViewMonth, 1).getDay();
+            const offset      = firstDay === 0 ? 6 : firstDay - 1;
+            const daysInMonth = new Date(activeYear, dpViewMonth + 1, 0).getDate();
+            const selectedISO = hiddenIn.value;
+
+            for (let i = 0; i < 42; i++) {
+                const d = i - offset + 1;
+                const btn2 = document.createElement('button');
+                btn2.type = 'button';
+                btn2.className = 'dp-day';
+
+                if (d < 1 || d > daysInMonth) {
                     btn2.disabled = true;
                     btn2.style.visibility = 'hidden';
                 } else {
-                    if (isoStr === selectedISO) btn2.classList.add('selected');
-                    if (isoStr === todayStr)    btn2.classList.add('today');
-                    btn2.addEventListener('click', e => {
-                        e.stopPropagation();
-                        hiddenIn.value = isoStr;
-                        updateDateReadable(isoStr);
-                        closeCalendar();
-                    });
+                    const mm     = String(dpViewMonth + 1).padStart(2, '0');
+                    const dd     = String(d).padStart(2, '0');
+                    const isoStr = `${activeYear}-${mm}-${dd}`;
+                    btn2.textContent = d;
+
+                    if (isoStr > todayStr) {
+                        btn2.disabled = true;
+                        btn2.style.visibility = 'hidden';
+                    } else {
+                        if (isoStr === selectedISO) btn2.classList.add('selected');
+                        if (isoStr === todayStr)    btn2.classList.add('today');
+                        btn2.addEventListener('click', e => {
+                            e.stopPropagation();
+                            hiddenIn.value = isoStr;
+                            updateDateReadable(isoStr);
+                            closeCalendar();
+                        });
+                    }
                 }
+                grid.appendChild(btn2);
             }
-            grid.appendChild(btn2);
         }
-    }
 
-    function createShell() {
-        const cal = document.createElement('div');
-        cal.className = 'date-picker-calendar';
-        cal.id = 'dpCalendar';
+        function createShell() {
+            const cal = document.createElement('div');
+            cal.className = 'date-picker-calendar';
+            cal.id = 'dpCalendar';
 
-        // Nav
-        const nav = document.createElement('div');
-        nav.className = 'dp-nav';
+            const nav = document.createElement('div');
+            nav.className = 'dp-nav';
 
-        const btnPrev = document.createElement('button');
-        btnPrev.type = 'button'; btnPrev.className = 'dp-nav-btn'; btnPrev.id = 'dpBtnPrev';
-        btnPrev.innerHTML = '<i class="fa fa-chevron-left"></i>';
-        btnPrev.addEventListener('click', e => {
-            e.stopPropagation();
+            const btnPrev = document.createElement('button');
+            btnPrev.type = 'button'; btnPrev.className = 'dp-nav-btn'; btnPrev.id = 'dpBtnPrev';
+            btnPrev.innerHTML = '<i class="fa fa-chevron-left"></i>';
+            btnPrev.addEventListener('click', e => {
+                e.stopPropagation();
+                if (dpViewMonth > 0) { 
+                    dpViewMonth--; 
+                    renderGrid(); 
+                }
+            });
+
+            const label = document.createElement('span');
+            label.className = 'dp-month-label';
+
+            const btnNext = document.createElement('button');
+            btnNext.type = 'button'; btnNext.className = 'dp-nav-btn'; btnNext.id = 'dpBtnNext';
+            btnNext.innerHTML = '<i class="fa fa-chevron-right"></i>';
+            btnNext.addEventListener('click', e => {
+                e.stopPropagation();
+                const activeYear = getActiveYear();
+                const nextYM     = activeYear * 12 + (dpViewMonth + 1);
+                const tYM        = todayYM();
+                if (dpViewMonth < 11 && nextYM <= tYM) { 
+                    dpViewMonth++; 
+                    renderGrid(); 
+                }
+            });
+
+            nav.append(btnPrev, label, btnNext);
+
+            const header = document.createElement('div');
+            header.className = 'dp-days-header';
+            DIAS.forEach(d => {
+                const dn = document.createElement('div');
+                dn.className = 'dp-day-name'; dn.textContent = d;
+                header.appendChild(dn);
+            });
+
+            const grid = document.createElement('div');
+            grid.className = 'dp-days';
+
+            cal.append(nav, header, grid);
+            return cal;
+        }
+
+        function openCalendar() {
+            if (document.getElementById('dpCalendar')) { closeCalendar(); return; }
+
             const activeYear = getActiveYear();
-            // No ir antes de enero (mes 0) ni antes del inicio del año activo
-            if (dpViewMonth > 0) { 
-                dpViewMonth--; 
-                renderGrid(); 
-            }
-        });
-
-        const label = document.createElement('span');
-        label.className = 'dp-month-label';
-
-        const btnNext = document.createElement('button');
-        btnNext.type = 'button'; btnNext.className = 'dp-nav-btn'; btnNext.id = 'dpBtnNext';
-        btnNext.innerHTML = '<i class="fa fa-chevron-right"></i>';
-        btnNext.addEventListener('click', e => {
-            e.stopPropagation();
-            const activeYear = getActiveYear();
-            const nextYM     = activeYear * 12 + (dpViewMonth + 1);
+            const now        = new Date();
             const tYM        = todayYM();
-            // No pasar de diciembre (mes 11) NI pasar del mes actual de hoy
-            if (dpViewMonth < 11 && nextYM <= tYM) { 
-                dpViewMonth++; 
-                renderGrid(); 
-            }
-        });
 
-        nav.append(btnPrev, label, btnNext);
-
-        // Header días
-        const header = document.createElement('div');
-        header.className = 'dp-days-header';
-        DIAS.forEach(d => {
-            const dn = document.createElement('div');
-            dn.className = 'dp-day-name'; dn.textContent = d;
-            header.appendChild(dn);
-        });
-
-        // Grid vacío
-        const grid = document.createElement('div');
-        grid.className = 'dp-days';
-
-        cal.append(nav, header, grid);
-        return cal;
-    }
-
-    function openCalendar() {
-        if (document.getElementById('dpCalendar')) { closeCalendar(); return; }
-
-        const activeYear = getActiveYear();
-        const now        = new Date();
-        const tYM        = todayYM();
-
-        if (hiddenIn.value) {
-            const [savedY, m] = hiddenIn.value.split('-');
-            const savedYM = parseInt(savedY, 10) * 12 + (parseInt(m, 10) - 1);
-            dpViewMonth = parseInt(m, 10) - 1;
-            if (savedYM > tYM || parseInt(savedY, 10) !== activeYear) {
-                dpViewMonth = Math.min(now.getMonth(), 11);
-                if (activeYear * 12 + dpViewMonth > tYM) {
-                    dpViewMonth = tYM - activeYear * 12;
+            if (hiddenIn.value) {
+                const [savedY, m] = hiddenIn.value.split('-');
+                const savedYM = parseInt(savedY, 10) * 12 + (parseInt(m, 10) - 1);
+                dpViewMonth = parseInt(m, 10) - 1;
+                if (savedYM > tYM || parseInt(savedY, 10) !== activeYear) {
+                    dpViewMonth = Math.min(now.getMonth(), 11);
+                    if (activeYear * 12 + dpViewMonth > tYM) {
+                        dpViewMonth = tYM - activeYear * 12;
+                    }
                 }
+            } else {
+                const maxMonth = tYM - activeYear * 12;
+                dpViewMonth = Math.max(0, Math.min(maxMonth, 11));
             }
-        } else {
-            const maxMonth = tYM - activeYear * 12;
-            dpViewMonth = Math.max(0, Math.min(maxMonth, 11));
+
+            const cal    = createShell();
+            const parent = btn.closest('.date-picker-group') || btn.parentElement;
+            parent.style.position = 'relative';
+            parent.appendChild(cal);
+            renderGrid();
+
+            if (window.innerWidth <= 680) {
+                const overlay = document.createElement('div');
+                overlay.id = 'dpOverlay';
+                overlay.style.cssText = `
+                    position: fixed; inset: 0;
+                    background: rgba(0,0,0,0.5);
+                    backdrop-filter: blur(4px);
+                    -webkit-backdrop-filter: blur(4px);
+                    z-index: 9998;
+                    animation: fadeIn 0.2s ease;
+                `;
+                overlay.addEventListener('click', closeCalendar);
+                document.body.appendChild(overlay);
+                document.body.appendChild(cal);
+            }
+
+            requestAnimationFrame(() => {
+                if (window.innerWidth > 680) {
+                    cal.style.left  = 'auto';
+                    cal.style.right = '0';
+                    const rect = cal.getBoundingClientRect();
+                    if (window.innerHeight - rect.bottom < 0) {
+                        cal.style.top    = 'auto';
+                        cal.style.bottom = 'calc(100% + 6px)';
+                    }
+                }
+            });
         }
 
-        const cal    = createShell();
-        const parent = btn.closest('.date-picker-group') || btn.parentElement;
-        parent.style.position = 'relative';
-        parent.appendChild(cal);
-        renderGrid();
-
-        // Overlay + blur en móvil
-        // Overlay + blur en móvil
-        if (window.innerWidth <= 680) {
-            const overlay = document.createElement('div');
-            overlay.id = 'dpOverlay';
-            overlay.style.cssText = `
-                position: fixed; inset: 0;
-                background: rgba(0,0,0,0.5);
-                backdrop-filter: blur(4px);
-                -webkit-backdrop-filter: blur(4px);
-                z-index: 9998;
-                animation: fadeIn 0.2s ease;
-            `;
-            overlay.addEventListener('click', closeCalendar);
-            document.body.appendChild(overlay);
-            
-            // Mover el calendario al body para que quede ENCIMA del overlay
-            document.body.appendChild(cal);
+        function closeCalendar() {
+            document.getElementById('dpCalendar')?.remove();
+            document.getElementById('dpOverlay')?.remove();
+            const modal = document.getElementById('imgModal');
+            if (modal) modal.style.filter = '';
         }
-
-        requestAnimationFrame(() => {
-            if (window.innerWidth > 680) {
-                cal.style.left  = 'auto';
-                cal.style.right = '0';
-                const rect = cal.getBoundingClientRect();
-                if (window.innerHeight - rect.bottom < 0) {
-                    cal.style.top    = 'auto';
-                    cal.style.bottom = 'calc(100% + 6px)';
-                }
-            }
-        });
-    }
-
-    function closeCalendar() {
-        document.getElementById('dpCalendar')?.remove();
-        document.getElementById('dpOverlay')?.remove();
-        const modal = document.getElementById('imgModal');
-        if (modal) modal.style.filter = '';
-    }
 
         btn.addEventListener('click', e => { e.stopPropagation(); openCalendar(); });
 
@@ -1082,125 +1246,6 @@ btnGlobalSave?.addEventListener('click', async function () {
         reader.readAsDataURL(file);
     }
 
-    function setFeatured() {}
-
-    // Array de imágenes pendientes
-    let pendingImages = [];
-
-    modalForm?.addEventListener('submit', function (e) {
-        e.preventDefault(); // siempre prevenir el submit nativo
-
-        if (!validateForm(this)) {
-            showToast('Por favor completa los campos obligatorios.', 'error');
-            return;
-        }
-
-        const file        = fileInput?.files?.[0];
-        const titulo      = document.getElementById('imgTituloInput')?.value.trim()
-        const description = document.getElementById('imgDescInput')?.value.trim();
-        const category    = document.getElementById('catInput')?.value;
-        const date        = document.getElementById('eventDateInput')?.value;
-        const dateLabel   = document.getElementById('datePickerLabel')?.textContent;
-
-        if (!file) { showToast('Selecciona una imagen.', 'error'); return; }
-        if (!date) { showToast('Selecciona una fecha.', 'error'); return; }
-
-        // Guardar en pendientes
-        const pending = { file, titulo, description, category, date, dateLabel };
-        pendingImages.push(pending);
-
-        // Crear tarjeta visual en el grid
-        const previewUrl = URL.createObjectURL(file);
-        const card = document.createElement('div');
-        card.className = 'img-card pending-card';
-        card.dataset.year = currentYear();
-        card.dataset.cat  = category;
-        card.dataset.pendingIndex = pendingImages.length - 1;
-        card.innerHTML = `
-            <div class="img-thumb">
-                <img src="${previewUrl}" alt="${description}">
-                <span class="cat-badge">${category}</span>
-                <span class="pending-badge">
-                    <i class="fa fa-clock"></i> Pendiente
-                </span>
-            </div>
-            <div class="img-body">
-                <p class="img-date"><i class="fa fa-calendar-day"></i> ${dateLabel}</p>
-                <p class="img-title" style="font-weight:600; font-size:13px; color:var(--text-heading); margin-bottom:4px;">${titulo}</p>
-                <p class="img-desc">${description}</p>
-                <div class="img-actions">
-                    <button class="btn-del-img btn-remove-pending" type="button"
-                            data-index="${pendingImages.length - 1}">
-                        <i class="fa fa-xmark"></i> Quitar
-                    </button>
-                </div>
-            </div>`;
-
-        document.getElementById('imgGrid')?.querySelector('.img-empty')?.remove();
-        document.getElementById('imgGrid')?.appendChild(card);
-
-        // Activar guardar
-        if (btnGlobalSave) btnGlobalSave.disabled = false;
-        if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = 'Guardar';
-
-        // Mostrar botón agregar más si hay menos de 9
-        const gridEl = document.getElementById('imgGrid');
-        const addMore = document.getElementById('imgAddMore');
-        const totalCards = gridEl?.querySelectorAll('.img-card').length ?? 0;
-        if (addMore) addMore.style.display = totalCards < 9 ? 'flex' : 'none';
-
-        closeModal();
-        showToast('Imagen lista para guardar.');
-    });
-
-    // Quitar pendiente del grid
-    document.getElementById('imgGrid')?.addEventListener('click', e => {
-        const btn = e.target.closest('.btn-remove-pending');
-        if (!btn) return;
-        const idx = parseInt(btn.dataset.index);
-        pendingImages[idx] = null;
-        btn.closest('.img-card')?.remove();
-        const remaining = pendingImages.filter(Boolean).length;
-        if (remaining === 0 && btnGlobalSave) {
-            btnGlobalSave.disabled = true;
-        }
-        const totalCards2 = document.getElementById('imgGrid')?.querySelectorAll('.img-card').length ?? 0;
-        const addMore2 = document.getElementById('imgAddMore');
-        if (addMore2) addMore2.style.display = totalCards2 < 9 ? 'flex' : 'none';
-    });
-
-    document.getElementById('imgGrid')?.addEventListener('click', e => {
-        const delBtn = e.target.closest('.btn-del-img');
-        if (!delBtn) return;
-        const id  = delBtn.dataset.id;
-        const url = delBtn.dataset.url;
-        if (!confirm('¿Eliminar esta imagen? Esta acción no se puede deshacer.')) return;
-        const card = document.querySelector(`.img-card[data-id="${id}"]`);
-        const activeCat = document.querySelector('#catFilter .pill.active')?.dataset.cat || 'todas';
-        const removeCard = () => {
-            if (card) {
-                card.style.transition = 'opacity 0.22s, transform 0.22s';
-                card.style.opacity = '0'; card.style.transform = 'scale(0.95)';
-                setTimeout(() => { 
-                    card.remove(); 
-                    filterImagesByCat(activeCat);
-                    refreshEmptyState(
-                        document.querySelectorAll(`#imgGrid .img-card[data-year="${currentYear()}"]`).length,
-                        currentYear()
-                    );
-                }, 230);
-            }
-            showToast('Imagen eliminada correctamente.');
-        };
-        if (!url || url === '#') { removeCard(); return; }
-        const token = document.querySelector('meta[name="csrf-token"]')?.content
-                   || document.querySelector('input[name="_token"]')?.value || '';
-        fetch(url, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' } })
-            .then(res => { if (!res.ok) throw new Error(); return res.json(); })
-            .then(removeCard)
-            .catch(() => showToast('No se pudo eliminar la imagen.', 'error'));
-    });
-
     const initialYear = yearDisplayNum?.textContent?.trim();
     if (initialYear) {
         const idx = years.indexOf(initialYear);
@@ -1226,8 +1271,8 @@ btnGlobalSave?.addEventListener('click', async function () {
         document.head.appendChild(style);
     }
 
-        document.getElementById('btnAddMore')?.addEventListener('click', () => {
+    document.getElementById('btnAddMore')?.addEventListener('click', () => {
         document.getElementById('btnAddImage')?.click();
     });
 
-})();
+})();   

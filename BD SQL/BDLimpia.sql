@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 15-04-2026 a las 21:55:02
+-- Tiempo de generación: 16-04-2026 a las 19:53:38
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `prueba11`
+-- Base de datos: `prueba12`
 --
 
 -- --------------------------------------------------------
@@ -29,10 +29,45 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `actividades` (
   `id_actividad` int NOT NULL,
-  `id_pagina` int NOT NULL,
-  `año_actividad` int DEFAULT NULL,
+  `id_ano` int DEFAULT NULL,
   `titulo_actividad` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `texto_actividad` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+  `icono_actividad` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `texto_actividad` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `orden_actividad` int DEFAULT NULL,
+  `visible` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `actividades_encabezado`
+--
+
+CREATE TABLE `actividades_encabezado` (
+  `id_encabezado` int NOT NULL,
+  `id_ano` int DEFAULT NULL,
+  `titulo_actividad` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `subtitulo_actividad` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ano_visible` int DEFAULT NULL COMMENT 'Año activo visible en la página pública',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `actividad_anos`
+--
+
+CREATE TABLE `actividad_anos` (
+  `id_ano` int NOT NULL,
+  `id_pagina` int NOT NULL,
+  `ano` int NOT NULL,
+  `visible` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1 = visible en selector público, 0 = oculto',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -546,19 +581,6 @@ INSERT INTO `usuario` (`id_usuario`, `nombre_usuario`, `correo_usuario`, `contra
 (7, 'Jefe de Area', 'Nintendo@gmail.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
 (8, 'Oscar Alejandro Sanchéz', 'Martin@gmail.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92');
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `widgets_actividades`
---
-
-CREATE TABLE `widgets_actividades` (
-  `id_widgetactividad` int NOT NULL,
-  `actividad_id` int NOT NULL,
-  `titulo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `texto` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 --
 -- Índices para tablas volcadas
 --
@@ -568,7 +590,23 @@ CREATE TABLE `widgets_actividades` (
 --
 ALTER TABLE `actividades`
   ADD PRIMARY KEY (`id_actividad`),
-  ADD KEY `id_pagina` (`id_pagina`);
+  ADD KEY `idx_actividades_ano` (`id_ano`),
+  ADD KEY `idx_actividades_orden` (`orden_actividad`);
+
+--
+-- Indices de la tabla `actividades_encabezado`
+--
+ALTER TABLE `actividades_encabezado`
+  ADD PRIMARY KEY (`id_encabezado`),
+  ADD UNIQUE KEY `unique_encabezado_ano` (`id_ano`);
+
+--
+-- Indices de la tabla `actividad_anos`
+--
+ALTER TABLE `actividad_anos`
+  ADD PRIMARY KEY (`id_ano`),
+  ADD UNIQUE KEY `unique_ano_pagina` (`ano`,`id_pagina`),
+  ADD KEY `idx_actividad_anos_pagina` (`id_pagina`);
 
 --
 -- Indices de la tabla `aliados`
@@ -767,13 +805,6 @@ ALTER TABLE `usuario`
   ADD UNIQUE KEY `correo_usuario` (`correo_usuario`);
 
 --
--- Indices de la tabla `widgets_actividades`
---
-ALTER TABLE `widgets_actividades`
-  ADD PRIMARY KEY (`id_widgetactividad`),
-  ADD KEY `actividad_id` (`actividad_id`);
-
---
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
@@ -782,6 +813,18 @@ ALTER TABLE `widgets_actividades`
 --
 ALTER TABLE `actividades`
   MODIFY `id_actividad` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `actividades_encabezado`
+--
+ALTER TABLE `actividades_encabezado`
+  MODIFY `id_encabezado` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `actividad_anos`
+--
+ALTER TABLE `actividad_anos`
+  MODIFY `id_ano` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `aliados`
@@ -829,7 +872,7 @@ ALTER TABLE `formulario_contacto`
 -- AUTO_INCREMENT de la tabla `informe`
 --
 ALTER TABLE `informe`
-  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT de la tabla `inicio`
@@ -922,12 +965,6 @@ ALTER TABLE `usuario`
   MODIFY `id_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT de la tabla `widgets_actividades`
---
-ALTER TABLE `widgets_actividades`
-  MODIFY `id_widgetactividad` int NOT NULL AUTO_INCREMENT;
-
---
 -- Restricciones para tablas volcadas
 --
 
@@ -935,7 +972,19 @@ ALTER TABLE `widgets_actividades`
 -- Filtros para la tabla `actividades`
 --
 ALTER TABLE `actividades`
-  ADD CONSTRAINT `actividades_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
+  ADD CONSTRAINT `actividades_fk_ano` FOREIGN KEY (`id_ano`) REFERENCES `actividad_anos` (`id_ano`) ON DELETE SET NULL;
+
+--
+-- Filtros para la tabla `actividades_encabezado`
+--
+ALTER TABLE `actividades_encabezado`
+  ADD CONSTRAINT `actividades_encabezado_fk_ano` FOREIGN KEY (`id_ano`) REFERENCES `actividad_anos` (`id_ano`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `actividad_anos`
+--
+ALTER TABLE `actividad_anos`
+  ADD CONSTRAINT `actividad_anos_fk_pagina` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
 
 --
 -- Filtros para la tabla `aliados`
@@ -1022,12 +1071,6 @@ ALTER TABLE `reportebeneficiarios`
 --
 ALTER TABLE `rol_usuario`
   ADD CONSTRAINT `rol_usuario_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
-
---
--- Filtros para la tabla `widgets_actividades`
---
-ALTER TABLE `widgets_actividades`
-  ADD CONSTRAINT `widgets_actividades_ibfk_1` FOREIGN KEY (`actividad_id`) REFERENCES `actividades` (`id_actividad`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

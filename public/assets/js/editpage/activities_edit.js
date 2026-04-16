@@ -2,6 +2,27 @@
 (function () {
     'use strict';
 
+    /* ════ RUTAS (inyectadas desde blade) ════ */
+    const ROUTES = window.ACTIVITIES_ROUTES ?? {};
+    const CSRF   = ROUTES.csrfToken ?? document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+
+    /* ════ HELPERS FETCH ════ */
+    async function apiFetch(url, method = 'GET', body = null) {
+        const opts = {
+            method,
+            headers: {
+                'Content-Type'  : 'application/json',
+                'X-CSRF-TOKEN'  : CSRF,
+                'Accept'        : 'application/json',
+            },
+        };
+        if (body) opts.body = JSON.stringify(body);
+        const res  = await fetch(url, opts);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message ?? 'Error en la solicitud.');
+        return data;
+    }
+
     /* ════ CATÁLOGO DE ÍCONOS ════ */
     const ICON_CATALOG = {
         'Salud': [
@@ -116,20 +137,17 @@
     /* ════ TABS ════ */
     document.querySelectorAll('.edit-tab').forEach(tab => {
         tab.addEventListener('click', () => {
-            const target = tab.dataset.target;
             document.querySelectorAll('.edit-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.edit-panel').forEach(p => p.classList.remove('active'));
             tab.classList.add('active');
-            const panel = document.getElementById('panel-' + target);
+            const panel = document.getElementById('panel-' + tab.dataset.target);
             if (panel) panel.classList.add('active');
         });
     });
 
-    /* ════ YEAR PICKER — Encabezado (página pública) ════ */
+    /* ════ YEAR PICKER — Encabezado ════ */
     const yearDisplay = document.getElementById('yearDisplay');
     const yearInput   = document.getElementById('anio_activo');
-    const yearDown    = document.getElementById('yearDown');
-    const yearUp      = document.getElementById('yearUp');
     const MIN_YEAR = 2000, MAX_YEAR = 2099;
 
     function animateEl(el, dir) {
@@ -145,18 +163,38 @@
         yearInput.value = val;
         yearDisplay.textContent = val;
         animateEl(yearDisplay, delta > 0 ? 'up' : 'down');
-        if (yearDown) yearDown.disabled = val <= MIN_YEAR;
-        if (yearUp)   yearUp.disabled   = val >= MAX_YEAR;
     }
 
-    yearDown?.addEventListener('click', () => updateYear(-1));
-    yearUp?.addEventListener('click',   () => updateYear(1));
+    document.getElementById('yearDown')?.addEventListener('click', () => updateYear(-1));
+    document.getElementById('yearUp')?.addEventListener('click',   () => updateYear(1));
+
+    /* ════ GUARDAR ENCABEZADO ════ */
+    document.getElementById('btnSaveEncabezado')?.addEventListener('click', async () => {
+        const titulo     = document.getElementById('titulo_seccion')?.value.trim();
+        const subtitulo  = document.getElementById('subtitulo_seccion')?.value.trim();
+        const anoVisible = parseInt(yearInput?.value);
+
+        if (!titulo) {
+            showToast('El título principal es obligatorio.', 'error');
+            document.getElementById('titulo_seccion')?.focus();
+            return;
+        }
+
+        try {
+            const data = await apiFetch(ROUTES.encabezado, 'POST', {
+                titulo_actividad    : titulo,
+                subtitulo_actividad : subtitulo,
+                ano_visible         : anoVisible,
+            });
+            showToast(data.message ?? 'Encabezado guardado.', 'success');
+        } catch (err) {
+            showToast(err.message ?? 'Error al guardar.', 'error');
+        }
+    });
 
     /* ════ FILTRO DE AÑO — Pestaña Actividades ════ */
     const filterYearDisplay = document.getElementById('filterYearDisplay');
     const filterYearInput   = document.getElementById('filter_anio');
-    const filterYearDown    = document.getElementById('filterYearDown');
-    const filterYearUp      = document.getElementById('filterYearUp');
 
     function updateFilterYear(delta) {
         let val = parseInt(filterYearInput.value) + delta;
@@ -164,16 +202,87 @@
         filterYearInput.value = val;
         filterYearDisplay.textContent = val;
         animateEl(filterYearDisplay, delta > 0 ? 'up' : 'down');
-        if (filterYearDown) filterYearDown.disabled = val <= MIN_YEAR;
-        if (filterYearUp)   filterYearUp.disabled   = val >= MAX_YEAR;
-
-        // Aquí puedes disparar un fetch/reload de actividades si en el futuro
-        // cada año tuviera sus propias tarjetas. Por ahora sólo registra el año.
-        // Ejemplo: loadActivitiesForYear(val);
+        loadActivitiesForYear(val);
     }
 
-    filterYearDown?.addEventListener('click', () => updateFilterYear(-1));
-    filterYearUp?.addEventListener('click',   () => updateFilterYear(1));
+    document.getElementById('filterYearDown')?.addEventListener('click', () => updateFilterYear(-1));
+    document.getElementById('filterYearUp')?.addEventListener('click',   () => updateFilterYear(1));
+
+    /* ════ CARGAR ACTIVIDADES POR AÑO (AJAX) ════ */
+    async function loadActivitiesForYear(ano) {
+        const list = document.getElementById('activitiesList');
+        if (!list) return;
+
+        list.style.cssText = 'opacity:0;transition:opacity .2s;';
+
+        try {
+            const url  = ROUTES.byAno.replace(':ano', ano);
+            const data = await apiFetch(url);
+            const acts = data.actividades ?? [];
+
+            list.innerHTML = '';
+
+            if (acts.length === 0) {
+                list.innerHTML = `
+                <div class="act-empty-state">
+                    <i class="fa fa-calendar-xmark"></i>
+                    <p>No hay actividades para <strong>${ano}</strong>.</p>
+                    <span>Agrega la primera actividad con el botón de abajo.</span>
+                </div>`;
+            } else {
+                acts.forEach((act, i) => {
+                    const card = buildCard(i + 1, act);
+                    list.appendChild(card);
+                    initCard(card);
+                });
+                actCount = acts.length;
+            }
+        } catch (err) {
+            showToast('Error al cargar actividades.', 'error');
+        } finally {
+            requestAnimationFrame(() => {
+                list.style.cssText = 'opacity:1;transition:opacity .3s;';
+            });
+        }
+    }
+
+    /* ════ GUARDAR ACTIVIDADES ════ */
+    document.getElementById('btnSaveActividades')?.addEventListener('click', async () => {
+        const ano   = parseInt(filterYearInput?.value);
+        const cards = document.querySelectorAll('#activitiesList .activity-card');
+
+        if (cards.length === 0) {
+            showToast('Agrega al menos una actividad.', 'error');
+            return;
+        }
+
+        const actividades = [];
+        let valid = true;
+
+        cards.forEach((card, i) => {
+            const titulo = card.querySelector(`[name^="act_titulo_"]`)?.value.trim();
+            const icono  = card.querySelector('.icon-hidden-input')?.value.trim();
+            const desc   = card.querySelector(`[name^="act_desc_"]`)?.value.trim();
+
+            if (!titulo) {
+                valid = false;
+                card.setAttribute('data-collapsed', 'false');
+                showToast(`La tarjeta ${i + 1} necesita un título.`, 'error');
+                return;
+            }
+
+            actividades.push({ titulo, icono: icono || 'fa-star', descripcion: desc });
+        });
+
+        if (!valid) return;
+
+        try {
+            const data = await apiFetch(ROUTES.actividades, 'POST', { ano, actividades });
+            showToast(data.message ?? 'Actividades guardadas.', 'success');
+        } catch (err) {
+            showToast(err.message ?? 'Error al guardar.', 'error');
+        }
+    });
 
     /* ════ ACORDEÓN ════ */
     function initAccordion(card) {
@@ -199,13 +308,13 @@
     let activeTarget   = null;
     let activeCategory = 'Todos';
 
-    const picker       = document.getElementById('iconPicker');
-    const backdrop     = document.getElementById('iconPickerBackdrop');
-    const closeBtn     = document.getElementById('iconPickerClose');
-    const searchInput  = document.getElementById('iconSearch');
+    const picker      = document.getElementById('iconPicker');
+    const backdrop    = document.getElementById('iconPickerBackdrop');
+    const closeBtn    = document.getElementById('iconPickerClose');
+    const searchInput = document.getElementById('iconSearch');
     const categoriesEl = document.getElementById('iconCategories');
-    const gridEl       = document.getElementById('iconGrid');
-    const emptyEl      = document.getElementById('iconEmpty');
+    const gridEl      = document.getElementById('iconGrid');
+    const emptyEl     = document.getElementById('iconEmpty');
 
     function renderCategories() {
         const cats = ['Todos', ...Object.keys(ICON_CATALOG)];
@@ -265,10 +374,8 @@
         const { hiddenInput, previewEl, triggerEl, triggerNameEl, triggerClassEl, summaryIconEl } = activeTarget;
 
         hiddenInput.value = ic.cls;
-
         if (previewEl) previewEl.innerHTML = `<i class="fa ${ic.cls}"></i>`;
         if (summaryIconEl) summaryIconEl.textContent = ic.cls;
-
         if (triggerEl) {
             const tp = triggerEl.querySelector('.icon-selector-trigger__preview');
             if (tp) tp.innerHTML = `<i class="fa ${ic.cls}"></i>`;
@@ -279,7 +386,6 @@
         document.querySelectorAll('.icon-item').forEach(el =>
             el.classList.toggle('selected', el.dataset.cls === ic.cls)
         );
-
         setTimeout(closePicker, 220);
     }
 
@@ -326,53 +432,43 @@
         const summaryIconEl = summaryIconId ? document.getElementById(summaryIconId) : null;
         const triggerNameEl  = trigger.querySelector('.icon-selector-trigger__name');
         const triggerClassEl = trigger.querySelector('.icon-selector-trigger__class');
-
         if (!hiddenInput) return;
-
         trigger.addEventListener('click', () => {
             trigger.classList.add('open');
             openPicker({ hiddenInput, previewEl, triggerEl: trigger, triggerNameEl, triggerClassEl, summaryIconEl });
         });
     }
 
-    /* ════ AGREGAR / QUITAR CARDS ════ */
+    /* ════ CARDS — AGREGAR / QUITAR ════ */
     let actCount = document.querySelectorAll('.activity-card').length;
 
     function renumber() {
         document.querySelectorAll('.activity-card').forEach((card, i) => {
             const n = i + 1;
             card.id = `act-${n}`;
-
             const numEl = card.querySelector('.act-card-num');
             if (numEl) numEl.textContent = n;
-
             const toggle = card.querySelector('.activity-card__toggle');
             if (toggle) toggle.dataset.card = `act-${n}`;
-
             ['icon-preview-', 'trigger-preview-', 'trigger-name-', 'trigger-class-',
              'summary-title-', 'summary-icon-'].forEach(prefix => {
                 const el = card.querySelector(`[id^="${prefix}"]`);
                 if (el) el.id = prefix + n;
             });
-
             const hidden = card.querySelector('.icon-hidden-input');
             if (hidden) { hidden.id = `act_icono_${n}`; hidden.name = `act_icono_${n}`; }
-
             const trigger = card.querySelector('.icon-selector-trigger');
             if (trigger) {
                 trigger.dataset.target      = `act_icono_${n}`;
                 trigger.dataset.preview     = `icon-preview-${n}`;
                 trigger.dataset.summaryIcon = `summary-icon-${n}`;
             }
-
             card.querySelectorAll('input[name^="act_titulo_"], textarea[name^="act_desc_"]').forEach(el => {
                 const base = el.name.replace(/_\d+$/, '');
                 el.name = `${base}_${n}`; el.id = `${base}_${n}`;
             });
-
             const titleInput = card.querySelector('.act-title-input');
             if (titleInput) titleInput.dataset.summary = `summary-title-${n}`;
-
             const btnRemove = card.querySelector('.btn-remove-act');
             if (btnRemove) btnRemove.dataset.act = n;
         });
@@ -396,21 +492,27 @@
         if (btnRemove) btnRemove.addEventListener('click', () => removeCard(card));
     }
 
-    function buildCard(n) {
+    function buildCard(n, act = null) {
+        const icono  = act?.icono_actividad  ?? '';
+        const titulo = act?.titulo_actividad ?? '';
+        const desc   = act?.texto_actividad  ?? '';
+        const iconLabel = icono ? icono.replace('fa-', '') : 'Seleccionar ícono';
+
         const card = document.createElement('div');
         card.className = 'activity-card';
         card.id = `act-${n}`;
-        card.setAttribute('data-collapsed', 'false');
+        card.setAttribute('data-collapsed', act ? 'true' : 'false');
+        if (act?.id_actividad) card.dataset.id = act.id_actividad;
         card.style.cssText = 'opacity:0;transform:translateY(8px);';
         card.innerHTML = `
             <div class="activity-card__toggle" data-card="act-${n}">
                 <span class="act-card-num">${n}</span>
                 <span class="act-card-icon" id="icon-preview-${n}">
-                    <i class="fa fa-image"></i>
+                    <i class="fa ${icono || 'fa-image'}"></i>
                 </span>
                 <span class="act-card-summary">
-                    <span class="act-card-summary__title" id="summary-title-${n}">Nueva actividad</span>
-                    <span class="act-card-summary__sub" id="summary-icon-${n}">—</span>
+                    <span class="act-card-summary__title" id="summary-title-${n}">${titulo || 'Nueva actividad'}</span>
+                    <span class="act-card-summary__sub" id="summary-icon-${n}">${icono || '—'}</span>
                 </span>
                 <span class="act-card-actions">
                     <span class="act-card-chevron"><i class="fa fa-chevron-down"></i></span>
@@ -430,20 +532,21 @@
                                  data-preview="icon-preview-${n}"
                                  data-summary-icon="summary-icon-${n}">
                                 <div class="icon-selector-trigger__preview" id="trigger-preview-${n}">
-                                    <i class="fa fa-image"></i>
+                                    <i class="fa ${icono || 'fa-image'}"></i>
                                 </div>
                                 <div class="icon-selector-trigger__info">
-                                    <span class="icon-selector-trigger__name" id="trigger-name-${n}">Seleccionar ícono</span>
-                                    <span class="icon-selector-trigger__class" id="trigger-class-${n}">—</span>
+                                    <span class="icon-selector-trigger__name" id="trigger-name-${n}">${iconLabel}</span>
+                                    <span class="icon-selector-trigger__class" id="trigger-class-${n}">${icono || '—'}</span>
                                 </div>
                                 <span class="icon-selector-trigger__arrow"><i class="fa fa-chevron-down"></i></span>
                             </div>
-                            <input type="hidden" id="act_icono_${n}" name="act_icono_${n}" value="" class="icon-hidden-input">
+                            <input type="hidden" id="act_icono_${n}" name="act_icono_${n}" value="${icono}" class="icon-hidden-input">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="act_titulo_${n}">Título</label>
                         <input type="text" id="act_titulo_${n}" name="act_titulo_${n}"
+                            value="${titulo}"
                             placeholder="Nombre de la actividad..."
                             class="act-title-input" data-summary="summary-title-${n}">
                     </div>
@@ -451,14 +554,15 @@
                 <div class="form-group">
                     <label for="act_desc_${n}">Descripción</label>
                     <textarea id="act_desc_${n}" name="act_desc_${n}" rows="3"
-                        placeholder="Describe la actividad, beneficiarios, alcance..."></textarea>
+                        placeholder="Describe la actividad, beneficiarios, alcance...">${desc}</textarea>
                 </div>
-            </div>
-        `;
+            </div>`;
         return card;
     }
 
     document.getElementById('btnAddAct')?.addEventListener('click', () => {
+        // Quitar estado vacío si existe
+        document.getElementById('actEmptyState')?.remove();
         actCount++;
         const card = buildCard(actCount);
         document.getElementById('activitiesList').appendChild(card);
@@ -486,74 +590,25 @@
         }, 3200);
     }
 
-    /* ════ VALIDACIÓN ════ */
-    const form = document.querySelector('.edit-container form');
-    if (form) {
-        form.addEventListener('submit', e => {
-            e.preventDefault();
-            let valid = true;
-            form.querySelectorAll('input[required]').forEach(field => {
-                field.classList.remove('field--error');
-                field.parentElement.querySelector('.field-error-msg')?.remove();
-                if (!field.value.trim()) {
-                    field.classList.add('field--error');
-                    const msg = document.createElement('span');
-                    msg.className = 'field-error-msg';
-                    msg.textContent = 'Este campo es obligatorio.';
-                    field.insertAdjacentElement('afterend', msg);
-                    field.addEventListener('input', () => {
-                        field.classList.remove('field--error');
-                        field.parentElement.querySelector('.field-error-msg')?.remove();
-                    }, { once: true });
-                    valid = false;
-                }
-            });
-            if (!valid) {
-                showToast('Por favor completa los campos obligatorios.', 'error');
-                const errorField = form.querySelector('.field--error');
-                if (errorField) {
-                    const panel = errorField.closest('.edit-panel');
-                    if (panel && !panel.classList.contains('active')) {
-                        const panelId = panel.id.replace('panel-', '');
-                        document.querySelector(`.edit-tab[data-target="${panelId}"]`)?.click();
-                    }
-                    const card = errorField.closest('.activity-card');
-                    if (card && card.getAttribute('data-collapsed') === 'true') {
-                        card.setAttribute('data-collapsed', 'false');
-                    }
-                    setTimeout(() => errorField.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
-                }
-                return;
-            }
-            showToast('Cambios guardados correctamente.', 'success');
-        });
-    }
-
-    /* ════ INIT ════ */
-    document.querySelectorAll('.activity-card').forEach(card => initCard(card));
-    renderCategories();
-
-    /* ════════════════════════════════════════
-       PANEL AÑOS — Toggle visible / Eliminar
-       ════════════════════════════════════════ */
-
+    /* ════ PANEL AÑOS — Toggle y Eliminar con fetch ════ */
     const confirmOverlay = document.getElementById('yrConfirmOverlay');
     const confirmYear    = document.getElementById('yrConfirmYear');
     const confirmDesc    = document.getElementById('yrConfirmDesc');
     const confirmCancel  = document.getElementById('yrConfirmCancel');
     const confirmDelete  = document.getElementById('yrConfirmDelete');
 
+    let pendingDeleteId   = null;
     let pendingDeleteYear = null;
     let pendingDeleteRow  = null;
 
-    /* ── Abrir modal de confirmación ── */
-    function openDeleteConfirm(year, acts, row) {
+    function openDeleteConfirm(id, year, acts, row) {
+        pendingDeleteId   = id;
         pendingDeleteYear = year;
         pendingDeleteRow  = row;
         confirmYear.textContent = year;
         confirmDesc.textContent = acts > 0
-            ? `Se eliminarán también las ${acts} actividades asociadas a este año. Esta acción no se puede deshacer.`
-            : 'Este año no tiene actividades asociadas. Esta acción no se puede deshacer.';
+            ? `Se eliminarán también las ${acts} actividades de este año. Esta acción no se puede deshacer.`
+            : 'Este año no tiene actividades. Esta acción no se puede deshacer.';
         confirmOverlay.classList.add('open');
         confirmOverlay.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
@@ -563,6 +618,7 @@
         confirmOverlay.classList.remove('open');
         confirmOverlay.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
+        pendingDeleteId   = null;
         pendingDeleteYear = null;
         pendingDeleteRow  = null;
     }
@@ -575,66 +631,72 @@
         if (e.key === 'Escape' && confirmOverlay?.classList.contains('open')) closeDeleteConfirm();
     });
 
-    /* ── Confirmar eliminación ── */
-    confirmDelete?.addEventListener('click', () => {
-        if (!pendingDeleteRow) return;
+    /* ── Confirmar eliminación con fetch ── */
+    confirmDelete?.addEventListener('click', async () => {
+        if (!pendingDeleteRow || !pendingDeleteId) return;
 
-        /* Animación de salida */
-        pendingDeleteRow.style.cssText = 'transition:opacity .22s,transform .22s;opacity:0;transform:translateX(-8px);';
-        const rowToRemove = pendingDeleteRow;
+        const row  = pendingDeleteRow;
+        const year = pendingDeleteYear;
+        const id   = pendingDeleteId;
         closeDeleteConfirm();
 
-        setTimeout(() => {
-            rowToRemove.remove();
-            showToast(`Año ${pendingDeleteYear ?? ''} eliminado correctamente.`, 'success');
+        try {
+            const url  = ROUTES.destroyAno.replace(':id', id);
+            const data = await apiFetch(url, 'DELETE');
 
-            /* Si la tabla quedó vacía mostrar mensaje */
-            const tbody = document.getElementById('yearsTableBody');
-            if (tbody && tbody.querySelectorAll('.year-row').length === 0) {
-                tbody.innerHTML = `
-                <tr>
-                    <td colspan="4" class="yt-empty">
+            row.style.cssText = 'transition:opacity .22s,transform .22s;opacity:0;transform:translateX(-8px);';
+            setTimeout(() => {
+                row.remove();
+                showToast(data.message ?? `Año ${year} eliminado.`, 'success');
+                const tbody = document.getElementById('yearsTableBody');
+                if (tbody && tbody.querySelectorAll('.year-row').length === 0) {
+                    tbody.innerHTML = `
+                    <tr><td colspan="4" class="yt-empty">
                         <i class="fa fa-calendar-xmark"></i>
                         <span>No hay años registrados.</span>
-                    </td>
-                </tr>`;
-            }
-        }, 240);
+                    </td></tr>`;
+                }
+            }, 240);
+        } catch (err) {
+            showToast(err.message ?? 'Error al eliminar.', 'error');
+        }
     });
 
-    /* ── Toggle ocultar / mostrar ── */
-    function handleToggle(btn, row) {
-        const isVisible = row.dataset.visible === 'true';
-        const year      = row.dataset.year;
-        const newVisible = !isVisible;
+    /* ── Toggle visible/oculto con fetch ── */
+    async function handleToggle(btn, row) {
+        const id      = btn.dataset.id;
+        const year    = row.dataset.year;
+        const wasVisible = row.dataset.visible === 'true';
 
-        /* Actualizar data */
-        row.dataset.visible = newVisible ? 'true' : 'false';
-        row.classList.toggle('year-row--hidden', !newVisible);
+        try {
+            const url  = ROUTES.toggleAno.replace(':id', id);
+            const data = await apiFetch(url, 'PATCH');
+            const newVisible = data.visible === 1;
 
-        /* Actualizar celda de estado */
-        const statusCell = row.querySelector('.yt-status');
-        if (statusCell) {
-            statusCell.className = `yt-status yt-status--${newVisible ? 'visible' : 'hidden'}`;
-            statusCell.innerHTML = newVisible
-                ? '<i class="fa fa-eye"></i> Visible'
-                : '<i class="fa fa-eye-slash"></i> Oculto';
+            row.dataset.visible = newVisible ? 'true' : 'false';
+            row.classList.toggle('year-row--hidden', !newVisible);
+
+            const statusCell = row.querySelector('.yt-status');
+            if (statusCell) {
+                statusCell.className = `yt-status yt-status--${newVisible ? 'visible' : 'hidden'}`;
+                statusCell.innerHTML = newVisible
+                    ? '<i class="fa fa-eye"></i> Visible'
+                    : '<i class="fa fa-eye-slash"></i> Oculto';
+            }
+
+            btn.dataset.visible = newVisible ? 'true' : 'false';
+            btn.title = newVisible ? 'Ocultar año' : 'Mostrar año';
+            btn.innerHTML = newVisible
+                ? '<i class="fa fa-eye-slash"></i><span>Ocultar</span>'
+                : '<i class="fa fa-eye"></i><span>Mostrar</span>';
+
+            showToast(data.message ?? `Año ${year} actualizado.`, 'success');
+        } catch (err) {
+            showToast(err.message ?? 'Error al actualizar.', 'error');
         }
-
-        /* Actualizar botón */
-        btn.dataset.visible = newVisible ? 'true' : 'false';
-        btn.title = newVisible ? 'Ocultar año' : 'Mostrar año';
-        btn.innerHTML = newVisible
-            ? '<i class="fa fa-eye-slash"></i><span>Ocultar</span>'
-            : '<i class="fa fa-eye"></i><span>Mostrar</span>';
-
-        showToast(
-            newVisible ? `Año ${year} ahora es visible en la página pública.` : `Año ${year} ocultado de la página pública.`,
-            'success'
-        );
     }
 
-    /* ── Delegación de eventos en la tabla ── */
+    /* ── Delegación de eventos en tabla de años ── */
     document.getElementById('yearsTableBody')?.addEventListener('click', e => {
         const toggleBtn = e.target.closest('.yt-btn--toggle');
         const deleteBtn = e.target.closest('.yt-btn--delete');
@@ -646,10 +708,15 @@
 
         if (deleteBtn) {
             const row  = deleteBtn.closest('.year-row');
+            const id   = deleteBtn.dataset.id;
             const year = deleteBtn.dataset.year;
             const acts = parseInt(deleteBtn.dataset.acts) || 0;
-            if (row) openDeleteConfirm(year, acts, row);
+            if (row) openDeleteConfirm(id, year, acts, row);
         }
     });
+
+    /* ════ INIT ════ */
+    document.querySelectorAll('.activity-card').forEach(card => initCard(card));
+    renderCategories();
 
 })();

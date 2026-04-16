@@ -16,9 +16,11 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\EditPageContactController;
 use App\Http\Controllers\Admin\EditPageBoardController;
 use App\Http\Controllers\Admin\EditPageAlliesController;
+use App\Http\Controllers\Admin\EditPageActivitiesController;
 use App\Http\Controllers\Admin\ProjectEditController;
 use App\Http\Controllers\Admin\FaqEditController;
 use App\Http\Controllers\Page\PublicPageController;
+use App\Http\Controllers\Page\ServicesController;
 use App\Http\Controllers\Page\EventsController;
 
 /* ── Rate limiter para el formulario de contacto ── */
@@ -38,8 +40,13 @@ Route::get('/events/{year}', [EventsController::class, 'show'])
      ->name('events.year')
      ->where('year', '[0-9]{4}');
 
+/* ── Actividades públicas por año (AJAX desde services.js) ── */
+Route::get('/actividades/ano/{ano}', [ServicesController::class, 'actividadesByAno'])
+     ->name('public.actividades.byAno')
+     ->where('ano', '[0-9]{4}');
+
 /* Login */
-Route::get('/login', fn() => view('login'))->name('login');
+Route::get('/login',  fn() => view('login'))->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
 /* Loading */
@@ -87,10 +94,10 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 
     /* ===== CONFIGURACIÓN ===== */
     Route::prefix('settings')->group(function () {
-        Route::get('/',                [SettingsController::class, 'index'])->name('admin.settings');
-        Route::post('/change-password', [SettingsController::class, 'changePassword'])->name('admin.settings.change-password');
-        Route::post('/update-profile',  [SettingsController::class, 'updateProfile'])->name('admin.settings.update-profile');
-        Route::post('/keep-session',    [SettingsController::class, 'keepSession']);
+        Route::get('/',                    [SettingsController::class, 'index'])->name('admin.settings');
+        Route::post('/change-password',    [SettingsController::class, 'changePassword'])->name('admin.settings.change-password');
+        Route::post('/update-profile',     [SettingsController::class, 'updateProfile'])->name('admin.settings.update-profile');
+        Route::post('/keep-session',       [SettingsController::class, 'keepSession']);
     });
 
     /* ===== USUARIOS ===== */
@@ -105,18 +112,28 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     /* ===== EDICIÓN DE PÁGINAS ===== */
     Route::prefix('pages')->group(function () {
 
-        /* Páginas simples (solo vista) */
-        Route::get('/home/edit',       fn() => view('admin.pages.home_edit'))->name('admin.pages.home.edit');
-        Route::get('/about/edit',      fn() => view('admin.pages.about_edit'))->name('admin.pages.about.edit');
-        Route::get('/activities/edit', fn() => view('admin.pages.activities_edit'))->name('admin.pages.activities.edit');
+        /* Páginas simples */
+        Route::get('/home/edit',  fn() => view('admin.pages.home_edit'))->name('admin.pages.home.edit');
+        Route::get('/about/edit', fn() => view('admin.pages.about_edit'))->name('admin.pages.about.edit');
+
+        /* ── Actividades ── */
+        Route::prefix('activities')->group(function () {
+            Route::get('/edit',                [EditPageActivitiesController::class, 'index'])->name('admin.pages.activities.edit');
+            Route::post('/encabezado',         [EditPageActivitiesController::class, 'updateEncabezado'])->name('admin.pages.activities.encabezado');
+            Route::get('/ano/{ano}',           [EditPageActivitiesController::class, 'getByAno'])->name('admin.pages.activities.byAno')->where('ano', '[0-9]{4}');
+            Route::post('/actividades',        [EditPageActivitiesController::class, 'updateActividades'])->name('admin.pages.activities.actividades');
+            Route::patch('/anos/{id}/toggle',  [EditPageActivitiesController::class, 'toggleAno'])->name('admin.pages.activities.toggleAno')->where('id', '[0-9]+');
+            Route::delete('/anos/{id}',        [EditPageActivitiesController::class, 'destroyAno'])->name('admin.pages.activities.destroyAno')->where('id', '[0-9]+');
+            Route::post('/anos',               [EditPageActivitiesController::class, 'storeAno'])->name('admin.pages.activities.storeAno');
+        });
 
         /* ── Aliados ── */
-        Route::get('/allies/edit',    [EditPageAlliesController::class, 'index'])->name('admin.pages.allies.edit');
-        Route::put('/allies/update',  [EditPageAlliesController::class, 'update'])->name('admin.pages.allies.update');
+        Route::get('/allies/edit',   [EditPageAlliesController::class, 'index'])->name('admin.pages.allies.edit');
+        Route::put('/allies/update', [EditPageAlliesController::class, 'update'])->name('admin.pages.allies.update');
 
         /* ── FAQ ── */
-        Route::get('/faq/edit',    [FaqEditController::class, 'edit'])->name('admin.pages.faq.edit');
-        Route::put('/faq/update',  [FaqEditController::class, 'update'])->name('admin.pages.faq.update');
+        Route::get('/faq/edit',   [FaqEditController::class, 'edit'])->name('admin.pages.faq.edit');
+        Route::put('/faq/update', [FaqEditController::class, 'update'])->name('admin.pages.faq.update');
 
         /* ── Proyectos ── */
         Route::prefix('projects')->group(function () {
@@ -132,8 +149,8 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
         });
 
         /* ── Directiva ── */
-        Route::get('/board/edit',    [EditPageBoardController::class, 'index'])->name('admin.pages.board.edit');
-        Route::put('/board/update',  [EditPageBoardController::class, 'update'])->name('admin.pages.board.update');
+        Route::get('/board/edit',   [EditPageBoardController::class, 'index'])->name('admin.pages.board.edit');
+        Route::put('/board/update', [EditPageBoardController::class, 'update'])->name('admin.pages.board.update');
 
         /* ── Contacto ── */
         Route::get('/contact/edit',   [EditPageContactController::class, 'index'])->name('admin.pages.contact.edit');

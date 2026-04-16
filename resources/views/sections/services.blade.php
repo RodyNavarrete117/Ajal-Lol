@@ -3,10 +3,39 @@
   <div class="container">
     <div class="section-title" data-anim="fade-up">
       <h2>Actividades</h2>
-      <p class="sub">Nuestras <span>Actividades 2023</span></p>
+      <p class="sub">Nuestras <span class="year-label-inline">Actividades 2023</span></p>
     </div>
 
-    <div class="activities-grid" role="list">
+    {{-- ── Selector de años ── --}}
+    <div class="year-selector" data-anim="fade-up" role="tablist" aria-label="Seleccionar año de actividades">
+
+      {{-- Años anteriores como "..." --}}
+      <div class="year-selector__dots" id="yearDots">
+        <button class="year-btn year-btn--dots" id="dotsToggle" aria-expanded="false" aria-haspopup="listbox" title="Ver años anteriores">
+          <span>···</span>
+        </button>
+        {{-- Dropdown de años anteriores --}}
+        <div class="year-dropdown" id="yearDropdown" role="listbox" aria-label="Años anteriores">
+          <button class="year-dropdown__item" data-year="2020" role="option">2020</button>
+          <button class="year-dropdown__item" data-year="2021" role="option">2021</button>
+          <button class="year-dropdown__item" data-year="2022" role="option">2022</button>
+        </div>
+      </div>
+
+      <div class="year-selector__divider" aria-hidden="true"></div>
+
+      {{-- Años principales visibles --}}
+      <button class="year-btn" data-year="2023" role="tab" aria-selected="true">2023</button>
+      <button class="year-btn" data-year="2024" role="tab" aria-selected="false">2024</button>
+      <button class="year-btn" data-year="2025" role="tab" aria-selected="false">2025</button>
+
+    </div>
+
+    {{-- ── Grid de actividades ── --}}
+    <div class="activities-grid" role="list" id="activitiesGrid">
+
+      {{-- Las tarjetas se renderizan dinámicamente según el año activo --}}
+      {{-- Por defecto se muestran las de 2023 --}}
 
       <article class="activity-card" data-anim="fade-up" data-delay="0" role="listitem">
         <div class="icon" aria-hidden="true"><i class="fas fa-tooth"></i></div>

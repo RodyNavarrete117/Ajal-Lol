@@ -237,36 +237,6 @@
   }
 }
 
-/* ─── ACTIVIDADES ─── */
-.activities-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; }
-.activity-card {
-  background: var(--white); border-radius: var(--radius-md); padding: 2.2rem 2rem;
-  border: 1px solid var(--rose-pale); transition: var(--transition);
-  position: relative; overflow: hidden; cursor: none;
-}
-.activity-card::before {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(135deg, var(--rose-blush), transparent);
-  opacity: 0; transition: opacity var(--transition);
-}
-.activity-card::after {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, var(--rose-mid), var(--gold), var(--rose-soft));
-  transform: scaleX(0); transform-origin: left; transition: transform var(--transition);
-}
-.activity-card:hover               { transform: translateY(-8px); box-shadow: var(--shadow-md); border-color: var(--rose-soft); }
-.activity-card:hover::before       { opacity: 1; }
-.activity-card:hover::after        { transform: scaleX(1); }
-.activity-card .icon {
-  width: 54px; height: 54px; background: var(--rose-blush); border-radius: var(--radius-sm);
-  display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--rose-mid);
-  margin-bottom: 1.3rem; transition: var(--transition); position: relative; z-index: 1;
-}
-.activity-card:hover .icon { background: var(--rose-deep); color: var(--white); transform: rotate(-5deg) scale(1.05); }
-.activity-card h3 { font-family: var(--font-display); font-size: 1.18rem; color: var(--rose-deep); margin-bottom: .7rem; font-weight: 700; position: relative; z-index: 1; }
-.activity-card p  { font-size: .9rem; color: var(--text-mid); line-height: 1.75; font-weight: 400; position: relative; z-index: 1; }
-@media (max-width: 960px) { .activities-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 580px) { .activities-grid { grid-template-columns: 1fr; } }
 
 /* ─── TEAM ─── */
 .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; justify-items: center; }

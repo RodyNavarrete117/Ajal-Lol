@@ -45,7 +45,7 @@
         ],
         'Comunidad': [
             { cls: 'fa-people-group',   label: 'Grupo de personas'},
-            { cls: 'fa-heart',          label: 'Apoyo'     },
+            { cls: 'fa-heart',          label: 'Apoyo'            },
             { cls: 'fa-house',          label: 'Casa'             },
             { cls: 'fa-utensils',       label: 'Alimentación'     },
             { cls: 'fa-shirt',          label: 'Ropa'             },
@@ -58,16 +58,16 @@
             { cls: 'fa-baby-carriage',  label: 'Bebé'             },
         ],
         'Trabajo': [
-            { cls: 'fa-briefcase',      label: 'Maletín'         },
-            { cls: 'fa-hammer',         label: 'Martillo'        },
-            { cls: 'fa-wrench',         label: 'Herramientas'    },
-            { cls: 'fa-tractor',        label: 'Tractor'         },
-            { cls: 'fa-industry',       label: 'Industria'       },
-            { cls: 'fa-money-bill-wave',label: 'Dinero'          },
-            { cls: 'fa-chart-line',     label: 'Crecimiento'     },
-            { cls: 'fa-handshake',      label: 'Acuerdo'         },
-            { cls: 'fa-bullhorn',       label: 'Anuncio'         },
-            { cls: 'fa-calendar-check', label: 'Evento'          },
+            { cls: 'fa-briefcase',       label: 'Maletín'         },
+            { cls: 'fa-hammer',          label: 'Martillo'        },
+            { cls: 'fa-wrench',          label: 'Herramientas'    },
+            { cls: 'fa-tractor',         label: 'Tractor'         },
+            { cls: 'fa-industry',        label: 'Industria'       },
+            { cls: 'fa-money-bill-wave', label: 'Dinero'          },
+            { cls: 'fa-chart-line',      label: 'Crecimiento'     },
+            { cls: 'fa-handshake',       label: 'Acuerdo'         },
+            { cls: 'fa-bullhorn',        label: 'Anuncio'         },
+            { cls: 'fa-calendar-check',  label: 'Evento'          },
         ],
         'General': [
             { cls: 'fa-star',           label: 'Estrella'        },
@@ -82,32 +82,30 @@
             { cls: 'fa-fire',           label: 'Urgente'         },
             { cls: 'fa-shield-halved',  label: 'Protección'      },
         ],
-                'Animlaes': [
-            { cls: 'fa-kiwi-bird',    label: 'Ave de corral'     }, // alternativa genérica
-            { cls: 'fa-crow',         label: 'Gallo / Gallina'   },
-            { cls: 'fa-egg',          label: 'Huevo'             },
-            { cls: 'fa-drumstick-bite', label: 'Pollo'          },
-            { cls: 'fa-paw',          label: 'Animal de granja'  },
-            { cls: 'fa-horse',        label: 'Caballo'           },
-            { cls: 'fa-cow',          label: 'Vaca'              },
-            { cls: 'fa-dog',          label: 'Animal doméstico'  },
-            { cls: 'fa-wheat-awn',    label: 'Alimento animal'   },
-            { cls: 'fa-tractor',      label: 'Campo'    },
-            { cls: 'fa-bacon',        label: 'Cerdo'             }, // depende de versión FA
+        'Animales': [
+            { cls: 'fa-kiwi-bird',       label: 'Ave de corral'    },
+            { cls: 'fa-crow',            label: 'Gallo / Gallina'  },
+            { cls: 'fa-egg',             label: 'Huevo'            },
+            { cls: 'fa-drumstick-bite',  label: 'Pollo'            },
+            { cls: 'fa-paw',             label: 'Animal de granja' },
+            { cls: 'fa-horse',           label: 'Caballo'          },
+            { cls: 'fa-cow',             label: 'Vaca'             },
+            { cls: 'fa-dog',             label: 'Animal doméstico' },
+            { cls: 'fa-wheat-awn',       label: 'Alimento animal'  },
+            { cls: 'fa-tractor',         label: 'Campo'            },
         ],
-
         'Campo': [
-            { cls: 'fa-tractor',        label: 'Agricultura'        },
-            { cls: 'fa-seedling',       label: 'Siembra'            },
-            { cls: 'fa-leaf',           label: 'Cultivo'            },
-            { cls: 'fa-wheat-awn',      label: 'Cosecha'            },
-            { cls: 'fa-water',          label: 'Riego'              },
-            { cls: 'fa-sun',            label: 'Jornada agrícola'   },
-            { cls: 'fa-cloud-sun',      label: 'Clima'              },
-            { cls: 'fa-bucket',         label: 'Recolección'        },
-            { cls: 'fa-hammer',         label: 'Herramientas'       },
-            { cls: 'fa-people-carry-box', label: 'Apoyo comunitario'},
-            { cls: 'fa-truck',          label: 'Transporte rural'   },
+            { cls: 'fa-tractor',          label: 'Agricultura'        },
+            { cls: 'fa-seedling',         label: 'Siembra'            },
+            { cls: 'fa-leaf',             label: 'Cultivo'            },
+            { cls: 'fa-wheat-awn',        label: 'Cosecha'            },
+            { cls: 'fa-water',            label: 'Riego'              },
+            { cls: 'fa-sun',              label: 'Jornada agrícola'   },
+            { cls: 'fa-cloud-sun',        label: 'Clima'              },
+            { cls: 'fa-bucket',           label: 'Recolección'        },
+            { cls: 'fa-hammer',           label: 'Herramientas'       },
+            { cls: 'fa-people-carry-box', label: 'Apoyo comunitario'  },
+            { cls: 'fa-truck',            label: 'Transporte rural'   },
         ],
     };
 
@@ -127,14 +125,14 @@
         });
     });
 
-    /* ════ YEAR PICKER ════ */
+    /* ════ YEAR PICKER — Encabezado (página pública) ════ */
     const yearDisplay = document.getElementById('yearDisplay');
     const yearInput   = document.getElementById('anio_activo');
     const yearDown    = document.getElementById('yearDown');
     const yearUp      = document.getElementById('yearUp');
     const MIN_YEAR = 2000, MAX_YEAR = 2099;
 
-    function animateYear(el, dir) {
+    function animateEl(el, dir) {
         el.style.cssText = 'transition:none;transform:' + (dir === 'up' ? 'translateY(10px)' : 'translateY(-10px)') + ';opacity:0';
         requestAnimationFrame(() => {
             el.style.cssText = 'transition:transform .18s ease,opacity .18s ease;transform:translateY(0);opacity:1';
@@ -146,7 +144,7 @@
         val = Math.max(MIN_YEAR, Math.min(MAX_YEAR, val));
         yearInput.value = val;
         yearDisplay.textContent = val;
-        animateYear(yearDisplay, delta > 0 ? 'up' : 'down');
+        animateEl(yearDisplay, delta > 0 ? 'up' : 'down');
         if (yearDown) yearDown.disabled = val <= MIN_YEAR;
         if (yearUp)   yearUp.disabled   = val >= MAX_YEAR;
     }
@@ -154,19 +152,40 @@
     yearDown?.addEventListener('click', () => updateYear(-1));
     yearUp?.addEventListener('click',   () => updateYear(1));
 
+    /* ════ FILTRO DE AÑO — Pestaña Actividades ════ */
+    const filterYearDisplay = document.getElementById('filterYearDisplay');
+    const filterYearInput   = document.getElementById('filter_anio');
+    const filterYearDown    = document.getElementById('filterYearDown');
+    const filterYearUp      = document.getElementById('filterYearUp');
+
+    function updateFilterYear(delta) {
+        let val = parseInt(filterYearInput.value) + delta;
+        val = Math.max(MIN_YEAR, Math.min(MAX_YEAR, val));
+        filterYearInput.value = val;
+        filterYearDisplay.textContent = val;
+        animateEl(filterYearDisplay, delta > 0 ? 'up' : 'down');
+        if (filterYearDown) filterYearDown.disabled = val <= MIN_YEAR;
+        if (filterYearUp)   filterYearUp.disabled   = val >= MAX_YEAR;
+
+        // Aquí puedes disparar un fetch/reload de actividades si en el futuro
+        // cada año tuviera sus propias tarjetas. Por ahora sólo registra el año.
+        // Ejemplo: loadActivitiesForYear(val);
+    }
+
+    filterYearDown?.addEventListener('click', () => updateFilterYear(-1));
+    filterYearUp?.addEventListener('click',   () => updateFilterYear(1));
+
     /* ════ ACORDEÓN ════ */
     function initAccordion(card) {
         const toggleDiv = card.querySelector('.activity-card__toggle');
         if (!toggleDiv) return;
         toggleDiv.addEventListener('click', function (e) {
-            // No colapsar si se hizo click en el botón eliminar
             if (e.target.closest('.btn-remove-act')) return;
             const collapsed = card.getAttribute('data-collapsed') === 'true';
             card.setAttribute('data-collapsed', collapsed ? 'false' : 'true');
         });
     }
 
-    /* Sincronizar título en el header al escribir */
     function initTitleSync(card) {
         const input = card.querySelector('.act-title-input');
         if (!input) return;
@@ -247,13 +266,9 @@
 
         hiddenInput.value = ic.cls;
 
-        // Actualizar preview del header de la card
         if (previewEl) previewEl.innerHTML = `<i class="fa ${ic.cls}"></i>`;
-
-        // Actualizar subtext del header (clase del ícono)
         if (summaryIconEl) summaryIconEl.textContent = ic.cls;
 
-        // Actualizar trigger
         if (triggerEl) {
             const tp = triggerEl.querySelector('.icon-selector-trigger__preview');
             if (tp) tp.innerHTML = `<i class="fa ${ic.cls}"></i>`;
@@ -303,12 +318,12 @@
     });
 
     function initTrigger(trigger) {
-        const targetId       = trigger.dataset.target;
-        const previewId      = trigger.dataset.preview;
-        const summaryIconId  = trigger.dataset.summaryIcon;
-        const hiddenInput    = document.getElementById(targetId);
-        const previewEl      = document.getElementById(previewId);
-        const summaryIconEl  = summaryIconId ? document.getElementById(summaryIconId) : null;
+        const targetId      = trigger.dataset.target;
+        const previewId     = trigger.dataset.preview;
+        const summaryIconId = trigger.dataset.summaryIcon;
+        const hiddenInput   = document.getElementById(targetId);
+        const previewEl     = document.getElementById(previewId);
+        const summaryIconEl = summaryIconId ? document.getElementById(summaryIconId) : null;
         const triggerNameEl  = trigger.querySelector('.icon-selector-trigger__name');
         const triggerClassEl = trigger.querySelector('.icon-selector-trigger__class');
 
@@ -334,7 +349,6 @@
             const toggle = card.querySelector('.activity-card__toggle');
             if (toggle) toggle.dataset.card = `act-${n}`;
 
-            // IDs numéricos
             ['icon-preview-', 'trigger-preview-', 'trigger-name-', 'trigger-class-',
              'summary-title-', 'summary-icon-'].forEach(prefix => {
                 const el = card.querySelector(`[id^="${prefix}"]`);
@@ -400,8 +414,7 @@
                 </span>
                 <span class="act-card-actions">
                     <span class="act-card-chevron"><i class="fa fa-chevron-down"></i></span>
-                    <button type="button" class="btn-remove-act" data-act="${n}"
-                        title="Eliminar actividad">
+                    <button type="button" class="btn-remove-act" data-act="${n}" title="Eliminar actividad">
                         <i class="fa fa-xmark"></i>
                     </button>
                 </span>
@@ -504,7 +517,6 @@
                         const panelId = panel.id.replace('panel-', '');
                         document.querySelector(`.edit-tab[data-target="${panelId}"]`)?.click();
                     }
-                    // Abrir el card si está colapsado
                     const card = errorField.closest('.activity-card');
                     if (card && card.getAttribute('data-collapsed') === 'true') {
                         card.setAttribute('data-collapsed', 'false');
@@ -520,5 +532,124 @@
     /* ════ INIT ════ */
     document.querySelectorAll('.activity-card').forEach(card => initCard(card));
     renderCategories();
+
+    /* ════════════════════════════════════════
+       PANEL AÑOS — Toggle visible / Eliminar
+       ════════════════════════════════════════ */
+
+    const confirmOverlay = document.getElementById('yrConfirmOverlay');
+    const confirmYear    = document.getElementById('yrConfirmYear');
+    const confirmDesc    = document.getElementById('yrConfirmDesc');
+    const confirmCancel  = document.getElementById('yrConfirmCancel');
+    const confirmDelete  = document.getElementById('yrConfirmDelete');
+
+    let pendingDeleteYear = null;
+    let pendingDeleteRow  = null;
+
+    /* ── Abrir modal de confirmación ── */
+    function openDeleteConfirm(year, acts, row) {
+        pendingDeleteYear = year;
+        pendingDeleteRow  = row;
+        confirmYear.textContent = year;
+        confirmDesc.textContent = acts > 0
+            ? `Se eliminarán también las ${acts} actividades asociadas a este año. Esta acción no se puede deshacer.`
+            : 'Este año no tiene actividades asociadas. Esta acción no se puede deshacer.';
+        confirmOverlay.classList.add('open');
+        confirmOverlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDeleteConfirm() {
+        confirmOverlay.classList.remove('open');
+        confirmOverlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        pendingDeleteYear = null;
+        pendingDeleteRow  = null;
+    }
+
+    confirmCancel?.addEventListener('click', closeDeleteConfirm);
+    confirmOverlay?.addEventListener('click', e => {
+        if (e.target === confirmOverlay) closeDeleteConfirm();
+    });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && confirmOverlay?.classList.contains('open')) closeDeleteConfirm();
+    });
+
+    /* ── Confirmar eliminación ── */
+    confirmDelete?.addEventListener('click', () => {
+        if (!pendingDeleteRow) return;
+
+        /* Animación de salida */
+        pendingDeleteRow.style.cssText = 'transition:opacity .22s,transform .22s;opacity:0;transform:translateX(-8px);';
+        const rowToRemove = pendingDeleteRow;
+        closeDeleteConfirm();
+
+        setTimeout(() => {
+            rowToRemove.remove();
+            showToast(`Año ${pendingDeleteYear ?? ''} eliminado correctamente.`, 'success');
+
+            /* Si la tabla quedó vacía mostrar mensaje */
+            const tbody = document.getElementById('yearsTableBody');
+            if (tbody && tbody.querySelectorAll('.year-row').length === 0) {
+                tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="yt-empty">
+                        <i class="fa fa-calendar-xmark"></i>
+                        <span>No hay años registrados.</span>
+                    </td>
+                </tr>`;
+            }
+        }, 240);
+    });
+
+    /* ── Toggle ocultar / mostrar ── */
+    function handleToggle(btn, row) {
+        const isVisible = row.dataset.visible === 'true';
+        const year      = row.dataset.year;
+        const newVisible = !isVisible;
+
+        /* Actualizar data */
+        row.dataset.visible = newVisible ? 'true' : 'false';
+        row.classList.toggle('year-row--hidden', !newVisible);
+
+        /* Actualizar celda de estado */
+        const statusCell = row.querySelector('.yt-status');
+        if (statusCell) {
+            statusCell.className = `yt-status yt-status--${newVisible ? 'visible' : 'hidden'}`;
+            statusCell.innerHTML = newVisible
+                ? '<i class="fa fa-eye"></i> Visible'
+                : '<i class="fa fa-eye-slash"></i> Oculto';
+        }
+
+        /* Actualizar botón */
+        btn.dataset.visible = newVisible ? 'true' : 'false';
+        btn.title = newVisible ? 'Ocultar año' : 'Mostrar año';
+        btn.innerHTML = newVisible
+            ? '<i class="fa fa-eye-slash"></i><span>Ocultar</span>'
+            : '<i class="fa fa-eye"></i><span>Mostrar</span>';
+
+        showToast(
+            newVisible ? `Año ${year} ahora es visible en la página pública.` : `Año ${year} ocultado de la página pública.`,
+            'success'
+        );
+    }
+
+    /* ── Delegación de eventos en la tabla ── */
+    document.getElementById('yearsTableBody')?.addEventListener('click', e => {
+        const toggleBtn = e.target.closest('.yt-btn--toggle');
+        const deleteBtn = e.target.closest('.yt-btn--delete');
+
+        if (toggleBtn) {
+            const row = toggleBtn.closest('.year-row');
+            if (row) handleToggle(toggleBtn, row);
+        }
+
+        if (deleteBtn) {
+            const row  = deleteBtn.closest('.year-row');
+            const year = deleteBtn.dataset.year;
+            const acts = parseInt(deleteBtn.dataset.acts) || 0;
+            if (row) openDeleteConfirm(year, acts, row);
+        }
+    });
 
 })();

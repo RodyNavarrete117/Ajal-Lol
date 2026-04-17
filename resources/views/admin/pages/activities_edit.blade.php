@@ -25,15 +25,12 @@
                 <div class="edit-icon"><i class="fa fa-calendar-days"></i></div>
                 <h2>Editar Página Actividades</h2>
             </div>
-            <p class="subtitle">Administra el encabezado, año activo y cada tarjeta de actividad que se muestra en la página pública.</p>
+            <p class="subtitle">Administra las tarjetas de actividad y los años que se muestran en la página pública.</p>
         </div>
 
         {{-- ── Tabs ── --}}
         <div class="edit-tabs-bar">
-            <button class="edit-tab active" data-target="encabezado">
-                <i class="fa fa-heading"></i> Encabezado
-            </button>
-            <button class="edit-tab" data-target="actividades">
+            <button class="edit-tab active" data-target="actividades">
                 <i class="fa fa-list-check"></i> Actividades
             </button>
             <button class="edit-tab" data-target="anos">
@@ -43,55 +40,8 @@
 
         <div class="edit-panels-wrap">
 
-        {{-- ══ PANEL: Encabezado ══ --}}
-        <div class="edit-panel active" id="panel-encabezado">
-            <div class="act-section-title">
-                <i class="fa fa-heading"></i>
-                Encabezado de la página
-            </div>
-            <div class="act-row">
-                <div class="form-group">
-                    <label for="titulo_seccion">Título principal <span class="req">*</span></label>
-                    <input type="text" id="titulo_seccion" name="titulo_seccion"
-                        value="{{ old('titulo_seccion', $encabezado->titulo_actividad ?? '') }}"
-                        placeholder="Ej: Actividades" required>
-                </div>
-                <div class="form-group">
-                    <label>Año visible en página pública</label>
-                    <div class="year-picker">
-                        <button type="button" class="year-picker__btn" id="yearDown" aria-label="Año anterior">
-                            <i class="fa fa-chevron-left"></i>
-                        </button>
-                        <div class="year-picker__display">
-                            <span class="year-picker__value" id="yearDisplay">
-                                {{ old('ano_visible', $encabezado->ano_visible ?? date('Y')) }}
-                            </span>
-                            <span class="year-picker__badge">página pública</span>
-                        </div>
-                        <button type="button" class="year-picker__btn" id="yearUp" aria-label="Año siguiente">
-                            <i class="fa fa-chevron-right"></i>
-                        </button>
-                        <input type="hidden" id="anio_activo" name="ano_visible"
-                            value="{{ old('ano_visible', $encabezado->ano_visible ?? date('Y')) }}">
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="subtitulo_seccion">Subtítulo</label>
-                <input type="text" id="subtitulo_seccion" name="subtitulo_actividad"
-                    value="{{ old('subtitulo_actividad', $encabezado->subtitulo_actividad ?? '') }}"
-                    placeholder="Ej: Nuestras Actividades 2023">
-            </div>
-            <div class="form-actions">
-                <button type="button" class="btn-save" id="btnSaveEncabezado">
-                    <i class="fa fa-floppy-disk"></i> Guardar Cambios
-                </button>
-                <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
-            </div>
-        </div>
-
         {{-- ══ PANEL: Actividades ══ --}}
-        <div class="edit-panel" id="panel-actividades">
+        <div class="edit-panel active" id="panel-actividades">
 
             {{-- ── Filtro de año ── --}}
             <div class="act-year-filter">
@@ -368,10 +318,8 @@
 @endsection
 
 @push('scripts')
-{{-- Rutas para el JS --}}
 <script>
     window.ACTIVITIES_ROUTES = {
-        encabezado  : '{{ route("admin.pages.activities.encabezado") }}',
         actividades : '{{ route("admin.pages.activities.actividades") }}',
         byAno       : '{{ route("admin.pages.activities.byAno", ":ano") }}',
         toggleAno   : '{{ route("admin.pages.activities.toggleAno", ":id") }}',

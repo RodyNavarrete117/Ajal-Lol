@@ -33,13 +33,13 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
   <!-- ── CSS propio (dividido para ahorrar código) ── -->
-  <link href="{{ asset('assets/css/admincss/publicpages/base.css') }}"       rel="stylesheet"> {{-- Variables, reset, utils, cursor, preloader --}}
-  <link href="{{ asset('assets/css/admincss/publicpages/header.css') }}"     rel="stylesheet"> {{-- Header, nav, dropdown --}}
-  <link href="{{ asset('assets/css/admincss/publicpages/sections.css') }}"   rel="stylesheet"> {{-- Hero, about, stats, aliados, actividades, team, mvov, faq --}}
-  <link href="{{ asset('assets/css/admincss/publicpages/activities.css') }}" rel="stylesheet"> {{-- Selector de años — sección Actividades --}}
-  <link href="{{ asset('assets/css/admincss/publicpages/contact.css') }}"    rel="stylesheet"> {{-- Formulario de contacto --}}
-  <link href="{{ asset('assets/css/admincss/publicpages/footer.css') }}"     rel="stylesheet"> {{-- Footer --}}
-  <link href="{{ asset('assets/css/admincss/publicpages/portfolio.css') }}"  rel="stylesheet"> {{-- Sección proyectos (year tabs, grid, lightbox) --}}
+  <link href="{{ asset('assets/css/admincss/publicpages/base.css') }}"       rel="stylesheet">
+  <link href="{{ asset('assets/css/admincss/publicpages/header.css') }}"     rel="stylesheet">
+  <link href="{{ asset('assets/css/admincss/publicpages/sections.css') }}"   rel="stylesheet">
+  <link href="{{ asset('assets/css/admincss/publicpages/activities.css') }}" rel="stylesheet">
+  <link href="{{ asset('assets/css/admincss/publicpages/contact.css') }}"    rel="stylesheet">
+  <link href="{{ asset('assets/css/admincss/publicpages/footer.css') }}"     rel="stylesheet">
+  <link href="{{ asset('assets/css/admincss/publicpages/portfolio.css') }}"  rel="stylesheet">
 
 </head>
 
@@ -60,7 +60,7 @@
     @include('sections.about')
     @include('sections.stats')
     @include('sections.clients')
-    @include('sections.services')   {{-- Actividades con selector de años --}}
+    @include('sections.services')
     @include('sections.portfolio')
     @include('sections.team')
     @include('sections.identity')
@@ -83,9 +83,9 @@
   <!-- ── JS propio (orden importante: utils primero) ── -->
   <script src="{{ asset('assets/js/publicpages/utils.js') }}"></script>
   <script src="{{ asset('assets/js/publicpages/header.js') }}"></script>
-  <script src="{{ asset('assets/js/publicpages/sections.js') }}" defer></script>
+  <script src="{{ asset('assets/js/publicpages/sections.js') }}"></script>
   <script src="{{ asset('assets/js/publicpages/portfolio.js') }}"></script>
-  <script src="{{ asset('assets/js/publicpages/services.js') }}"></script>  {{-- Selector de años — sección Actividades --}}
+  <script src="{{ asset('assets/js/publicpages/services.js') }}"></script>
   <script src="{{ asset('assets/js/publicpages/contact.js') }}"></script>
 
 </body>

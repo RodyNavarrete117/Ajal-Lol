@@ -8,6 +8,9 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.8rem;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity .3s ease, transform .3s ease;
 }
 
 .activity-card {
@@ -249,6 +252,7 @@
     transform: translateY(10px);
     transition: opacity .22s ease, transform .22s ease;
 }
+
 .activities-grid.year-visible {
     opacity: 1;
     transform: translateY(0);

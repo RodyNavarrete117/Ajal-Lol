@@ -12,13 +12,25 @@ class ServicesController extends Controller
     /* ── Actividades por año — ruta pública AJAX ── */
     public function actividadesByAno(int $ano)
     {
+        // Verificar que el año existe y es visible
+        $anoRecord = DB::table('actividad_anos')
+            ->where('id_pagina', self::ID_PAGINA)
+            ->where('ano', $ano)
+            ->where('visible', 1)
+            ->first();
+
+        if (!$anoRecord) {
+            return response()->json([
+                'success'     => false,
+                'actividades' => [],
+                'ano'         => $ano,
+            ], 404);
+        }
+
         $actividades = DB::table('actividades')
-            ->join('actividad_anos', 'actividades.id_ano', '=', 'actividad_anos.id_ano')
-            ->where('actividad_anos.id_pagina', self::ID_PAGINA)
-            ->where('actividad_anos.ano', $ano)
-            ->where('actividad_anos.visible', 1)
-            ->where('actividades.visible', 1)
-            ->orderBy('actividades.orden_actividad')
+            ->where('id_ano', $anoRecord->id_ano)
+            ->where('visible', 1)
+            ->orderBy('orden_actividad')
             ->select('actividades.*')
             ->get();
 

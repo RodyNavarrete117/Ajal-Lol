@@ -90,24 +90,12 @@ class AppServiceProvider extends ServiceProvider
         // ── Actividades: sección services (página pública) ──
         View::composer('sections.services', function ($view) {
 
-            // Encabezado — título, subtítulo y año visible
-            $encabezado = DB::table('actividades_encabezado')
-                ->join('actividad_anos', 'actividades_encabezado.id_ano', '=', 'actividad_anos.id_ano')
-                ->where('actividad_anos.id_pagina', 4)
-                ->select('actividades_encabezado.*')
-                ->first();
-
-            // Año activo a mostrar por defecto
-            $anoVisible = $encabezado->ano_visible ?? null;
-
-            // Si no hay año guardado, usar el más reciente visible
-            if (!$anoVisible) {
-                $anoVisible = DB::table('actividad_anos')
-                    ->where('id_pagina', 4)
-                    ->where('visible', 1)
-                    ->orderBy('ano', 'desc')
-                    ->value('ano') ?? date('Y');
-            }
+            // Año activo: el más reciente con visible = 1
+            $anoVisible = DB::table('actividad_anos')
+                ->where('id_pagina', 4)
+                ->where('visible', 1)
+                ->orderBy('ano', 'desc')
+                ->value('ano') ?? date('Y');
 
             // Años visibles para el selector público
             $anosVisibles = DB::table('actividad_anos')
@@ -126,11 +114,6 @@ class AppServiceProvider extends ServiceProvider
                 ->select('actividades.*')
                 ->get();
 
-            $view->with('act_encabezado',  $encabezado ?? (object)[
-                'titulo_actividad'    => 'Actividades',
-                'subtitulo_actividad' => 'Nuestras Actividades',
-                'ano_visible'         => date('Y'),
-            ]);
             $view->with('act_anos',        $anosVisibles);
             $view->with('act_actividades', $actividades);
             $view->with('act_ano_activo',  $anoVisible);

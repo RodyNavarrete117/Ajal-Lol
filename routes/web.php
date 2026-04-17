@@ -119,7 +119,6 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
         /* ── Actividades ── */
         Route::prefix('activities')->group(function () {
             Route::get('/edit',                [EditPageActivitiesController::class, 'index'])->name('admin.pages.activities.edit');
-            Route::post('/encabezado',         [EditPageActivitiesController::class, 'updateEncabezado'])->name('admin.pages.activities.encabezado');
             Route::get('/ano/{ano}',           [EditPageActivitiesController::class, 'getByAno'])->name('admin.pages.activities.byAno')->where('ano', '[0-9]{4}');
             Route::post('/actividades',        [EditPageActivitiesController::class, 'updateActividades'])->name('admin.pages.activities.actividades');
             Route::patch('/anos/{id}/toggle',  [EditPageActivitiesController::class, 'toggleAno'])->name('admin.pages.activities.toggleAno')->where('id', '[0-9]+');

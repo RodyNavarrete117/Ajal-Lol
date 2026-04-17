@@ -2,11 +2,10 @@
 
   <div class="container">
     <div class="section-title" data-anim="fade-up">
-      <h2>{{ $act_encabezado->titulo_actividad ?? 'Actividades' }}</h2>
+      <h2>Actividades</h2>
       <p class="sub">
-        Nuestras <span class="year-label-inline">
-          {{ $act_encabezado->subtitulo_actividad ?? 'Actividades' }} {{ $act_ano_activo }}
-        </span>
+        Nuestras actividades del:
+        <span class="year-label-inline">{{ $act_ano_activo }}</span>
       </p>
     </div>
 
@@ -41,7 +40,7 @@
       <div class="year-selector__divider" aria-hidden="true"></div>
       @endif
 
-      {{-- Años recientes visibles como pills ── --}}
+      {{-- Años recientes visibles como pills --}}
       @foreach($anosRecientes as $yr)
       <button class="year-btn {{ $yr->ano == $act_ano_activo ? 'active' : '' }}"
               data-year="{{ $yr->ano }}"
@@ -57,11 +56,7 @@
     <div class="activities-grid year-visible" role="list" id="activitiesGrid">
 
       @forelse($act_actividades as $i => $act)
-      @php $delays = [0, 80, 160, 0, 80, 160, 0, 80, 160]; @endphp
-      <article class="activity-card"
-               data-anim="fade-up"
-               data-delay="{{ $delays[$i] ?? 0 }}"
-               role="listitem">
+      <article class="activity-card" role="listitem">
         <div class="icon" aria-hidden="true">
           <i class="fa {{ $act->icono_actividad ?? 'fa-star' }}"></i>
         </div>
@@ -73,7 +68,8 @@
         <div class="year-empty__icon"><i class="fas fa-calendar-xmark"></i></div>
         <p class="year-empty__title">Sin actividades registradas</p>
         <p class="year-empty__sub">
-          No hay actividades disponibles para el año <strong>{{ $act_ano_activo }}</strong>.
+          No hay actividades disponibles para el año
+          <strong>{{ $act_ano_activo }}</strong>.
         </p>
       </div>
       @endforelse

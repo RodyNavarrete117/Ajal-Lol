@@ -11,27 +11,18 @@ class EditPageActivitiesController extends Controller
     private const ID_PAGINA = 4;
 
     /* ══════════════════════════════════════════════════════
-       VISTA PRINCIPAL — carga las 3 pestañas
+       VISTA PRINCIPAL
     ══════════════════════════════════════════════════════ */
     public function index()
     {
-        // Año activo para el filtro (el más reciente visible)
-        $anoActivo = request('ano', optional(
+        $anoActivo = request('ano',
             DB::table('actividad_anos')
                 ->where('id_pagina', self::ID_PAGINA)
                 ->where('visible', 1)
                 ->orderBy('ano', 'desc')
-                ->first()
-        )->ano ?? date('Y'));
+                ->value('ano') ?? date('Y')
+        );
 
-        // Encabezado — llega a pagina via actividad_anos
-        $encabezado = DB::table('actividades_encabezado')
-            ->join('actividad_anos', 'actividades_encabezado.id_ano', '=', 'actividad_anos.id_ano')
-            ->where('actividad_anos.id_pagina', self::ID_PAGINA)
-            ->select('actividades_encabezado.*')
-            ->first();
-
-        // Años registrados con conteo de actividades
         $anos = DB::table('actividad_anos')
             ->where('id_pagina', self::ID_PAGINA)
             ->orderBy('ano', 'desc')
@@ -43,7 +34,6 @@ class EditPageActivitiesController extends Controller
                 return $ano;
             });
 
-        // Actividades del año activo
         $actividades = DB::table('actividades')
             ->join('actividad_anos', 'actividades.id_ano', '=', 'actividad_anos.id_ano')
             ->where('actividad_anos.id_pagina', self::ID_PAGINA)
@@ -53,7 +43,6 @@ class EditPageActivitiesController extends Controller
             ->get();
 
         return view('admin.pages.activities_edit', compact(
-            'encabezado',
             'anos',
             'actividades',
             'anoActivo'
@@ -61,65 +50,25 @@ class EditPageActivitiesController extends Controller
     }
 
     /* ══════════════════════════════════════════════════════
-       PESTAÑA ENCABEZADO — guardar título, subtítulo y año
-    ══════════════════════════════════════════════════════ */
-    public function updateEncabezado(Request $request)
-    {
-        $validated = $request->validate([
-            'titulo_actividad'    => 'required|string|max:150',
-            'subtitulo_actividad' => 'nullable|string|max:255',
-            'ano_visible'         => 'nullable|integer|min:2000|max:2099',
-        ]);
-
-        // Obtener el id_ano del año visible para relacionar el encabezado
-        $anoRecord = null;
-        if (!empty($validated['ano_visible'])) {
-            $anoRecord = DB::table('actividad_anos')
-                ->where('id_pagina', self::ID_PAGINA)
-                ->where('ano', $validated['ano_visible'])
-                ->first();
-        }
-
-        // Buscar encabezado existente via join
-        $encabezadoExistente = DB::table('actividades_encabezado')
-            ->join('actividad_anos', 'actividades_encabezado.id_ano', '=', 'actividad_anos.id_ano')
-            ->where('actividad_anos.id_pagina', self::ID_PAGINA)
-            ->select('actividades_encabezado.id_encabezado')
-            ->first();
-
-        $data = [
-            'titulo_actividad'    => $validated['titulo_actividad'],
-            'subtitulo_actividad' => $validated['subtitulo_actividad'] ?? null,
-            'ano_visible'         => $validated['ano_visible'] ?? null,
-            'id_ano'              => $anoRecord?->id_ano ?? null,
-            'updated_at'          => now(),
-        ];
-
-        if ($encabezadoExistente) {
-            DB::table('actividades_encabezado')
-                ->where('id_encabezado', $encabezadoExistente->id_encabezado)
-                ->update($data);
-        } else {
-            DB::table('actividades_encabezado')
-                ->insert(array_merge($data, ['created_at' => now()]));
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Encabezado guardado correctamente.',
-        ]);
-    }
-
-    /* ══════════════════════════════════════════════════════
        PESTAÑA ACTIVIDADES — obtener tarjetas por año (AJAX)
     ══════════════════════════════════════════════════════ */
     public function getByAno(int $ano)
     {
+        $anoRecord = DB::table('actividad_anos')
+            ->where('id_pagina', self::ID_PAGINA)
+            ->where('ano', $ano)
+            ->first();
+
+        if (!$anoRecord) {
+            return response()->json([
+                'success'     => false,
+                'actividades' => [],
+            ], 404);
+        }
+
         $actividades = DB::table('actividades')
-            ->join('actividad_anos', 'actividades.id_ano', '=', 'actividad_anos.id_ano')
-            ->where('actividad_anos.id_pagina', self::ID_PAGINA)
-            ->where('actividad_anos.ano', $ano)
-            ->orderBy('actividades.orden_actividad')
+            ->where('id_ano', $anoRecord->id_ano)
+            ->orderBy('orden_actividad')
             ->select('actividades.*')
             ->get();
 
@@ -138,12 +87,10 @@ class EditPageActivitiesController extends Controller
             'ano'                       => 'required|integer|min:2000|max:2099',
             'actividades'               => 'required|array|min:1',
             'actividades.*.titulo'      => 'required|string|max:150',
-            'actividades.*.icono'       => 'required|string|max:50',
+            'actividades.*.icono'       => 'required|string|max:100',
             'actividades.*.descripcion' => 'nullable|string',
-            'actividades.*.visible'     => 'nullable|boolean',
         ]);
 
-        // Obtener o crear el año
         $anoRecord = DB::table('actividad_anos')
             ->where('id_pagina', self::ID_PAGINA)
             ->where('ano', $request->ano)
@@ -161,10 +108,7 @@ class EditPageActivitiesController extends Controller
             $idAno = $anoRecord->id_ano;
         }
 
-        // Eliminar actividades anteriores del año y reinsertar
-        DB::table('actividades')
-            ->where('id_ano', $idAno)
-            ->delete();
+        DB::table('actividades')->where('id_ano', $idAno)->delete();
 
         foreach ($request->actividades as $orden => $act) {
             DB::table('actividades')->insert([
@@ -173,7 +117,7 @@ class EditPageActivitiesController extends Controller
                 'icono_actividad'  => $act['icono'],
                 'texto_actividad'  => $act['descripcion'] ?? null,
                 'orden_actividad'  => $orden + 1,
-                'visible'          => $act['visible'] ?? 1,
+                'visible'          => 1,
                 'created_at'       => now(),
                 'updated_at'       => now(),
             ]);
@@ -206,10 +150,7 @@ class EditPageActivitiesController extends Controller
 
         DB::table('actividad_anos')
             ->where('id_ano', $id)
-            ->update([
-                'visible'    => $nuevoEstado,
-                'updated_at' => now(),
-            ]);
+            ->update(['visible' => $nuevoEstado, 'updated_at' => now()]);
 
         return response()->json([
             'success' => true,
@@ -237,20 +178,10 @@ class EditPageActivitiesController extends Controller
             ], 404);
         }
 
-        // Eliminar actividades del año explícitamente
-        DB::table('actividades')
-            ->where('id_ano', $id)
-            ->delete();
-
-        // Eliminar encabezado asociado si existe
-        DB::table('actividades_encabezado')
-            ->where('id_ano', $id)
-            ->delete();
-
-        // Eliminar el año
-        DB::table('actividad_anos')
-            ->where('id_ano', $id)
-            ->delete();
+        // ON DELETE CASCADE lo maneja automáticamente
+        // pero lo dejamos explícito por claridad
+        DB::table('actividades')->where('id_ano', $id)->delete();
+        DB::table('actividad_anos')->where('id_ano', $id)->delete();
 
         return response()->json([
             'success' => true,

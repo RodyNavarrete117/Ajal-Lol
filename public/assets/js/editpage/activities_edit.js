@@ -145,9 +145,9 @@
         });
     });
 
-    /* ════ YEAR PICKER — Encabezado ════ */
-    const yearDisplay = document.getElementById('yearDisplay');
-    const yearInput   = document.getElementById('anio_activo');
+    /* ════ FILTRO DE AÑO — Pestaña Actividades ════ */
+    const filterYearDisplay = document.getElementById('filterYearDisplay');
+    const filterYearInput   = document.getElementById('filter_anio');
     const MIN_YEAR = 2000, MAX_YEAR = 2099;
 
     function animateEl(el, dir) {
@@ -156,45 +156,6 @@
             el.style.cssText = 'transition:transform .18s ease,opacity .18s ease;transform:translateY(0);opacity:1';
         });
     }
-
-    function updateYear(delta) {
-        let val = parseInt(yearInput.value) + delta;
-        val = Math.max(MIN_YEAR, Math.min(MAX_YEAR, val));
-        yearInput.value = val;
-        yearDisplay.textContent = val;
-        animateEl(yearDisplay, delta > 0 ? 'up' : 'down');
-    }
-
-    document.getElementById('yearDown')?.addEventListener('click', () => updateYear(-1));
-    document.getElementById('yearUp')?.addEventListener('click',   () => updateYear(1));
-
-    /* ════ GUARDAR ENCABEZADO ════ */
-    document.getElementById('btnSaveEncabezado')?.addEventListener('click', async () => {
-        const titulo     = document.getElementById('titulo_seccion')?.value.trim();
-        const subtitulo  = document.getElementById('subtitulo_seccion')?.value.trim();
-        const anoVisible = parseInt(yearInput?.value);
-
-        if (!titulo) {
-            showToast('El título principal es obligatorio.', 'error');
-            document.getElementById('titulo_seccion')?.focus();
-            return;
-        }
-
-        try {
-            const data = await apiFetch(ROUTES.encabezado, 'POST', {
-                titulo_actividad    : titulo,
-                subtitulo_actividad : subtitulo,
-                ano_visible         : anoVisible,
-            });
-            showToast(data.message ?? 'Encabezado guardado.', 'success');
-        } catch (err) {
-            showToast(err.message ?? 'Error al guardar.', 'error');
-        }
-    });
-
-    /* ════ FILTRO DE AÑO — Pestaña Actividades ════ */
-    const filterYearDisplay = document.getElementById('filterYearDisplay');
-    const filterYearInput   = document.getElementById('filter_anio');
 
     function updateFilterYear(delta) {
         let val = parseInt(filterYearInput.value) + delta;
@@ -238,7 +199,12 @@
                 actCount = acts.length;
             }
         } catch (err) {
-            showToast('Error al cargar actividades.', 'error');
+            list.innerHTML = `
+            <div class="act-empty-state">
+                <i class="fa fa-calendar-xmark"></i>
+                <p>No hay actividades para <strong>${ano}</strong>.</p>
+                <span>Agrega la primera actividad con el botón de abajo.</span>
+            </div>`;
         } finally {
             requestAnimationFrame(() => {
                 list.style.cssText = 'opacity:1;transition:opacity .3s;';
@@ -308,13 +274,13 @@
     let activeTarget   = null;
     let activeCategory = 'Todos';
 
-    const picker      = document.getElementById('iconPicker');
-    const backdrop    = document.getElementById('iconPickerBackdrop');
-    const closeBtn    = document.getElementById('iconPickerClose');
-    const searchInput = document.getElementById('iconSearch');
+    const picker       = document.getElementById('iconPicker');
+    const backdrop     = document.getElementById('iconPickerBackdrop');
+    const closeBtn     = document.getElementById('iconPickerClose');
+    const searchInput  = document.getElementById('iconSearch');
     const categoriesEl = document.getElementById('iconCategories');
-    const gridEl      = document.getElementById('iconGrid');
-    const emptyEl     = document.getElementById('iconEmpty');
+    const gridEl       = document.getElementById('iconGrid');
+    const emptyEl      = document.getElementById('iconEmpty');
 
     function renderCategories() {
         const cats = ['Todos', ...Object.keys(ICON_CATALOG)];
@@ -561,7 +527,6 @@
     }
 
     document.getElementById('btnAddAct')?.addEventListener('click', () => {
-        // Quitar estado vacío si existe
         document.getElementById('actEmptyState')?.remove();
         actCount++;
         const card = buildCard(actCount);
@@ -666,7 +631,6 @@
     async function handleToggle(btn, row) {
         const id      = btn.dataset.id;
         const year    = row.dataset.year;
-        const wasVisible = row.dataset.visible === 'true';
 
         try {
             const url  = ROUTES.toggleAno.replace(':id', id);

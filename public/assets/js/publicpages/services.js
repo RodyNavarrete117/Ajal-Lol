@@ -15,19 +15,16 @@
     const ROUTE_TEMPLATE = selector.dataset.route ?? '';
     let   activeYear     = parseInt(selector.dataset.anoActivo) || new Date().getFullYear();
 
-    const DELAYS = [0, 80, 160, 0, 80, 160, 0, 80, 160];
-
     /* ── Referencias DOM ── */
     const dotsToggle   = document.getElementById('dotsToggle');
     const yearDropdown = document.getElementById('yearDropdown');
     let   dropdownOpen = false;
 
     /* ════ RENDERIZAR TARJETAS ════ */
-    function buildCard(act, index) {
-        const delay = DELAYS[index] ?? 0;
+    function buildCard(act) {
         const icono = act.icono_actividad ?? 'fa-star';
         return `
-        <article class="activity-card" data-anim="fade-up" data-delay="${delay}" role="listitem">
+        <article class="activity-card" role="listitem">
             <div class="icon" aria-hidden="true"><i class="fa ${icono}"></i></div>
             <h3>${act.titulo_actividad ?? ''}</h3>
             <p>${act.texto_actividad ?? ''}</p>
@@ -51,33 +48,33 @@
         grid.classList.remove('year-visible');
 
         try {
-            const url  = ROUTE_TEMPLATE.replace(':ano', year);
-            const res  = await fetch(url, {
+            const url = ROUTE_TEMPLATE.replace(':ano', year);
+            const res = await fetch(url, {
                 headers: { 'Accept': 'application/json' }
             });
 
-            if (!res.ok) throw new Error('Error al cargar actividades.');
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
             const data = await res.json();
             const acts = data.actividades ?? [];
 
             setTimeout(() => {
                 grid.innerHTML = acts.length
-                    ? acts.map((a, i) => buildCard(a, i)).join('')
+                    ? acts.map(a => buildCard(a)).join('')
                     : buildEmpty(year);
 
-                requestAnimationFrame(() => {
-                    grid.classList.remove('year-transitioning');
-                    grid.classList.add('year-visible');
-                });
+                grid.classList.remove('year-transitioning');
+                void grid.offsetHeight;
+                grid.classList.add('year-visible');
 
-                if (yearLabel) yearLabel.textContent = `Actividades ${year}`;
+                if (yearLabel) yearLabel.textContent = year;
             }, 220);
 
         } catch (err) {
             setTimeout(() => {
                 grid.innerHTML = buildEmpty(year);
                 grid.classList.remove('year-transitioning');
+                void grid.offsetHeight;
                 grid.classList.add('year-visible');
             }, 220);
         }

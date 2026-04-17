@@ -554,7 +554,7 @@
         const hasImages    = cardsOfYear(y).length > 0;
         
         // Verifica si hay imágenes pendientes, deletes o updates
-        const hasPendingWork = pendingImages.filter(Boolean).length > 0 || pendingDeletes.length > 0 || pendingUpdates.length > 0;
+        const hasPendingWork = pendingImages.filter(Boolean).length > 0 || pendingDeletes.length > 0 || pendingUpdates.length > 0 || pendingCatDeletes.length > 0;
 
         if (!hasImages && !hasPendingWork) {
             btnGlobalSave.disabled = true;
@@ -574,6 +574,7 @@
     let pendingImages = [];
     let pendingUpdates = []; 
     let pendingDeletes = [];
+    let pendingCatDeletes = [];
     let editState = { isEditing: false, type: null, idOrIndex: null };
 
     btnGlobalSave?.addEventListener('click', async function () {
@@ -658,6 +659,20 @@
                 }
             }
 
+            // 3.5 ELIMINAR CATEGORÍAS PENDIENTES
+            for (const id of pendingCatDeletes) {
+                try {
+                    const res = await fetch(`/admin/pages/projects/category/${id}`, {
+                        method: 'DELETE',
+                        headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' }
+                    });
+                    if (!res.ok) throw new Error();
+                } catch {
+                    showToast('Error al eliminar una categoría.', 'error');
+                }
+            }
+            pendingCatDeletes = [];
+
             // 4. GUARDAR SUBTÍTULO
             try {
                 await fetch('/admin/pages/projects/year-update', {
@@ -715,45 +730,43 @@
         filterImagesByCat(pill.dataset.cat);
     });
 
-    document.getElementById('catList')?.addEventListener('click', e => {
-        const delBtn = e.target.closest('.cat-item__del');
+    document.getElementById('catPillsManager')?.addEventListener('click', e => {
+        const delBtn = e.target.closest('.cat-mgr-pill__del');
         if (!delBtn) return;
-        const item    = delBtn.closest('.cat-item');
-        const catName = item?.dataset.cat;
-        const catId   = item?.dataset.id;
-        if (!catName) return;
 
-        const token = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+        const pill   = delBtn.closest('.cat-mgr-pill');
+        const catId  = pill?.dataset.id;
+        const catName = pill?.dataset.cat;
+        if (!pill) return;
 
-        fetch(`/admin/pages/projects/category/${catId}`, {
-            method: 'DELETE',
-            headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' }
-        })
-        .then(res => { if (!res.ok) throw new Error(); return res.json(); })
-        .then(() => {
-            item.style.transition = 'opacity 0.2s, transform 0.2s';
-            item.style.opacity = '0'; item.style.transform = 'translateX(8px)';
-            setTimeout(() => {
-                item.remove();
-                document.querySelector(`#catFilter .pill[data-cat="${catName}"]`)?.remove();
-                const sel = document.getElementById('catInput');
-                if (sel) Array.from(sel.options).forEach(o => { if (o.value === catName) o.remove(); });
-            }, 200);
-            showToast(`Categoría "${catName}" eliminada.`);
-        })
-        .catch(() => showToast('Error al eliminar la categoría.', 'error'));
+        const isPending = pill.classList.contains('cat-mgr-pill--pending-del');
+
+        if (isPending) {
+            // Deshacer
+            pill.classList.remove('cat-mgr-pill--pending-del');
+            pendingCatDeletes = pendingCatDeletes.filter(id => id !== catId);
+            delBtn.innerHTML = '<i class="fa fa-xmark"></i>';
+            delBtn.title = 'Marcar para eliminar';
+            showToast(`"${catName}" restaurada.`);
+        } else {
+            // Marcar para eliminar
+            pill.classList.add('cat-mgr-pill--pending-del');
+            pendingCatDeletes.push(catId);
+            delBtn.innerHTML = '<i class="fa fa-rotate-left"></i>';
+            delBtn.title = 'Deshacer';
+            showToast(`"${catName}" marcada para eliminar. Guarda para confirmar.`, 'error');
+        }
+
+        updateGlobalSaveBtn();
     });
-
-    document.getElementById('btnAddCat')?.addEventListener('click', addCategory);
-    document.getElementById('newCatInput')?.addEventListener('keydown', e => { if (e.key === 'Enter') addCategory(); });
 
     function addCategory() {
         const input = document.getElementById('newCatInput');
         const val   = input?.value.trim();
         if (!val) { showToast('Escribe un nombre de categoría.', 'error'); return; }
 
-        const catList = document.getElementById('catList');
-        const exists = Array.from(catList?.querySelectorAll('.cat-item__name') || [])
+        const manager = document.getElementById('catPillsManager');
+        const exists = Array.from(manager?.querySelectorAll('.cat-mgr-pill__name') || [])
                         .some(el => el.textContent.toLowerCase() === val.toLowerCase());
         if (exists) { showToast('Esa categoría ya existe.', 'error'); return; }
 
@@ -766,33 +779,41 @@
         })
         .then(res => { if (!res.ok) throw new Error(); return res.json(); })
         .then(data => {
-            const item = document.createElement('div');
-            item.className = 'cat-item'; 
-            item.dataset.cat = val;
-            item.dataset.id  = data.id;
-            item.innerHTML = `
-                <span class="cat-item__dot"></span>
-                <span class="cat-item__name">${val}</span>
-                <button class="cat-item__del" type="button" title="Eliminar categoría">
+            // Agregar píldora al manager
+            const pill = document.createElement('div');
+            pill.className = 'cat-mgr-pill';
+            pill.dataset.cat = val;
+            pill.dataset.id  = data.id;
+            pill.innerHTML = `
+                <span class="cat-mgr-pill__name">${val}</span>
+                <button class="cat-mgr-pill__del" type="button" title="Marcar para eliminar">
                     <i class="fa fa-xmark"></i>
                 </button>`;
-            catList?.appendChild(item);
+            manager?.appendChild(pill);
 
+            // Agregar al filtro de imágenes
             const filter = document.getElementById('catFilter');
             const btn = document.createElement('button');
             btn.className = 'pill'; btn.dataset.cat = val; btn.type = 'button'; btn.textContent = val;
             filter?.appendChild(btn);
 
-            const sel = document.getElementById('catInput');
-            const opt = document.createElement('option');
-            opt.value = val; opt.textContent = val;
-            sel?.appendChild(opt);
+            // Agregar a las píldoras del modal
+            const catPillsWrap = document.getElementById('catPillsWrap');
+            const modalPill = document.createElement('button');
+            modalPill.type = 'button';
+            modalPill.className = 'cat-pill';
+            modalPill.dataset.value = val;
+            modalPill.textContent = val;
+            catPillsWrap?.appendChild(modalPill);
 
             if (input) input.value = '';
             showToast(`Categoría "${val}" agregada.`);
         })
         .catch(() => showToast('Error al guardar la categoría.', 'error'));
     }
+
+    document.getElementById('btnAddCat')?.addEventListener('click', addCategory);
+    document.getElementById('newCatInput')?.addEventListener('keydown', e => { if (e.key === 'Enter') addCategory(); });
 
     const modalBg     = document.getElementById('imgModalBg');
     const modalForm   = document.getElementById('imgModalForm');
@@ -838,6 +859,14 @@
         editState = { isEditing: false, type: null, idOrIndex: null };
         const uploadText = document.querySelector('.upload-text');
         if(uploadText) uploadText.textContent = 'Haz clic o arrastra una imagen';
+
+        const firstPill = document.querySelector('#catPillsWrap .cat-pill');
+        document.querySelectorAll('#catPillsWrap .cat-pill').forEach(p => p.classList.remove('cat-pill--active'));
+        if (firstPill) {
+            firstPill.classList.add('cat-pill--active');
+            const hidden = document.getElementById('catInput');
+            if (hidden) hidden.value = firstPill.dataset.value;
+        }
 
         openModal();
     });
@@ -927,8 +956,10 @@
             const catInput = document.getElementById('catInput');
             if(catInput && cat !== 'todas') catInput.value = cat;
 
-            const catValueSpan = document.getElementById('catValue');
-            if(catValueSpan && cat !== 'todas') catValueSpan.textContent = cat;
+            // Marcar visualmente la pill correcta
+            document.querySelectorAll('#catPillsWrap .cat-pill').forEach(p => {
+                p.classList.toggle('cat-pill--active', p.dataset.value === cat);
+            });
 
             const dateInput = document.getElementById('eventDateInput');
             if (dateInput && dateISO) {
@@ -1232,13 +1263,10 @@
 
             requestAnimationFrame(() => {
                 if (window.innerWidth > 680) {
-                    cal.style.left  = 'auto';
-                    cal.style.right = '0';
-                    const rect = cal.getBoundingClientRect();
-                    if (window.innerHeight - rect.bottom < 0) {
-                        cal.style.top    = 'auto';
-                        cal.style.bottom = 'calc(100% + 6px)';
-                    }
+                    cal.style.left   = 'auto';
+                    cal.style.right  = '0';
+                    cal.style.top    = 'auto';
+                    cal.style.bottom = 'calc(100% + 6px)'; // ← siempre arriba
                 }
             });
         }
@@ -1332,15 +1360,19 @@
 
     (function() {
         const wrap = document.getElementById('catPillsWrap');
+        if (!wrap) return;
+
+        // Inicializar catInput con la primera píldora al cargar
+        const firstPill = wrap.querySelector('.cat-pill');
         const hidden = document.getElementById('catInput');
-        if (!wrap || !hidden) return;
+        if (firstPill && hidden) hidden.value = firstPill.dataset.value;
 
         wrap.addEventListener('click', e => {
             const pill = e.target.closest('.cat-pill');
             if (!pill) return;
             wrap.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('cat-pill--active'));
             pill.classList.add('cat-pill--active');
-            hidden.value = pill.dataset.value;
+            if (hidden) hidden.value = pill.dataset.value;
         });
     })();
 

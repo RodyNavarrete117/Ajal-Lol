@@ -111,7 +111,7 @@ public function yearDestroy(Request $request)
                             ->where('ano', $request->year) // ← sin ñ
                             ->firstOrFail();
 
-            $cat = ProyectoCategoria::where('nombre', $request->category)->firstOrFail();
+            $cat = ProyectoCategoria::whereRaw('LOWER(TRIM(nombre)) = ?', [strtolower(trim($request->category))])->firstOrFail();
 
             $path = $request->file('image')->store('proyectos', 'public');
 

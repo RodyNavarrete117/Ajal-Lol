@@ -12,7 +12,8 @@ class PublicPageController extends Controller
     {
         $anos = ProyectoAno::where('id_pagina', 5)
                            ->where('visible', true)
-                           ->orderByDesc('ano')
+                           ->whereHas('imagenes') 
+                           ->orderBy('ano')
                            ->get();
 
         $categorias = ProyectoCategoria::orderBy('orden')->get();

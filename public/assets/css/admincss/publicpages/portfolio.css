@@ -238,3 +238,23 @@
   .year-tab     { font-size: .82rem; padding: .5rem 1.2rem; }
 }
 @media (max-width: 480px) { .portfolio-grid { grid-template-columns: 1fr; } }
+
+/* ─── ESTADO VACÍO ─── */
+.portfolio-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-mid);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+.portfolio-empty i {
+    font-size: 48px;
+    opacity: 0.3;
+}
+.portfolio-empty p {
+    font-size: 15px;
+    margin: 0;
+    font-family: var(--font-body);
+}

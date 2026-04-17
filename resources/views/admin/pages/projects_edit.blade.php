@@ -245,20 +245,21 @@
                     Estas categorías son <strong>globales</strong> — se aplican a todos los años.
                     Añade o elimina según lo que necesites.
                 </p>
-                <div class="cat-list" id="catList">
+
+                <div class="cat-pills-manager" id="catPillsManager">
                     @foreach($categoriesObj as $cat)
-                        <div class="cat-item" data-cat="{{ $cat->nombre }}" data-id="{{ $cat->id_categoria }}">
-                            <span class="cat-item__dot"></span>
-                            <span class="cat-item__name">{{ $cat->nombre }}</span>
-                            <button class="cat-item__del" type="button" title="Eliminar categoría">
+                        <div class="cat-mgr-pill" data-cat="{{ $cat->nombre }}" data-id="{{ $cat->id_categoria }}">
+                            <span class="cat-mgr-pill__name">{{ $cat->nombre }}</span>
+                            <button class="cat-mgr-pill__del" type="button" title="Marcar para eliminar">
                                 <i class="fa fa-xmark"></i>
                             </button>
                         </div>
                     @endforeach
                 </div>
+
                 <div class="cat-add-row">
                     <input type="text" id="newCatInput" placeholder="Nueva categoría..."
-                           class="new-cat-input">
+                        class="new-cat-input">
                     <button type="button" class="btn-save btn-save--sm" id="btnAddCat">
                         <i class="fa fa-plus"></i> Agregar
                     </button>
@@ -404,19 +405,20 @@
                     </div>
 
                     <div class="form-group" style="margin-top:16px">
-                      <div style="display:flex; align-items:center; gap:8px; margin-bottom:7px;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:7px;">
                         <label style="margin-bottom:0;">Categoría</label>
                         <span style="font-size:11px; color:var(--text-placeholder);">
                             <i class="fa fa-angles-right"></i> Desliza para ver más
                         </span>
                     </div>
+                    <input type="hidden" id="catInput" name="category" value="{{ $categories[0] ?? '' }}">
                     <div class="cat-pills-wrap" id="catPillsWrap">
-                            @foreach($categories as $cat)
-                                <button type="button"
-                                        class="cat-pill {{ $loop->first ? 'cat-pill--active' : '' }}"
-                                        data-value="{{ $cat }}">{{ $cat }}</button>
-                            @endforeach
-                        </div>
+                        @foreach($categories as $cat)
+                            <button type="button"
+                                    class="cat-pill {{ $loop->first ? 'cat-pill--active' : '' }}"
+                                    data-value="{{ $cat }}">{{ $cat }}</button>
+                        @endforeach
+                    </div>
                     </div>
                 </div>
 

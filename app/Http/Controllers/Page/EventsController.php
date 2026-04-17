@@ -21,7 +21,8 @@ class EventsController extends Controller
 
         $anosVisibles = ProyectoAno::where('id_pagina', 5)
                         ->where('visible', true)
-                        ->orderByDesc('ano')
+                        ->whereHas('imagenes')
+                        ->orderBy('ano')
                         ->get();
 
         // $anos es lo que usa el header para el dropdown

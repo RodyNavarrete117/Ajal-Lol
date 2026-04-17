@@ -12,6 +12,10 @@
                 ${type === 'success' ? '<i class="fa fa-circle-check"></i>' : '<i class="fa fa-circle-exclamation"></i>'}
             </span>
             <span class="edit-toast__msg">${message}</span>`;
+
+        const panelOpen = document.getElementById('detailsPanel')?.classList.contains('open');
+        if (panelOpen && window.innerWidth > 480) toast.style.right = '360px';
+
         document.body.appendChild(toast);
         requestAnimationFrame(() => toast.classList.add('edit-toast--show'));
         setTimeout(() => {
@@ -1443,12 +1447,22 @@
     renderYear();
     setTimeout(updateGlobalSaveBtn, 0);
 
-    // Restaurar tab activo y mostrar toast si venimos de un guardado
     const savedTab = sessionStorage.getItem('activeTab');
     if (savedTab) {
         sessionStorage.removeItem('activeTab');
+        // Activar tab sin disparar scroll
+        document.querySelectorAll('.content-tab').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => {
+            p.style.display = 'none';
+            p.classList.remove('active');
+        });
         const tabBtn = document.querySelector(`.content-tab[data-tab="${savedTab}"]`);
-        if (tabBtn) tabBtn.click();
+        const tabPanel = document.getElementById(
+            savedTab === 'images' ? 'tabImages' : savedTab === 'categories' ? 'tabCategories' : 'tabSettings'
+        );
+        if (tabBtn) tabBtn.classList.add('active');
+        if (tabPanel) { tabPanel.style.display = ''; tabPanel.classList.add('active'); }
+        window.scrollTo(0, 0);
         setTimeout(() => showToast('Guardado correctamente.'), 600);
     }
 
@@ -1465,6 +1479,7 @@
             .field-error-msg { margin-top:4px; font-size:12px; color:#c0392b; font-weight:500; }
             .upload-zone.dragover { border-color:var(--accent) !important; background:var(--accent-light) !important; }
             .dp-day.future { opacity:0.22; cursor:not-allowed; pointer-events:none; }
+            @media(max-width:480px) { .edit-toast { z-index:1099 !important; } }
         `;
         document.head.appendChild(style);
     }
@@ -1491,6 +1506,83 @@
         });
     })();
 
+    function initDetailsPanel() {
+        const panel   = document.getElementById('detailsPanel');
+        const bg      = document.getElementById('detailsPanelBg');
+        const closeBtn = document.getElementById('detailsPanelClose');
+
+        function openPanel(card) {
+            const img   = card.querySelector('.img-thumb img')?.src ?? '';
+            const title = card.querySelector('.img-title')?.textContent?.trim() ?? '—';
+            const desc  = card.querySelector('.img-desc')?.textContent?.trim() ?? '—';
+            const cat   = card.querySelector('.cat-badge')?.textContent?.trim() ?? '—';
+            const date  = card.querySelector('.img-date')?.textContent?.trim() ?? '—';
+            const id    = card.dataset.id ?? '—';
+
+            document.getElementById('detailsPanelHeroBg').style.backgroundImage = `url('${img}')`;
+            document.getElementById('detailsPanelTitle').textContent = title;
+            document.getElementById('detailsPanelDesc').textContent  = desc;
+            document.getElementById('detailsPanelCat').textContent   = cat;
+            document.getElementById('detailsPanelDate').textContent  = date;
+            document.getElementById('detailsPanelId').textContent    = id;
+
+            panel.dataset.cardId = card.dataset.id ?? '';
+            panel.dataset.cardPendingIndex = card.dataset.pendingIndex ?? '';
+            panel.dataset.isPending = card.classList.contains('pending-card') ? '1' : '0';
+
+            panel?.classList.add('open');
+            bg?.classList.add('open');
+
+            // Mover toast si existe
+            const toast = document.querySelector('.edit-toast');
+            if (toast && window.innerWidth > 480) toast.style.right = '360px';
+        }
+
+        function closePanel() {
+            panel?.classList.remove('open');
+            bg?.classList.remove('open');
+
+            const toast = document.querySelector('.edit-toast');
+            if (toast) toast.style.right = '26px';
+        }
+
+        closeBtn?.addEventListener('click', closePanel);
+        // Botón Editar del panel
+        document.getElementById('detailsPanelEdit')?.addEventListener('click', () => {
+            const id = panel.dataset.cardId;
+            const isPending = panel.dataset.isPending === '1';
+            closePanel();
+            setTimeout(() => {
+                const btn = isPending
+                    ? document.querySelector(`.pending-card[data-pending-index="${panel.dataset.cardPendingIndex}"] .btn-edit-img`)
+                    : document.querySelector(`.img-card[data-id="${id}"] .btn-edit-img`);
+                btn?.click();
+            }, 300);
+        });
+
+        // Botón Eliminar del panel
+        document.getElementById('detailsPanelDel')?.addEventListener('click', () => {
+            const id = panel.dataset.cardId;
+            closePanel();
+            setTimeout(() => {
+                const btn = document.querySelector(`.img-card[data-id="${id}"] .btn-del-img`);
+                btn?.click();
+            }, 300);
+        });
+        bg?.addEventListener('click', closePanel);
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closePanel();
+        });
+
+        document.getElementById('imgGrid')?.addEventListener('click', e => {
+            const btn = e.target.closest('.overlay-details-btn');
+            if (!btn) return;
+            const card = btn.closest('.img-card');
+            if (card) openPanel(card);
+        });
+    }
+
+    initDetailsPanel();
     initCatDragAndDrop();
 
 })();   

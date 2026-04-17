@@ -328,6 +328,48 @@
     </div>{{-- /.edit-container --}}
 </div>{{-- /.edit-card --}}
 
+{{-- PANEL LATERAL — Detalles de imagen --}}
+<div class="details-panel-bg" id="detailsPanelBg"></div>
+    <div class="details-panel" id="detailsPanel">
+
+    {{-- Header mínimo --}}
+    <button class="details-panel__close" id="detailsPanelClose" type="button">
+        <i class="fa fa-xmark"></i>
+    </button>
+
+    {{-- Hero con imagen de fondo --}}
+    <div class="details-panel__hero">
+        <div class="details-panel__hero-bg" id="detailsPanelHeroBg"></div>
+        <div class="details-panel__hero-overlay"></div>
+        <div class="details-panel__hero-content">
+            <span class="details-panel__cat-badge" id="detailsPanelCat">—</span>
+            <h2 class="details-panel__hero-title" id="detailsPanelTitle">—</h2>
+            <div class="details-panel__hero-meta">
+                <span><i class="fa fa-calendar-day"></i> <span id="detailsPanelDate">—</span></span>
+                <span><i class="fa fa-fingerprint"></i> ID <span id="detailsPanelId">—</span></span>
+            </div>
+        </div>
+    </div>
+
+    {{-- Cuerpo --}}
+    <div class="details-panel__body">
+        <div class="details-panel__field">
+            <span class="details-panel__label"><i class="fa fa-align-left"></i> Descripción</span>
+            <span class="details-panel__value" id="detailsPanelDesc">—</span>
+        </div>
+    </div>
+
+    {{-- Acciones --}}
+    <div class="details-panel__actions">
+        <button class="details-panel__btn-edit" id="detailsPanelEdit" type="button">
+            <i class="fa fa-pen"></i> Editar imagen
+        </button>
+        <button class="details-panel__btn-del" id="detailsPanelDel" type="button">
+            <i class="fa fa-trash-can"></i>
+        </button>
+    </div>
+</div>
+
 </div>{{-- /.edit-page-wrapper --}}
 
 {{-- MODAL — Añadir / Editar imagen --}}
@@ -465,47 +507,7 @@
     </div>
 </div>
 
-{{-- PANEL LATERAL — Detalles de imagen --}}
-<div class="details-panel-bg" id="detailsPanelBg"></div>
-    <div class="details-panel" id="detailsPanel">
 
-    {{-- Header mínimo --}}
-    <button class="details-panel__close" id="detailsPanelClose" type="button">
-        <i class="fa fa-xmark"></i>
-    </button>
-
-    {{-- Hero con imagen de fondo --}}
-    <div class="details-panel__hero">
-        <div class="details-panel__hero-bg" id="detailsPanelHeroBg"></div>
-        <div class="details-panel__hero-overlay"></div>
-        <div class="details-panel__hero-content">
-            <span class="details-panel__cat-badge" id="detailsPanelCat">—</span>
-            <h2 class="details-panel__hero-title" id="detailsPanelTitle">—</h2>
-            <div class="details-panel__hero-meta">
-                <span><i class="fa fa-calendar-day"></i> <span id="detailsPanelDate">—</span></span>
-                <span><i class="fa fa-fingerprint"></i> ID <span id="detailsPanelId">—</span></span>
-            </div>
-        </div>
-    </div>
-
-    {{-- Cuerpo --}}
-    <div class="details-panel__body">
-        <div class="details-panel__field">
-            <span class="details-panel__label"><i class="fa fa-align-left"></i> Descripción</span>
-            <span class="details-panel__value" id="detailsPanelDesc">—</span>
-        </div>
-    </div>
-
-    {{-- Acciones --}}
-    <div class="details-panel__actions">
-        <button class="details-panel__btn-edit" id="detailsPanelEdit" type="button">
-            <i class="fa fa-pen"></i> Editar imagen
-        </button>
-        <button class="details-panel__btn-del" id="detailsPanelDel" type="button">
-            <i class="fa fa-trash-can"></i>
-        </button>
-    </div>
-</div>
 
 @endsection
 

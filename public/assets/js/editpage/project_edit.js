@@ -733,10 +733,11 @@
             pendingDeletes = [];
             pendingUpdates = [];
             
-            // Guardar qué tab estaba activo antes de recargar
+            // Guardar qué tab y año estaba activo antes de recargar
             const activeTab = document.querySelector('.content-tab.active')?.dataset.tab ?? 'images';
             sessionStorage.setItem('activeTab', activeTab);
-            
+            sessionStorage.setItem('activeYear', currentYear());
+
             window.location.reload();
     });
 
@@ -809,6 +810,16 @@
             delBtn.title = 'Marcar para eliminar';
             showToast(`"${catName}" restaurada.`);
         } else {
+            // Verificar si hay imágenes que usan esta categoría
+            const imagenesEnUso = Array.from(document.querySelectorAll(`#imgGrid .img-card[data-cat="${catName}"]`))
+                .filter(card => !card.classList.contains('pending-card'));
+
+            if (imagenesEnUso.length > 0) {
+                const añosEnUso = [...new Set(imagenesEnUso.map(card => card.dataset.year))].sort().join(', ');
+                showToast(`No se puede eliminar "${catName}" — está en uso en: ${añosEnUso}. Reasigna o elimina esas imágenes primero.`, 'error');
+                return;
+            }
+
             // Marcar para eliminar
             pill.classList.add('cat-mgr-pill--pending-del');
             pendingCatDeletes.push(catId);
@@ -1444,6 +1455,14 @@
         const idx = years.indexOf(initialYear);
         if (idx !== -1) currentIdx = idx;
     }
+
+    const savedYear = sessionStorage.getItem('activeYear');
+    if (savedYear) {
+        sessionStorage.removeItem('activeYear');
+        const idx = years.indexOf(savedYear);
+        if (idx !== -1) currentIdx = idx;
+    }
+
     renderYear();
     setTimeout(updateGlobalSaveBtn, 0);
 
@@ -1536,6 +1555,11 @@
             // Mover toast si existe
             const toast = document.querySelector('.edit-toast');
             if (toast && window.innerWidth > 480) toast.style.right = '360px';
+
+            // Ocultar sidebar en móvil cuando el panel abre
+            if (window.innerWidth <= 768) {
+                document.querySelector('.sidebar')?.style.setProperty('display', 'none');
+            }
         }
 
         function closePanel() {
@@ -1544,6 +1568,11 @@
 
             const toast = document.querySelector('.edit-toast');
             if (toast) toast.style.right = '26px';
+
+            // Restaurar sidebar al cerrar
+            if (window.innerWidth <= 768) {
+                document.querySelector('.sidebar')?.style.setProperty('display', '');
+            }
         }
 
         closeBtn?.addEventListener('click', closePanel);

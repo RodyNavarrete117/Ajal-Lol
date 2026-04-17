@@ -554,7 +554,7 @@
         const hasImages    = cardsOfYear(y).length > 0;
         
         // Verifica si hay imágenes pendientes, deletes o updates
-        const hasPendingWork = pendingImages.filter(Boolean).length > 0 || pendingDeletes.length > 0 || pendingUpdates.length > 0 || pendingCatDeletes.length > 0;
+        const hasPendingWork = pendingImages.filter(Boolean).length > 0 || pendingDeletes.length > 0 || pendingUpdates.length > 0 || pendingCatDeletes.length > 0 || pendingCatNews.length > 0;
 
         if (!hasImages && !hasPendingWork) {
             btnGlobalSave.disabled = true;
@@ -573,6 +573,7 @@
     // LISTAS PRINCIPALES DEL SISTEMA
     let pendingImages = [];
     let pendingUpdates = []; 
+    let pendingCatNews = [];
     let pendingDeletes = [];
     let pendingCatDeletes = [];
     let editState = { isEditing: false, type: null, idOrIndex: null };
@@ -673,6 +674,25 @@
             }
             pendingCatDeletes = [];
 
+            // 3.6 CREAR CATEGORÍAS NUEVAS
+            const manager = document.getElementById('catPillsManager');
+            for (const nombre of pendingCatNews) {
+                try {
+                    const res = await fetch('/admin/pages/projects/category', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
+                        body: JSON.stringify({ nombre })
+                    });
+                    if (!res.ok) throw new Error();
+                    const data = await res.json();
+                    const pill = manager?.querySelector(`.cat-mgr-pill--pending-new[data-cat="${nombre}"]`);
+                    if (pill) { pill.dataset.id = data.id; pill.classList.remove('cat-mgr-pill--pending-new'); }
+                } catch {
+                    showToast(`Error al guardar la categoría "${nombre}".`, 'error');
+                }
+            }
+            pendingCatNews = [];
+
             // 4. GUARDAR SUBTÍTULO
             try {
                 await fetch('/admin/pages/projects/year-update', {
@@ -739,6 +759,18 @@
         const catName = pill?.dataset.cat;
         if (!pill) return;
 
+        // Si es nueva y aún no guardada, simplemente quitarla
+        if (pill.classList.contains('cat-mgr-pill--pending-new')) {
+            const nombre = pill.dataset.cat;
+            pendingCatNews = pendingCatNews.filter(n => n !== nombre);
+            pill.remove();
+            document.querySelector(`#catFilter .pill[data-cat="${nombre}"]`)?.remove();
+            document.querySelector(`#catPillsWrap .cat-pill[data-value="${nombre}"]`)?.remove();
+            updateGlobalSaveBtn();
+            showToast(`Categoría "${nombre}" descartada.`);
+            return;
+        }
+
         const isPending = pill.classList.contains('cat-mgr-pill--pending-del');
 
         if (isPending) {
@@ -770,46 +802,39 @@
                         .some(el => el.textContent.toLowerCase() === val.toLowerCase());
         if (exists) { showToast('Esa categoría ya existe.', 'error'); return; }
 
-        const token = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+        // Agregar píldora al manager como pendiente (sin guardar aún)
+        const pill = document.createElement('div');
+        pill.className = 'cat-mgr-pill cat-mgr-pill--pending-new';
+        pill.dataset.cat = val;
+        pill.dataset.id  = ''; // sin id hasta guardar
+        pill.innerHTML = `
+            <span class="cat-mgr-pill__name">${val}</span>
+            <button class="cat-mgr-pill__del" type="button" title="Quitar">
+                <i class="fa fa-xmark"></i>
+            </button>`;
+        manager?.appendChild(pill);
 
-        fetch('/admin/pages/projects/category', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
-            body: JSON.stringify({ nombre: val })
-        })
-        .then(res => { if (!res.ok) throw new Error(); return res.json(); })
-        .then(data => {
-            // Agregar píldora al manager
-            const pill = document.createElement('div');
-            pill.className = 'cat-mgr-pill';
-            pill.dataset.cat = val;
-            pill.dataset.id  = data.id;
-            pill.innerHTML = `
-                <span class="cat-mgr-pill__name">${val}</span>
-                <button class="cat-mgr-pill__del" type="button" title="Marcar para eliminar">
-                    <i class="fa fa-xmark"></i>
-                </button>`;
-            manager?.appendChild(pill);
+        // Agregar al filtro de imágenes
+        const filter = document.getElementById('catFilter');
+        const btn = document.createElement('button');
+        btn.className = 'pill'; btn.dataset.cat = val; btn.type = 'button'; btn.textContent = val;
+        filter?.appendChild(btn);
 
-            // Agregar al filtro de imágenes
-            const filter = document.getElementById('catFilter');
-            const btn = document.createElement('button');
-            btn.className = 'pill'; btn.dataset.cat = val; btn.type = 'button'; btn.textContent = val;
-            filter?.appendChild(btn);
+        // Agregar a las píldoras del modal
+        const catPillsWrap = document.getElementById('catPillsWrap');
+        const modalPill = document.createElement('button');
+        modalPill.type = 'button';
+        modalPill.className = 'cat-pill';
+        modalPill.dataset.value = val;
+        modalPill.textContent = val;
+        catPillsWrap?.appendChild(modalPill);
 
-            // Agregar a las píldoras del modal
-            const catPillsWrap = document.getElementById('catPillsWrap');
-            const modalPill = document.createElement('button');
-            modalPill.type = 'button';
-            modalPill.className = 'cat-pill';
-            modalPill.dataset.value = val;
-            modalPill.textContent = val;
-            catPillsWrap?.appendChild(modalPill);
+        // Agregar a la lista de pendientes para crear
+        pendingCatNews.push(val);
 
-            if (input) input.value = '';
-            showToast(`Categoría "${val}" agregada.`);
-        })
-        .catch(() => showToast('Error al guardar la categoría.', 'error'));
+        if (input) input.value = '';
+        updateGlobalSaveBtn();
+        showToast(`Categoría "${val}" lista para guardar.`);
     }
 
     document.getElementById('btnAddCat')?.addEventListener('click', addCategory);

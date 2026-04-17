@@ -188,4 +188,13 @@ public function yearDestroy(Request $request)
         ProyectoCategoria::findOrFail($id)->delete();
         return response()->json(['ok' => true]);
     }
+
+    public function categoryOrder(Request $request)
+    {
+        foreach ($request->orden as $item) {
+            ProyectoCategoria::where('id_categoria', $item['id'])
+                ->update(['orden' => $item['orden']]);
+        }
+        return response()->json(['ok' => true]);
+    }
 }

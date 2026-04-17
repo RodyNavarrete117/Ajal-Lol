@@ -554,7 +554,7 @@
         const hasImages    = cardsOfYear(y).length > 0;
         
         // Verifica si hay imágenes pendientes, deletes o updates
-        const hasPendingWork = pendingImages.filter(Boolean).length > 0 || pendingDeletes.length > 0 || pendingUpdates.length > 0 || pendingCatDeletes.length > 0 || pendingCatNews.length > 0;
+        const hasPendingWork = pendingImages.filter(Boolean).length > 0 || pendingDeletes.length > 0 || pendingUpdates.length > 0 || pendingCatDeletes.length > 0 || pendingCatNews.length > 0 || pendingCatOrder;;
 
         if (!hasImages && !hasPendingWork) {
             btnGlobalSave.disabled = true;
@@ -576,6 +576,7 @@
     let pendingCatNews = [];
     let pendingDeletes = [];
     let pendingCatDeletes = [];
+    let pendingCatOrder = false;
     let editState = { isEditing: false, type: null, idOrIndex: null };
 
     btnGlobalSave?.addEventListener('click', async function () {
@@ -693,6 +694,25 @@
             }
             pendingCatNews = [];
 
+            // 3.7 GUARDAR ORDEN DE CATEGORÍAS
+            if (pendingCatOrder) {
+                const manager = document.getElementById('catPillsManager');
+                const orden = Array.from(manager?.querySelectorAll('.cat-mgr-pill') || [])
+                    .filter(p => p.dataset.id)
+                    .map((p, i) => ({ id: p.dataset.id, orden: i + 1 }));
+
+                try {
+                    await fetch('/admin/pages/projects/category-order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
+                        body: JSON.stringify({ orden })
+                    });
+                } catch {
+                    showToast('Error al guardar el orden.', 'error');
+                }
+                pendingCatOrder = false;
+            }
+
             // 4. GUARDAR SUBTÍTULO
             try {
                 await fetch('/admin/pages/projects/year-update', {
@@ -708,8 +728,12 @@
             pendingImages = [];
             pendingDeletes = [];
             pendingUpdates = [];
-            showToast(`Año ${y} guardado correctamente.`);
-            setTimeout(() => window.location.reload(), 1200);
+            
+            // Guardar qué tab estaba activo antes de recargar
+            const activeTab = document.querySelector('.content-tab.active')?.dataset.tab ?? 'images';
+            sessionStorage.setItem('activeTab', activeTab);
+            
+            window.location.reload();
     });
 
     subtitleInput?.addEventListener('input', updateGlobalSaveBtn);
@@ -836,6 +860,63 @@
         updateGlobalSaveBtn();
         showToast(`Categoría "${val}" lista para guardar.`);
     }
+
+    function initCatDragAndDrop() {
+    const manager = document.getElementById('catPillsManager');
+    if (!manager) return;
+
+    let dragSrc = null;
+
+    manager.addEventListener('dragstart', e => {
+        const pill = e.target.closest('.cat-mgr-pill');
+        if (!pill) return;
+        dragSrc = pill;
+        pill.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+    });
+
+    manager.addEventListener('dragend', e => {
+        const pill = e.target.closest('.cat-mgr-pill');
+        if (pill) pill.classList.remove('dragging');
+        manager.classList.remove('drag-over-active');
+        dragSrc = null;
+    });
+
+    manager.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        const pill = e.target.closest('.cat-mgr-pill');
+        if (!pill || pill === dragSrc) return;
+        manager.classList.add('drag-over-active');
+
+        const rect = pill.getBoundingClientRect();
+        const mid  = rect.left + rect.width / 2;
+        if (e.clientX < mid) {
+            manager.insertBefore(dragSrc, pill);
+        } else {
+            manager.insertBefore(dragSrc, pill.nextSibling);
+        }
+    });
+
+    manager.addEventListener('drop', e => {
+        e.preventDefault();
+        pendingCatOrder = true;
+        updateGlobalSaveBtn();
+        showToast('Orden cambiado. Guarda para confirmar.');
+    });
+
+    // Hacer las píldoras arrastrables
+    function makeDraggable() {
+        manager.querySelectorAll('.cat-mgr-pill').forEach(pill => {
+            pill.setAttribute('draggable', 'true');
+        });
+    }
+
+    makeDraggable();
+
+    // Observer para nuevas píldoras que se agreguen dinámicamente
+    new MutationObserver(makeDraggable).observe(manager, { childList: true });
+}
 
     document.getElementById('btnAddCat')?.addEventListener('click', addCategory);
     document.getElementById('newCatInput')?.addEventListener('keydown', e => { if (e.key === 'Enter') addCategory(); });
@@ -1362,6 +1443,15 @@
     renderYear();
     setTimeout(updateGlobalSaveBtn, 0);
 
+    // Restaurar tab activo y mostrar toast si venimos de un guardado
+    const savedTab = sessionStorage.getItem('activeTab');
+    if (savedTab) {
+        sessionStorage.removeItem('activeTab');
+        const tabBtn = document.querySelector(`.content-tab[data-tab="${savedTab}"]`);
+        if (tabBtn) tabBtn.click();
+        setTimeout(() => showToast('Guardado correctamente.'), 600);
+    }
+
     if (!document.getElementById('edit-page-js-styles')) {
         const style = document.createElement('style');
         style.id = 'edit-page-js-styles';
@@ -1400,5 +1490,7 @@
             if (hidden) hidden.value = pill.dataset.value;
         });
     })();
+
+    initCatDragAndDrop();
 
 })();   

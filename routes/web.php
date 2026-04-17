@@ -146,6 +146,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
             Route::delete('/image/{id}',    [ProjectEditController::class, 'imageDestroy'])->name('admin.projects.image.destroy');
             Route::post('/category',        [ProjectEditController::class, 'categoryStore'])->name('admin.projects.category.store');
             Route::delete('/category/{id}', [ProjectEditController::class, 'categoryDestroy'])->name('admin.projects.category.destroy');
+            Route::post('/category-order', [ProjectEditController::class, 'categoryOrder'])->name('admin.projects.category.order');
         });
 
         /* ── Directiva ── */

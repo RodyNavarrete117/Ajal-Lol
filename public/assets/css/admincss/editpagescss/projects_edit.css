@@ -762,3 +762,14 @@
     color: #2d7d46;
     border-style: dashed;
 }
+
+.cat-mgr-pill.dragging {
+    opacity: 0.4;
+    cursor: grabbing;
+}
+.cat-mgr-pill {
+    cursor: grab;
+}
+.cat-pills-manager.drag-over-active .cat-mgr-pill:not(.dragging) {
+    transition: transform 0.15s ease;
+}

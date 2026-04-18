@@ -100,12 +100,6 @@
                 </button>
 
             </div>{{-- /.year-selector --}}
-
-            {{-- Dentro de .edit-hero__inner, después del .year-selector --}}
-            <button type="button" class="btn-hero-save" id="btnGlobalSave" disabled>
-                <i class="fa fa-floppy-disk" id="btnGlobalSaveIcon"></i>
-                <span id="btnGlobalSaveLabel">Guardar</span>
-            </button>
         </div>
 
         {{-- Formulario agregar año: select con años disponibles --}}
@@ -217,11 +211,14 @@
                             <p class="img-desc">{{ $img->description ?: 'Sin descripción.' }}</p>
                             <div class="img-actions">
                                 <button class="btn-edit-img" type="button"
-                                        data-id="{{ $img->id }}">Editar</button>
+                                        data-id="{{ $img->id }}">
+                                    <i class="fa fa-pen"></i> Editar
+                                </button>
                                 <button class="btn-del-img" type="button"
                                         data-id="{{ $img->id }}"
-                                        data-url="{{ route('admin.projects.image.destroy', $img->id) }}">
-                                    Eliminar
+                                        data-url="{{ route('admin.projects.image.destroy', $img->id) }}"
+                                        title="Eliminar">
+                                    <i class="fa fa-trash-can"></i>
                                 </button>
                                 <span class="img-id-tag">ID: {{ $img->id }}</span>
                             </div>
@@ -329,6 +326,15 @@
         </div>
 
     </div>{{-- /.edit-container --}}
+
+    <div class="projects-form-actions">
+        <button type="button" class="btn-save" id="btnGlobalSave" disabled>
+            <i class="fa fa-floppy-disk" id="btnGlobalSaveIcon"></i>
+            <span id="btnGlobalSaveLabel">Guardar Cambios</span>
+        </button>
+        <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
+    </div>
+
 </div>{{-- /.edit-card --}}
 
 {{-- PANEL LATERAL — Detalles de imagen --}}

@@ -168,7 +168,6 @@
 .subtitle-band__input:focus { border-color: var(--border-focus); background: var(--bg-input-focus); box-shadow: var(--shadow-focus); }
 
 .btn-hero-save { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border-radius: 10px; border: none; background: rgba(255,255,255,0.92); color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background var(--tr), opacity var(--tr); white-space: nowrap; }
-.btn-hero-save:disabled { opacity: 0.38; cursor: not-allowed; pointer-events: none; }
 .btn-hero-save:not(:disabled):hover { background: #fff; }
 .year-label-badge { display: inline-flex; align-items: center; background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 10px; margin-left: 4px; transition: background var(--tr); }
 .year-actions-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
@@ -277,8 +276,22 @@
 .img-actions { display:flex; align-items:center; gap:6px; }
 .btn-edit-img { flex:1; padding:7px 0; background:var(--accent); color:#fff; border:none; border-radius:7px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; transition:background var(--tr); }
 .btn-edit-img:hover { background:var(--accent-hover); }
-.btn-del-img { padding:7px 10px; background:var(--bg-container); color:#c0392b; border:1.5px solid #e8c0bb; border-radius:7px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; transition:background var(--tr), border-color var(--tr); }
-.btn-del-img:hover { background:#fdf0ee; border-color:#c0392b; }
+.btn-del-img { 
+    padding: 7px 10px;
+    width: 34px;
+    height: 31px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg-container); 
+    color: #c0392b; 
+    border: 1.5px solid rgba(192,57,43,0.35);
+    border-radius: 7px; 
+    font-size: 12px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    font-family: inherit; 
+    transition: background var(--tr), border-color var(--tr); 
+}
+.btn-del-img:hover { background: #fdf0ee; border-color: #c0392b; }
 .img-id-tag { margin-left:auto; font-size:11px; color:var(--text-sub); font-weight:500; white-space:nowrap; }
 .img-empty { grid-column:1/-1; text-align:center; padding:44px 20px; color:var(--text-sub); font-size:14px; display:flex; flex-direction:column; align-items:center; gap:14px; }
 .img-empty i { font-size:28px; opacity:0.32; }
@@ -931,3 +944,36 @@
     transition: background 0.2s ease, transform 0.15s ease;
 }
 .edit-back-btn:hover { background: rgba(255,255,255,0.22); transform: translateX(-2px); }
+
+.projects-form-actions {
+    display: flex; gap: 10px;
+    padding: 18px 28px 28px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-container);
+    transition: border-color var(--tr), background var(--tr);
+}
+
+.projects-form-actions .btn-save:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn-undo-del {
+    flex: 1;
+    padding: 7px 0;
+    background: #c0392b;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: background var(--tr);
+}
+.btn-undo-del:hover { background: #a93226; }

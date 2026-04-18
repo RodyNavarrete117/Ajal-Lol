@@ -1018,11 +1018,13 @@
             card.style.outline = '2px dashed #c0392b';
             card.style.transition = 'opacity 0.2s, outline 0.2s';
 
-            targetBtn.textContent = 'Deshacer';
-            targetBtn.style.background = 'transparent';
-            targetBtn.style.color = '#c0392b';
+            targetBtn.innerHTML = '<i class="fa fa-rotate-left"></i> Deshacer';
+            targetBtn.style.background = '';
+            targetBtn.style.color = '';
             targetBtn.classList.remove('btn-del-img');
             targetBtn.classList.add('btn-undo-del');
+
+            card.querySelector('.btn-edit-img').style.display = 'none';
 
             pendingDeletes.push(id);
             updateGlobalSaveBtn();
@@ -1040,11 +1042,15 @@
             card.style.opacity = '1';
             card.style.outline = 'none';
 
-            targetBtn.textContent = 'Eliminar';
+            // Restaurar botón eliminar con ícono
+            targetBtn.innerHTML = '<i class="fa fa-trash-can"></i>';
             targetBtn.style.background = '';
             targetBtn.style.color = '';
             targetBtn.classList.remove('btn-undo-del');
             targetBtn.classList.add('btn-del-img');
+
+            // Mostrar botón editar de nuevo
+            card.querySelector('.btn-edit-img').style.display = '';
 
             updateGlobalSaveBtn();
             showToast('Eliminación cancelada.', 'success');

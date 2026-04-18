@@ -332,7 +332,9 @@
             <i class="fa fa-floppy-disk" id="btnGlobalSaveIcon"></i>
             <span id="btnGlobalSaveLabel">Guardar Cambios</span>
         </button>
-        <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
+        <button type="button" class="btn-cancel" id="btnGlobalCancel" disabled>
+            <i class="fa fa-rotate-left"></i> Deshacer cambios
+        </button>
     </div>
 
 </div>{{-- /.edit-card --}}

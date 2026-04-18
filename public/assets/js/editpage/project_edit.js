@@ -572,6 +572,12 @@
         btnGlobalSave.title    = '';
         if (btnGlobalSaveLabel) btnGlobalSaveLabel.textContent = (hasSubChange || hasPendingWork) ? 'Guardar cambios' : 'Guardar';
         if (btnGlobalSaveIcon)  btnGlobalSaveIcon.className    = 'fa fa-floppy-disk';
+
+        const btnCancel = document.getElementById('btnGlobalCancel');
+        if (btnCancel) {
+            const hasChanges = !(btnGlobalSave.disabled);
+            btnCancel.disabled = !hasChanges;
+        }
     }
 
     // LISTAS PRINCIPALES DEL SISTEMA
@@ -742,6 +748,53 @@
     });
 
     subtitleInput?.addEventListener('input', updateGlobalSaveBtn);
+
+    document.getElementById('btnGlobalCancel')?.addEventListener('click', () => {
+    // Limpiar imágenes pendientes del grid
+    document.querySelectorAll('.img-card.pending-card').forEach(c => c.remove());
+        pendingImages = [];
+
+        // Restaurar tarjetas marcadas para eliminar
+        document.querySelectorAll('.btn-undo-del').forEach(btn => {
+            const card = btn.closest('.img-card');
+            if (!card) return;
+            card.style.opacity = '1';
+            card.style.outline = 'none';
+            btn.innerHTML = '<i class="fa fa-trash-can"></i>';
+            btn.style.background = '';
+            btn.style.color = '';
+            btn.classList.remove('btn-undo-del');
+            btn.classList.add('btn-del-img');
+            const editBtn = card.querySelector('.btn-edit-img');
+            if (editBtn) editBtn.style.display = '';
+        });
+        pendingDeletes = [];
+
+        // Restaurar tarjetas marcadas para editar
+        document.querySelectorAll('.img-card[style*="outline"]').forEach(c => c.style.outline = 'none');
+        pendingUpdates = [];
+
+        // Ocultar "Agregar más imágenes" si no quedan pendientes
+        const addMore = document.getElementById('imgAddMore');
+        if (addMore) addMore.style.display = 'none';
+
+        // Restaurar subtítulo
+        const y = currentYear();
+        if (subtitleInput) subtitleInput.value = subtitles[y] ?? '';
+
+        // Restaurar categorías pendientes
+        document.querySelectorAll('.cat-mgr-pill--pending-new').forEach(p => p.remove());
+        document.querySelectorAll('.cat-mgr-pill--pending-del').forEach(pill => {
+            pill.classList.remove('cat-mgr-pill--pending-del');
+            pill.querySelector('.cat-mgr-pill__del').innerHTML = '<i class="fa fa-xmark"></i>';
+        });
+        pendingCatNews = [];
+        pendingCatDeletes = [];
+        pendingCatOrder = false;
+
+        updateGlobalSaveBtn();
+        showToast('Cambios descartados.');
+    });
 
     const tabPanels = {
         images:     document.getElementById('tabImages'),

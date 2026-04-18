@@ -231,6 +231,11 @@
 .form-group input[type="date"] { cursor: pointer; }
 
 .btn-save, .btn-cancel { display: inline-flex; align-items: center; gap: 7px; padding: 10px 22px; border-radius: 9px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; letter-spacing: 0.2px; transition: background var(--tr), color var(--tr), transform 0.14s ease, box-shadow 0.14s ease; }
+.btn-cancel:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
 .btn-save { background: var(--accent); color: #fff; box-shadow: 0 4px 14px rgba(125,63,106,0.26); }
 .btn-save:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(125,63,106,0.34); }
 .btn-save:active { transform: scale(0.97); }
@@ -276,20 +281,19 @@
 .img-actions { display:flex; align-items:center; gap:6px; }
 .btn-edit-img { flex:1; padding:7px 0; background:var(--accent); color:#fff; border:none; border-radius:7px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; transition:background var(--tr); }
 .btn-edit-img:hover { background:var(--accent-hover); }
-.btn-del-img { 
+.btn-del-img {
     padding: 7px 10px;
-    width: 34px;
-    height: 31px;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--bg-container); 
-    color: #c0392b; 
+    width: auto;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    background: transparent;
+    color: #c0392b;
     border: 1.5px solid rgba(192,57,43,0.35);
-    border-radius: 7px; 
-    font-size: 12px; 
-    font-weight: 600; 
-    cursor: pointer; 
-    font-family: inherit; 
-    transition: background var(--tr), border-color var(--tr); 
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background var(--tr), border-color var(--tr);
 }
 .btn-del-img:hover { background: #fdf0ee; border-color: #c0392b; }
 .img-id-tag { margin-left:auto; font-size:11px; color:var(--text-sub); font-weight:500; white-space:nowrap; }
@@ -961,6 +965,7 @@
 
 .btn-undo-del {
     flex: 1;
+    width: 100%;
     padding: 7px 0;
     background: #c0392b;
     color: #fff;

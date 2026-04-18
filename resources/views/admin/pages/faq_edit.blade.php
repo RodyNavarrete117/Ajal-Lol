@@ -22,12 +22,15 @@
                 <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             </div>
             <div class="edit-header-top">
+                <a href="{{ url('/admin/page') }}" class="edit-back-btn">
+                    <i class="fa fa-arrow-left"></i>
+                </a>
                 <div class="edit-icon"><i class="fa fa-circle-question"></i></div>
-                <h2>Editar Página Preguntas Frecuentes</h2>
+                <div class="edit-header-text">
+                    <h2>Editar Página Preguntas Frecuentes</h2>
+                    <p class="subtitle">Administra las preguntas y respuestas que se muestran en la página pública.</p>
+                </div>
             </div>
-            <p class="subtitle">
-                Administra las preguntas y respuestas que se muestran en la página pública.
-            </p>
         </div>
 
         {{-- ── Form ── --}}

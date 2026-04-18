@@ -921,3 +921,13 @@
 .img-card[style*="dashed"] .img-thumb:hover .img-overlay {
     display: none !important;
 }
+
+.edit-back-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.20);
+    color: #fff; font-size: 14px; text-decoration: none; flex-shrink: 0;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+.edit-back-btn:hover { background: rgba(255,255,255,0.22); transform: translateX(-2px); }

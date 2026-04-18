@@ -43,11 +43,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Active page ───────────────────────────────────────────────
     function setActivePage() {
         const currentPath = window.location.pathname;
+
+        const effectivePath = (currentPath.startsWith('/admin/page/') || currentPath.startsWith('/admin/pages/'))
+            ? '/admin/page'
+            : currentPath;
+
         document.querySelectorAll('.menu a:not(.notification-trigger)').forEach(link => {
             const linkPath = new URL(link.href).pathname;
-            link.classList.toggle('active', linkPath === currentPath);
+            link.classList.toggle('active', linkPath === effectivePath);
 
-            if (isMobile() && linkPath === currentPath) {
+            if (isMobile() && linkPath === effectivePath) {
                 if (pageNames[linkPath]) sidebarTitle.textContent = pageNames[linkPath];
                 if (pageIcons[linkPath]) sidebarTitle.setAttribute('data-page-icon', pageIcons[linkPath]);
             }

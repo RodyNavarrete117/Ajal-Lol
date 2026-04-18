@@ -39,13 +39,16 @@
         <div class="edit-hero__inner">
 
             {{-- Izquierda: icono + texto --}}
-            <div class="edit-hero__left">
-                <div class="edit-hero__icon"><i class="fa fa-folder-open"></i></div>
-                <div>
-                    <h1 class="edit-hero__title">Editor de Proyectos</h1>
-                    <p class="edit-hero__sub">Gestiona años, imágenes y visibilidad pública.</p>
-                </div>
-            </div>
+<div class="edit-hero__left">
+    <a href="{{ url('/admin/page') }}" class="edit-back-btn">
+        <i class="fa fa-arrow-left"></i>
+    </a>
+    <div class="edit-hero__icon"><i class="fa fa-folder-open"></i></div>
+    <div>
+        <h1 class="edit-hero__title">Editor de Proyectos</h1>
+        <p class="edit-hero__sub">Gestiona años, imágenes y visibilidad pública.</p>
+    </div>
+</div>
 
             {{-- Derecha: selector de año (píldora unificada) --}}
             <div class="year-selector" id="yearSelector">

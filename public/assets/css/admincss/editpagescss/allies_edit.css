@@ -114,7 +114,19 @@
 .edit-header-top { position: relative; z-index: 1; display: flex; align-items: center; gap: 14px; margin-bottom: 4px; }
 .edit-icon { width: 46px; height: 46px; border-radius: 12px; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.20); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; flex-shrink: 0; }
 .edit-container h2 { margin: 0; font-size: 21px; font-weight: 700; color: #fff; letter-spacing: -0.3px; line-height: 1.2; }
-.subtitle { margin: 0; color: rgba(255,255,255,0.55); font-size: 12px; line-height: 1.4; padding-left: 60px; position: relative; z-index: 1; }
+.subtitle { margin: 0; color: rgba(255,255,255,0.55); font-size: 12px; line-height: 1.4; }
+
+.edit-header-text { display: flex; flex-direction: column; gap: 3px; }
+
+.edit-back-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.20);
+    color: #fff; font-size: 14px; text-decoration: none; flex-shrink: 0;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+.edit-back-btn:hover { background: rgba(255,255,255,0.22); transform: translateX(-2px); }
 
 form { padding: 22px 28px 30px; }
 
@@ -205,3 +217,18 @@ form { padding: 22px 28px 30px; }
     .edit-container h2 { font-size: 17px; }
 }
 @media (max-width: 380px) { .logos-grid { grid-template-columns: 1fr; } }
+
+.edit-header__bg {
+    font-size: 60px;
+    color: rgba(255,255,255,0.05);
+}
+
+.edit-header__bg i {
+    position: absolute;
+}
+.edit-header__bg i:nth-child(1) { top: -10px; left: 14%; font-size: 36px; }
+.edit-header__bg i:nth-child(2) { bottom: -4px; left: 28%; font-size: 24px; opacity:.55; }
+.edit-header__bg i:nth-child(3) { top: 4px;   left: 46%; font-size: 40px; opacity:.45; }
+.edit-header__bg i:nth-child(4) { bottom: -2px; left: 62%; font-size: 28px; opacity:.60; }
+.edit-header__bg i:nth-child(5) { top: -4px;  left: 76%; font-size: 32px; opacity:.50; }
+.edit-header__bg i:nth-child(6) { bottom: -3px; right: 7%; font-size: 20px; opacity:.40; }

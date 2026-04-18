@@ -107,11 +107,19 @@
     margin: 0; font-size: 21px; font-weight: 700;
     color: #fff; letter-spacing: -0.3px; line-height: 1.2;
 }
-.subtitle {
-    margin: 0; color: rgba(255,255,255,0.55);
-    font-size: 12px; line-height: 1.4;
-    padding-left: 60px; position: relative; z-index: 1;
+.subtitle { margin: 0; color: rgba(255,255,255,0.55); font-size: 12px; line-height: 1.4; }
+
+.edit-header-text { display: flex; flex-direction: column; gap: 3px; }
+
+.edit-back-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.20);
+    color: #fff; font-size: 14px; text-decoration: none; flex-shrink: 0;
+    transition: background 0.2s ease, transform 0.15s ease;
 }
+.edit-back-btn:hover { background: rgba(255,255,255,0.22); transform: translateX(-2px); }
 
 form { padding: 22px 28px 30px; }
 

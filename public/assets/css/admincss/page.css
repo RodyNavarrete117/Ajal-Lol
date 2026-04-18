@@ -231,6 +231,12 @@
     pointer-events: none;
     overflow: hidden;
 }
+
+.header-icon i {
+    color: #fff;
+    font-size: 18px;
+}
+
 .header-bg svg {
     position: absolute;
     fill: none;
@@ -239,6 +245,19 @@
     stroke-linecap: round;
     stroke-linejoin: round;
 }
+
+.header-bg i {
+    position: absolute;
+    color: rgba(255,255,255,0.13);
+    font-size: 36px;
+}
+
+.page-card:nth-child(3) .header-bg i:nth-child(1) { font-size: 52px; top: -12px; left: 32%; opacity: 0.6; }
+.page-card:nth-child(3) .header-bg i:nth-child(2) { font-size: 32px; bottom: -4px; left: 20%; opacity: 0.5; }
+.page-card:nth-child(3) .header-bg i:nth-child(3) { font-size: 44px; top: 6px; right: 12%; opacity: 0.55; }
+.page-card:nth-child(3) .header-bg i:nth-child(4) { font-size: 28px; bottom: 0; right: 35%; opacity: 0.4; }
+.page-card:nth-child(3) .header-bg i:nth-child(5) { font-size: 38px; top: -6px; left: 48%; opacity: 0.65; }
+.page-card:nth-child(3) .header-bg i:nth-child(6) { font-size: 22px; bottom: -6px; right: 18%; opacity: 0.35; }
 
 /* Posiciones únicas por card */
 .page-card:nth-child(1) .header-bg svg:nth-child(1) { width: 50px; height: 50px; top: -10px; left: 38%; }

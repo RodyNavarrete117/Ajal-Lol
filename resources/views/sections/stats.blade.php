@@ -5,29 +5,29 @@
 
       <div class="stat-item">
         <i class="bi bi-emoji-smile" aria-hidden="true"></i>
-        <span class="num purecounter" data-end="7451" data-duration="1"
-              aria-label="7451 beneficiarios atendidos">0</span>
+        <span class="num purecounter" data-end="{{ $totBen }}"
+              data-duration="1">0</span>
         <p>Beneficiarios atendidos</p>
       </div>
 
       <div class="stat-item">
         <i class="bi bi-journal-richtext" aria-hidden="true"></i>
-        <span class="num purecounter" data-end="5" data-duration="1"
-              aria-label="5 proyectos activos">0</span>
+        <span class="num purecounter" data-end="{{ $totProy }}"
+              data-duration="1">0</span>
         <p>Proyectos activos</p>
       </div>
 
       <div class="stat-item">
         <i class="bi bi-clock-history" aria-hidden="true"></i>
-        <span class="num purecounter" data-end="1463" data-duration="1"
-              aria-label="1463 horas de apoyo">0</span>
+        <span class="num purecounter" data-end="{{ $totHrs }}"
+              data-duration="1">0</span>
         <p>Horas de apoyo</p>
       </div>
 
       <div class="stat-item">
         <i class="bi bi-people-fill" aria-hidden="true"></i>
-        <span class="num purecounter" data-end="35" data-duration="1"
-              aria-label="35 voluntarios activos">0</span>
+        <span class="num purecounter" data-end="{{ $totVol }}"
+              data-duration="1">0</span>
         <p>Voluntarios activos</p>
       </div>
 

@@ -118,7 +118,8 @@
 
             {{-- ══ PANEL: Estadísticas ══ --}}
             <div class="edit-panel" id="panel-stats"
-                 data-stats='@json($statsData ?? [])'>
+                data-stats='@json($statsData ?? [])'
+                data-bd-stats='@json($bdStats ?? [])'>
 
                 <div class="panel-title">
                     <i class="fa fa-chart-simple"></i>

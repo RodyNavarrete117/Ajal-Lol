@@ -294,13 +294,22 @@
 
     const statsPanel = document.getElementById('panel-stats');
     var statsData = {};
+    window._statsData = statsData; // exponer para debug y acceso global
+    var bdStatsData = {};
+    window._bdStatsData = bdStatsData;
 
     if (statsPanel) {
 
         try {
             const raw = JSON.parse(statsPanel.dataset.stats || '{}');
             Object.entries(raw).forEach(([k, v]) => { statsData[Number(k)] = v; });
+            window._statsData = statsData;
         } catch (e) { console.error('Error al parsear data-stats:', e); }
+
+        try {
+            const rawBd = JSON.parse(statsPanel.dataset.bdStats || '{}');
+            Object.entries(rawBd).forEach(([k, v]) => { bdStatsData[Number(k)] = v; });
+        } catch (e) { console.error('Error al parsear data-bd-stats:', e); }
 
         let statsCurrentIdx = 0;
 
@@ -312,9 +321,21 @@
         /* ── Totales ── */
         function statsUpdateTotals() {
             const t = { ben: 0, proy: 0, hrs: 0, vol: 0 };
-            Object.values(statsData).forEach(yr =>
-                STAT_FIELDS.forEach(f => t[f.key] += Number(yr[f.key] || 0))
-            );
+
+            Object.entries(statsData).forEach(([yrKey, yr]) => {
+                STAT_FIELDS.forEach(f => {
+                    if (f.key !== '_bdInclude') t[f.key] += Number(yr[f.key] || 0);
+                });
+                // Sumar BD si el toggle está activo
+                if (yr._bdInclude) {
+                    const bd = bdStatsData[Number(yrKey)];
+                    if (bd) {
+                        t.ben  += Number(bd.beneficiarios || 0);
+                        t.proy += Number(bd.proyectos     || 0);
+                    }
+                }
+            });
+
             const el = id => document.getElementById(id);
             if (el('statTotBen'))  el('statTotBen').textContent  = statsFmt(t.ben);
             if (el('statTotProy')) el('statTotProy').textContent = statsFmt(t.proy);
@@ -566,6 +587,7 @@
 
             const yr = all[statsCurrentIdx];
             const d  = statsData[yr] || {};
+            const bd = bdStatsData[yr] || null; // datos BD para este año
             wrap.innerHTML = '';
 
             const p = document.createElement('div');
@@ -575,30 +597,76 @@
             hdr.className = 'stats-yr-panel-hdr';
             hdr.innerHTML = `
                 <span class="stats-yr-badge">${yr}</span>
-                <span class="stats-yr-psub">Datos registrados </span>`;
+                <span class="stats-yr-psub">Datos registrados</span>`;
             p.appendChild(hdr);
 
+            // Grid de campos manuales
             const grid = document.createElement('div');
             grid.className = 'stats-fields-grid';
 
             STAT_FIELDS.forEach(f => {
+                const bdVal = bd ? (f.key === 'ben' ? bd.beneficiarios : f.key === 'proy' ? bd.proyectos : null) : null;
+                const manualVal = d[f.key] || '';
+
+                // Calcular el total visual si hay BD y toggle activo
                 const sf = document.createElement('div');
                 sf.className = 'stats-field';
+                sf.dataset.fieldKey = f.key;
+
                 sf.innerHTML = `
                     <label>${f.label}</label>
                     <input type="number" min="0"
-                           data-key="${f.key}"
-                           value="${d[f.key] || ''}"
-                           placeholder="${f.placeholder}">`;
+                        data-key="${f.key}"
+                        value="${manualVal}"
+                        placeholder="${f.placeholder}">
+                    ${bdVal !== null ? `<span class="stats-field-bd-hint" id="bd-hint-${yr}-${f.key}">
+                        + ${Number(bdVal).toLocaleString('es-MX')} de la BD
+                    </span>` : ''}`;
                 grid.appendChild(sf);
             });
 
             p.appendChild(grid);
+
+            // Casilla de BD (solo si hay datos en BD para este año)
+            if (bd && (bd.beneficiarios > 0 || bd.proyectos > 0)) {
+                const bdSection = document.createElement('div');
+                bdSection.className = 'stats-bd-toggle-row';
+
+                const isChecked = d._bdInclude === true || d._bdInclude === 1;
+
+                bdSection.innerHTML = `
+                    <div class="stats-bd-toggle-info">
+                        <i class="fa fa-database"></i>
+                        <span>Sumar datos existentes de la BD para <strong>${yr}</strong>:</span>
+                        <span class="stats-bd-pill">
+                            ${bd.beneficiarios > 0 ? `<span>${Number(bd.beneficiarios).toLocaleString('es-MX')} beneficiarios</span>` : ''}
+                            ${bd.proyectos > 0 ? `<span>${Number(bd.proyectos).toLocaleString('es-MX')} proyectos</span>` : ''}
+                        </span>
+                    </div>
+                    <label class="stats-bd-switch">
+                        <input type="checkbox" class="stats-bd-chk" data-ano="${yr}"
+                            ${isChecked ? 'checked' : ''}>
+                        <span class="stats-bd-switch-track">
+                            <span class="stats-bd-switch-thumb"></span>
+                        </span>
+                    </label>`;
+
+                p.appendChild(bdSection);
+
+                // Evento del toggle
+                bdSection.querySelector('.stats-bd-chk').addEventListener('change', function() {
+                    const ano = Number(this.dataset.ano);
+                    if (!statsData[ano]) statsData[ano] = { ben: 0, proy: 0, hrs: 0, vol: 0 };
+                    Object.assign(statsData[ano], { _bdInclude: this.checked });
+                    statsUpdateTotals();
+                });
+            }
+
             wrap.appendChild(p);
 
             p.addEventListener('input', e => {
                 const inp = e.target;
-                if (inp.tagName !== 'INPUT' || !inp.dataset.key) return;
+                if (inp.tagName !== 'INPUT' || inp.type === 'checkbox' || !inp.dataset.key) return;
                 if (!statsData[yr]) statsData[yr] = {};
                 statsData[yr][inp.dataset.key] = Number(inp.value) || 0;
                 statsUpdateTotals();

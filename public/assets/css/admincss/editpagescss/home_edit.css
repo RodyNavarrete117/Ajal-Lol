@@ -793,9 +793,79 @@ form { padding: 22px 28px 30px; }
 @media (max-width: 860px) {
     .stats-totals-bar  { grid-template-columns: repeat(2, 1fr); }
     .stats-fields-grid { grid-template-columns: repeat(2, 1fr); }
-    .stats-yr-row      { justify-content: flex-start; }
+    .stats-yr-row      { justify-content: center; }
 }
 @media (max-width: 400px) {
     .stats-totals-bar  { grid-template-columns: 1fr 1fr; }
     .stats-fields-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* Toggle BD por año */
+.stats-bd-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: var(--accent-light);
+    border: 1px solid var(--accent-mid);
+    border-radius: 10px;
+    flex-wrap: nowrap;
+}
+.stats-bd-toggle-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-sub);
+    flex-wrap: wrap;
+}
+.stats-bd-toggle-info i { color: var(--accent); font-size: 12px; }
+.stats-bd-toggle-info strong { color: var(--accent); }
+.stats-bd-pill {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.stats-bd-pill span {
+    padding: 2px 9px;
+    border-radius: 20px;
+    background: var(--accent-mid);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+}
+.stats-field-bd-hint {
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+/* Switch reutilizado */
+.stats-bd-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.stats-bd-switch input[type="checkbox"] {
+    position: absolute; opacity: 0; width: 0; height: 0;
+}
+.stats-bd-switch-track {
+    width: 38px; height: 22px; border-radius: 11px;
+    background: var(--border); position: relative;
+    display: block; transition: background 0.22s ease; flex-shrink: 0;
+}
+.stats-bd-switch input:checked + .stats-bd-switch-track { background: var(--accent); }
+.stats-bd-switch-thumb {
+    position: absolute; top: 3px; left: 3px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.22);
+    transition: transform 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+.stats-bd-switch input:checked + .stats-bd-switch-track .stats-bd-switch-thumb {
+    transform: translateX(16px);
 }

@@ -26,16 +26,35 @@ class EditPageHomeController extends Controller
                 'proy' => (int) $row->proyectos,
                 'hrs'  => (int) $row->horas_apoyo,
                 'vol'  => (int) $row->voluntarios,
+                '_bdInclude' => (bool) $row->bd_include,
             ])
             ->toArray();
 
-        // ── 2. Beneficiarios por año desde reportebeneficiarios + informe ──
-        $beneficiariosPorAno = DB::table('reportebeneficiarios as rb')
+        $reporteBenPorAno = DB::table('reportebeneficiarios as rb')
             ->join('informe as i', 'rb.id_informe', '=', 'i.id_informe')
             ->selectRaw('YEAR(i.fecha) as ano, COUNT(rb.id_reportebeneficiario) as total')
             ->groupByRaw('YEAR(i.fecha)')
             ->pluck('total', 'ano')
             ->toArray();
+
+        $asistenciaBenPorAno = DB::table('asistenciabeneficiarios as ab')
+            ->join('informe as i', 'ab.id_informe', '=', 'i.id_informe')
+            ->selectRaw('YEAR(i.fecha) as ano, COUNT(ab.id_asistenciabeneficiario) as total')
+            ->groupByRaw('YEAR(i.fecha)')
+            ->pluck('total', 'ano')
+            ->toArray();
+
+        // Unir ambas sumando por año
+        $beneficiariosPorAno = [];
+        $anosConBen = array_unique(array_merge(
+            array_keys($reporteBenPorAno),
+            array_keys($asistenciaBenPorAno)
+        ));
+        foreach ($anosConBen as $ano) {
+            $beneficiariosPorAno[$ano] =
+                ($reporteBenPorAno[$ano]   ?? 0) +
+                ($asistenciaBenPorAno[$ano] ?? 0);
+        }
 
         // ── 3. Proyectos/Informes por año ──
         $proyectosPorAno = DB::table('informe')
@@ -85,7 +104,7 @@ class EditPageHomeController extends Controller
                 foreach ($stats as $ano => $values) {
                     $ano            = (int) $ano;
                     $anosEnviados[] = $ano;
-                    $bdInclude      = $request->has("bd_include.{$ano}") ? 1 : 0;
+                    $bdInclude = !empty($values['_bdInclude']) ? 1 : 0;
 
                     DB::table('inicio_estadisticas')->updateOrInsert(
                         [
@@ -111,28 +130,9 @@ class EditPageHomeController extends Controller
             }
         }
 
-        // Guardar bd_include para años que solo existen en BD (sin manuales)
-        $bdIncludeAll = $request->input('bd_include', []);
-        foreach ($bdIncludeAll as $ano => $val) {
-            $ano = (int) $ano;
-            DB::table('inicio_estadisticas')->updateOrInsert(
-                [
-                    'id_pagina' => self::PAGINA_INICIO,
-                    'ano'       => $ano,
-                ],
-                [
-                    'bd_include' => 1,
-                    'updated_at' => now(),
-                ]
-            );
+        if ($request->hasHeader('X-Requested-With') || $request->wantsJson()) {
+            return response()->json(['success' => true]);
         }
-
-        // Poner bd_include = 0 en años cuyo checkbox NO vino en el request
-        $anosConToggle = array_map('intval', array_keys($bdIncludeAll));
-        DB::table('inicio_estadisticas')
-            ->where('id_pagina', self::PAGINA_INICIO)
-            ->whereNotIn('ano', $anosConToggle)
-            ->update(['bd_include' => 0, 'updated_at' => now()]);
 
         return redirect()
             ->route('admin.pages.home.edit')

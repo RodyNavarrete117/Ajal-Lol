@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\EditPageActivitiesController;
 use App\Http\Controllers\Admin\EditPageAboutController;
 use App\Http\Controllers\Admin\ProjectEditController;
 use App\Http\Controllers\Admin\FaqEditController;
+use App\Http\Controllers\Admin\EditPageHomeController; 
 use App\Http\Controllers\Page\PublicPageController;
 use App\Http\Controllers\Page\ServicesController;
 use App\Http\Controllers\Page\EventsController;
@@ -113,8 +114,9 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     /* ===== EDICIÓN DE PÁGINAS ===== */
     Route::prefix('pages')->group(function () {
 
-        /* Páginas simples */
-        Route::get('/home/edit', fn() => view('admin.pages.home_edit'))->name('admin.pages.home.edit');
+        /* ── Inicio ── */
+        Route::get('/home/edit',    [EditPageHomeController::class, 'index'])->name('admin.pages.home.edit');
+        Route::post('/home/update', [EditPageHomeController::class, 'update'])->name('admin.pages.home.update');
 
         /* ── Nosotros ── */
         Route::prefix('about')->group(function () {

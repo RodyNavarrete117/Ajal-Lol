@@ -52,7 +52,7 @@
         </div>
 
         {{-- ── Form ── --}}
-        <form method="POST" action="#">
+        <form method="POST" action="{{ route('admin.pages.home.update') }}">
             @csrf
 
             {{-- ══ PANEL: Hero ══ --}}
@@ -117,80 +117,56 @@
             </div>
 
             {{-- ══ PANEL: Estadísticas ══ --}}
-            <div class="edit-panel" id="panel-stats">
+            <div class="edit-panel" id="panel-stats"
+                 data-stats='@json($statsData ?? [])'>
+
                 <div class="panel-title">
                     <i class="fa fa-chart-simple"></i>
                     Estadísticas destacadas
                 </div>
-                <p class="panel-desc">Números que aparecen en la banda de estadísticas de la página de inicio.</p>
 
-                <div class="stats-grid">
-
-                    <div class="stat-card">
-                        <div class="stat-card__icon" style="background:rgba(139,62,114,0.10);color:#8B3E72;">
-                            <i class="fa fa-calendar"></i>
-                        </div>
-                        <div class="stat-card__fields">
-                            <div class="form-group">
-                                <label for="stat1_num">Número</label>
-                                <input type="text" id="stat1_num" name="stat1_num" value="{{ old('stat1_num', '25+') }}" placeholder="Ej: 25+">
-                            </div>
-                            <div class="form-group">
-                                <label for="stat1_label">Etiqueta</label>
-                                <input type="text" id="stat1_label" name="stat1_label" value="{{ old('stat1_label', 'Años de servicio') }}" placeholder="Ej: Años de servicio">
-                            </div>
-                        </div>
+                {{-- Totales acumulados --}}
+                <div class="stats-totals-bar">
+                    <div class="stats-tot-cell">
+                        <span class="stats-tot-num" id="statTotBen">0</span>
+                        <span class="stats-tot-lbl">Beneficiarios</span>
                     </div>
-
-                    <div class="stat-card">
-                        <div class="stat-card__icon" style="background:rgba(8,145,178,0.10);color:#0891b2;">
-                            <i class="fa fa-users"></i>
-                        </div>
-                        <div class="stat-card__fields">
-                            <div class="form-group">
-                                <label for="stat2_num">Número</label>
-                                <input type="text" id="stat2_num" name="stat2_num" value="{{ old('stat2_num', '500+') }}" placeholder="Ej: 500+">
-                            </div>
-                            <div class="form-group">
-                                <label for="stat2_label">Etiqueta</label>
-                                <input type="text" id="stat2_label" name="stat2_label" value="{{ old('stat2_label', 'Familias beneficiadas') }}" placeholder="Ej: Familias beneficiadas">
-                            </div>
-                        </div>
+                    <div class="stats-tot-cell">
+                        <span class="stats-tot-num" id="statTotProy">0</span>
+                        <span class="stats-tot-lbl">Proyectos</span>
                     </div>
-
-                    <div class="stat-card">
-                        <div class="stat-card__icon" style="background:rgba(22,163,74,0.10);color:#16a34a;">
-                            <i class="fa fa-map-location-dot"></i>
-                        </div>
-                        <div class="stat-card__fields">
-                            <div class="form-group">
-                                <label for="stat3_num">Número</label>
-                                <input type="text" id="stat3_num" name="stat3_num" value="{{ old('stat3_num', '11') }}" placeholder="Ej: 11">
-                            </div>
-                            <div class="form-group">
-                                <label for="stat3_label">Etiqueta</label>
-                                <input type="text" id="stat3_label" name="stat3_label" value="{{ old('stat3_label', 'Comunidades atendidas') }}" placeholder="Ej: Comunidades atendidas">
-                            </div>
-                        </div>
+                    <div class="stats-tot-cell">
+                        <span class="stats-tot-num" id="statTotHrs">0</span>
+                        <span class="stats-tot-lbl">Horas de apoyo</span>
                     </div>
-
-                    <div class="stat-card">
-                        <div class="stat-card__icon" style="background:rgba(217,119,6,0.10);color:#d97706;">
-                            <i class="fa fa-handshake"></i>
-                        </div>
-                        <div class="stat-card__fields">
-                            <div class="form-group">
-                                <label for="stat4_num">Número</label>
-                                <input type="text" id="stat4_num" name="stat4_num" value="{{ old('stat4_num', '35') }}" placeholder="Ej: 35">
-                            </div>
-                            <div class="form-group">
-                                <label for="stat4_label">Etiqueta</label>
-                                <input type="text" id="stat4_label" name="stat4_label" value="{{ old('stat4_label', 'Colaboradores activos') }}" placeholder="Ej: Colaboradores activos">
-                            </div>
-                        </div>
+                    <div class="stats-tot-cell">
+                        <span class="stats-tot-num" id="statTotVol">0</span>
+                        <span class="stats-tot-lbl">Voluntarios</span>
                     </div>
-
                 </div>
+
+                {{-- Form agregar año (oculto por defecto) --}}
+                <div class="stats-add-yr-form" id="statsAddYrForm">
+                    <label>Nuevo año:</label>
+                    <input class="stats-ayi" type="number" id="statsAyiInp"
+                           min="2000" max="2100" placeholder="2025">
+                    <button class="stats-btn-ok" id="statsBtnOk" type="button">
+                        <i class="fa fa-check"></i> Agregar
+                    </button>
+                    <button class="stats-btn-cx" id="statsBtnCx" type="button">Cancelar</button>
+                </div>
+
+                {{-- Carrusel de años --}}
+                <div class="stats-yr-row" id="statsYrRow"></div>
+
+                {{-- Dropdown (el JS lo mueve al body) --}}
+                <div class="stats-yr-dd" id="statsYrDd" role="listbox" style="display:none"></div>
+
+                {{-- Panel del año activo --}}
+                <div id="statsYrPanel"></div>
+
+                {{-- Input hidden para serializar al guardar --}}
+                <input type="hidden" name="stats_data" id="statsDataInput">
 
                 <div class="form-actions">
                     <button type="submit" class="btn-save">

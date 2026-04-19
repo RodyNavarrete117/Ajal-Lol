@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 19-04-2026 a las 02:56:41
+-- Tiempo de generación: 19-04-2026 a las 23:10:24
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `prueba13`
+-- Base de datos: `prueba1`
 --
 
 -- --------------------------------------------------------
@@ -151,6 +151,18 @@ CREATE TABLE `asistenciabeneficiarios` (
   `asistenciaedadbeneficiario` int DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `asistenciabeneficiarios`
+--
+
+INSERT INTO `asistenciabeneficiarios` (`id_asistenciabeneficiario`, `id_informe`, `asistencianombrebeneficiario`, `asistenciaedadbeneficiario`, `created_at`) VALUES
+(1, 1, 'Efrén Villacis', 23, '2026-04-19 22:24:12'),
+(2, 1, 'Leon Dan', 23, '2026-04-19 22:24:12'),
+(3, 1, 'Cangrellero', 23, '2026-04-19 22:24:12'),
+(4, 1, 'Rodylex', 23, '2026-04-19 22:24:12'),
+(5, 1, 'Foconacio', 23, '2026-04-19 22:24:12'),
+(6, 1, 'Estamos navarrete', 23, '2026-04-19 22:24:12');
 
 -- --------------------------------------------------------
 
@@ -308,30 +320,8 @@ CREATE TABLE `informe` (
 --
 
 INSERT INTO `informe` (`id_informe`, `nombre_organizacion`, `evento`, `lugar`, `fecha`, `created_at`, `updated_at`) VALUES
-(2, 'Ajal-lol AC', 'Actividad recreativa de Año Nuevo', 'Izamal, Yucatán', '2026-01-16', '2026-02-20 18:06:10', '2026-02-20 18:06:10'),
-(3, 'Ajal-lol AC', 'Entrega de juguetes Día de Reyes', 'Tekit, Yucatán', '2026-01-15', '2026-02-20 18:06:10', '2026-02-20 18:06:10'),
-(7, 'Ajal-lol AC', 'Distribución de despensas alimentarias', 'Akil, Yucatán', '2026-02-20', '2026-02-26 23:10:08', '2026-02-26 23:10:08'),
-(22, 'Ajal-lol AC', 'Entrega de canastas básicas de alimentos', 'Akil, Yucatán', '2026-02-20', '2026-03-03 00:05:35', '2026-03-03 00:05:35'),
-(30, 'Ajal-lol AC', 'Entrega de artículos de primera necesidad', 'Akil, Yucatán', '2026-03-01', '2026-03-03 00:20:28', '2026-03-03 00:20:28'),
-(31, 'Ajal-lol AC', 'Jornada de ayuda humanitaria comunitaria', 'Akil, Yucatán', '2026-03-21', '2026-03-03 00:22:21', '2026-03-03 00:22:21'),
-(32, 'Ajal-lol AC', 'Entrega de insumos para el hogar', 'Akil, Yucatán', '2026-03-02', '2026-03-03 00:25:03', '2026-03-03 00:25:03'),
-(37, 'Ajal-lol AC', 'Apoyo alimentario a familias vulnerables', 'Akil, Yucatán', '2026-02-22', '2026-03-03 00:28:43', '2026-03-03 00:28:43'),
-(43, 'Ajal-lol AC', 'Programa de nutrición infantil comunitaria', 'Akil, Yucatán', '2026-02-20', '2026-03-03 00:32:40', '2026-03-03 00:32:40'),
-(44, 'Ajal-lol AC', 'Jornada de salud preventiva', 'Akil, Yucatán', '2026-03-03', '2026-03-03 00:33:53', '2026-03-03 00:33:53'),
-(45, 'Ajal-lol AC', 'Distribución de suministros educativos', 'Akil, Yucatán', '2026-04-02', '2026-03-03 00:35:01', '2026-03-03 00:35:01'),
-(48, 'Ajal-lol AC', 'Entrega de kit de útiles escolares', 'Akil, Yucatán', '2026-04-15', '2026-03-03 00:37:39', '2026-03-03 00:37:39'),
-(49, 'Ajal-lol AC', 'Campaña de apoyo a adultos mayores', 'Akil, Yucatán', '2026-05-01', '2026-03-03 00:38:15', '2026-03-03 00:38:15'),
-(53, 'Ajal-lol AC', 'Brigada de asistencia social comunitaria', 'Akil, Yucatán', '2026-04-02', '2026-03-03 00:51:40', '2026-03-03 00:51:40'),
-(54, 'Ajal-lol AC', 'Taller de capacitación para el empleo', 'Akil, Yucatán', '2026-05-20', '2026-03-03 00:52:20', '2026-03-03 00:52:20'),
-(57, 'Ajal-lol AC', 'Jornada de reforestación comunitaria', 'Akil, Yucatán', '2026-06-05', '2026-03-03 00:53:34', '2026-03-03 00:53:34'),
-(58, 'Ajal-lol AC', 'Entrega de materiales de construcción', 'Akil, Yucatán', '2026-09-20', '2026-03-03 03:54:30', '2026-03-03 03:54:30'),
-(59, 'Ajal-lol AC', 'Programa de becas y apoyo educativo', 'Akil, Yucatán', '2026-07-20', '2026-03-03 04:09:53', '2026-03-03 04:09:53'),
-(60, 'Ajal-lol AC', 'Entrega de despensas y artículos del hogar', 'Akil, Yucatán', '2026-03-03', '2026-03-03 21:31:04', '2026-03-03 21:31:04'),
-(61, 'Ajal-lol AC', 'Brigada de Salud Integral \"Vida Sana\"', 'Izamal, Yucatán', '2026-03-10', '2026-03-11 00:05:21', '2026-03-11 00:05:21'),
-(62, 'Ajal-lol AC', 'Jornada de reforestación comunitaria', 'Akil, Yucatán', '2026-03-11', '2026-03-11 21:57:37', '2026-03-11 21:57:37'),
-(63, 'Ajal-lol AC', 'Jornada de reforestación comunitaria', 'Chikindzonot, Yucatán', '2026-03-11', '2026-03-11 22:50:10', '2026-03-11 22:50:10'),
-(64, 'Ajal-lol AC', 'Campaña de apoyo a adultos mayores', 'Acanceh, Yucatán', '2026-03-11', '2026-03-11 23:16:43', '2026-03-11 23:16:43'),
-(65, 'Ajal-lol AC', 'Taller de capacitación para el empleo', 'Abalá, Yucatán', '2026-03-20', '2026-03-12 21:45:11', '2026-03-12 21:45:11');
+(1, 'Ajal-lol AC', 'Superestamos', 'Akil, Yucatán', '2026-04-19', '2026-04-20 04:24:12', '2026-04-20 04:24:12'),
+(2, 'Ajal-lol AC', 'Superestamos reporte', 'Akil, Yucatán', '2026-04-19', '2026-04-20 04:38:04', '2026-04-20 04:38:04');
 
 -- --------------------------------------------------------
 
@@ -347,6 +337,35 @@ CREATE TABLE `inicio` (
   `img_inicio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `url_inicio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `inicio_estadisticas`
+--
+
+CREATE TABLE `inicio_estadisticas` (
+  `id_estadistica` int NOT NULL,
+  `id_pagina` int NOT NULL,
+  `ano` int NOT NULL,
+  `beneficiarios` int NOT NULL DEFAULT '0',
+  `proyectos` int NOT NULL DEFAULT '0',
+  `horas_apoyo` int NOT NULL DEFAULT '0',
+  `voluntarios` int NOT NULL DEFAULT '0',
+  `bd_include` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1 = incluir datos BD en el total del sitio',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `inicio_estadisticas`
+--
+
+INSERT INTO `inicio_estadisticas` (`id_estadistica`, `id_pagina`, `ano`, `beneficiarios`, `proyectos`, `horas_apoyo`, `voluntarios`, `bd_include`, `created_at`, `updated_at`) VALUES
+(1, 1, 2023, 7451, 5, 1463, 35, 0, '2026-04-19 18:22:03', '2026-04-20 04:53:42'),
+(2, 1, 2024, 0, 0, 0, 0, 0, '2026-04-19 18:22:03', '2026-04-20 04:53:42'),
+(5, 1, 2025, 0, 0, 0, 0, 0, '2026-04-19 19:22:40', '2026-04-20 04:53:42'),
+(6, 1, 2026, 0, 0, 0, 0, 1, '2026-04-19 19:22:40', '2026-04-20 04:53:42');
 
 -- --------------------------------------------------------
 
@@ -643,6 +662,13 @@ CREATE TABLE `proyecto_anos` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `proyecto_anos`
+--
+
+INSERT INTO `proyecto_anos` (`id_ano`, `id_pagina`, `ano`, `subtitulo`, `visible`, `created_at`, `updated_at`) VALUES
+(1, 5, 2026, NULL, 1, '2026-04-20 01:51:15', '2026-04-20 01:51:15');
+
 -- --------------------------------------------------------
 
 --
@@ -703,6 +729,18 @@ CREATE TABLE `reportebeneficiarios` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `reportebeneficiarios`
+--
+
+INSERT INTO `reportebeneficiarios` (`id_reportebeneficiario`, `id_informe`, `reportenombrebeneficiario`, `reportecurpbeneficiario`, `reporteedadbeneficiario`, `created_at`) VALUES
+(1, 2, 'Carlos Eduardo Flores León', 'FOLC860118HYNLER07', 12, '2026-04-19 22:38:04'),
+(2, 2, 'Rodolfo Morales', 'GORM910305MDFMGN06', 24, '2026-04-19 22:38:04'),
+(3, 2, 'Albert Wesker', 'MEPG980418MDFNRB16', 76, '2026-04-19 22:38:04'),
+(4, 2, 'Gabriela Mendoza Paredes', 'NAOM970214HDFVRT10', 56, '2026-04-19 22:38:04'),
+(5, 2, 'Miguel Ángel Navarro Ortiz', 'NISJ850320HYNCSF01', 54, '2026-04-19 22:38:04'),
+(6, 2, 'Carlos Oliveira', 'PELJ880430HYNTRS03', 55, '2026-04-19 22:38:04');
+
 -- --------------------------------------------------------
 
 --
@@ -741,6 +779,13 @@ CREATE TABLE `sessions` (
   `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `last_activity` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `sessions`
+--
+
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+('PE46lxhYKn5N8CPnYI7umBh5dqVxIDSYAAC9YWWE', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiNjVrNU5hbTFPUUplZUtBVmg0VGlVUWVqMzFYcDBCVnp2R3I2MldjbCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NTE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9hcGkvbm90aWZpY2F0aW9ucy9jb3VudCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo3OiJ1c2VyX2lkIjtpOjE7czo2OiJub21icmUiO3M6MjA6IlJvZG9sZm8gTmF2YXJyZXRlIEVrIjtzOjU6ImVtYWlsIjtzOjE3OiJhZG1pbkBhamFsbG9sLmNvbSI7czozOiJyb2wiO3M6MTM6ImFkbWluaXN0cmFkb3IiO30=', 1776640215);
 
 -- --------------------------------------------------------
 
@@ -879,6 +924,14 @@ ALTER TABLE `informe`
 ALTER TABLE `inicio`
   ADD PRIMARY KEY (`id_inicio`),
   ADD KEY `id_pagina` (`id_pagina`);
+
+--
+-- Indices de la tabla `inicio_estadisticas`
+--
+ALTER TABLE `inicio_estadisticas`
+  ADD PRIMARY KEY (`id_estadistica`),
+  ADD UNIQUE KEY `unique_ano_pagina` (`ano`,`id_pagina`),
+  ADD KEY `fk_estadistica_pagina` (`id_pagina`);
 
 --
 -- Indices de la tabla `jobs`
@@ -1067,7 +1120,7 @@ ALTER TABLE `aliados_imagenes`
 -- AUTO_INCREMENT de la tabla `asistenciabeneficiarios`
 --
 ALTER TABLE `asistenciabeneficiarios`
-  MODIFY `id_asistenciabeneficiario` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_asistenciabeneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `contacto`
@@ -1097,13 +1150,19 @@ ALTER TABLE `formulario_contacto`
 -- AUTO_INCREMENT de la tabla `informe`
 --
 ALTER TABLE `informe`
-  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `inicio`
 --
 ALTER TABLE `inicio`
   MODIFY `id_inicio` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `inicio_estadisticas`
+--
+ALTER TABLE `inicio_estadisticas`
+  MODIFY `id_estadistica` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `jobs`
@@ -1175,7 +1234,7 @@ ALTER TABLE `preguntas_frecuentes`
 -- AUTO_INCREMENT de la tabla `proyecto_anos`
 --
 ALTER TABLE `proyecto_anos`
-  MODIFY `id_ano` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_ano` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `proyecto_categorias`
@@ -1199,7 +1258,7 @@ ALTER TABLE `redes_sociales`
 -- AUTO_INCREMENT de la tabla `reportebeneficiarios`
 --
 ALTER TABLE `reportebeneficiarios`
-  MODIFY `id_reportebeneficiario` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_reportebeneficiario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `rol_usuario`
@@ -1270,6 +1329,12 @@ ALTER TABLE `directiva`
 --
 ALTER TABLE `inicio`
   ADD CONSTRAINT `inicio_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
+
+--
+-- Filtros para la tabla `inicio_estadisticas`
+--
+ALTER TABLE `inicio_estadisticas`
+  ADD CONSTRAINT `fk_estadistica_pagina` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
 
 --
 -- Filtros para la tabla `nosotros`

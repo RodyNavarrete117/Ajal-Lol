@@ -46,8 +46,8 @@ class AppServiceProvider extends ServiceProvider
                 ->get();
 
             $view->with('directivaConfig', $config ?? (object)[
-                'titulo_directiva'    => 'Directiva',
-                'subtitulo_directiva' => 'Comité Directivo',
+                'titulo_directiva'    => '',
+                'subtitulo_directiva' => '',
             ]);
 
             $view->with('directiva', $miembros);
@@ -87,24 +87,21 @@ class AppServiceProvider extends ServiceProvider
             $view->with('aliados', $aliados);
         });
 
-        // ── Actividades: sección services (página pública) ──
+        // ── Actividades: sección services ──
         View::composer('sections.services', function ($view) {
 
-            // Año activo: el más reciente con visible = 1
             $anoVisible = DB::table('actividad_anos')
                 ->where('id_pagina', 4)
                 ->where('visible', 1)
                 ->orderBy('ano', 'desc')
                 ->value('ano') ?? date('Y');
 
-            // Años visibles para el selector público
             $anosVisibles = DB::table('actividad_anos')
                 ->where('id_pagina', 4)
                 ->where('visible', 1)
                 ->orderBy('ano', 'asc')
                 ->get();
 
-            // Actividades del año activo
             $actividades = DB::table('actividades')
                 ->join('actividad_anos', 'actividades.id_ano', '=', 'actividad_anos.id_ano')
                 ->where('actividad_anos.id_pagina', 4)
@@ -117,6 +114,85 @@ class AppServiceProvider extends ServiceProvider
             $view->with('act_anos',        $anosVisibles);
             $view->with('act_actividades', $actividades);
             $view->with('act_ano_activo',  $anoVisible);
+        });
+
+        // ── Nosotros: sección about ──
+        View::composer('sections.about', function ($view) {
+
+            $nosotros = DB::table('nosotros')
+                ->where('id_pagina', 2)
+                ->first();
+
+            $idNosotros = $nosotros?->id_nosotros;
+
+            $encabezado = $idNosotros
+                ? DB::table('nosotros_encabezado')
+                    ->where('id_nosotros', $idNosotros)
+                    ->first()
+                : null;
+
+            $historia = $idNosotros
+                ? DB::table('nosotros_historia')
+                    ->where('id_nosotros', $idNosotros)
+                    ->first()
+                : null;
+
+            $general = $idNosotros
+                ? DB::table('nosotros_general')
+                    ->where('id_nosotros', $idNosotros)
+                    ->first()
+                : null;
+
+            $view->with('about_encabezado', $encabezado ?? (object)[
+                'titulo'    => '',
+                'subtitulo' => '',
+            ]);
+
+            $view->with('about_historia', $historia ?? (object)[
+                'imagen'            => null,
+                'badge_texto'       => '',
+                'etiqueta_superior' => '',
+                'titulo_bloque'     => '',
+                'texto_destacado'   => '',
+                'texto_descriptivo' => '',
+            ]);
+
+            $view->with('about_general', $general ?? (object)[
+                'ano_fundacion' => null,
+                'beneficiarios' => null,
+                'ubicacion'     => null,
+            ]);
+        });
+
+        // ── Identidad: sección identity ──
+        View::composer('sections.identity', function ($view) {
+
+            $nosotros = DB::table('nosotros')
+                ->where('id_pagina', 2)
+                ->first();
+
+            $idNosotros = $nosotros?->id_nosotros;
+
+            $identidad = $idNosotros
+                ? DB::table('nosotros_identidad')
+                    ->where('id_nosotros', $idNosotros)
+                    ->first()
+                : null;
+
+            $items = $identidad
+                ? DB::table('nosotros_identidad_items')
+                    ->where('id_identidad', $identidad->id_identidad)
+                    ->orderBy('orden')
+                    ->get()
+                    ->keyBy('tipo')
+                : collect();
+
+            $view->with('identity_encabezado', $identidad ?? (object)[
+                'titulo'    => '',
+                'subtitulo' => '',
+            ]);
+
+            $view->with('identity_items', $items);
         });
     }
 }

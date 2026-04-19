@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\EditPageContactController;
 use App\Http\Controllers\Admin\EditPageBoardController;
 use App\Http\Controllers\Admin\EditPageAlliesController;
 use App\Http\Controllers\Admin\EditPageActivitiesController;
+use App\Http\Controllers\Admin\EditPageAboutController;
 use App\Http\Controllers\Admin\ProjectEditController;
 use App\Http\Controllers\Admin\FaqEditController;
 use App\Http\Controllers\Page\PublicPageController;
@@ -94,10 +95,10 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
 
     /* ===== CONFIGURACIÓN ===== */
     Route::prefix('settings')->group(function () {
-        Route::get('/',                    [SettingsController::class, 'index'])->name('admin.settings');
-        Route::post('/change-password',    [SettingsController::class, 'changePassword'])->name('admin.settings.change-password');
-        Route::post('/update-profile',     [SettingsController::class, 'updateProfile'])->name('admin.settings.update-profile');
-        Route::post('/keep-session',       [SettingsController::class, 'keepSession']);
+        Route::get('/',                 [SettingsController::class, 'index'])->name('admin.settings');
+        Route::post('/change-password', [SettingsController::class, 'changePassword'])->name('admin.settings.change-password');
+        Route::post('/update-profile',  [SettingsController::class, 'updateProfile'])->name('admin.settings.update-profile');
+        Route::post('/keep-session',    [SettingsController::class, 'keepSession']);
     });
 
     /* ===== USUARIOS ===== */
@@ -113,17 +114,25 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::prefix('pages')->group(function () {
 
         /* Páginas simples */
-        Route::get('/home/edit',  fn() => view('admin.pages.home_edit'))->name('admin.pages.home.edit');
-        Route::get('/about/edit', fn() => view('admin.pages.about_edit'))->name('admin.pages.about.edit');
+        Route::get('/home/edit', fn() => view('admin.pages.home_edit'))->name('admin.pages.home.edit');
+
+        /* ── Nosotros ── */
+        Route::prefix('about')->group(function () {
+            Route::get('/edit',        [EditPageAboutController::class, 'index'])->name('admin.pages.about.edit');
+            Route::post('/encabezado', [EditPageAboutController::class, 'updateEncabezado'])->name('admin.pages.about.encabezado');
+            Route::post('/historia',   [EditPageAboutController::class, 'updateHistoria'])->name('admin.pages.about.historia');
+            Route::post('/general',    [EditPageAboutController::class, 'updateGeneral'])->name('admin.pages.about.general');
+            Route::post('/identidad',  [EditPageAboutController::class, 'updateIdentidad'])->name('admin.pages.about.identidad');
+        });
 
         /* ── Actividades ── */
         Route::prefix('activities')->group(function () {
-            Route::get('/edit',                [EditPageActivitiesController::class, 'index'])->name('admin.pages.activities.edit');
-            Route::get('/ano/{ano}',           [EditPageActivitiesController::class, 'getByAno'])->name('admin.pages.activities.byAno')->where('ano', '[0-9]{4}');
-            Route::post('/actividades',        [EditPageActivitiesController::class, 'updateActividades'])->name('admin.pages.activities.actividades');
-            Route::patch('/anos/{id}/toggle',  [EditPageActivitiesController::class, 'toggleAno'])->name('admin.pages.activities.toggleAno')->where('id', '[0-9]+');
-            Route::delete('/anos/{id}',        [EditPageActivitiesController::class, 'destroyAno'])->name('admin.pages.activities.destroyAno')->where('id', '[0-9]+');
-            Route::post('/anos',               [EditPageActivitiesController::class, 'storeAno'])->name('admin.pages.activities.storeAno');
+            Route::get('/edit',               [EditPageActivitiesController::class, 'index'])->name('admin.pages.activities.edit');
+            Route::get('/ano/{ano}',          [EditPageActivitiesController::class, 'getByAno'])->name('admin.pages.activities.byAno')->where('ano', '[0-9]{4}');
+            Route::post('/actividades',       [EditPageActivitiesController::class, 'updateActividades'])->name('admin.pages.activities.actividades');
+            Route::patch('/anos/{id}/toggle', [EditPageActivitiesController::class, 'toggleAno'])->name('admin.pages.activities.toggleAno')->where('id', '[0-9]+');
+            Route::delete('/anos/{id}',       [EditPageActivitiesController::class, 'destroyAno'])->name('admin.pages.activities.destroyAno')->where('id', '[0-9]+');
+            Route::post('/anos',              [EditPageActivitiesController::class, 'storeAno'])->name('admin.pages.activities.storeAno');
         });
 
         /* ── Aliados ── */
@@ -145,7 +154,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
             Route::delete('/image/{id}',    [ProjectEditController::class, 'imageDestroy'])->name('admin.projects.image.destroy');
             Route::post('/category',        [ProjectEditController::class, 'categoryStore'])->name('admin.projects.category.store');
             Route::delete('/category/{id}', [ProjectEditController::class, 'categoryDestroy'])->name('admin.projects.category.destroy');
-            Route::post('/category-order', [ProjectEditController::class, 'categoryOrder'])->name('admin.projects.category.order');
+            Route::post('/category-order',  [ProjectEditController::class, 'categoryOrder'])->name('admin.projects.category.order');
         });
 
         /* ── Directiva ── */

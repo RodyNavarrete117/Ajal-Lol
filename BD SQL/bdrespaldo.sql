@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 17-04-2026 a las 18:28:18
+-- Tiempo de generación: 19-04-2026 a las 02:56:41
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `prueba12`
+-- Base de datos: `prueba13`
 --
 
 -- --------------------------------------------------------
@@ -30,9 +30,9 @@ SET time_zone = "+00:00";
 CREATE TABLE `actividades` (
   `id_actividad` int NOT NULL,
   `id_ano` int NOT NULL,
-  `titulo_actividad` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `icono_actividad` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'fa-star',
-  `texto_actividad` text COLLATE utf8mb4_unicode_ci,
+  `titulo_actividad` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `icono_actividad` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'fa-star',
+  `texto_actividad` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `orden_actividad` int NOT NULL DEFAULT '0',
   `visible` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -413,11 +413,136 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 CREATE TABLE `nosotros` (
   `id_nosotros` int NOT NULL,
   `id_pagina` int NOT NULL,
-  `titulo_nosotros` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `imagen_nosotros` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `subtitulo_nosotros` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `texto_nosotros` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `nosotros`
+--
+
+INSERT INTO `nosotros` (`id_nosotros`, `id_pagina`, `created_at`, `updated_at`) VALUES
+(1, 2, '2026-04-19 02:44:22', '2026-04-19 02:44:22');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `nosotros_encabezado`
+--
+
+CREATE TABLE `nosotros_encabezado` (
+  `id_encabezado` int NOT NULL,
+  `id_nosotros` int NOT NULL,
+  `titulo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `subtitulo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `nosotros_encabezado`
+--
+
+INSERT INTO `nosotros_encabezado` (`id_encabezado`, `id_nosotros`, `titulo`, `subtitulo`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Nosotros', 'Conoce más sobre nuestra historia', '2026-04-19 02:44:22', '2026-04-19 02:44:22');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `nosotros_general`
+--
+
+CREATE TABLE `nosotros_general` (
+  `id_general` int NOT NULL,
+  `id_nosotros` int NOT NULL,
+  `ano_fundacion` int DEFAULT NULL,
+  `beneficiarios` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ubicacion` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `nosotros_general`
+--
+
+INSERT INTO `nosotros_general` (`id_general`, `id_nosotros`, `ano_fundacion`, `beneficiarios`, `ubicacion`, `created_at`, `updated_at`) VALUES
+(1, 1, 2000, '4990', 'Hoctún Yucatán', '2026-04-19 02:44:22', '2026-04-19 08:46:22');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `nosotros_historia`
+--
+
+CREATE TABLE `nosotros_historia` (
+  `id_historia` int NOT NULL,
+  `id_nosotros` int NOT NULL,
+  `imagen` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `badge_texto` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `etiqueta_superior` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `titulo_bloque` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `texto_destacado` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `texto_descriptivo` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `nosotros_historia`
+--
+
+INSERT INTO `nosotros_historia` (`id_historia`, `id_nosotros`, `imagen`, `badge_texto`, `etiqueta_superior`, `titulo_bloque`, `texto_destacado`, `texto_descriptivo`, `created_at`, `updated_at`) VALUES
+(1, 1, 'nosotros/AP1T2f692MaJTPubQ1ijRttPoqfLyqXuzHUAT4Wp.jpg', 'Fundada en el año 2000', 'Nuestra Historia', 'Así comenzó Ajal Lol', 'La organización fue fundada en el año 2000 por 5 mujeres que compartían la inquietud de buscar una manera de ayudar a las personas de escasos recursos. Actualmente el comité directivo lo conforman 8 mujeres y su trabajo es apoyado por 35 colaboradores y voluntarios.', 'Para nosotros como asociación es muy importante el papel que jugamos en la sociedad. Siempre hemos buscado que nuestras acciones tengan un impacto positivo llegando al mayor número posible de beneficiarios.', '2026-04-19 02:44:22', '2026-04-19 08:44:54');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `nosotros_identidad`
+--
+
+CREATE TABLE `nosotros_identidad` (
+  `id_identidad` int NOT NULL,
+  `id_nosotros` int NOT NULL,
+  `titulo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `subtitulo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `nosotros_identidad`
+--
+
+INSERT INTO `nosotros_identidad` (`id_identidad`, `id_nosotros`, `titulo`, `subtitulo`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Nuestra Identidad', 'Los principios que nos guían', '2026-04-19 02:44:22', '2026-04-19 02:44:22');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `nosotros_identidad_items`
+--
+
+CREATE TABLE `nosotros_identidad_items` (
+  `id_item` int NOT NULL,
+  `id_identidad` int NOT NULL,
+  `tipo` enum('mision','vision','objetivo','valores') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `titulo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `contenido` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `orden` int NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `nosotros_identidad_items`
+--
+
+INSERT INTO `nosotros_identidad_items` (`id_item`, `id_identidad`, `tipo`, `titulo`, `contenido`, `orden`, `created_at`, `updated_at`) VALUES
+(1, 1, 'mision', 'Misión', 'Impulsar programas que aporten positivamente al desarrollo integral de las familias en situación vulnerable.', 1, '2026-04-19 02:44:22', '2026-04-19 02:44:22'),
+(2, 1, 'vision', 'Visión', 'Ser un referente a nivel nacional como organización que apoya el desarrollo integral en materia de salud y capacitación para el trabajo.', 2, '2026-04-19 02:44:22', '2026-04-19 02:44:22'),
+(3, 1, 'objetivo', 'Objetivo General', 'Contribuir al mejoramiento de la calidad de vida de las personas que viven en situación vulnerable de las comunidades mayas de Yucatán.', 3, '2026-04-19 02:44:22', '2026-04-19 02:44:22'),
+(4, 1, 'valores', 'Valores', 'Solidaridad: ser empáticos y atender las necesidades de cada beneficiario.\nIgualdad: apoyo con amor y respeto, sin distinción.\nCompromiso: trato digno y trabajo social con pasión.\nInterculturalidad: apertura para convivir y aprender.', 4, '2026-04-19 02:44:22', '2026-04-19 02:44:22');
 
 -- --------------------------------------------------------
 
@@ -782,6 +907,41 @@ ALTER TABLE `nosotros`
   ADD KEY `id_pagina` (`id_pagina`);
 
 --
+-- Indices de la tabla `nosotros_encabezado`
+--
+ALTER TABLE `nosotros_encabezado`
+  ADD PRIMARY KEY (`id_encabezado`),
+  ADD KEY `id_nosotros` (`id_nosotros`);
+
+--
+-- Indices de la tabla `nosotros_general`
+--
+ALTER TABLE `nosotros_general`
+  ADD PRIMARY KEY (`id_general`),
+  ADD KEY `id_nosotros` (`id_nosotros`);
+
+--
+-- Indices de la tabla `nosotros_historia`
+--
+ALTER TABLE `nosotros_historia`
+  ADD PRIMARY KEY (`id_historia`),
+  ADD KEY `id_nosotros` (`id_nosotros`);
+
+--
+-- Indices de la tabla `nosotros_identidad`
+--
+ALTER TABLE `nosotros_identidad`
+  ADD PRIMARY KEY (`id_identidad`),
+  ADD KEY `id_nosotros` (`id_nosotros`);
+
+--
+-- Indices de la tabla `nosotros_identidad_items`
+--
+ALTER TABLE `nosotros_identidad_items`
+  ADD PRIMARY KEY (`id_item`),
+  ADD KEY `id_identidad` (`id_identidad`);
+
+--
 -- Indices de la tabla `notificaciones`
 --
 ALTER TABLE `notificaciones`
@@ -961,7 +1121,37 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT de la tabla `nosotros`
 --
 ALTER TABLE `nosotros`
-  MODIFY `id_nosotros` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_nosotros` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `nosotros_encabezado`
+--
+ALTER TABLE `nosotros_encabezado`
+  MODIFY `id_encabezado` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `nosotros_general`
+--
+ALTER TABLE `nosotros_general`
+  MODIFY `id_general` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `nosotros_historia`
+--
+ALTER TABLE `nosotros_historia`
+  MODIFY `id_historia` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `nosotros_identidad`
+--
+ALTER TABLE `nosotros_identidad`
+  MODIFY `id_identidad` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `nosotros_identidad_items`
+--
+ALTER TABLE `nosotros_identidad_items`
+  MODIFY `id_item` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `notificaciones`
@@ -1085,7 +1275,37 @@ ALTER TABLE `inicio`
 -- Filtros para la tabla `nosotros`
 --
 ALTER TABLE `nosotros`
-  ADD CONSTRAINT `nosotros_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
+  ADD CONSTRAINT `nosotros_fk_pagina` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
+
+--
+-- Filtros para la tabla `nosotros_encabezado`
+--
+ALTER TABLE `nosotros_encabezado`
+  ADD CONSTRAINT `nosotros_encabezado_fk` FOREIGN KEY (`id_nosotros`) REFERENCES `nosotros` (`id_nosotros`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `nosotros_general`
+--
+ALTER TABLE `nosotros_general`
+  ADD CONSTRAINT `nosotros_general_fk` FOREIGN KEY (`id_nosotros`) REFERENCES `nosotros` (`id_nosotros`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `nosotros_historia`
+--
+ALTER TABLE `nosotros_historia`
+  ADD CONSTRAINT `nosotros_historia_fk` FOREIGN KEY (`id_nosotros`) REFERENCES `nosotros` (`id_nosotros`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `nosotros_identidad`
+--
+ALTER TABLE `nosotros_identidad`
+  ADD CONSTRAINT `nosotros_identidad_fk` FOREIGN KEY (`id_nosotros`) REFERENCES `nosotros` (`id_nosotros`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `nosotros_identidad_items`
+--
+ALTER TABLE `nosotros_identidad_items`
+  ADD CONSTRAINT `nosotros_identidad_items_fk` FOREIGN KEY (`id_identidad`) REFERENCES `nosotros_identidad` (`id_identidad`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `notificaciones`

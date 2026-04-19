@@ -2,21 +2,40 @@
 (function () {
     'use strict';
 
-    /* ── Toast ─────────────────────────────────────────── */
-    function showToast(message, type = 'success') {
-        const existing = document.querySelector('.edit-toast');
-        if (existing) existing.remove();
+    const ROUTES = window.ABOUT_ROUTES ?? {};
+    const CSRF   = ROUTES.csrfToken ?? document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
+    /* ── helpers fetch ── */
+    async function apiFetch(url, body) {
+        const formData = body instanceof FormData ? body : null;
+        const isJson   = !(body instanceof FormData);
+
+        const opts = {
+            method : 'POST',
+            headers: {
+                'X-CSRF-TOKEN': CSRF,
+                'Accept'      : 'application/json',
+                ...(isJson ? { 'Content-Type': 'application/json' } : {}),
+            },
+            body: isJson ? JSON.stringify(body) : body,
+        };
+
+        const res  = await fetch(url, opts);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message ?? 'Error en la solicitud.');
+        return data;
+    }
+
+    /* ── Toast ── */
+    function showToast(message, type = 'success') {
+        document.querySelector('.edit-toast')?.remove();
         const toast = document.createElement('div');
         toast.className = `edit-toast edit-toast--${type}`;
         toast.innerHTML = `
             <span class="edit-toast__icon">
-                ${type === 'success'
-                    ? '<i class="fa fa-circle-check"></i>'
-                    : '<i class="fa fa-circle-exclamation"></i>'}
+                <i class="fa ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
             </span>
-            <span class="edit-toast__msg">${message}</span>
-        `;
+            <span class="edit-toast__msg">${message}</span>`;
         document.body.appendChild(toast);
         requestAnimationFrame(() => toast.classList.add('edit-toast--show'));
         setTimeout(() => {
@@ -25,32 +44,27 @@
         }, 3200);
     }
 
-    /* ── Tabs ───────────────────────────────────────────── */
-    const tabs   = document.querySelectorAll('.edit-tab');
-    const panels = document.querySelectorAll('.edit-panel');
-
-    tabs.forEach(tab => {
+    /* ── Tabs ── */
+    document.querySelectorAll('.edit-tab').forEach(tab => {
         tab.addEventListener('click', () => {
-            const target = tab.dataset.target;
-
-            tabs.forEach(t => t.classList.remove('active'));
-            panels.forEach(p => p.classList.remove('active'));
-
+            document.querySelectorAll('.edit-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.edit-panel').forEach(p => p.classList.remove('active'));
             tab.classList.add('active');
-            const panel = document.getElementById('panel-' + target);
+            const panel = document.getElementById('panel-' + tab.dataset.target);
             if (panel) panel.classList.add('active');
         });
     });
 
-    /* ── Preview de imagen de historia ─────────────────── */
+    /* ── Preview imagen historia ── */
     const fileInput  = document.getElementById('imagen_historia');
     const previewEl  = document.getElementById('histImgPreview');
     const btnClear   = document.getElementById('btnClearHist');
     const uploadArea = document.getElementById('histImgArea');
+    const quitarInput = document.getElementById('quitar_imagen');
 
     function renderPreview(file) {
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = e => {
             previewEl.innerHTML = `<img src="${e.target.result}" alt="Vista previa">`;
         };
         reader.readAsDataURL(file);
@@ -64,6 +78,7 @@
                 <small>PNG, JPG, WEBP · Máx. 5MB</small>
             </div>`;
         if (fileInput) fileInput.value = '';
+        if (quitarInput) quitarInput.value = '1';
     }
 
     previewEl?.addEventListener('click', () => fileInput?.click());
@@ -71,51 +86,44 @@
     fileInput?.addEventListener('change', function () {
         const file = this.files[0];
         if (!file) return;
-
         if (file.size > 5 * 1024 * 1024) {
             showToast('La imagen supera el límite de 5MB.', 'error');
             this.value = '';
             return;
         }
-
         const allowed = ['image/png', 'image/jpeg', 'image/webp'];
         if (!allowed.includes(file.type)) {
             showToast('Formato no permitido. Usa PNG, JPG o WEBP.', 'error');
             this.value = '';
             return;
         }
-
+        if (quitarInput) quitarInput.value = '0';
         renderPreview(file);
     });
 
     btnClear?.addEventListener('click', clearPreview);
 
-    uploadArea?.addEventListener('dragover', (e) => {
+    uploadArea?.addEventListener('dragover', e => {
         e.preventDefault();
         uploadArea.classList.add('drag-over');
     });
-
-    uploadArea?.addEventListener('dragleave', () => {
-        uploadArea.classList.remove('drag-over');
-    });
-
-    uploadArea?.addEventListener('drop', (e) => {
+    uploadArea?.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+    uploadArea?.addEventListener('drop', e => {
         e.preventDefault();
         uploadArea.classList.remove('drag-over');
         const file = e.dataTransfer.files[0];
         if (!file) return;
-
         if (file.size > 5 * 1024 * 1024) { showToast('La imagen supera el límite de 5MB.', 'error'); return; }
         const allowed = ['image/png', 'image/jpeg', 'image/webp'];
         if (!allowed.includes(file.type)) { showToast('Formato no permitido.', 'error'); return; }
-
         const dt = new DataTransfer();
         dt.items.add(file);
         if (fileInput) fileInput.files = dt.files;
+        if (quitarInput) quitarInput.value = '0';
         renderPreview(file);
     });
 
-    /* ── Acordeón identidad ─────────────────────────────── */
+    /* ── Acordeón identidad ── */
     document.querySelectorAll('.identity-card__toggle').forEach(btn => {
         btn.addEventListener('click', () => {
             const card = btn.closest('.identity-card');
@@ -124,61 +132,76 @@
         });
     });
 
-    /* ── Validación ──────────────────────────────────────── */
-    function validateForm(form) {
-        let valid = true;
+    /* ── Guardar Encabezado ── */
+    document.getElementById('btnSaveEncabezado')?.addEventListener('click', async () => {
+        const titulo    = document.getElementById('titulo_pagina')?.value.trim();
+        const subtitulo = document.getElementById('subtitulo_pagina')?.value.trim();
 
-        form.querySelectorAll('input[required], textarea[required]').forEach(field => {
-            clearError(field);
-            if (!field.value.trim()) {
-                markError(field, 'Este campo es obligatorio.');
-                valid = false;
-            }
-        });
-
-        return valid;
-    }
-
-    function markError(field, msg) {
-        field.classList.add('field--error');
-        const err = document.createElement('span');
-        err.className = 'field-error-msg';
-        err.textContent = msg;
-        field.insertAdjacentElement('afterend', err);
-        field.addEventListener('input', () => clearError(field), { once: true });
-    }
-
-    function clearError(field) {
-        field.classList.remove('field--error');
-        field.parentElement.querySelector('.field-error-msg')?.remove();
-    }
-
-    /* ── Submit ──────────────────────────────────────────── */
-    const form = document.querySelector('.edit-container form');
-    if (!form) return;
-
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        if (!validateForm(form)) {
-            showToast('Por favor completa los campos obligatorios.', 'error');
-
-            // Si el campo con error está en un panel inactivo, activar ese panel
-            const errorField = form.querySelector('.field--error');
-            if (errorField) {
-                const panel = errorField.closest('.edit-panel');
-                if (panel && !panel.classList.contains('active')) {
-                    const panelId = panel.id.replace('panel-', '');
-                    const tab = document.querySelector(`.edit-tab[data-target="${panelId}"]`);
-                    if (tab) tab.click();
-                }
-                setTimeout(() => errorField.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
-            }
-            return;
+        try {
+            const data = await apiFetch(ROUTES.encabezado, { titulo, subtitulo });
+            showToast(data.message ?? 'Encabezado guardado.', 'success');
+        } catch (err) {
+            showToast(err.message ?? 'Error al guardar.', 'error');
         }
+    });
 
-        showToast('Cambios guardados correctamente.', 'success');
-        /* TODO: reemplazar con fetch/axios o form.submit() */
+    /* ── Guardar Historia ── */
+    document.getElementById('btnSaveHistoria')?.addEventListener('click', async () => {
+        const formData = new FormData();
+        formData.append('badge_texto',       document.getElementById('badge_imagen')?.value.trim() ?? '');
+        formData.append('etiqueta_superior',  document.getElementById('eyebrow_historia')?.value.trim() ?? '');
+        formData.append('titulo_bloque',      document.getElementById('titulo_historia')?.value.trim() ?? '');
+        formData.append('texto_destacado',    document.getElementById('texto_destacado')?.value.trim() ?? '');
+        formData.append('texto_descriptivo',  document.getElementById('texto_descripcion')?.value.trim() ?? '');
+        formData.append('quitar_imagen',      document.getElementById('quitar_imagen')?.value ?? '0');
+        formData.append('_token',             CSRF);
+
+        const file = fileInput?.files[0];
+        if (file) formData.append('imagen_historia', file);
+
+        try {
+            const data = await apiFetch(ROUTES.historia, formData);
+            showToast(data.message ?? 'Historia guardada.', 'success');
+        } catch (err) {
+            showToast(err.message ?? 'Error al guardar.', 'error');
+        }
+    });
+
+    /* ── Guardar General ── */
+    document.getElementById('btnSaveGeneral')?.addEventListener('click', async () => {
+        const ano_fundacion = document.getElementById('anio_fundacion')?.value.trim();
+        const beneficiarios = document.getElementById('num_beneficiarios')?.value.trim();
+        const ubicacion     = document.getElementById('ubicacion')?.value.trim();
+
+        try {
+            const data = await apiFetch(ROUTES.general, { ano_fundacion, beneficiarios, ubicacion });
+            showToast(data.message ?? 'Información general guardada.', 'success');
+        } catch (err) {
+            showToast(err.message ?? 'Error al guardar.', 'error');
+        }
+    });
+
+    /* ── Guardar Identidad ── */
+    document.getElementById('btnSaveIdentidad')?.addEventListener('click', async () => {
+        const payload = {
+            identidad_titulo    : document.getElementById('identidad_titulo')?.value.trim(),
+            identidad_subtitulo : document.getElementById('identidad_subtitulo')?.value.trim(),
+            titulo_mision       : document.getElementById('titulo_mision')?.value.trim(),
+            mision              : document.getElementById('mision')?.value.trim(),
+            titulo_vision       : document.getElementById('titulo_vision')?.value.trim(),
+            vision              : document.getElementById('vision')?.value.trim(),
+            titulo_objetivo     : document.getElementById('titulo_objetivo')?.value.trim(),
+            objetivo_general    : document.getElementById('objetivo_general')?.value.trim(),
+            titulo_valores      : document.getElementById('titulo_valores')?.value.trim(),
+            valores             : document.getElementById('valores')?.value.trim(),
+        };
+
+        try {
+            const data = await apiFetch(ROUTES.identidad, payload);
+            showToast(data.message ?? 'Identidad guardada.', 'success');
+        } catch (err) {
+            showToast(err.message ?? 'Error al guardar.', 'error');
+        }
     });
 
 })();

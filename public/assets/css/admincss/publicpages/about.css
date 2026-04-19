@@ -1,0 +1,105 @@
+/* ============================================================
+   AJAL LOL — about.css
+   Ruta: assets/css/admincss/publicpages/about.css
+   Contiene: Datos generales de la sección Nosotros
+   Depende de: base.css (variables)
+   ============================================================ */
+
+/* ─── Contenedor de datos generales ─── */
+.about-general-info {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--white);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--rose-pale);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.about-general-info::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--rose-mid), var(--gold));
+    border-radius: 4px 0 0 4px;
+}
+
+/* ─── Cada ítem ─── */
+.about-general-item {
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+    font-size: .9rem;
+    color: var(--text-mid);
+    padding: .6rem .75rem;
+    border-radius: var(--radius-sm);
+    background: var(--cream);
+    border: 1px solid transparent;
+    opacity: 0;
+    transform: translateX(-16px);
+    transition: opacity .5s ease, transform .5s ease, background .3s ease, border-color .3s ease;
+}
+
+.about-general-item:hover {
+    background: var(--rose-blush);
+    border-color: var(--rose-pale);
+}
+
+.about-general-item--visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* ─── Ícono ─── */
+.about-general-item__icon {
+    width: 36px;
+    height: 36px;
+    background: var(--rose-blush);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background var(--transition);
+}
+
+.about-general-item:hover .about-general-item__icon {
+    background: var(--rose-deep);
+}
+
+.about-general-item__icon i {
+    color: var(--rose-mid);
+    font-size: 1rem;
+    transition: color var(--transition);
+}
+
+.about-general-item:hover .about-general-item__icon i {
+    color: var(--white);
+}
+
+/* ─── Texto ─── */
+.about-general-item__text {
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+}
+
+.about-general-item__label {
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-light);
+}
+
+.about-general-item__value {
+    font-size: .92rem;
+    font-weight: 500;
+    color: var(--rose-deep);
+}

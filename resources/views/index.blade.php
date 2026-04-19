@@ -34,6 +34,7 @@
 
   <!-- ── CSS propio (dividido para ahorrar código) ── -->
   <link href="{{ asset('assets/css/admincss/publicpages/base.css') }}"       rel="stylesheet">
+  <link href="{{ asset('assets/css/admincss/publicpages/about.css') }}" rel="stylesheet">
   <link href="{{ asset('assets/css/admincss/publicpages/header.css') }}"     rel="stylesheet">
   <link href="{{ asset('assets/css/admincss/publicpages/sections.css') }}"   rel="stylesheet">
   <link href="{{ asset('assets/css/admincss/publicpages/activities.css') }}" rel="stylesheet">
@@ -84,6 +85,7 @@
   <script src="{{ asset('assets/js/publicpages/utils.js') }}"></script>
   <script src="{{ asset('assets/js/publicpages/header.js') }}"></script>
   <script src="{{ asset('assets/js/publicpages/sections.js') }}"></script>
+  <script src="{{ asset('assets/js/publicpages/about.js') }}"></script>
   <script src="{{ asset('assets/js/publicpages/portfolio.js') }}"></script>
   <script src="{{ asset('assets/js/publicpages/services.js') }}"></script>
   <script src="{{ asset('assets/js/publicpages/contact.js') }}"></script>

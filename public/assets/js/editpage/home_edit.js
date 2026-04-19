@@ -349,12 +349,9 @@
         function statsPositionDropdown(btn) {
             if (!statsDd || !btn) return;
             const r = btn.getBoundingClientRect();
-            const w = Math.max(r.width, 140);
-            let left = r.left + (r.width / 2) - (w / 2);
-            left = Math.max(8, Math.min(left, window.innerWidth - w - 8));
             statsDd.style.top   = (r.bottom + 6) + 'px';
-            statsDd.style.left  = left + 'px';
-            statsDd.style.width = w + 'px';
+            statsDd.style.left  = r.left + 'px';
+            statsDd.style.width = '';
         }
 
         function statsOpenDropdown(btn) {
@@ -391,6 +388,13 @@
         /* ── Poblar select de años disponibles ── */
         function statsPopulateAddForm() {
             const addForm = document.getElementById('statsAddYrForm');
+            const plusBtnReset = document.querySelector('.stats-btn-plus');
+            if (plusBtnReset) {
+                plusBtnReset.disabled = false;
+                plusBtnReset.style.opacity       = '';
+                plusBtnReset.style.cursor        = '';
+                plusBtnReset.style.pointerEvents = '';
+            }
             if (!addForm) return;
 
             const currentYear = new Date().getFullYear();
@@ -417,13 +421,19 @@
             sel.innerHTML = '';
             const btnOk = document.getElementById('statsBtnOk');
 
-            if (available.length === 0) {
-                const opt = document.createElement('option');
-                opt.textContent = 'Sin años disponibles';
-                opt.disabled    = true;
-                sel.appendChild(opt);
-                if (btnOk) btnOk.disabled = true;
-            } else {
+                if (available.length === 0) {
+                    // Cerrar el form si estaba abierto
+                    addForm.classList.remove('show');
+                    // Deshabilitar visualmente el botón +
+                    const plusBtn = document.querySelector('.stats-btn-plus');
+                    if (plusBtn) {
+                        plusBtn.disabled = true;
+                        plusBtn.style.opacity      = '0.35';
+                        plusBtn.style.cursor       = 'not-allowed';
+                        plusBtn.style.pointerEvents = 'none';
+                    }
+                    return;
+                }else {
                 if (btnOk) btnOk.disabled = false;
                 available.forEach(y => {
                     const opt = document.createElement('option');
@@ -434,33 +444,72 @@
             }
         }
 
+        // NUEVA función — agregar después de statsPopulateAddForm
+        function statsUpdatePlusBtn() {
+            const currentYear = new Date().getFullYear();
+            const existing    = statsSortedYears();
+            const available   = [];
+            for (let y = currentYear; y >= 2023; y--) {
+                if (!existing.includes(y)) available.push(y);
+            }
+
+            const plusBtn = document.querySelector('.stats-btn-plus');
+            if (!plusBtn) return;
+
+            if (available.length === 0) {
+                plusBtn.disabled            = true;
+                plusBtn.style.opacity       = '0.35';
+                plusBtn.style.cursor        = 'not-allowed';
+                plusBtn.style.pointerEvents = 'none';
+            } else {
+                plusBtn.disabled            = false;
+                plusBtn.style.opacity       = '';
+                plusBtn.style.cursor        = '';
+                plusBtn.style.pointerEvents = '';
+            }
+        }
+
         /* ── Carrusel ── */
         function statsBuildCarousel() {
             const row = document.getElementById('statsYrRow');
             if (!row) return;
             row.innerHTML = '';
 
-            const all    = statsSortedYears();
-            const active = all[statsCurrentIdx];
+            const all    = statsSortedYears();   // ordenados desc: [2025, 2024, 2023…]
+            if (!all.length) {
+                // Sin años: solo mostrar botón +
+                const plusBtn = buildPlusBtn();
+                row.appendChild(plusBtn);
+                return;
+            }
 
-            const prevYears = [...all].slice(statsCurrentIdx + 1).reverse();
-            const nextYears = [...all].slice(0, statsCurrentIdx).reverse();
+            const activeYr = all[statsCurrentIdx];
 
-            // Izquierda
-            prevYears.forEach(yr => {
+            // Año anterior (el que va ANTES en el tiempo = índice mayor en array desc)
+            const prevYr = all[statsCurrentIdx + 1] ?? null;
+            // Año siguiente (el que va DESPUÉS en el tiempo = índice menor en array desc)
+            const nextYr = all[statsCurrentIdx - 1] ?? null;
+
+            // Cápsula año anterior
+            if (prevYr !== null) {
                 const btn = document.createElement('button');
-                btn.type = 'button'; btn.className = 'stats-yr-adj'; btn.textContent = yr;
-                btn.addEventListener('click', () => { statsCurrentIdx = all.indexOf(yr); statsRenderAll(); });
+                btn.type = 'button';
+                btn.className = 'stats-yr-adj';
+                btn.textContent = prevYr;
+                btn.addEventListener('click', () => {
+                    statsCurrentIdx = statsCurrentIdx + 1;
+                    statsRenderAll();
+                });
                 row.appendChild(btn);
-            });
+            }
 
-            // Centro
+            // Cápsula activa (con dropdown)
             const wrap   = document.createElement('div');
             wrap.className = 'stats-yr-active-wrap';
             const actBtn = document.createElement('button');
             actBtn.type      = 'button';
             actBtn.className = 'stats-yr-act';
-            actBtn.innerHTML = `${active} <span class="stats-yr-chv">&#9660;</span>`;
+            actBtn.innerHTML = `${activeYr} <span class="stats-yr-chv">&#9660;</span>`;
             actBtn.addEventListener('click', e => {
                 e.stopPropagation();
                 statsDd.style.display === 'none'
@@ -470,15 +519,24 @@
             wrap.appendChild(actBtn);
             row.appendChild(wrap);
 
-            // Derecha
-            nextYears.forEach(yr => {
+            // Cápsula año siguiente
+            if (nextYr !== null) {
                 const btn = document.createElement('button');
-                btn.type = 'button'; btn.className = 'stats-yr-adj'; btn.textContent = yr;
-                btn.addEventListener('click', () => { statsCurrentIdx = all.indexOf(yr); statsRenderAll(); });
+                btn.type = 'button';
+                btn.className = 'stats-yr-adj';
+                btn.textContent = nextYr;
+                btn.addEventListener('click', () => {
+                    statsCurrentIdx = statsCurrentIdx - 1;
+                    statsRenderAll();
+                });
                 row.appendChild(btn);
-            });
+            }
 
             // Botón +
+            row.appendChild(buildPlusBtn());
+        }
+
+        function buildPlusBtn() {
             const plusBtn = document.createElement('button');
             plusBtn.type        = 'button';
             plusBtn.className   = 'stats-btn-plus';
@@ -492,7 +550,7 @@
                 if (!open) statsPopulateAddForm();
                 statsCloseDropdown();
             });
-            row.appendChild(plusBtn);
+            return plusBtn;
         }
 
         /* ── Panel del año ── */
@@ -552,6 +610,7 @@
             statsBuildCarousel();
             statsRenderPanel();
             statsUpdateTotals();
+            statsUpdatePlusBtn();
         }
 
         /* ── Confirmar agregar año ── */

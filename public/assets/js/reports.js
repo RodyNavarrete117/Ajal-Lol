@@ -416,10 +416,10 @@ function openEventModal(id, title, date, lugar) {
     document.getElementById('event-modal-subtitle').textContent = fechaFormateada;
     document.getElementById('event-modal-lugar').textContent    = lugar || 'Sin especificar';
 
-    const eventData = (typeof eventsFromDB !== 'undefined' && eventsFromDB[date])
-        ? eventsFromDB[date] : null;
+    const eventData = (typeof eventsByIdDB !== 'undefined' && eventsByIdDB[id])
+        ? eventsByIdDB[id] : null;
 
-    const tipo  = eventData ? eventData.tipo : null;
+    const tipo = eventData ? eventData.tipo : null;
 
     const tipoEl = document.getElementById('modal-info-tipo');
     if (tipoEl) {
@@ -1171,7 +1171,7 @@ function openEditView(id, from = 'history') {
         document.getElementById('edit-nombre-org').value     = data.nombre_organizacion || '';
         document.getElementById('edit-fecha-hidden').value   = data.fecha || '';
 
-        const tipo = (data.beneficiaries && data.beneficiaries.length > 0) ? 'reporte' : 'asistencia';
+        const tipo = data.tipo || ((data.beneficiaries && data.beneficiaries.length > 0) ? 'reporte' : 'asistencia');
         document.getElementById('edit-tipo').value = tipo;
 
         const form = document.getElementById('edit-report-form');

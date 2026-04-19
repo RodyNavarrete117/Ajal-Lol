@@ -709,6 +709,7 @@
 
 <script>
     const eventsFromDB      = @json($events->toArray());
+    const eventsByIdDB      = @json($eventsById->toArray());
     const ROUTE_BASE        = "{{ url('admin/report') }}";
     const DB_EVENTOS        = @json($reports->pluck('evento')->unique()->values());
     const DB_LUGARES        = @json($reports->pluck('lugar')->filter()->unique()->values());
@@ -716,7 +717,7 @@
     const ROUTE_PREVIEW_PDF        = "{{ route('admin.reports.previewPdf') }}";
     const ROUTE_BLANK_REPORT       = "{{ route('admin.reports.blankReport') }}";
     const ROUTE_BLANK_ATTENDANCE   = "{{ route('admin.reports.blankAttendance') }}";
-    const ROUTE_API_REPORT = "{{ url('admin/api/report') }}";
+    const ROUTE_API_REPORT = "{{ url('admin/report') }}";
 
     @if($errors->any())
         document.addEventListener('DOMContentLoaded', () => showCreateView());

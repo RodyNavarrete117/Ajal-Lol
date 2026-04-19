@@ -131,25 +131,41 @@ class ReportsController extends Controller
             ->latest('fecha')
             ->get();
 
+        // Para el calendario (por fecha)
         $events = $reports->mapWithKeys(function ($report) {
             $total = $report->beneficiaries_count > 0
                 ? $report->beneficiaries_count
                 : $report->attendances_count;
-
             return [
                 $report->fecha => [
                     'id'                  => $report->id_informe,
                     'title'               => $report->evento,
                     'lugar'               => $report->lugar,
                     'beneficiaries_count' => $total,
-                    'tipo'                => $report->beneficiaries_count > 0 ? 'reporte' : 'asistencia', // ← agregar
+                    'tipo'                => $report->beneficiaries_count > 0 ? 'reporte' : 'asistencia',
                 ]
             ];
         });
 
-        return view('admin.reports', compact('reports', 'events'));
-    }
+        // Para el modal/historial (por ID)
+        $eventsById = $reports->mapWithKeys(function ($report) {
+            $total = $report->beneficiaries_count > 0
+                ? $report->beneficiaries_count
+                : $report->attendances_count;
+            return [
+                $report->id_informe => [
+                    'id'                  => $report->id_informe,
+                    'title'               => $report->evento,
+                    'lugar'               => $report->lugar,
+                    'fecha'               => $report->fecha,
+                    'beneficiaries_count' => $total,
+                    'tipo'                => $report->beneficiaries_count > 0 ? 'reporte' : 'asistencia',
+                ]
+            ];
+        });
 
+        return view('admin.reports', compact('reports', 'events', 'eventsById'));
+    }
     // =============================================
     // CREAR INFORME (botón Guardar)
     // =============================================
@@ -437,6 +453,8 @@ class ReportsController extends Controller
     {
         $report = Report::with(['beneficiaries', 'attendances'])->findOrFail($id);
 
-        return response()->json($report);
+        $tipo = $report->beneficiaries->isNotEmpty() ? 'reporte' : 'asistencia';
+
+        return response()->json(array_merge($report->toArray(), ['tipo' => $tipo]));
     }
 }

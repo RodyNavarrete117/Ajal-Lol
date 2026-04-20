@@ -1,0 +1,212 @@
+/* ==================== DONATIONS EDIT — CSS ====================
+   Basado en Allies Edit pero adaptado a donaciones
+   ============================================================ */
+
+:root {
+    --bg-page:          #f4f2f8;
+    --bg-container:     #ffffff;
+    --bg-input:         #f7f5fb;
+    --bg-input-focus:   #ffffff;
+    --border:           #e6e1f0;
+    --border-focus:     #8B3E72;
+    --text-heading:     #18141e;
+    --text-sub:         #6b6078;
+    --text-label:       #4a3f5c;
+    --text-input:       #18141e;
+    --text-placeholder: #b0a4c4;
+    --accent:           #8B3E72;
+    --accent-hover:     #7a3464;
+    --accent-light:     rgba(139, 62, 114, 0.08);
+    --btn-cancel-bg:    #f0ecf7;
+    --btn-cancel-color: #5a4e6a;
+    --btn-cancel-hover: #e8e2f2;
+    --shadow-card:      0 4px 24px rgba(60, 30, 80, 0.08);
+    --shadow-focus:     0 0 0 3px rgba(139, 62, 114, 0.15);
+    --tr:               0.22s ease;
+    --card-radius:      16px;
+    --hero-gradient:    linear-gradient(135deg, #065048 0%, #0e8a7a 48%, #1ab8a4 100%);
+}
+
+/* DARK MODE */
+[data-theme="dark"] {
+    --bg-page:          #0f1420;
+    --bg-container:     #161b27;
+    --bg-input:         #1e2a45;
+    --bg-input-focus:   #243356;
+    --border:           #2d4070;
+    --border-focus:     #d46ba8;
+    --text-heading:     #e8e8f0;
+    --text-sub:         #6878a8;
+    --text-label:       #a0a8c0;
+    --text-input:       #e8e8f0;
+    --text-placeholder: #4a5878;
+    --accent:           #d46ba8;
+    --accent-hover:     #e07db8;
+    --accent-light:     rgba(212, 107, 168, 0.10);
+    --btn-cancel-bg:    #1e2a45;
+    --btn-cancel-color: #a0a8c0;
+    --btn-cancel-hover: #243356;
+}
+
+/* ===== CONTENEDOR ===== */
+.edit-page-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.edit-container {
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border);
+    background: var(--bg-container);
+}
+
+/* ===== HEADER ===== */
+.edit-header {
+    position: relative;
+    padding: 22px 26px;
+    background: var(--hero-gradient);
+}
+
+.edit-header h2 {
+    color: #fff;
+    margin: 0;
+    font-size: 20px;
+}
+
+.subtitle {
+    color: rgba(255,255,255,0.6);
+    font-size: 12px;
+}
+
+/* ===== FORM ===== */
+form {
+    padding: 22px 26px;
+}
+
+/* ===== CAMPOS ===== */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-label);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: var(--bg-input);
+    font-size: 13px;
+    color: var(--text-input);
+    transition: all var(--tr);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: var(--border-focus);
+    background: var(--bg-input-focus);
+    outline: none;
+    box-shadow: var(--shadow-focus);
+}
+
+/* ===== BLOQUE ESPECIAL (DATOS BANCARIOS) ===== */
+.bank-box {
+    background: var(--bg-input);
+    border: 1px dashed var(--border);
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+}
+
+.bank-box h4 {
+    margin: 0 0 10px;
+    font-size: 13px;
+    color: var(--accent);
+}
+
+/* ===== BOTONES ===== */
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-save {
+    background: var(--accent);
+    color: #fff;
+    padding: 9px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--tr);
+}
+
+.btn-save:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.btn-cancel {
+    background: var(--btn-cancel-bg);
+    color: var(--btn-cancel-color);
+    padding: 9px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+.btn-cancel:hover {
+    background: var(--btn-cancel-hover);
+}
+
+/* ===== TOAST ===== */
+.edit-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #236b3f;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: 0.3s ease;
+}
+
+.edit-toast--show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+    form {
+        padding: 16px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-save,
+    .btn-cancel {
+        width: 100%;
+        text-align: center;
+    }
+}

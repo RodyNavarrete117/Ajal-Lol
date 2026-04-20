@@ -63,7 +63,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="eyebrow">Etiqueta superior (eyebrow)</label>
+                    <label for="eyebrow">Etiqueta superior (Titulo superior)</label>
                     <input type="text" id="eyebrow" name="eyebrow"
                         value="{{ old('eyebrow', 'Organización sin fines de lucro') }}"
                         placeholder="Ej: Organización sin fines de lucro">
@@ -90,21 +90,6 @@
                     <textarea id="descripcion" name="descripcion" rows="3"
                         placeholder="Escribe una descripción breve..." required
                     >{{ old('descripcion', 'Transformando vidas en las comunidades mayas de Yucatán desde el año 2000, con amor, compromiso e interculturalidad.') }}</textarea>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="btn_primario">Botón primario (texto)</label>
-                        <input type="text" id="btn_primario" name="btn_primario"
-                            value="{{ old('btn_primario', 'Conoce más') }}"
-                            placeholder="Ej: Conoce más">
-                    </div>
-                    <div class="form-group">
-                        <label for="btn_primario_url">Botón primario (enlace)</label>
-                        <input type="text" id="btn_primario_url" name="btn_primario_url"
-                            value="{{ old('btn_primario_url', '#about') }}"
-                            placeholder="Ej: #about o /nosotros">
-                    </div>
                 </div>
 
                 <div class="form-actions">

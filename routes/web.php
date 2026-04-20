@@ -25,6 +25,7 @@ use App\Http\Controllers\Page\PublicPageController;
 use App\Http\Controllers\Page\ServicesController;
 use App\Http\Controllers\Page\EventsController;
 
+
 /* ── Rate limiter para el formulario de contacto ── */
 RateLimiter::for('contact', function (Request $request) {
     return Limit::perMinutes(10, 3)->by($request->ip());
@@ -167,6 +168,9 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::get('/contact/edit',   [EditPageContactController::class, 'index'])->name('admin.pages.contact.edit');
         Route::put('/contact/update', [EditPageContactController::class, 'update'])->name('admin.pages.contact.update');
     });
+    /* ── Donativos ── */
+    Route::get('/donations/edit', fn() => view('admin.pages.donations_edit'))->name('admin.pages.donations.edit');
+    
 
     /* ===== NOTIFICACIONES (API) ===== */
     Route::prefix('api/notifications')->group(function () {

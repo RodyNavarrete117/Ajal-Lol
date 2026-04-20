@@ -2,7 +2,7 @@
  * AJAL LOL — sections.js
  * Ruta: assets/js/publicpages/sections.js
  * Contiene: Contadores animados · Marquee infinito
- *           Stats hover · FAQ accordion
+ *           Stats hover · FAQ accordion · Team carousel
  * Depende de: utils.js (AjalUtils)
  */
 
@@ -78,26 +78,132 @@
   /* ═══════════════════════════════════════════════
      FAQ ACCORDION
   ═══════════════════════════════════════════════ */
-function initFaq() {
-  document.addEventListener('click', function(e) {
-    const btn = e.target.closest('.faq-question');
-    if (!btn) return;
+  function initFaq() {
+    document.addEventListener('click', function (e) {
+      const btn = e.target.closest('.faq-question');
+      if (!btn) return;
 
-    const item = btn.closest('.faq-item');
-    const answer = item.querySelector('.faq-answer');
-    const isOpen = item.classList.contains('open');
+      const item = btn.closest('.faq-item');
+      const answer = item.querySelector('.faq-answer');
+      const isOpen = item.classList.contains('open');
 
-    document.querySelectorAll('.faq-item').forEach(i => {
-      i.classList.remove('open');
-      i.querySelector('.faq-answer').style.maxHeight = '0';
+      document.querySelectorAll('.faq-item').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.faq-answer').style.maxHeight = '0';
+      });
+
+      if (!isOpen) {
+        item.classList.add('open');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+      }
+    });
+  }
+
+  /* ═══════════════════════════════════════════════
+     TEAM CAROUSEL
+  ═══════════════════════════════════════════════ */
+  function initTeamCarousel() {
+    const grid   = document.getElementById('teamGrid');
+    const prev   = document.getElementById('teamPrev');
+    const next   = document.getElementById('teamNext');
+    const dotsEl = document.getElementById('teamDots');
+    if (!grid || !prev || !next || !dotsEl) return;
+
+    const perPage = () => window.innerWidth <= 560 ? 1 : window.innerWidth <= 900 ? 2 : 3;
+    let current = 0;
+
+    function totalPages() {
+      return Math.ceil(grid.children.length / perPage());
+    }
+
+    function goTo(page) {
+      const total = totalPages();
+      current = Math.max(0, Math.min(page, total - 1));
+
+      // Ancho de una tarjeta + su gap
+      const firstCard = grid.children[0];
+      if (!firstCard) return;
+      const cardW = firstCard.offsetWidth;
+      const gap   = parseFloat(getComputedStyle(grid).gap) || 0;
+
+      // Cada "página" avanza perPage() tarjetas
+      grid.style.transform = `translateX(-${current * perPage() * (cardW + gap)}px)`;
+
+      dotsEl.querySelectorAll('.carousel-dot').forEach((d, i) =>
+        d.classList.toggle('active', i === current)
+      );
+
+      prev.disabled = current === 0;
+      next.disabled = current >= total - 1;
+    }
+
+    function buildDots() {
+      dotsEl.innerHTML = '';
+      for (let i = 0; i < totalPages(); i++) {
+        const d = document.createElement('button');
+        d.className = 'carousel-dot' + (i === current ? ' active' : '');
+        d.setAttribute('aria-label', 'Página ' + (i + 1));
+        d.addEventListener('click', () => goTo(i));
+        dotsEl.appendChild(d);
+      }
+    }
+
+    /* ── Flechas ── */
+    prev.addEventListener('click', () => goTo(current - 1));
+    next.addEventListener('click', () => goTo(current + 1));
+
+    
+    /* ── Wheel horizontal (Trackpad Definitivo) ── */
+    let wheelAccum = 0;
+    let lastSlideTime = 0;
+    const scrollCooldown = 800; // Tiempo exacto de bloqueo (ajusta este valor a la duración de tu CSS)
+
+    grid.parentElement.addEventListener('wheel', (e) => {
+      const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+      if (!isHorizontal || e.deltaX === 0) return;
+
+      e.preventDefault();
+
+      const now = Date.now();
+
+      // 1. Si estamos dentro del tiempo de bloqueo, ignoramos y destruimos la inercia
+      if (now - lastSlideTime < scrollCooldown) {
+        wheelAccum = 0; 
+        return;
+      }
+
+      // 2. Acumulamos la distancia del deslizamiento
+      wheelAccum += e.deltaX;
+
+      // 3. Evaluamos si cruzamos el umbral para cambiar de página (50px)
+      if (wheelAccum > 50) {
+        goTo(current + 1);
+        lastSlideTime = now; // Guardamos la hora exacta del cambio
+        wheelAccum = 0;
+      } else if (wheelAccum < -50) {
+        goTo(current - 1);
+        lastSlideTime = now; // Guardamos la hora exacta del cambio
+        wheelAccum = 0;
+      }
+    }, { passive: false });
+
+    // 4. Limpieza suave por si el usuario mueve un poco el dedo pero no cambia de página
+    let resetTimer;
+    grid.parentElement.addEventListener('wheel', () => {
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(() => { wheelAccum = 0; }, 150);
+    }, { passive: true });
+
+    /* ── Resize ── */
+    window.addEventListener('resize', () => {
+      current = 0;
+      buildDots();
+      goTo(0);
     });
 
-    if (!isOpen) {
-      item.classList.add('open');
-      answer.style.maxHeight = answer.scrollHeight + 'px';
-    }
-  });
-}
+    buildDots();
+    goTo(0);
+  }
 
   /* ── Init ── */
   function init() {
@@ -105,6 +211,7 @@ function initFaq() {
     initMarquee();
     initStatCards();
     initFaq();
+    initTeamCarousel();
   }
 
   if (document.readyState === 'loading') {

@@ -239,11 +239,25 @@
 
 
 /* ─── TEAM ─── */
-.team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; justify-items: center; }
+.team-carousel-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+.team-grid {
+  display: flex;
+  gap: 2.5rem;
+  transition: transform .45s ease;
+  will-change: transform;
+}
 .team-card {
-  background: var(--white); border-radius: var(--radius-lg); overflow: hidden;
-  box-shadow: var(--shadow-sm); transition: var(--transition);
-  max-width: 300px; width: 100%; border: 1px solid var(--rose-pale); cursor: none;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  flex: 0 0 calc((100% - 5rem) / 3); /* 3 tarjetas visibles */
+  border: 1px solid var(--rose-pale);
+  cursor: none;
 }
 .team-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-md); border-color: var(--rose-soft); }
 .team-card .member-img {
@@ -258,11 +272,54 @@
 .team-card:hover .member-img::after { opacity: 1; }
 .team-card .member-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
 .team-card:hover .member-img img { transform: scale(1.06); }
-.team-card .member-info { padding: 1.5rem 1.2rem 1.8rem; text-align: center; border-top: 2px solid var(--rose-blush); }
+.team-card .member-info {
+  padding: 1.5rem 1.2rem 1.8rem;
+  text-align: center;
+  border-top: 2px solid var(--rose-blush);
+}
 .team-card h3 { font-family: var(--font-display); font-size: 1.05rem; color: var(--rose-deep); font-weight: 700; }
 .team-card span { font-size: .78rem; color: var(--text-light); letter-spacing: 1px; text-transform: uppercase; display: block; margin-top: .35rem; font-weight: 500; }
-@media (max-width: 768px) { .team-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 480px) { .team-grid { grid-template-columns: 1fr; } }
+
+/* controles */
+.team-carousel-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.8rem;
+  margin-top: 2.5rem;
+}
+.carousel-btn {
+  background: none;
+  border: none;
+  padding: .2rem .5rem;
+  color: var(--rose-pale);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: color .25s ease, transform .2s ease;
+  line-height: 1;
+}
+.carousel-btn:hover  { color: var(--rose-deep); transform: scale(1.2); }
+.carousel-btn:disabled { opacity: .2; pointer-events: none; }
+
+.carousel-dots { display: flex; gap: .55rem; align-items: center; }
+.carousel-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--rose-pale);
+  border: none; cursor: pointer;
+  transition: background .3s ease, transform .3s ease, width .3s ease;
+}
+.carousel-dot.active {
+  background: var(--rose-deep);
+  width: 20px;
+  border-radius: 99px;
+}
+
+@media (max-width: 900px) {
+  .team-card { flex: 0 0 calc((100% - 2.5rem) / 2); }
+}
+@media (max-width: 560px) {
+  .team-card { flex: 0 0 100%; }
+}
 
 /* ─── IDENTIDAD (MVOV) ─── */
 #pricing {

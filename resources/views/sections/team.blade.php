@@ -14,38 +14,41 @@
       </p>
     </div>
 
-    <div class="team-grid" role="list">
+  <div class="team-carousel-wrapper">
+      <div class="team-grid" id="teamGrid" role="list">
 
-      @forelse($directiva as $index => $miembro)
-      <article class="team-card"
-               data-anim="zoom-in"
-               data-delay="{{ $index * 100 }}"
-               role="listitem">
+        @forelse($directiva as $index => $miembro)
+        <article class="team-card"
+                data-anim="zoom-in"
+                data-delay="{{ $index * 100 }}"
+                role="listitem">
+          <div class="member-img">
+            @if($miembro->foto_directiva)
+              <img src="{{ asset('storage/' . $miembro->foto_directiva) }}"
+                  alt="Fotografía de {{ $miembro->nombre_directiva }}, {{ $miembro->cargo_directiva }}"
+                  loading="lazy">
+            @else
+              <div class="member-img-placeholder">
+                <i class="fa fa-user" aria-hidden="true"></i>
+              </div>
+            @endif
+          </div>
+          <div class="member-info">
+            <h3>{{ $miembro->nombre_directiva ?? 'Sin nombre' }}</h3>
+            <span>{{ $miembro->cargo_directiva ?? 'Sin cargo' }}</span>
+          </div>
+        </article>
+        @empty
+        <p style="text-align:center;color:var(--text-light)">No hay miembros registrados aún.</p>
+        @endforelse
 
-        <div class="member-img">
-          @if($miembro->foto_directiva)
-            <img src="{{ asset('storage/' . $miembro->foto_directiva) }}"
-                 alt="Fotografía de {{ $miembro->nombre_directiva }}, {{ $miembro->cargo_directiva }}"
-                 loading="lazy">
-          @else
-            <div class="member-img-placeholder">
-              <i class="fa fa-user" aria-hidden="true"></i>
-            </div>
-          @endif
-        </div>
+      </div>
+    </div>
 
-        <div class="member-info">
-          <h3>{{ !empty($miembro->nombre_directiva) ? $miembro->nombre_directiva : 'Sin nombre' }}</h3>
-          <span>{{ !empty($miembro->cargo_directiva) ? $miembro->cargo_directiva : 'Sin cargo' }}</span>
-        </div>
-
-      </article>
-      @empty
-      <p style="text-align:center;color:var(--text-light)">
-        No hay miembros registrados aún.
-      </p>
-      @endforelse
-
+    <div class="team-carousel-controls">
+      <button class="carousel-btn" id="teamPrev" aria-label="Anterior"><i class="fa fa-chevron-left"></i></button>
+      <div class="carousel-dots" id="teamDots"></div>
+      <button class="carousel-btn" id="teamNext" aria-label="Siguiente"><i class="fa fa-chevron-right"></i></button>
     </div>
   </div>
 

@@ -1,8 +1,5 @@
 /* ============================================================
    AJAL LOL — footer.css
-   Ruta: assets/css/publicpages/footer.css
-   Contiene: Footer donate · Footer main · Footer bottom
-   Depende de: base.css (variables)
    ============================================================ */
 
 #footer { background: var(--text-dark); color: rgba(255,255,255,.65); }
@@ -10,29 +7,119 @@
 /* ─── Donaciones ─── */
 .footer-donate {
   background: linear-gradient(135deg, var(--rose-mid), var(--rose-deep));
-  padding: 4rem 0; text-align: center; position: relative; overflow: hidden;
+  padding: 4.5rem 0; text-align: center; position: relative; overflow: hidden;
 }
 .footer-donate::before {
   content: ''; position: absolute; inset: 0;
   background: radial-gradient(ellipse at 50% 100%, rgba(245,198,212,.15), transparent 60%);
 }
-.footer-donate h4 {
-  font-family: var(--font-display); font-size: 2rem; color: var(--white);
-  margin-bottom: .8rem; font-style: italic; position: relative;
+.footer-donate::after {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.05);
+  pointer-events: none;
 }
+
+.footer-donate-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--white);
+  font-style: italic;
+  margin-bottom: .8rem;
+  position: relative;
+}
+
 .footer-donate p {
   color: rgba(255,255,255,.85); max-width: 520px; margin-inline: auto;
-  margin-bottom: 1.8rem; font-weight: 400; font-size: .95rem; position: relative;
+  margin-bottom: 2rem; font-weight: 400; font-size: .95rem; position: relative;
 }
+
+/* ─── Botón PayPal ─── */
 .btn-paypal {
-  display: inline-flex; align-items: center; gap: .6rem;
-  background: var(--white); color: var(--rose-deep);
-  padding: .85rem 2.2rem; border-radius: 99px;
-  font-weight: 700; font-size: .93rem; transition: var(--transition);
-  position: relative; cursor: none;
+  display: inline-flex;
+  align-items: center;
+  gap: .9rem;
+  background: #fff;
+  padding: .75rem 1.6rem .75rem .75rem;
+  border-radius: 99px;
+  font-weight: 700;
+  font-size: .93rem;
+  text-decoration: none;
+  position: relative;
+  transition: transform .25s ease, box-shadow .25s ease, background .2s ease;
+  box-shadow: 0 8px 28px rgba(0,0,0,.18);
+  cursor: pointer;
 }
-.btn-paypal:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); background: var(--rose-blush); }
-.footer-donate .thanks { color: rgba(255,255,255,.55); font-size: .82rem; margin-top: 1rem; position: relative; }
+
+.btn-paypal:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 40px rgba(0,0,0,.22);
+  background: #f0f7ff;
+}
+
+.btn-paypal__icon {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #003087, #0070ba);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  transition: transform .25s ease;
+}
+.btn-paypal:hover .btn-paypal__icon {
+  transform: scale(1.08);
+}
+
+.btn-paypal__content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .1rem;
+}
+
+.btn-paypal__label {
+  color: #003087;
+  font-size: .93rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.btn-paypal__sub {
+  color: #0070ba;
+  font-size: .7rem;
+  font-weight: 500;
+  opacity: .8;
+}
+
+.btn-paypal__arrow {
+  color: #003087;
+  font-size: .85rem;
+  opacity: .5;
+  transition: transform .25s ease, opacity .25s ease;
+}
+.btn-paypal:hover .btn-paypal__arrow {
+  transform: translateX(4px);
+  opacity: 1;
+}
+
+.footer-donate .thanks {
+  color: rgba(255,255,255,.55);
+  font-size: .82rem;
+  margin-top: 1.4rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+}
+.footer-donate .thanks i {
+  color: rgba(255,255,255,.4);
+  font-size: .7rem;
+}
 
 /* ─── Cuerpo ─── */
 .footer-main {
@@ -68,7 +155,7 @@
   border: 1px solid rgba(255,255,255,.15);
   display: flex; align-items: center; justify-content: center;
   color: rgba(255,255,255,.6); font-size: 1rem;
-  transition: var(--transition); cursor: none;
+  transition: var(--transition); cursor: pointer;
 }
 .footer-social .social-row a:hover {
   background: var(--rose-mid); border-color: var(--rose-mid); color: var(--white);
@@ -83,14 +170,22 @@
 }
 .footer-bottom span { color: rgba(255,255,255,.5); }
 
-@media (max-width: 768px) { .footer-main { grid-template-columns: 1fr; gap: 2.5rem; } 
-  .footer-main{
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .footer-main {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
     text-align: center;
   }
-
   .social-row {
     display: flex;
     justify-content: center;
   }
-
+  .btn-paypal {
+    padding: .65rem 1.4rem .65rem .65rem;
+  }
+  .btn-paypal__icon {
+    width: 36px; height: 36px;
+    font-size: 1rem;
+  }
 }

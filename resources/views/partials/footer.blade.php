@@ -3,16 +3,28 @@
   <!-- Donaciones -->
   <div class="footer-donate">
     <div class="container">
-      <h2 class="footer-donate-title" style="font-family:var(--font-display);font-size:2rem;color:var(--white);font-style:italic;margin-bottom:.8rem">
+      <h2 class="footer-donate-title">
         ¡Tu apoyo transforma vidas!
       </h2>
       <p>Te invitamos a hacer una donación a través de PayPal para ayudarnos a continuar con nuestra labor. Cada aporte, por pequeño que sea, nos acerca más a lograr nuestros objetivos.</p>
-      <a href=""
+
+      <a href="https://paypal.me/AjalLolAC"
          class="btn-paypal" target="_blank" rel="noopener noreferrer"
          aria-label="Donar a Ajal Lol a través de PayPal">
-        <i class="bi bi-paypal" aria-hidden="true"></i> Donar con PayPal
+        <span class="btn-paypal__icon">
+          <i class="bi bi-paypal" aria-hidden="true"></i>
+        </span>
+        <span class="btn-paypal__content">
+          <span class="btn-paypal__label">Donar con PayPal</span>
+          <span class="btn-paypal__sub">Seguro · Rápido · Fácil</span>
+        </span>
+        <i class="bi bi-arrow-right btn-paypal__arrow" aria-hidden="true"></i>
       </a>
-      <p class="thanks">¡Gracias por tu generosidad y por formar parte de esta causa!</p>
+
+      <p class="thanks">
+        <i class="bi bi-heart-fill" aria-hidden="true"></i>
+        ¡Gracias por tu generosidad y por formar parte de esta causa!
+      </p>
     </div>
   </div>
 

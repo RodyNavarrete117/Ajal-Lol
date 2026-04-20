@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 20-04-2026 a las 21:40:30
+-- Tiempo de generación: 20-04-2026 a las 21:59:32
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -507,29 +507,6 @@ INSERT INTO `nosotros_encabezado` (`id_encabezado`, `id_nosotros`, `titulo`, `su
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `nosotros_general`
---
-
-CREATE TABLE `nosotros_general` (
-  `id_general` int NOT NULL,
-  `id_nosotros` int NOT NULL,
-  `ano_fundacion` int DEFAULT NULL,
-  `beneficiarios` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ubicacion` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `nosotros_general`
---
-
-INSERT INTO `nosotros_general` (`id_general`, `id_nosotros`, `ano_fundacion`, `beneficiarios`, `ubicacion`, `created_at`, `updated_at`) VALUES
-(1, 1, 2000, '4990', 'Hoctún Yucatán', '2026-04-19 02:44:22', '2026-04-19 08:46:22');
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `nosotros_historia`
 --
 
@@ -1022,13 +999,6 @@ ALTER TABLE `nosotros_encabezado`
   ADD KEY `id_nosotros` (`id_nosotros`);
 
 --
--- Indices de la tabla `nosotros_general`
---
-ALTER TABLE `nosotros_general`
-  ADD PRIMARY KEY (`id_general`),
-  ADD KEY `id_nosotros` (`id_nosotros`);
-
---
 -- Indices de la tabla `nosotros_historia`
 --
 ALTER TABLE `nosotros_historia`
@@ -1250,12 +1220,6 @@ ALTER TABLE `nosotros_encabezado`
   MODIFY `id_encabezado` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT de la tabla `nosotros_general`
---
-ALTER TABLE `nosotros_general`
-  MODIFY `id_general` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
 -- AUTO_INCREMENT de la tabla `nosotros_historia`
 --
 ALTER TABLE `nosotros_historia`
@@ -1414,12 +1378,6 @@ ALTER TABLE `nosotros`
 --
 ALTER TABLE `nosotros_encabezado`
   ADD CONSTRAINT `nosotros_encabezado_fk` FOREIGN KEY (`id_nosotros`) REFERENCES `nosotros` (`id_nosotros`) ON DELETE CASCADE;
-
---
--- Filtros para la tabla `nosotros_general`
---
-ALTER TABLE `nosotros_general`
-  ADD CONSTRAINT `nosotros_general_fk` FOREIGN KEY (`id_nosotros`) REFERENCES `nosotros` (`id_nosotros`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `nosotros_historia`

@@ -52,49 +52,6 @@
         <p style="color:var(--text-light)">Texto no disponible</p>
         @endif
 
-        {{-- ── Datos generales ── --}}
-        @if(!empty($about_general->ano_fundacion) || !empty($about_general->beneficiarios) || !empty($about_general->ubicacion))
-        <div class="about-general-info">
-
-          @if(!empty($about_general->ano_fundacion))
-          <div class="about-general-item">
-            <div class="about-general-item__icon">
-              <i class="bi bi-calendar-check" aria-hidden="true"></i>
-            </div>
-            <div class="about-general-item__text">
-              <span class="about-general-item__label">Año de fundación</span>
-              <span class="about-general-item__value">{{ $about_general->ano_fundacion }}</span>
-            </div>
-          </div>
-          @endif
-
-          @if(!empty($about_general->beneficiarios))
-          <div class="about-general-item">
-            <div class="about-general-item__icon">
-              <i class="bi bi-people-fill" aria-hidden="true"></i>
-            </div>
-            <div class="about-general-item__text">
-              <span class="about-general-item__label">Beneficiarios</span>
-              <span class="about-general-item__value">{{ $about_general->beneficiarios }}</span>
-            </div>
-          </div>
-          @endif
-
-          @if(!empty($about_general->ubicacion))
-          <div class="about-general-item">
-            <div class="about-general-item__icon">
-              <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
-            </div>
-            <div class="about-general-item__text">
-              <span class="about-general-item__label">Ubicación</span>
-              <span class="about-general-item__value">{{ $about_general->ubicacion }}</span>
-            </div>
-          </div>
-          @endif
-
-        </div>
-        @endif
-
       </div>
 
     </div>

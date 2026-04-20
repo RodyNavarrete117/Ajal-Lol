@@ -7,10 +7,8 @@
 
     /* ── helpers fetch ── */
     async function apiFetch(url, body) {
-        const formData = body instanceof FormData ? body : null;
-        const isJson   = !(body instanceof FormData);
-
-        const opts = {
+        const isJson = !(body instanceof FormData);
+        const res = await fetch(url, {
             method : 'POST',
             headers: {
                 'X-CSRF-TOKEN': CSRF,
@@ -18,9 +16,7 @@
                 ...(isJson ? { 'Content-Type': 'application/json' } : {}),
             },
             body: isJson ? JSON.stringify(body) : body,
-        };
-
-        const res  = await fetch(url, opts);
+        });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message ?? 'Error en la solicitud.');
         return data;
@@ -56,10 +52,10 @@
     });
 
     /* ── Preview imagen historia ── */
-    const fileInput  = document.getElementById('imagen_historia');
-    const previewEl  = document.getElementById('histImgPreview');
-    const btnClear   = document.getElementById('btnClearHist');
-    const uploadArea = document.getElementById('histImgArea');
+    const fileInput   = document.getElementById('imagen_historia');
+    const previewEl   = document.getElementById('histImgPreview');
+    const btnClear    = document.getElementById('btnClearHist');
+    const uploadArea  = document.getElementById('histImgArea');
     const quitarInput = document.getElementById('quitar_imagen');
 
     function renderPreview(file) {
@@ -86,27 +82,16 @@
     fileInput?.addEventListener('change', function () {
         const file = this.files[0];
         if (!file) return;
-        if (file.size > 5 * 1024 * 1024) {
-            showToast('La imagen supera el límite de 5MB.', 'error');
-            this.value = '';
-            return;
-        }
+        if (file.size > 5 * 1024 * 1024) { showToast('La imagen supera el límite de 5MB.', 'error'); this.value = ''; return; }
         const allowed = ['image/png', 'image/jpeg', 'image/webp'];
-        if (!allowed.includes(file.type)) {
-            showToast('Formato no permitido. Usa PNG, JPG o WEBP.', 'error');
-            this.value = '';
-            return;
-        }
+        if (!allowed.includes(file.type)) { showToast('Formato no permitido. Usa PNG, JPG o WEBP.', 'error'); this.value = ''; return; }
         if (quitarInput) quitarInput.value = '0';
         renderPreview(file);
     });
 
     btnClear?.addEventListener('click', clearPreview);
 
-    uploadArea?.addEventListener('dragover', e => {
-        e.preventDefault();
-        uploadArea.classList.add('drag-over');
-    });
+    uploadArea?.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
     uploadArea?.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
     uploadArea?.addEventListener('drop', e => {
         e.preventDefault();
@@ -136,7 +121,6 @@
     document.getElementById('btnSaveEncabezado')?.addEventListener('click', async () => {
         const titulo    = document.getElementById('titulo_pagina')?.value.trim();
         const subtitulo = document.getElementById('subtitulo_pagina')?.value.trim();
-
         try {
             const data = await apiFetch(ROUTES.encabezado, { titulo, subtitulo });
             showToast(data.message ?? 'Encabezado guardado.', 'success');
@@ -148,34 +132,18 @@
     /* ── Guardar Historia ── */
     document.getElementById('btnSaveHistoria')?.addEventListener('click', async () => {
         const formData = new FormData();
-        formData.append('badge_texto',       document.getElementById('badge_imagen')?.value.trim() ?? '');
-        formData.append('etiqueta_superior',  document.getElementById('eyebrow_historia')?.value.trim() ?? '');
-        formData.append('titulo_bloque',      document.getElementById('titulo_historia')?.value.trim() ?? '');
-        formData.append('texto_destacado',    document.getElementById('texto_destacado')?.value.trim() ?? '');
-        formData.append('texto_descriptivo',  document.getElementById('texto_descripcion')?.value.trim() ?? '');
-        formData.append('quitar_imagen',      document.getElementById('quitar_imagen')?.value ?? '0');
-        formData.append('_token',             CSRF);
-
+        formData.append('badge_texto',        document.getElementById('badge_imagen')?.value.trim() ?? '');
+        formData.append('etiqueta_superior',   document.getElementById('eyebrow_historia')?.value.trim() ?? '');
+        formData.append('titulo_bloque',       document.getElementById('titulo_historia')?.value.trim() ?? '');
+        formData.append('texto_destacado',     document.getElementById('texto_destacado')?.value.trim() ?? '');
+        formData.append('texto_descriptivo',   document.getElementById('texto_descripcion')?.value.trim() ?? '');
+        formData.append('quitar_imagen',       document.getElementById('quitar_imagen')?.value ?? '0');
+        formData.append('_token',              CSRF);
         const file = fileInput?.files[0];
         if (file) formData.append('imagen_historia', file);
-
         try {
             const data = await apiFetch(ROUTES.historia, formData);
             showToast(data.message ?? 'Historia guardada.', 'success');
-        } catch (err) {
-            showToast(err.message ?? 'Error al guardar.', 'error');
-        }
-    });
-
-    /* ── Guardar General ── */
-    document.getElementById('btnSaveGeneral')?.addEventListener('click', async () => {
-        const ano_fundacion = document.getElementById('anio_fundacion')?.value.trim();
-        const beneficiarios = document.getElementById('num_beneficiarios')?.value.trim();
-        const ubicacion     = document.getElementById('ubicacion')?.value.trim();
-
-        try {
-            const data = await apiFetch(ROUTES.general, { ano_fundacion, beneficiarios, ubicacion });
-            showToast(data.message ?? 'Información general guardada.', 'success');
         } catch (err) {
             showToast(err.message ?? 'Error al guardar.', 'error');
         }
@@ -195,7 +163,6 @@
             titulo_valores      : document.getElementById('titulo_valores')?.value.trim(),
             valores             : document.getElementById('valores')?.value.trim(),
         };
-
         try {
             const data = await apiFetch(ROUTES.identidad, payload);
             showToast(data.message ?? 'Identidad guardada.', 'success');

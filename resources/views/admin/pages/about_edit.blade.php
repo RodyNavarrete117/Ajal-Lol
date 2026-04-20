@@ -43,9 +43,6 @@
             <button class="edit-tab" data-target="historia">
                 <i class="fa fa-image"></i> Historia
             </button>
-            <button class="edit-tab" data-target="general">
-                <i class="fa fa-circle-info"></i> General
-            </button>
             <button class="edit-tab" data-target="identidad">
                 <i class="fa fa-landmark"></i> Identidad
             </button>
@@ -156,43 +153,6 @@
 
                 <div class="form-actions">
                     <button type="button" class="btn-save" id="btnSaveHistoria">
-                        <i class="fa fa-floppy-disk"></i> Guardar Cambios
-                    </button>
-                    <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
-                </div>
-            </div>
-
-            {{-- ══ PANEL: General ══ --}}
-            <div class="edit-panel" id="panel-general">
-                <div class="form-section-title">
-                    <i class="fa fa-circle-info"></i>
-                    Información general
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="anio_fundacion">Año de fundación</label>
-                        <input type="number" id="anio_fundacion" name="anio_fundacion"
-                            value="{{ old('anio_fundacion', $general->ano_fundacion ?? '') }}"
-                            min="1900" max="2099" placeholder="Ej: 2000">
-                    </div>
-                    <div class="form-group">
-                        <label for="num_beneficiarios">Beneficiarios</label>
-                        <input type="text" id="num_beneficiarios" name="num_beneficiarios"
-                            value="{{ old('num_beneficiarios', $general->beneficiarios ?? '') }}"
-                            placeholder="Ej: Más de 500 familias">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="ubicacion">Ubicación</label>
-                    <input type="text" id="ubicacion" name="ubicacion"
-                        value="{{ old('ubicacion', $general->ubicacion ?? '') }}"
-                        placeholder="Ej: Mérida, Yucatán, México">
-                </div>
-
-                <div class="form-actions">
-                    <button type="button" class="btn-save" id="btnSaveGeneral">
                         <i class="fa fa-floppy-disk"></i> Guardar Cambios
                     </button>
                     <button type="button" class="btn-cancel" onclick="window.history.back()">Cancelar</button>
@@ -351,7 +311,6 @@
     window.ABOUT_ROUTES = {
         encabezado : '{{ route("admin.pages.about.encabezado") }}',
         historia   : '{{ route("admin.pages.about.historia") }}',
-        general    : '{{ route("admin.pages.about.general") }}',
         identidad  : '{{ route("admin.pages.about.identidad") }}',
         csrfToken  : '{{ csrf_token() }}',
     };

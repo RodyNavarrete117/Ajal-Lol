@@ -127,7 +127,6 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
             Route::get('/edit',        [EditPageAboutController::class, 'index'])->name('admin.pages.about.edit');
             Route::post('/encabezado', [EditPageAboutController::class, 'updateEncabezado'])->name('admin.pages.about.encabezado');
             Route::post('/historia',   [EditPageAboutController::class, 'updateHistoria'])->name('admin.pages.about.historia');
-            Route::post('/general',    [EditPageAboutController::class, 'updateGeneral'])->name('admin.pages.about.general');
             Route::post('/identidad',  [EditPageAboutController::class, 'updateIdentidad'])->name('admin.pages.about.identidad');
         });
 

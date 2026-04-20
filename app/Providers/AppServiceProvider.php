@@ -137,12 +137,6 @@ class AppServiceProvider extends ServiceProvider
                     ->first()
                 : null;
 
-            $general = $idNosotros
-                ? DB::table('nosotros_general')
-                    ->where('id_nosotros', $idNosotros)
-                    ->first()
-                : null;
-
             $view->with('about_encabezado', $encabezado ?? (object)[
                 'titulo'    => '',
                 'subtitulo' => '',
@@ -155,12 +149,6 @@ class AppServiceProvider extends ServiceProvider
                 'titulo_bloque'     => '',
                 'texto_destacado'   => '',
                 'texto_descriptivo' => '',
-            ]);
-
-            $view->with('about_general', $general ?? (object)[
-                'ano_fundacion' => null,
-                'beneficiarios' => null,
-                'ubicacion'     => null,
             ]);
         });
 

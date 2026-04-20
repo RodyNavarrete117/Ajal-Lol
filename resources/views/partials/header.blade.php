@@ -67,7 +67,7 @@
           <li role="none">
             <a href="{{ url('/') }}" role="menuitem"
                class="{{ request()->is('/') ? 'active' : '' }}">
-              <i class="nav-icon bi bi-house-door"></i>
+              <i class="nav-icon bi bi-house"></i>
               Inicio
             </a>
           </li>
@@ -75,7 +75,7 @@
           <li class="nav-dropdown" role="none">
             <a href="{{ url('/#about') }}" class="nav-dropdown-toggle" role="menuitem"
                aria-haspopup="true" aria-expanded="false">
-              <i class="nav-icon bi bi-people"></i>
+              <i class="nav-icon bi bi-person"></i>
               Nosotros
               <i class="bi bi-chevron-down nav-dropdown-arrow" aria-hidden="true"></i>
             </a>
@@ -100,7 +100,7 @@
 
           <li role="none">
             <a href="{{ url('/#services') }}" role="menuitem">
-              <i class="nav-icon bi bi-lightning"></i>
+              <i class="nav-icon bi bi-sun"></i>
               Actividades
             </a>
           </li>
@@ -108,7 +108,7 @@
           <li class="nav-dropdown nav-dropdown-proyectos" role="none">
               <a href="{{ url('/#portfolio') }}" class="nav-dropdown-toggle" role="menuitem"
                 aria-haspopup="true" aria-expanded="false">
-                  <i class="nav-icon bi bi-folder2-open"></i>
+                  <i class="nav-icon bi bi-grid"></i>
                   Proyectos
                   <i class="bi bi-chevron-down nav-dropdown-arrow" aria-hidden="true"></i>
               </a>
@@ -125,14 +125,14 @@
 
           <li role="none">
             <a href="{{ url('/#faq') }}" role="menuitem">
-              <i class="nav-icon bi bi-question-circle"></i>
+              <i class="nav-icon bi bi-chat"></i>
               Preguntas
             </a>
           </li>
 
           <li role="none">
             <a href="{{ url('/#contact') }}" role="menuitem">
-              <i class="nav-icon bi bi-envelope"></i>
+              <i class="nav-icon bi bi-send"></i>
               Contacto
             </a>
           </li>

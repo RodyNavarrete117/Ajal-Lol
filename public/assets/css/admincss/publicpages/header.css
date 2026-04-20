@@ -413,3 +413,58 @@ html::-webkit-scrollbar {
     -webkit-backdrop-filter: none !important;
   }
 }
+
+/* ═══════════════════════════════════════════════
+   ESTILOS DE ICONOS Y TEXTO (ESCRITORIO)
+   Fondo claro: usamos color vino
+═══════════════════════════════════════════════ */
+.navmenu a {
+  color: var(--text-mid); /* Color del texto inactivo */
+}
+
+.navmenu a i.nav-icon {
+  color: var(--text-mid); /* El icono toma el mismo color que el texto inactivo */
+  font-size: 1.15em;
+  vertical-align: middle;
+  transition: color 0.3s ease;
+}
+
+/* Cuando pasas el mouse o estás en esa página (Activo) */
+.navmenu a:hover,
+.navmenu a.active {
+  color: #8b2252 !important; /* Texto se vuelve vino */
+}
+
+.navmenu a:hover i.nav-icon,
+.navmenu a.active i.nav-icon {
+  color: #8b2252 !important; /* Icono se vuelve vino junto con el texto */
+}
+
+/* ═══════════════════════════════════════════════
+   ESTILOS DE ICONOS Y TEXTO (MÓVIL)
+   Fondo oscuro: usamos blanco y dorado
+═══════════════════════════════════════════════ */
+@media (max-width: 1100px) {
+  
+  /* 1. Estado inactivo: Texto e Icono BLANCOS para que resalten */
+  .navmenu > ul > li > a {
+    color: rgba(255,255,255,.92) !important;
+  }
+  .navmenu a i.nav-icon {
+    color: rgba(255,255,255,.92) !important;
+  }
+
+  /* 2. Estado Activo/Hover: Texto e Icono DORADOS */
+  .navmenu > ul > li:hover > a,
+  .navmenu > ul > li > a.active {
+    color: #f0d080 !important;
+    background: rgba(0,0,0,.18) !important;
+  }
+  
+  .navmenu > ul > li:hover > a i.nav-icon,
+  .navmenu > ul > li > a.active i.nav-icon {
+    color: #f0d080 !important;
+  }
+  
+  /* Resto de tu código móvil... */
+}

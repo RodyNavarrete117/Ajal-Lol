@@ -298,3 +298,82 @@ form { padding: 22px 28px 30px; }
 .accordion-header:hover {
     background: var(--accent-light);
 }
+/* ===== PAYPAL / DONACIONES ===== */
+
+.donation-highlight {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #003087 0%, #0070ba 100%);
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(0, 112, 186, 0.25);
+}
+
+.donation-highlight__left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.donation-highlight__icon {
+    font-size: 20px;
+    background: rgba(255,255,255,0.15);
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.donation-highlight__text {
+    display: flex;
+    flex-direction: column;
+}
+
+.donation-highlight__text strong {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.donation-highlight__text span {
+    font-size: 11px;
+    opacity: 0.8;
+}
+
+/* Botón estilo PayPal */
+.btn-paypal {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffc439;
+    color: #111;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease, background .2s ease;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+.btn-paypal:hover {
+    background: #ffb347;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(0,0,0,0.2);
+}
+
+.btn-paypal i {
+    font-size: 13px;
+}
+
+/* Dentro del acordeón (mejora visual para donaciones) */
+.accordion-item.donation {
+    border-left: 4px solid #0070ba;
+}
+
+.accordion-item.donation.active {
+    border-left: 4px solid #ffc439;
+}

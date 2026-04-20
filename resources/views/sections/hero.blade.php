@@ -6,25 +6,36 @@
 
   <div class="container">
     <div class="hero-content">
-      <p class="hero-eyebrow">Organización sin fines de lucro</p>
+
+      @if(!empty($hero_data->eyebrow))
+      <p class="hero-eyebrow">{{ $hero_data->eyebrow }}</p>
+      @endif
+
       <h1>
-        Portal informativo de
-        <em>Ajal Lol A.C.</em>
+        {{ $hero_data->titulo_principal ?: 'Título no disponible' }}
+        @if(!empty($hero_data->titulo_em))
+        <em>{{ $hero_data->titulo_em }}</em>
+        @endif
       </h1>
-      <p>Transformando vidas en las comunidades mayas de Yucatán desde el año 2000, con amor, compromiso e interculturalidad.</p>
+
+      <p>{{ $hero_data->descripcion ?: 'Texto no disponible' }}</p>
 
       <div class="hero-buttons">
         <a href="#about" class="btn-rose">
           <i class="bi bi-heart-fill" aria-hidden="true"></i>
           Conoce más
         </a>
-        <a href="https://www.youtube.com/watch?v=lRM7kJdDUM4"
+
+        @if($hero_videos->isNotEmpty())
+        <a href="{{ $hero_videos->first()->youtube_url }}"
            class="btn-ghost" target="_blank" rel="noopener noreferrer"
-           aria-label="Ver video de Ajal Lol en YouTube">
+           aria-label="Ver video en YouTube">
           <span class="play-icon" aria-hidden="true"><i class="bi bi-play-fill"></i></span>
           Ver video
         </a>
+        @endif
       </div>
+
     </div>
   </div>
 

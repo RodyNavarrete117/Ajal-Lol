@@ -170,7 +170,11 @@
 }
 
 /* ══════════ FORM BODY ══════════ */
-form { padding: 22px 28px 30px; }
+.edit-form-body {
+    padding: 22px 28px 30px;
+}
+
+form { padding: 0; }
 
 /* ══════════ PANELS ══════════ */
 .edit-panel { display: none; animation: fadeUp 0.22s cubic-bezier(0.4,0,0.2,1) both; }
@@ -411,7 +415,7 @@ form { padding: 22px 28px 30px; }
 
 @media (max-width: 680px) {
     .edit-tabs-bar { padding: 0 16px; }
-    form { padding: 16px 16px 24px; }
+    .edit-form-body { padding: 16px 16px 24px; }
     .subtitle { display: none; }
     .form-row { grid-template-columns: 1fr; }
     .video-row { grid-template-columns: 1fr; gap: 8px; }
@@ -444,7 +448,6 @@ form { padding: 22px 28px 30px; }
    ESTADÍSTICAS POR AÑO
    ══════════════════════════════════════════ */
 
-/* Totales acumulados */
 .stats-totals-bar {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -483,7 +486,6 @@ form { padding: 22px 28px 30px; }
     transition: color var(--tr);
 }
 
-/* Form agregar año */
 .stats-add-yr-form {
     display: none;
     align-items: center;
@@ -510,7 +512,6 @@ form { padding: 22px 28px 30px; }
     letter-spacing: 0;
     margin-bottom: 0;
 }
-/* anular el ::before del form-group genérico dentro del form de año */
 .stats-add-yr-form label::before { display: none; }
 
 .stats-ayi {
@@ -562,7 +563,6 @@ form { padding: 22px 28px 30px; }
 }
 .stats-btn-cx:hover { background: var(--bg-input); }
 
-/* Fila carrusel */
 .stats-yr-row {
     display: flex;
     align-items: center;
@@ -576,7 +576,6 @@ form { padding: 22px 28px 30px; }
 }
 .stats-yr-row::-webkit-scrollbar { display: none; }
 
-/* Cápsulas adyacentes */
 .stats-yr-adj {
     padding: 7px 16px;
     border-radius: 20px;
@@ -600,7 +599,6 @@ form { padding: 22px 28px 30px; }
 }
 .stats-yr-adj:active { transform: scale(0.97); }
 
-/* Cápsula activa */
 .stats-yr-active-wrap { position: relative; flex-shrink: 0; }
 
 .stats-yr-act {
@@ -631,7 +629,6 @@ form { padding: 22px 28px 30px; }
 }
 .stats-yr-act.open .stats-yr-chv { transform: rotate(180deg); }
 
-/* Botón + */
 .stats-btn-plus {
     width: 32px;
     height: 32px;
@@ -654,12 +651,11 @@ form { padding: 22px 28px 30px; }
     color: var(--accent);
 }
 
-/* Dropdown */
 .stats-yr-dd {
     position: fixed;
     width: auto;
-    min-width: 90px;      /* ← justo para 4 dígitos + padding */
-    max-width: 110px;     /* ← no se estira más */
+    min-width: 90px;
+    max-width: 110px;
     background: var(--bg-container);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -689,7 +685,6 @@ form { padding: 22px 28px 30px; }
 .stats-yr-dd-item:hover  { background: var(--accent-light); }
 .stats-yr-dd-item.active { background: var(--accent-light); color: var(--accent); }
 
-/* Panel del año */
 .stats-yr-panel {
     border: 1px solid var(--border-card);
     border-radius: 14px;
@@ -725,7 +720,6 @@ form { padding: 22px 28px 30px; }
     transition: color var(--tr);
 }
 
-/* Grid de campos */
 .stats-fields-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -778,7 +772,6 @@ form { padding: 22px 28px 30px; }
 }
 .stats-field input::placeholder { color: var(--text-placeholder); }
 
-/* Sin años */
 .stats-no-yr {
     padding: 28px;
     text-align: center;
@@ -789,7 +782,6 @@ form { padding: 22px 28px 30px; }
     margin-bottom: 4px;
 }
 
-/* Responsive stats */
 @media (max-width: 860px) {
     .stats-totals-bar  { grid-template-columns: repeat(2, 1fr); }
     .stats-fields-grid { grid-template-columns: repeat(2, 1fr); }
@@ -800,7 +792,6 @@ form { padding: 22px 28px 30px; }
     .stats-fields-grid { grid-template-columns: 1fr 1fr; }
 }
 
-/* Toggle BD por año */
 .stats-bd-toggle-row {
     display: flex;
     align-items: center;
@@ -843,7 +834,6 @@ form { padding: 22px 28px 30px; }
     opacity: 0.7;
 }
 
-/* Switch reutilizado */
 .stats-bd-switch {
     position: relative;
     display: inline-flex;

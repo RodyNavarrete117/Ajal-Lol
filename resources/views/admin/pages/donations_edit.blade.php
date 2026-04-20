@@ -120,6 +120,7 @@
                 </div>
 
             </div>
+            
 
             {{-- BOTONES --}}
             <div class="form-actions">
@@ -137,6 +138,7 @@
         </form>
     </div>
 </div>
+
 
 {{-- TOAST --}}
 <div id="toast" class="edit-toast">

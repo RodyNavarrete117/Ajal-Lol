@@ -18,13 +18,12 @@ use App\Http\Controllers\Admin\EditPageBoardController;
 use App\Http\Controllers\Admin\EditPageAlliesController;
 use App\Http\Controllers\Admin\EditPageActivitiesController;
 use App\Http\Controllers\Admin\EditPageAboutController;
+use App\Http\Controllers\Admin\EditPageHomeController;
 use App\Http\Controllers\Admin\ProjectEditController;
 use App\Http\Controllers\Admin\FaqEditController;
-use App\Http\Controllers\Admin\EditPageHomeController; 
 use App\Http\Controllers\Page\PublicPageController;
 use App\Http\Controllers\Page\ServicesController;
 use App\Http\Controllers\Page\EventsController;
-
 
 /* ── Rate limiter para el formulario de contacto ── */
 RateLimiter::for('contact', function (Request $request) {
@@ -116,8 +115,12 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::prefix('pages')->group(function () {
 
         /* ── Inicio ── */
-        Route::get('/home/edit',    [EditPageHomeController::class, 'index'])->name('admin.pages.home.edit');
-        Route::post('/home/update', [EditPageHomeController::class, 'update'])->name('admin.pages.home.update');
+        Route::prefix('home')->group(function () {
+            Route::get('/edit',    [EditPageHomeController::class, 'index'])->name('admin.pages.home.edit');
+            Route::post('/hero',   [EditPageHomeController::class, 'updateHero'])->name('admin.pages.home.hero');
+            Route::post('/videos', [EditPageHomeController::class, 'updateVideos'])->name('admin.pages.home.videos');
+            Route::post('/update', [EditPageHomeController::class, 'update'])->name('admin.pages.home.update');
+        });
 
         /* ── Nosotros ── */
         Route::prefix('about')->group(function () {
@@ -168,9 +171,9 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::get('/contact/edit',   [EditPageContactController::class, 'index'])->name('admin.pages.contact.edit');
         Route::put('/contact/update', [EditPageContactController::class, 'update'])->name('admin.pages.contact.update');
     });
+
     /* ── Donativos ── */
     Route::get('/donations/edit', fn() => view('admin.pages.donations_edit'))->name('admin.pages.donations.edit');
-    
 
     /* ===== NOTIFICACIONES (API) ===== */
     Route::prefix('api/notifications')->group(function () {

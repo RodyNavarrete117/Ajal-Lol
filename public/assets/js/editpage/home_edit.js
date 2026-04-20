@@ -5,22 +5,36 @@
     'use strict';
 
     const MAX_VIDEOS = 10;
+    const CSRF = window.HOME_ROUTES?.csrfToken
+        ?? document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
-    /* ── Toast ─────────────────────────────────────────── */
+    /* ── helpers fetch ── */
+    async function apiFetch(url, body) {
+        const isFormData = body instanceof FormData;
+        const res = await fetch(url, {
+            method : 'POST',
+            headers: {
+                'X-CSRF-TOKEN': CSRF,
+                'Accept'      : 'application/json',
+                ...(!isFormData ? { 'Content-Type': 'application/json' } : {}),
+            },
+            body: isFormData ? body : JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message ?? 'Error en la solicitud.');
+        return data;
+    }
+
+    /* ── Toast ── */
     function showToast(message, type = 'success') {
-        const existing = document.querySelector('.edit-toast');
-        if (existing) existing.remove();
-
+        document.querySelector('.edit-toast')?.remove();
         const toast = document.createElement('div');
         toast.className = `edit-toast edit-toast--${type}`;
         toast.innerHTML = `
             <span class="edit-toast__icon">
-                ${type === 'success'
-                    ? '<i class="fa fa-circle-check"></i>'
-                    : '<i class="fa fa-circle-exclamation"></i>'}
+                <i class="fa ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i>
             </span>
-            <span class="edit-toast__msg">${message}</span>
-        `;
+            <span class="edit-toast__msg">${message}</span>`;
         document.body.appendChild(toast);
         requestAnimationFrame(() => toast.classList.add('edit-toast--show'));
         setTimeout(() => {
@@ -29,22 +43,18 @@
         }, 3200);
     }
 
-    /* ── Tabs ─────────────────────────────────────────── */
-    const tabs   = document.querySelectorAll('.edit-tab');
-    const panels = document.querySelectorAll('.edit-panel');
-
-    tabs.forEach(tab => {
+    /* ── Tabs ── */
+    document.querySelectorAll('.edit-tab').forEach(tab => {
         tab.addEventListener('click', () => {
-            const target = tab.dataset.target;
-            tabs.forEach(t => t.classList.remove('active'));
-            panels.forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.edit-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.edit-panel').forEach(p => p.classList.remove('active'));
             tab.classList.add('active');
-            const panel = document.getElementById('panel-' + target);
+            const panel = document.getElementById('panel-' + tab.dataset.target);
             if (panel) panel.classList.add('active');
         });
     });
 
-    /* ── Extraer ID de YouTube desde URL o ID directo ── */
+    /* ── Extraer ID de YouTube ── */
     function extractYouTubeId(input) {
         input = input.trim();
         if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
@@ -58,21 +68,21 @@
         return null;
     }
 
-    /* ── Actualizar miniatura de un video ── */
+    /* ── Actualizar miniatura ── */
     function updateThumb(thumbEl, videoId) {
         if (!thumbEl) return;
         const img = thumbEl.querySelector('img');
         if (!img) return;
         if (videoId) {
-            img.src = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+            img.src           = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
             img.style.opacity = '1';
         } else {
-            img.src = '';
+            img.src           = '';
             img.style.opacity = '0';
         }
     }
 
-    /* ── Inicializar eventos de una fila de video ── */
+    /* ── Init fila de video ── */
     function initVideoRow(row) {
         const idInput   = row.querySelector('.vid-id-input');
         const thumbId   = idInput?.dataset.thumb;
@@ -105,7 +115,7 @@
         });
     }
 
-    /* ── Renumerar filas de video ── */
+    /* ── Renumerar filas ── */
     function renumberVideos() {
         document.querySelectorAll('.video-row').forEach((row, i) => {
             const n = i + 1;
@@ -122,24 +132,19 @@
             if (thumbEl) thumbEl.id = `vthumb-${n}`;
             const idInput = row.querySelector('.vid-id-input');
             if (idInput) idInput.dataset.thumb = `vthumb-${n}`;
-
-            const btnRemove = row.querySelector('.btn-remove-video');
-            if (btnRemove) btnRemove.dataset.row = n;
         });
     }
 
-    /* ── Actualizar estado del botón agregar ── */
+    /* ── Estado botón agregar ── */
     function updateVideoAddBar() {
         const count = document.querySelectorAll('.video-row').length;
-        const bar   = document.getElementById('videoAddBar');
         const btn   = document.getElementById('btnAddVideo');
-        if (!bar || !btn) return;
-        const isMax = count >= MAX_VIDEOS;
-        bar.classList.toggle('is-max', isMax);
-        btn.disabled = isMax;
+        if (!btn) return;
+        btn.disabled = count >= MAX_VIDEOS;
+        document.getElementById('videoAddBar')?.classList.toggle('is-max', count >= MAX_VIDEOS);
     }
 
-    /* ── Construir fila de video nueva ── */
+    /* ── Construir fila nueva ── */
     function buildVideoRow(n) {
         const row = document.createElement('div');
         row.className = 'video-row';
@@ -157,17 +162,16 @@
                         placeholder="Ej: Nuestra historia" class="vid-title-input">
                 </div>
                 <div class="form-group">
-                    <label for="vid_id_${n}">ID o URL de YouTube</label>
+                    <label for="vid_id_${n}">URL de YouTube</label>
                     <input type="text" id="vid_id_${n}" name="vid_id_${n}"
-                        placeholder="Ej: lRM7kJdDUM4 o https://youtube.com/..."
+                        placeholder="Ej: https://www.youtube.com/watch?v=..."
                         class="vid-id-input" data-thumb="vthumb-${n}">
-                    <span class="field-hint">Pega el ID del video o la URL completa de YouTube.</span>
+                    <span class="field-hint">URL completa de YouTube.</span>
                 </div>
             </div>
             <button type="button" class="btn-remove-video" data-row="${n}" title="Eliminar video">
                 <i class="fa fa-xmark"></i>
-            </button>
-        `;
+            </button>`;
         return row;
     }
 
@@ -178,103 +182,96 @@
             showToast(`Máximo de ${MAX_VIDEOS} videos alcanzado.`, 'error');
             return;
         }
-        const n   = count + 1;
-        const row = buildVideoRow(n);
+        const row = buildVideoRow(count + 1);
         document.getElementById('videosList').appendChild(row);
-        requestAnimationFrame(() => { row.style.opacity = '1'; row.style.transform = 'translateY(0)'; });
         initVideoRow(row);
         updateVideoAddBar();
         setTimeout(() => row.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80);
     });
 
-    /* ── Validación ── */
-    function validateForm(form) {
-        let valid = true;
-        form.querySelectorAll('input[required], textarea[required]').forEach(field => {
-            clearError(field);
-            if (!field.value.trim()) { markError(field, 'Este campo es obligatorio.'); valid = false; }
+    /* ── Guardar Hero ── */
+    document.getElementById('btnSaveHero')?.addEventListener('click', async () => {
+        const payload = {
+            eyebrow          : document.getElementById('eyebrow')?.value.trim(),
+            titulo_principal : document.getElementById('titulo_principal')?.value.trim(),
+            titulo_em        : document.getElementById('titulo_em')?.value.trim(),
+            descripcion      : document.getElementById('descripcion')?.value.trim(),
+        };
+
+        if (!payload.titulo_principal || !payload.descripcion) {
+            showToast('Completa los campos obligatorios.', 'error');
+            return;
+        }
+
+        try {
+            const data = await apiFetch(window.HOME_ROUTES.hero, payload);
+            showToast(data.message ?? 'Hero guardado.');
+        } catch (err) {
+            showToast(err.message ?? 'Error al guardar.', 'error');
+        }
+    });
+
+    /* ── Guardar Videos ── */
+    document.getElementById('btnSaveVideos')?.addEventListener('click', async () => {
+        const rows  = document.querySelectorAll('.video-row');
+        const videos = [];
+
+        rows.forEach(row => {
+            const urlInput   = row.querySelector('.vid-id-input');
+            const titleInput = row.querySelector('.vid-title-input');
+            const url        = urlInput?.value.trim();
+            if (url) {
+                videos.push({
+                    titulo: titleInput?.value.trim() ?? '',
+                    url,
+                });
+            }
         });
-        return valid;
-    }
-    function markError(field, msg) {
-        field.classList.add('field--error');
-        const err = document.createElement('span');
-        err.className = 'field-error-msg'; err.textContent = msg;
-        field.insertAdjacentElement('afterend', err);
-        field.addEventListener('input', () => clearError(field), { once: true });
-    }
-    function clearError(field) {
-        field.classList.remove('field--error');
-        field.parentElement?.querySelector('.field-error-msg')?.remove();
-    }
 
-    /* ── Submit general (AJAX) ── */
-    const form = document.querySelector('.edit-container form');
-    if (form) {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
+        if (!videos.length) {
+            showToast('Agrega al menos un video con URL.', 'error');
+            return;
+        }
 
-            // Serializar statsData
-            const hidden = document.getElementById('statsDataInput');
-            if (hidden && typeof statsData !== 'undefined') {
-                hidden.value = JSON.stringify(statsData);
-            }
+        try {
+            const data = await apiFetch(window.HOME_ROUTES.videos, { videos });
+            showToast(data.message ?? 'Videos guardados.');
+        } catch (err) {
+            showToast(err.message ?? 'Error al guardar.', 'error');
+        }
+    });
 
-            if (!validateForm(form)) {
-                showToast('Por favor completa los campos obligatorios.', 'error');
-                const errorField = form.querySelector('.field--error');
-                if (errorField) {
-                    const panel = errorField.closest('.edit-panel');
-                    if (panel && !panel.classList.contains('active')) {
-                        const panelId = panel.id.replace('panel-', '');
-                        const tab = document.querySelector(`.edit-tab[data-target="${panelId}"]`);
-                        if (tab) tab.click();
-                    }
-                    setTimeout(() => errorField.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
-                }
-                return;
-            }
+    /* ── Guardar Estadísticas ── */
+    document.getElementById('btnSaveStats')?.addEventListener('click', async () => {
+        const hidden = document.getElementById('statsDataInput');
+        if (hidden && typeof statsData !== 'undefined') {
+            hidden.value = JSON.stringify(statsData);
+        }
 
-            // Estado de carga en todos los botones guardar
-            const btnsSave = form.querySelectorAll('.btn-save');
-            const originales = [];
-            btnsSave.forEach(btn => {
-                originales.push(btn.innerHTML);
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Guardando...';
-            });
+        const formData = new FormData();
+        formData.append('stats_data', hidden?.value ?? '{}');
+        formData.append('_token', CSRF);
 
-            fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form),
+        try {
+            const res  = await fetch(window.HOME_ROUTES.stats, {
+                method : 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json',
+                    'Accept'          : 'application/json',
+                    'X-CSRF-TOKEN'    : CSRF,
                 },
-            })
-            .then(res => {
-                if (res.ok) return res.json();
-                throw new Error('Error ' + res.status);
-            })
-            .then(data => {
-                if (data.success) {
-                    showToast('Cambios guardados correctamente.');
-                } else {
-                    showToast('Error al guardar.', 'error');
-                }
-            })
-            .catch(err => {
-                console.error('Error al guardar:', err);
-                showToast('Error al guardar los cambios.', 'error');
-            })
-            .finally(() => {
-                btnsSave.forEach((btn, i) => {
-                    btn.disabled = false;
-                    btn.innerHTML = originales[i];
-                });
+                body: formData,
             });
-        });
-    }
+            const data = await res.json();
+            if (data.success) {
+                showToast('Estadísticas guardadas correctamente.');
+            } else {
+                showToast('Error al guardar.', 'error');
+            }
+        } catch (err) {
+            showToast('Error al guardar las estadísticas.', 'error');
+        }
+    });
 
     /* ── Init videos ── */
     document.querySelectorAll('.video-row').forEach(row => initVideoRow(row));
@@ -283,7 +280,7 @@
 
     /* ══════════════════════════════════════════════════════
        ESTADÍSTICAS POR AÑO
-       ══════════════════════════════════════════════════════ */
+    ══════════════════════════════════════════════════════ */
 
     const STAT_FIELDS = [
         { key: 'ben',  label: 'Beneficiarios',    placeholder: 'Ej: 500'  },
@@ -294,16 +291,13 @@
 
     const statsPanel = document.getElementById('panel-stats');
     var statsData = {};
-    window._statsData = statsData; // exponer para debug y acceso global
     var bdStatsData = {};
-    window._bdStatsData = bdStatsData;
 
     if (statsPanel) {
 
         try {
             const raw = JSON.parse(statsPanel.dataset.stats || '{}');
             Object.entries(raw).forEach(([k, v]) => { statsData[Number(k)] = v; });
-            window._statsData = statsData;
         } catch (e) { console.error('Error al parsear data-stats:', e); }
 
         try {
@@ -318,15 +312,10 @@
         }
         function statsFmt(n) { return Number(n || 0).toLocaleString('es-MX'); }
 
-        /* ── Totales ── */
         function statsUpdateTotals() {
             const t = { ben: 0, proy: 0, hrs: 0, vol: 0 };
-
             Object.entries(statsData).forEach(([yrKey, yr]) => {
-                STAT_FIELDS.forEach(f => {
-                    if (f.key !== '_bdInclude') t[f.key] += Number(yr[f.key] || 0);
-                });
-                // Sumar BD si el toggle está activo
+                STAT_FIELDS.forEach(f => { t[f.key] += Number(yr[f.key] || 0); });
                 if (yr._bdInclude) {
                     const bd = bdStatsData[Number(yrKey)];
                     if (bd) {
@@ -335,7 +324,6 @@
                     }
                 }
             });
-
             const el = id => document.getElementById(id);
             if (el('statTotBen'))  el('statTotBen').textContent  = statsFmt(t.ben);
             if (el('statTotProy')) el('statTotProy').textContent = statsFmt(t.proy);
@@ -343,7 +331,6 @@
             if (el('statTotVol'))  el('statTotVol').textContent  = statsFmt(t.vol);
         }
 
-        /* ── Dropdown ── */
         const statsDd = document.getElementById('statsYrDd');
         if (statsDd && statsDd.parentElement !== document.body) {
             document.body.appendChild(statsDd);
@@ -370,9 +357,8 @@
         function statsPositionDropdown(btn) {
             if (!statsDd || !btn) return;
             const r = btn.getBoundingClientRect();
-            statsDd.style.top   = (r.bottom + 6) + 'px';
-            statsDd.style.left  = r.left + 'px';
-            statsDd.style.width = '';
+            statsDd.style.top  = (r.bottom + 6) + 'px';
+            statsDd.style.left = r.left + 'px';
         }
 
         function statsOpenDropdown(btn) {
@@ -392,42 +378,27 @@
         }
 
         document.addEventListener('click', e => {
-            if (!e.target.closest('.stats-yr-active-wrap') &&
-                !e.target.closest('#statsYrDd')) {
+            if (!e.target.closest('.stats-yr-active-wrap') && !e.target.closest('#statsYrDd'))
                 statsCloseDropdown();
-            }
         });
         window.addEventListener('scroll', () => {
-            if (statsDd && statsDd.style.display !== 'none' && statsDropBtn)
+            if (statsDd?.style.display !== 'none' && statsDropBtn)
                 statsPositionDropdown(statsDropBtn);
         }, { passive: true });
         window.addEventListener('resize', () => {
-            if (statsDd && statsDd.style.display !== 'none' && statsDropBtn)
+            if (statsDd?.style.display !== 'none' && statsDropBtn)
                 statsPositionDropdown(statsDropBtn);
         }, { passive: true });
 
-        /* ── Poblar select de años disponibles ── */
         function statsPopulateAddForm() {
-            const addForm = document.getElementById('statsAddYrForm');
-            const plusBtnReset = document.querySelector('.stats-btn-plus');
-            if (plusBtnReset) {
-                plusBtnReset.disabled = false;
-                plusBtnReset.style.opacity       = '';
-                plusBtnReset.style.cursor        = '';
-                plusBtnReset.style.pointerEvents = '';
-            }
-            if (!addForm) return;
-
+            const addForm     = document.getElementById('statsAddYrForm');
             const currentYear = new Date().getFullYear();
             const existing    = statsSortedYears();
-
-            // Años disponibles: año actual+1 hacia atrás hasta 2023, excluyendo los ya registrados
-            const available = [];
+            const available   = [];
             for (let y = currentYear; y >= 2023; y--) {
                 if (!existing.includes(y)) available.push(y);
             }
 
-            // Reemplazar el input por un select (solo la primera vez)
             const oldInp = document.getElementById('statsAyiInp');
             let sel = addForm.querySelector('.stats-ayi-select');
 
@@ -442,30 +413,26 @@
             sel.innerHTML = '';
             const btnOk = document.getElementById('statsBtnOk');
 
-                if (available.length === 0) {
-                    // Cerrar el form si estaba abierto
-                    addForm.classList.remove('show');
-                    // Deshabilitar visualmente el botón +
-                    const plusBtn = document.querySelector('.stats-btn-plus');
-                    if (plusBtn) {
-                        plusBtn.disabled = true;
-                        plusBtn.style.opacity      = '0.35';
-                        plusBtn.style.cursor       = 'not-allowed';
-                        plusBtn.style.pointerEvents = 'none';
-                    }
-                    return;
-                }else {
+            if (available.length === 0) {
+                addForm.classList.remove('show');
+                const plusBtn = document.querySelector('.stats-btn-plus');
+                if (plusBtn) {
+                    plusBtn.disabled            = true;
+                    plusBtn.style.opacity       = '0.35';
+                    plusBtn.style.cursor        = 'not-allowed';
+                    plusBtn.style.pointerEvents = 'none';
+                }
+                return;
+            } else {
                 if (btnOk) btnOk.disabled = false;
                 available.forEach(y => {
                     const opt = document.createElement('option');
-                    opt.value       = y;
-                    opt.textContent = y;
+                    opt.value = y; opt.textContent = y;
                     sel.appendChild(opt);
                 });
             }
         }
 
-        // NUEVA función — agregar después de statsPopulateAddForm
         function statsUpdatePlusBtn() {
             const currentYear = new Date().getFullYear();
             const existing    = statsSortedYears();
@@ -473,64 +440,40 @@
             for (let y = currentYear; y >= 2023; y--) {
                 if (!existing.includes(y)) available.push(y);
             }
-
             const plusBtn = document.querySelector('.stats-btn-plus');
             if (!plusBtn) return;
-
             if (available.length === 0) {
-                plusBtn.disabled            = true;
-                plusBtn.style.opacity       = '0.35';
-                plusBtn.style.cursor        = 'not-allowed';
-                plusBtn.style.pointerEvents = 'none';
+                plusBtn.disabled = true; plusBtn.style.opacity = '0.35';
+                plusBtn.style.cursor = 'not-allowed'; plusBtn.style.pointerEvents = 'none';
             } else {
-                plusBtn.disabled            = false;
-                plusBtn.style.opacity       = '';
-                plusBtn.style.cursor        = '';
-                plusBtn.style.pointerEvents = '';
+                plusBtn.disabled = false; plusBtn.style.opacity = '';
+                plusBtn.style.cursor = ''; plusBtn.style.pointerEvents = '';
             }
         }
 
-        /* ── Carrusel ── */
         function statsBuildCarousel() {
             const row = document.getElementById('statsYrRow');
             if (!row) return;
             row.innerHTML = '';
 
-            const all    = statsSortedYears();   // ordenados desc: [2025, 2024, 2023…]
-            if (!all.length) {
-                // Sin años: solo mostrar botón +
-                const plusBtn = buildPlusBtn();
-                row.appendChild(plusBtn);
-                return;
-            }
+            const all = statsSortedYears();
+            if (!all.length) { row.appendChild(buildPlusBtn()); return; }
 
-            const activeYr = all[statsCurrentIdx];
-
-            // Año anterior (el que va ANTES en el tiempo = índice mayor en array desc)
             const prevYr = all[statsCurrentIdx + 1] ?? null;
-            // Año siguiente (el que va DESPUÉS en el tiempo = índice menor en array desc)
             const nextYr = all[statsCurrentIdx - 1] ?? null;
 
-            // Cápsula año anterior
             if (prevYr !== null) {
                 const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'stats-yr-adj';
-                btn.textContent = prevYr;
-                btn.addEventListener('click', () => {
-                    statsCurrentIdx = statsCurrentIdx + 1;
-                    statsRenderAll();
-                });
+                btn.type = 'button'; btn.className = 'stats-yr-adj'; btn.textContent = prevYr;
+                btn.addEventListener('click', () => { statsCurrentIdx++; statsRenderAll(); });
                 row.appendChild(btn);
             }
 
-            // Cápsula activa (con dropdown)
             const wrap   = document.createElement('div');
             wrap.className = 'stats-yr-active-wrap';
             const actBtn = document.createElement('button');
-            actBtn.type      = 'button';
-            actBtn.className = 'stats-yr-act';
-            actBtn.innerHTML = `${activeYr} <span class="stats-yr-chv">&#9660;</span>`;
+            actBtn.type = 'button'; actBtn.className = 'stats-yr-act';
+            actBtn.innerHTML = `${all[statsCurrentIdx]} <span class="stats-yr-chv">&#9660;</span>`;
             actBtn.addEventListener('click', e => {
                 e.stopPropagation();
                 statsDd.style.display === 'none'
@@ -540,29 +483,20 @@
             wrap.appendChild(actBtn);
             row.appendChild(wrap);
 
-            // Cápsula año siguiente
             if (nextYr !== null) {
                 const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'stats-yr-adj';
-                btn.textContent = nextYr;
-                btn.addEventListener('click', () => {
-                    statsCurrentIdx = statsCurrentIdx - 1;
-                    statsRenderAll();
-                });
+                btn.type = 'button'; btn.className = 'stats-yr-adj'; btn.textContent = nextYr;
+                btn.addEventListener('click', () => { statsCurrentIdx--; statsRenderAll(); });
                 row.appendChild(btn);
             }
 
-            // Botón +
             row.appendChild(buildPlusBtn());
         }
 
         function buildPlusBtn() {
             const plusBtn = document.createElement('button');
-            plusBtn.type        = 'button';
-            plusBtn.className   = 'stats-btn-plus';
-            plusBtn.title       = 'Agregar año';
-            plusBtn.textContent = '+';
+            plusBtn.type = 'button'; plusBtn.className = 'stats-btn-plus';
+            plusBtn.title = 'Agregar año'; plusBtn.textContent = '+';
             plusBtn.addEventListener('click', e => {
                 e.stopPropagation();
                 const addForm = document.getElementById('statsAddYrForm');
@@ -574,11 +508,9 @@
             return plusBtn;
         }
 
-        /* ── Panel del año ── */
         function statsRenderPanel() {
             const wrap = document.getElementById('statsYrPanel');
             if (!wrap) return;
-
             const all = statsSortedYears();
             if (!all.length) {
                 wrap.innerHTML = '<div class="stats-no-yr">Sin años registrados. Usa el botón + para añadir uno.</div>';
@@ -587,7 +519,7 @@
 
             const yr = all[statsCurrentIdx];
             const d  = statsData[yr] || {};
-            const bd = bdStatsData[yr] || null; // datos BD para este año
+            const bd = bdStatsData[yr] || null;
             wrap.innerHTML = '';
 
             const p = document.createElement('div');
@@ -595,45 +527,30 @@
 
             const hdr = document.createElement('div');
             hdr.className = 'stats-yr-panel-hdr';
-            hdr.innerHTML = `
-                <span class="stats-yr-badge">${yr}</span>
-                <span class="stats-yr-psub">Datos registrados</span>`;
+            hdr.innerHTML = `<span class="stats-yr-badge">${yr}</span><span class="stats-yr-psub">Datos registrados</span>`;
             p.appendChild(hdr);
 
-            // Grid de campos manuales
             const grid = document.createElement('div');
             grid.className = 'stats-fields-grid';
 
             STAT_FIELDS.forEach(f => {
-                const bdVal = bd ? (f.key === 'ben' ? bd.beneficiarios : f.key === 'proy' ? bd.proyectos : null) : null;
+                const bdVal    = bd ? (f.key === 'ben' ? bd.beneficiarios : f.key === 'proy' ? bd.proyectos : null) : null;
                 const manualVal = d[f.key] || '';
-
-                // Calcular el total visual si hay BD y toggle activo
                 const sf = document.createElement('div');
-                sf.className = 'stats-field';
-                sf.dataset.fieldKey = f.key;
-
+                sf.className = 'stats-field'; sf.dataset.fieldKey = f.key;
                 sf.innerHTML = `
                     <label>${f.label}</label>
-                    <input type="number" min="0"
-                        data-key="${f.key}"
-                        value="${manualVal}"
-                        placeholder="${f.placeholder}">
-                    ${bdVal !== null ? `<span class="stats-field-bd-hint" id="bd-hint-${yr}-${f.key}">
-                        + ${Number(bdVal).toLocaleString('es-MX')} de la BD
-                    </span>` : ''}`;
+                    <input type="number" min="0" data-key="${f.key}"
+                        value="${manualVal}" placeholder="${f.placeholder}">
+                    ${bdVal !== null ? `<span class="stats-field-bd-hint">+ ${Number(bdVal).toLocaleString('es-MX')} de la BD</span>` : ''}`;
                 grid.appendChild(sf);
             });
-
             p.appendChild(grid);
 
-            // Casilla de BD (solo si hay datos en BD para este año)
             if (bd && (bd.beneficiarios > 0 || bd.proyectos > 0)) {
                 const bdSection = document.createElement('div');
                 bdSection.className = 'stats-bd-toggle-row';
-
                 const isChecked = d._bdInclude === true || d._bdInclude === 1;
-
                 bdSection.innerHTML = `
                     <div class="stats-bd-toggle-info">
                         <i class="fa fa-database"></i>
@@ -644,17 +561,11 @@
                         </span>
                     </div>
                     <label class="stats-bd-switch">
-                        <input type="checkbox" class="stats-bd-chk" data-ano="${yr}"
-                            ${isChecked ? 'checked' : ''}>
-                        <span class="stats-bd-switch-track">
-                            <span class="stats-bd-switch-thumb"></span>
-                        </span>
+                        <input type="checkbox" class="stats-bd-chk" data-ano="${yr}" ${isChecked ? 'checked' : ''}>
+                        <span class="stats-bd-switch-track"><span class="stats-bd-switch-thumb"></span></span>
                     </label>`;
-
                 p.appendChild(bdSection);
-
-                // Evento del toggle
-                bdSection.querySelector('.stats-bd-chk').addEventListener('change', function() {
+                bdSection.querySelector('.stats-bd-chk').addEventListener('change', function () {
                     const ano = Number(this.dataset.ano);
                     if (!statsData[ano]) statsData[ano] = { ben: 0, proy: 0, hrs: 0, vol: 0 };
                     Object.assign(statsData[ano], { _bdInclude: this.checked });
@@ -663,7 +574,6 @@
             }
 
             wrap.appendChild(p);
-
             p.addEventListener('input', e => {
                 const inp = e.target;
                 if (inp.tagName !== 'INPUT' || inp.type === 'checkbox' || !inp.dataset.key) return;
@@ -673,7 +583,6 @@
             });
         }
 
-        /* ── Render completo ── */
         function statsRenderAll() {
             statsBuildCarousel();
             statsRenderPanel();
@@ -681,18 +590,11 @@
             statsUpdatePlusBtn();
         }
 
-        /* ── Confirmar agregar año ── */
         function statsConfirmAddYear() {
             const sel = document.querySelector('.stats-ayi-select');
             const val = parseInt(sel?.value);
-            if (!val) {
-                showToast('No hay años disponibles para agregar.', 'error');
-                return;
-            }
-            if (statsData[val] !== undefined) {
-                showToast(`El año ${val} ya existe.`, 'error');
-                return;
-            }
+            if (!val) { showToast('No hay años disponibles.', 'error'); return; }
+            if (statsData[val] !== undefined) { showToast(`El año ${val} ya existe.`, 'error'); return; }
             statsData[val] = { ben: 0, proy: 0, hrs: 0, vol: 0 };
             statsCurrentIdx = statsSortedYears().indexOf(val);
             document.getElementById('statsAddYrForm')?.classList.remove('show');
@@ -705,7 +607,6 @@
             document.getElementById('statsAddYrForm')?.classList.remove('show');
         });
 
-        /* ── Init ── */
         statsCurrentIdx = 0;
         statsRenderAll();
     }

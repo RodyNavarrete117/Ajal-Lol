@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 19-04-2026 a las 23:10:24
+-- Tiempo de generación: 20-04-2026 a las 21:40:30
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `prueba1`
+-- Base de datos: `prueba14`
 --
 
 -- --------------------------------------------------------
@@ -279,6 +279,13 @@ CREATE TABLE `formulario_contacto` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
+-- Volcado de datos para la tabla `formulario_contacto`
+--
+
+INSERT INTO `formulario_contacto` (`id_formcontacto`, `nombre_completo`, `correo`, `numero_telefonico`, `asunto`, `mensaje`, `fecha_envio`) VALUES
+(1, 'Rafael Sánchez Martín', 'admin@ajallol.com', '9991208921', 'Quiero colaborar', 'Hola', '2026-04-20 10:05:23');
+
+--
 -- Disparadores `formulario_contacto`
 --
 DELIMITER $$
@@ -332,11 +339,20 @@ INSERT INTO `informe` (`id_informe`, `nombre_organizacion`, `evento`, `lugar`, `
 CREATE TABLE `inicio` (
   `id_inicio` int NOT NULL,
   `id_pagina` int NOT NULL,
-  `titulo_inicio` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `texto_inicio` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `img_inicio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `url_inicio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `eyebrow` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `titulo_principal` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `titulo_em` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `descripcion` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `inicio`
+--
+
+INSERT INTO `inicio` (`id_inicio`, `id_pagina`, `eyebrow`, `titulo_principal`, `titulo_em`, `descripcion`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Organización sin fines de lucro', 'Portal informativo de', 'Ajal Lol A.C.', 'Ajal Lol A.C. es una organización de asistencia social sin fines de lucro', '2026-04-21 03:23:04', '2026-04-21 03:23:04');
 
 -- --------------------------------------------------------
 
@@ -362,10 +378,33 @@ CREATE TABLE `inicio_estadisticas` (
 --
 
 INSERT INTO `inicio_estadisticas` (`id_estadistica`, `id_pagina`, `ano`, `beneficiarios`, `proyectos`, `horas_apoyo`, `voluntarios`, `bd_include`, `created_at`, `updated_at`) VALUES
-(1, 1, 2023, 7451, 5, 1463, 35, 0, '2026-04-19 18:22:03', '2026-04-20 04:53:42'),
-(2, 1, 2024, 0, 0, 0, 0, 0, '2026-04-19 18:22:03', '2026-04-20 04:53:42'),
-(5, 1, 2025, 0, 0, 0, 0, 0, '2026-04-19 19:22:40', '2026-04-20 04:53:42'),
-(6, 1, 2026, 0, 0, 0, 0, 1, '2026-04-19 19:22:40', '2026-04-20 04:53:42');
+(1, 1, 2023, 7451, 5, 1463, 35, 0, '2026-04-19 18:22:03', '2026-04-20 22:48:04'),
+(2, 1, 2024, 0, 0, 0, 0, 0, '2026-04-19 18:22:03', '2026-04-20 22:48:04'),
+(5, 1, 2025, 0, 0, 0, 0, 0, '2026-04-19 19:22:40', '2026-04-20 22:48:04'),
+(6, 1, 2026, 32, 0, 0, 0, 1, '2026-04-19 19:22:40', '2026-04-20 22:48:04');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `inicio_videos`
+--
+
+CREATE TABLE `inicio_videos` (
+  `id_video` int NOT NULL,
+  `id_inicio` int NOT NULL,
+  `titulo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `youtube_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `orden` int NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `inicio_videos`
+--
+
+INSERT INTO `inicio_videos` (`id_video`, `id_inicio`, `titulo`, `youtube_url`, `orden`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Nuestra historia', 'https://www.youtube.com/watch?v=820QWnTYBzw', 1, '2026-04-21 03:23:37', '2026-04-21 03:23:37');
 
 -- --------------------------------------------------------
 
@@ -578,6 +617,15 @@ CREATE TABLE `notificaciones` (
   `leido` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `notificaciones`
+--
+
+INSERT INTO `notificaciones` (`id_notificacion`, `id_usuario`, `id_formulario`, `titulo`, `mensaje`, `leido`, `created_at`) VALUES
+(1, 1, 1, 'Nueva solicitud de: Rafael Sánchez Martín', 'Quiero colaborar — Hola', 0, '2026-04-20 16:05:23'),
+(2, 5, 1, 'Nueva solicitud de: Rafael Sánchez Martín', 'Quiero colaborar — Hola', 0, '2026-04-20 16:05:23'),
+(3, 8, 1, 'Nueva solicitud de: Rafael Sánchez Martín', 'Quiero colaborar — Hola', 0, '2026-04-20 16:05:23');
 
 -- --------------------------------------------------------
 
@@ -934,6 +982,13 @@ ALTER TABLE `inicio_estadisticas`
   ADD KEY `fk_estadistica_pagina` (`id_pagina`);
 
 --
+-- Indices de la tabla `inicio_videos`
+--
+ALTER TABLE `inicio_videos`
+  ADD PRIMARY KEY (`id_video`),
+  ADD KEY `id_inicio` (`id_inicio`);
+
+--
 -- Indices de la tabla `jobs`
 --
 ALTER TABLE `jobs`
@@ -1144,7 +1199,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT de la tabla `formulario_contacto`
 --
 ALTER TABLE `formulario_contacto`
-  MODIFY `id_formcontacto` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_formcontacto` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `informe`
@@ -1156,13 +1211,19 @@ ALTER TABLE `informe`
 -- AUTO_INCREMENT de la tabla `inicio`
 --
 ALTER TABLE `inicio`
-  MODIFY `id_inicio` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_inicio` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `inicio_estadisticas`
 --
 ALTER TABLE `inicio_estadisticas`
   MODIFY `id_estadistica` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT de la tabla `inicio_videos`
+--
+ALTER TABLE `inicio_videos`
+  MODIFY `id_video` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `jobs`
@@ -1216,7 +1277,7 @@ ALTER TABLE `nosotros_identidad_items`
 -- AUTO_INCREMENT de la tabla `notificaciones`
 --
 ALTER TABLE `notificaciones`
-  MODIFY `id_notificacion` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_notificacion` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `paginas`
@@ -1335,6 +1396,12 @@ ALTER TABLE `inicio`
 --
 ALTER TABLE `inicio_estadisticas`
   ADD CONSTRAINT `fk_estadistica_pagina` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
+
+--
+-- Filtros para la tabla `inicio_videos`
+--
+ALTER TABLE `inicio_videos`
+  ADD CONSTRAINT `inicio_videos_fk` FOREIGN KEY (`id_inicio`) REFERENCES `inicio` (`id_inicio`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `nosotros`

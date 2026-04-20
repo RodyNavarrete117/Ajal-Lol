@@ -194,5 +194,29 @@ class AppServiceProvider extends ServiceProvider
 
             $view->with('identity_items', $items);
         });
+
+        // ── Hero: sección inicio ──
+        View::composer('sections.hero', function ($view) {
+
+            $hero = DB::table('inicio')
+                ->where('id_pagina', 1)
+                ->first();
+
+            $videos = $hero
+                ? DB::table('inicio_videos')
+                    ->where('id_inicio', $hero->id_inicio)
+                    ->orderBy('orden')
+                    ->get()
+                : collect();
+
+            $view->with('hero_data', $hero ?? (object)[
+                'eyebrow'          => '',
+                'titulo_principal' => '',
+                'titulo_em'        => '',
+                'descripcion'      => '',
+            ]);
+
+            $view->with('hero_videos', $videos);
+        });
     }
 }

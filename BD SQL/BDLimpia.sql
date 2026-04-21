@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 16-04-2026 a las 19:53:38
+-- Tiempo de generación: 21-04-2026 a las 16:14:31
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `prueba12`
+-- Base de datos: `prueba16`
 --
 
 -- --------------------------------------------------------
@@ -29,28 +29,12 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `actividades` (
   `id_actividad` int NOT NULL,
-  `id_ano` int DEFAULT NULL,
-  `titulo_actividad` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `icono_actividad` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id_ano` int NOT NULL,
+  `titulo_actividad` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `icono_actividad` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'fa-star',
   `texto_actividad` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `orden_actividad` int DEFAULT NULL,
+  `orden_actividad` int NOT NULL DEFAULT '0',
   `visible` tinyint(1) NOT NULL DEFAULT '1',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `actividades_encabezado`
---
-
-CREATE TABLE `actividades_encabezado` (
-  `id_encabezado` int NOT NULL,
-  `id_ano` int DEFAULT NULL,
-  `titulo_actividad` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `subtitulo_actividad` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ano_visible` int DEFAULT NULL COMMENT 'Año activo visible en la página pública',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -173,6 +157,64 @@ CREATE TABLE `directiva` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `donaciones`
+--
+
+CREATE TABLE `donaciones` (
+  `id_donacion` int NOT NULL,
+  `id_pagina` int NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `donaciones_bancario`
+--
+
+CREATE TABLE `donaciones_bancario` (
+  `id_bancario` int NOT NULL,
+  `id_donacion` int NOT NULL,
+  `beneficiario` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banco` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `clabe` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `donaciones_info`
+--
+
+CREATE TABLE `donaciones_info` (
+  `id_info` int NOT NULL,
+  `id_donacion` int NOT NULL,
+  `titulo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `descripcion` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `donaciones_paypal`
+--
+
+CREATE TABLE `donaciones_paypal` (
+  `id_paypal` int NOT NULL,
+  `id_donacion` int NOT NULL,
+  `paypal_usuario` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `failed_jobs`
 --
 
@@ -239,36 +281,6 @@ CREATE TABLE `informe` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `informe`
---
-
-INSERT INTO `informe` (`id_informe`, `nombre_organizacion`, `evento`, `lugar`, `fecha`, `created_at`, `updated_at`) VALUES
-(2, 'Ajal-lol AC', 'Actividad recreativa de Año Nuevo', 'Izamal, Yucatán', '2026-01-16', '2026-02-20 18:06:10', '2026-02-20 18:06:10'),
-(3, 'Ajal-lol AC', 'Entrega de juguetes Día de Reyes', 'Tekit, Yucatán', '2026-01-15', '2026-02-20 18:06:10', '2026-02-20 18:06:10'),
-(7, 'Ajal-lol AC', 'Distribución de despensas alimentarias', 'Akil, Yucatán', '2026-02-20', '2026-02-26 23:10:08', '2026-02-26 23:10:08'),
-(22, 'Ajal-lol AC', 'Entrega de canastas básicas de alimentos', 'Akil, Yucatán', '2026-02-20', '2026-03-03 00:05:35', '2026-03-03 00:05:35'),
-(30, 'Ajal-lol AC', 'Entrega de artículos de primera necesidad', 'Akil, Yucatán', '2026-03-01', '2026-03-03 00:20:28', '2026-03-03 00:20:28'),
-(31, 'Ajal-lol AC', 'Jornada de ayuda humanitaria comunitaria', 'Akil, Yucatán', '2026-03-21', '2026-03-03 00:22:21', '2026-03-03 00:22:21'),
-(32, 'Ajal-lol AC', 'Entrega de insumos para el hogar', 'Akil, Yucatán', '2026-03-02', '2026-03-03 00:25:03', '2026-03-03 00:25:03'),
-(37, 'Ajal-lol AC', 'Apoyo alimentario a familias vulnerables', 'Akil, Yucatán', '2026-02-22', '2026-03-03 00:28:43', '2026-03-03 00:28:43'),
-(43, 'Ajal-lol AC', 'Programa de nutrición infantil comunitaria', 'Akil, Yucatán', '2026-02-20', '2026-03-03 00:32:40', '2026-03-03 00:32:40'),
-(44, 'Ajal-lol AC', 'Jornada de salud preventiva', 'Akil, Yucatán', '2026-03-03', '2026-03-03 00:33:53', '2026-03-03 00:33:53'),
-(45, 'Ajal-lol AC', 'Distribución de suministros educativos', 'Akil, Yucatán', '2026-04-02', '2026-03-03 00:35:01', '2026-03-03 00:35:01'),
-(48, 'Ajal-lol AC', 'Entrega de kit de útiles escolares', 'Akil, Yucatán', '2026-04-15', '2026-03-03 00:37:39', '2026-03-03 00:37:39'),
-(49, 'Ajal-lol AC', 'Campaña de apoyo a adultos mayores', 'Akil, Yucatán', '2026-05-01', '2026-03-03 00:38:15', '2026-03-03 00:38:15'),
-(53, 'Ajal-lol AC', 'Brigada de asistencia social comunitaria', 'Akil, Yucatán', '2026-04-02', '2026-03-03 00:51:40', '2026-03-03 00:51:40'),
-(54, 'Ajal-lol AC', 'Taller de capacitación para el empleo', 'Akil, Yucatán', '2026-05-20', '2026-03-03 00:52:20', '2026-03-03 00:52:20'),
-(57, 'Ajal-lol AC', 'Jornada de reforestación comunitaria', 'Akil, Yucatán', '2026-06-05', '2026-03-03 00:53:34', '2026-03-03 00:53:34'),
-(58, 'Ajal-lol AC', 'Entrega de materiales de construcción', 'Akil, Yucatán', '2026-09-20', '2026-03-03 03:54:30', '2026-03-03 03:54:30'),
-(59, 'Ajal-lol AC', 'Programa de becas y apoyo educativo', 'Akil, Yucatán', '2026-07-20', '2026-03-03 04:09:53', '2026-03-03 04:09:53'),
-(60, 'Ajal-lol AC', 'Entrega de despensas y artículos del hogar', 'Akil, Yucatán', '2026-03-03', '2026-03-03 21:31:04', '2026-03-03 21:31:04'),
-(61, 'Ajal-lol AC', 'Brigada de Salud Integral \"Vida Sana\"', 'Izamal, Yucatán', '2026-03-10', '2026-03-11 00:05:21', '2026-03-11 00:05:21'),
-(62, 'Ajal-lol AC', 'Jornada de reforestación comunitaria', 'Akil, Yucatán', '2026-03-11', '2026-03-11 21:57:37', '2026-03-11 21:57:37'),
-(63, 'Ajal-lol AC', 'Jornada de reforestación comunitaria', 'Chikindzonot, Yucatán', '2026-03-11', '2026-03-11 22:50:10', '2026-03-11 22:50:10'),
-(64, 'Ajal-lol AC', 'Campaña de apoyo a adultos mayores', 'Acanceh, Yucatán', '2026-03-11', '2026-03-11 23:16:43', '2026-03-11 23:16:43'),
-(65, 'Ajal-lol AC', 'Taller de capacitación para el empleo', 'Abalá, Yucatán', '2026-03-20', '2026-03-12 21:45:11', '2026-03-12 21:45:11');
-
 -- --------------------------------------------------------
 
 --
@@ -278,10 +290,47 @@ INSERT INTO `informe` (`id_informe`, `nombre_organizacion`, `evento`, `lugar`, `
 CREATE TABLE `inicio` (
   `id_inicio` int NOT NULL,
   `id_pagina` int NOT NULL,
-  `titulo_inicio` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `texto_inicio` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `img_inicio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `url_inicio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `eyebrow` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `titulo_principal` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `titulo_em` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `descripcion` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `inicio_estadisticas`
+--
+
+CREATE TABLE `inicio_estadisticas` (
+  `id_estadistica` int NOT NULL,
+  `id_pagina` int NOT NULL,
+  `ano` int NOT NULL,
+  `beneficiarios` int NOT NULL DEFAULT '0',
+  `proyectos` int NOT NULL DEFAULT '0',
+  `horas_apoyo` int NOT NULL DEFAULT '0',
+  `voluntarios` int NOT NULL DEFAULT '0',
+  `bd_include` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1 = incluir datos BD en el total del sitio',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `inicio_videos`
+--
+
+CREATE TABLE `inicio_videos` (
+  `id_video` int NOT NULL,
+  `id_inicio` int NOT NULL,
+  `titulo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `youtube_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `orden` int NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -331,15 +380,6 @@ CREATE TABLE `migrations` (
   `batch` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `migrations`
---
-
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(1, '0001_01_01_000000_create_users_table', 1),
-(2, '0001_01_01_000001_create_cache_table', 1),
-(3, '0001_01_01_000002_create_jobs_table', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -349,10 +389,74 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 CREATE TABLE `nosotros` (
   `id_nosotros` int NOT NULL,
   `id_pagina` int NOT NULL,
-  `titulo_nosotros` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `imagen_nosotros` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `subtitulo_nosotros` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `texto_nosotros` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `nosotros_encabezado`
+--
+
+CREATE TABLE `nosotros_encabezado` (
+  `id_encabezado` int NOT NULL,
+  `id_nosotros` int NOT NULL,
+  `titulo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `subtitulo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `nosotros_historia`
+--
+
+CREATE TABLE `nosotros_historia` (
+  `id_historia` int NOT NULL,
+  `id_nosotros` int NOT NULL,
+  `imagen` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `badge_texto` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `etiqueta_superior` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `titulo_bloque` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `texto_destacado` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `texto_descriptivo` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `nosotros_identidad`
+--
+
+CREATE TABLE `nosotros_identidad` (
+  `id_identidad` int NOT NULL,
+  `id_nosotros` int NOT NULL,
+  `titulo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `subtitulo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `nosotros_identidad_items`
+--
+
+CREATE TABLE `nosotros_identidad_items` (
+  `id_item` int NOT NULL,
+  `id_identidad` int NOT NULL,
+  `tipo` enum('mision','vision','objetivo','valores') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `titulo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `contenido` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `orden` int NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -390,14 +494,14 @@ CREATE TABLE `paginas` (
 --
 
 INSERT INTO `paginas` (`id_pagina`, `id_usuario`, `slug`, `created_at`, `updated_at`) VALUES
-(1, 1, 'inicio', '2026-03-25 17:24:08', '2026-03-25 17:24:08'),
-(2, 1, 'nosotros', '2026-03-25 17:24:08', '2026-03-25 17:24:08'),
-(3, 1, 'aliados', '2026-03-25 17:24:08', '2026-03-25 17:24:08'),
-(4, 1, 'actividades', '2026-03-25 17:24:08', '2026-03-25 17:24:08'),
-(5, 1, 'proyectos', '2026-03-25 17:24:08', '2026-03-25 17:24:08'),
-(6, 1, 'directiva', '2026-03-25 17:24:08', '2026-03-25 17:24:08'),
-(7, 1, 'preguntas-frecuentes', '2026-03-25 17:24:08', '2026-03-25 17:24:08'),
-(8, 1, 'contacto', '2026-03-25 17:24:08', '2026-03-25 17:24:08');
+(1, 1, 'inicio', '2026-04-21 16:11:58', '2026-04-21 16:11:58'),
+(2, 1, 'nosotros', '2026-04-21 16:11:58', '2026-04-21 16:11:58'),
+(3, 1, 'aliados', '2026-04-21 16:11:58', '2026-04-21 16:11:58'),
+(4, 1, 'actividades', '2026-04-21 16:11:58', '2026-04-21 16:11:58'),
+(5, 1, 'proyectos', '2026-04-21 16:11:58', '2026-04-21 16:11:58'),
+(6, 1, 'directiva', '2026-04-21 16:11:58', '2026-04-21 16:11:58'),
+(7, 1, 'preguntas-frecuentes', '2026-04-21 16:11:58', '2026-04-21 16:11:58'),
+(8, 1, 'contacto', '2026-04-21 16:11:58', '2026-04-21 16:11:58');
 
 -- --------------------------------------------------------
 
@@ -469,20 +573,6 @@ CREATE TABLE `proyecto_imagenes` (
   `event_date` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `redes_sociales`
---
-
-CREATE TABLE `redes_sociales` (
-  `id_redes_sociales` int NOT NULL,
-  `nombre_redsocial` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `url_redsocial` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `icono` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `activo` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -594,19 +684,12 @@ ALTER TABLE `actividades`
   ADD KEY `idx_actividades_orden` (`orden_actividad`);
 
 --
--- Indices de la tabla `actividades_encabezado`
---
-ALTER TABLE `actividades_encabezado`
-  ADD PRIMARY KEY (`id_encabezado`),
-  ADD UNIQUE KEY `unique_encabezado_ano` (`id_ano`);
-
---
 -- Indices de la tabla `actividad_anos`
 --
 ALTER TABLE `actividad_anos`
   ADD PRIMARY KEY (`id_ano`),
   ADD UNIQUE KEY `unique_ano_pagina` (`ano`,`id_pagina`),
-  ADD KEY `idx_actividad_anos_pagina` (`id_pagina`);
+  ADD KEY `actividad_anos_fk_pagina` (`id_pagina`);
 
 --
 -- Indices de la tabla `aliados`
@@ -658,6 +741,34 @@ ALTER TABLE `directiva`
   ADD KEY `id_pagina` (`id_pagina`);
 
 --
+-- Indices de la tabla `donaciones`
+--
+ALTER TABLE `donaciones`
+  ADD PRIMARY KEY (`id_donacion`),
+  ADD KEY `id_pagina` (`id_pagina`);
+
+--
+-- Indices de la tabla `donaciones_bancario`
+--
+ALTER TABLE `donaciones_bancario`
+  ADD PRIMARY KEY (`id_bancario`),
+  ADD KEY `id_donacion` (`id_donacion`);
+
+--
+-- Indices de la tabla `donaciones_info`
+--
+ALTER TABLE `donaciones_info`
+  ADD PRIMARY KEY (`id_info`),
+  ADD KEY `id_donacion` (`id_donacion`);
+
+--
+-- Indices de la tabla `donaciones_paypal`
+--
+ALTER TABLE `donaciones_paypal`
+  ADD PRIMARY KEY (`id_paypal`),
+  ADD KEY `id_donacion` (`id_donacion`);
+
+--
 -- Indices de la tabla `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
@@ -685,6 +796,21 @@ ALTER TABLE `inicio`
   ADD KEY `id_pagina` (`id_pagina`);
 
 --
+-- Indices de la tabla `inicio_estadisticas`
+--
+ALTER TABLE `inicio_estadisticas`
+  ADD PRIMARY KEY (`id_estadistica`),
+  ADD UNIQUE KEY `unique_ano_pagina` (`ano`,`id_pagina`),
+  ADD KEY `fk_estadistica_pagina` (`id_pagina`);
+
+--
+-- Indices de la tabla `inicio_videos`
+--
+ALTER TABLE `inicio_videos`
+  ADD PRIMARY KEY (`id_video`),
+  ADD KEY `id_inicio` (`id_inicio`);
+
+--
 -- Indices de la tabla `jobs`
 --
 ALTER TABLE `jobs`
@@ -709,6 +835,34 @@ ALTER TABLE `migrations`
 ALTER TABLE `nosotros`
   ADD PRIMARY KEY (`id_nosotros`),
   ADD KEY `id_pagina` (`id_pagina`);
+
+--
+-- Indices de la tabla `nosotros_encabezado`
+--
+ALTER TABLE `nosotros_encabezado`
+  ADD PRIMARY KEY (`id_encabezado`),
+  ADD KEY `id_nosotros` (`id_nosotros`);
+
+--
+-- Indices de la tabla `nosotros_historia`
+--
+ALTER TABLE `nosotros_historia`
+  ADD PRIMARY KEY (`id_historia`),
+  ADD KEY `id_nosotros` (`id_nosotros`);
+
+--
+-- Indices de la tabla `nosotros_identidad`
+--
+ALTER TABLE `nosotros_identidad`
+  ADD PRIMARY KEY (`id_identidad`),
+  ADD KEY `id_nosotros` (`id_nosotros`);
+
+--
+-- Indices de la tabla `nosotros_identidad_items`
+--
+ALTER TABLE `nosotros_identidad_items`
+  ADD PRIMARY KEY (`id_item`),
+  ADD KEY `id_identidad` (`id_identidad`);
 
 --
 -- Indices de la tabla `notificaciones`
@@ -763,12 +917,6 @@ ALTER TABLE `proyecto_imagenes`
   ADD KEY `id_categoria` (`id_categoria`);
 
 --
--- Indices de la tabla `redes_sociales`
---
-ALTER TABLE `redes_sociales`
-  ADD PRIMARY KEY (`id_redes_sociales`);
-
---
 -- Indices de la tabla `reportebeneficiarios`
 --
 ALTER TABLE `reportebeneficiarios`
@@ -815,12 +963,6 @@ ALTER TABLE `actividades`
   MODIFY `id_actividad` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `actividades_encabezado`
---
-ALTER TABLE `actividades_encabezado`
-  MODIFY `id_encabezado` int NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `actividad_anos`
 --
 ALTER TABLE `actividad_anos`
@@ -857,6 +999,30 @@ ALTER TABLE `directiva`
   MODIFY `id_directiva` int NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `donaciones`
+--
+ALTER TABLE `donaciones`
+  MODIFY `id_donacion` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `donaciones_bancario`
+--
+ALTER TABLE `donaciones_bancario`
+  MODIFY `id_bancario` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `donaciones_info`
+--
+ALTER TABLE `donaciones_info`
+  MODIFY `id_info` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `donaciones_paypal`
+--
+ALTER TABLE `donaciones_paypal`
+  MODIFY `id_paypal` int NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
@@ -872,13 +1038,25 @@ ALTER TABLE `formulario_contacto`
 -- AUTO_INCREMENT de la tabla `informe`
 --
 ALTER TABLE `informe`
-  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `id_informe` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `inicio`
 --
 ALTER TABLE `inicio`
   MODIFY `id_inicio` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `inicio_estadisticas`
+--
+ALTER TABLE `inicio_estadisticas`
+  MODIFY `id_estadistica` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `inicio_videos`
+--
+ALTER TABLE `inicio_videos`
+  MODIFY `id_video` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `jobs`
@@ -890,13 +1068,37 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT de la tabla `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `nosotros`
 --
 ALTER TABLE `nosotros`
   MODIFY `id_nosotros` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `nosotros_encabezado`
+--
+ALTER TABLE `nosotros_encabezado`
+  MODIFY `id_encabezado` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `nosotros_historia`
+--
+ALTER TABLE `nosotros_historia`
+  MODIFY `id_historia` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `nosotros_identidad`
+--
+ALTER TABLE `nosotros_identidad`
+  MODIFY `id_identidad` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `nosotros_identidad_items`
+--
+ALTER TABLE `nosotros_identidad_items`
+  MODIFY `id_item` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `notificaciones`
@@ -935,12 +1137,6 @@ ALTER TABLE `proyecto_imagenes`
   MODIFY `id_imagen` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `redes_sociales`
---
-ALTER TABLE `redes_sociales`
-  MODIFY `id_redes_sociales` int NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `reportebeneficiarios`
 --
 ALTER TABLE `reportebeneficiarios`
@@ -972,13 +1168,7 @@ ALTER TABLE `usuario`
 -- Filtros para la tabla `actividades`
 --
 ALTER TABLE `actividades`
-  ADD CONSTRAINT `actividades_fk_ano` FOREIGN KEY (`id_ano`) REFERENCES `actividad_anos` (`id_ano`) ON DELETE SET NULL;
-
---
--- Filtros para la tabla `actividades_encabezado`
---
-ALTER TABLE `actividades_encabezado`
-  ADD CONSTRAINT `actividades_encabezado_fk_ano` FOREIGN KEY (`id_ano`) REFERENCES `actividad_anos` (`id_ano`) ON DELETE CASCADE;
+  ADD CONSTRAINT `actividades_fk_ano` FOREIGN KEY (`id_ano`) REFERENCES `actividad_anos` (`id_ano`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `actividad_anos`
@@ -1017,16 +1207,76 @@ ALTER TABLE `directiva`
   ADD CONSTRAINT `directiva_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
 
 --
+-- Filtros para la tabla `donaciones`
+--
+ALTER TABLE `donaciones`
+  ADD CONSTRAINT `donaciones_fk_pagina` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
+
+--
+-- Filtros para la tabla `donaciones_bancario`
+--
+ALTER TABLE `donaciones_bancario`
+  ADD CONSTRAINT `donaciones_bancario_fk` FOREIGN KEY (`id_donacion`) REFERENCES `donaciones` (`id_donacion`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `donaciones_info`
+--
+ALTER TABLE `donaciones_info`
+  ADD CONSTRAINT `donaciones_info_fk` FOREIGN KEY (`id_donacion`) REFERENCES `donaciones` (`id_donacion`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `donaciones_paypal`
+--
+ALTER TABLE `donaciones_paypal`
+  ADD CONSTRAINT `donaciones_paypal_fk` FOREIGN KEY (`id_donacion`) REFERENCES `donaciones` (`id_donacion`) ON DELETE CASCADE;
+
+--
 -- Filtros para la tabla `inicio`
 --
 ALTER TABLE `inicio`
   ADD CONSTRAINT `inicio_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
 
 --
+-- Filtros para la tabla `inicio_estadisticas`
+--
+ALTER TABLE `inicio_estadisticas`
+  ADD CONSTRAINT `fk_estadistica_pagina` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
+
+--
+-- Filtros para la tabla `inicio_videos`
+--
+ALTER TABLE `inicio_videos`
+  ADD CONSTRAINT `inicio_videos_fk` FOREIGN KEY (`id_inicio`) REFERENCES `inicio` (`id_inicio`) ON DELETE CASCADE;
+
+--
 -- Filtros para la tabla `nosotros`
 --
 ALTER TABLE `nosotros`
-  ADD CONSTRAINT `nosotros_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
+  ADD CONSTRAINT `nosotros_fk_pagina` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
+
+--
+-- Filtros para la tabla `nosotros_encabezado`
+--
+ALTER TABLE `nosotros_encabezado`
+  ADD CONSTRAINT `nosotros_encabezado_fk` FOREIGN KEY (`id_nosotros`) REFERENCES `nosotros` (`id_nosotros`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `nosotros_historia`
+--
+ALTER TABLE `nosotros_historia`
+  ADD CONSTRAINT `nosotros_historia_fk` FOREIGN KEY (`id_nosotros`) REFERENCES `nosotros` (`id_nosotros`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `nosotros_identidad`
+--
+ALTER TABLE `nosotros_identidad`
+  ADD CONSTRAINT `nosotros_identidad_fk` FOREIGN KEY (`id_nosotros`) REFERENCES `nosotros` (`id_nosotros`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `nosotros_identidad_items`
+--
+ALTER TABLE `nosotros_identidad_items`
+  ADD CONSTRAINT `nosotros_identidad_items_fk` FOREIGN KEY (`id_identidad`) REFERENCES `nosotros_identidad` (`id_identidad`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `notificaciones`

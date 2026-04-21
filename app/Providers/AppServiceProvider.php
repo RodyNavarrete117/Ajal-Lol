@@ -126,15 +126,11 @@ class AppServiceProvider extends ServiceProvider
             $idNosotros = $nosotros?->id_nosotros;
 
             $encabezado = $idNosotros
-                ? DB::table('nosotros_encabezado')
-                    ->where('id_nosotros', $idNosotros)
-                    ->first()
+                ? DB::table('nosotros_encabezado')->where('id_nosotros', $idNosotros)->first()
                 : null;
 
             $historia = $idNosotros
-                ? DB::table('nosotros_historia')
-                    ->where('id_nosotros', $idNosotros)
-                    ->first()
+                ? DB::table('nosotros_historia')->where('id_nosotros', $idNosotros)->first()
                 : null;
 
             $view->with('about_encabezado', $encabezado ?? (object)[
@@ -162,9 +158,7 @@ class AppServiceProvider extends ServiceProvider
             $idNosotros = $nosotros?->id_nosotros;
 
             $identidad = $idNosotros
-                ? DB::table('nosotros_identidad')
-                    ->where('id_nosotros', $idNosotros)
-                    ->first()
+                ? DB::table('nosotros_identidad')->where('id_nosotros', $idNosotros)->first()
                 : null;
 
             $items = $identidad
@@ -206,5 +200,44 @@ class AppServiceProvider extends ServiceProvider
 
             $view->with('hero_videos', $videos);
         });
+
+        // ── Donaciones: footer y editor ──
+        View::composer(
+            ['partials.footer', 'admin.pages.donations_edit'],
+            function ($view) {
+                $donacion = DB::table('donaciones')
+                    ->where('id_pagina', 1)
+                    ->first();
+
+                $idDonacion = $donacion?->id_donacion;
+
+                $info = $idDonacion
+                    ? DB::table('donaciones_info')->where('id_donacion', $idDonacion)->first()
+                    : null;
+
+                $paypal = $idDonacion
+                    ? DB::table('donaciones_paypal')->where('id_donacion', $idDonacion)->first()
+                    : null;
+
+                $bancario = $idDonacion
+                    ? DB::table('donaciones_bancario')->where('id_donacion', $idDonacion)->first()
+                    : null;
+
+                $view->with('donacion_info', $info ?? (object)[
+                    'titulo'      => '',
+                    'descripcion' => '',
+                ]);
+
+                $view->with('donacion_paypal', $paypal ?? (object)[
+                    'paypal_usuario' => '',
+                ]);
+
+                $view->with('donacion_bancario', $bancario ?? (object)[
+                    'beneficiario' => '',
+                    'banco'        => '',
+                    'clabe'        => '',
+                ]);
+            }
+        );
     }
 }

@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\EditPageAlliesController;
 use App\Http\Controllers\Admin\EditPageActivitiesController;
 use App\Http\Controllers\Admin\EditPageAboutController;
 use App\Http\Controllers\Admin\EditPageHomeController;
+use App\Http\Controllers\Admin\EditPageDonationsController;
 use App\Http\Controllers\Admin\ProjectEditController;
 use App\Http\Controllers\Admin\FaqEditController;
 use App\Http\Controllers\Page\PublicPageController;
@@ -169,10 +170,16 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
         /* ── Contacto ── */
         Route::get('/contact/edit',   [EditPageContactController::class, 'index'])->name('admin.pages.contact.edit');
         Route::put('/contact/update', [EditPageContactController::class, 'update'])->name('admin.pages.contact.update');
-    });
 
-    /* ── Donativos ── */
-    Route::get('/donations/edit', fn() => view('admin.pages.donations_edit'))->name('admin.pages.donations.edit');
+        /* ── Donaciones ── */
+        Route::prefix('donations')->group(function () {
+            Route::get('/edit',      [EditPageDonationsController::class, 'index'])->name('admin.pages.donations.edit');
+            Route::post('/info',     [EditPageDonationsController::class, 'updateInfo'])->name('admin.pages.donations.info');
+            Route::post('/bancario', [EditPageDonationsController::class, 'updateBancario'])->name('admin.pages.donations.bancario');
+            Route::post('/paypal',   [EditPageDonationsController::class, 'updatePaypal'])->name('admin.pages.donations.paypal');
+        });
+
+    });
 
     /* ===== NOTIFICACIONES (API) ===== */
     Route::prefix('api/notifications')->group(function () {

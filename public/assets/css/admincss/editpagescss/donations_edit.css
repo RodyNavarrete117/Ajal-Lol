@@ -286,6 +286,7 @@ form { padding: 0; }
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 16px;
+    margin-bottom: 14px;
 }
 
 .bank-card__header {
@@ -433,14 +434,16 @@ form { padding: 0; }
 .paypal-preview__link:hover { color: var(--paypal-blue); text-decoration: underline; }
 .paypal-preview__link i { font-size: 14px; }
 
-/* ══════════ FORM ACTIONS ══════════ */
-.form-actions {
-    display: flex; gap: 10px;
-    padding-top: 18px; margin-top: 6px;
+/* ══════════ FORM ACTIONS INLINE ══════════ */
+.form-actions-inline {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 14px;
+    margin-top: 6px;
     border-top: 1px solid var(--border);
-    transition: border-color var(--tr);
 }
 
+/* ══════════ BUTTONS ══════════ */
 .btn-save, .btn-cancel {
     display: inline-flex; align-items: center; gap: 7px;
     padding: 9px 20px; border-radius: 9px;
@@ -484,9 +487,9 @@ form { padding: 0; }
     .edit-form-body { padding: 16px 16px 24px; }
     .subtitle { display: none; }
     .form-row { grid-template-columns: 1fr; }
-    .form-actions { flex-direction: column; }
-    .btn-save, .btn-cancel { width: 100%; justify-content: center; }
     .edit-container h2 { font-size: 17px; }
     .paypal-highlight { flex-direction: column; align-items: flex-start; gap: 8px; }
     .input-paypal-prefix { font-size: 11px; padding: 8px 10px; }
+    .form-actions-inline { justify-content: stretch; }
+    .form-actions-inline .btn-save { width: 100%; justify-content: center; }
 }

@@ -56,12 +56,18 @@
                         <div class="form-group">
                             <label for="title">Título principal</label>
                             <input type="text" id="title" name="title"
-                                placeholder="Ej: Apoya nuestra causa">
+                                value="{{ old('title', $donacion_info->titulo ?? '') }}"
+                                placeholder="Ej: ¡Tu apoyo transforma vidas!">
                         </div>
                         <div class="form-group">
                             <label for="description">Descripción</label>
                             <textarea id="description" name="description" rows="3"
-                                placeholder="Explica cómo ayudan las donaciones..."></textarea>
+                                placeholder="Explica cómo ayudan las donaciones...">{{ old('description', $donacion_info->descripcion ?? '') }}</textarea>
+                        </div>
+                        <div class="form-actions-inline">
+                            <button type="button" class="btn-save" id="btnSaveInfo">
+                                <i class="fa-solid fa-floppy-disk"></i> Guardar
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -87,11 +93,13 @@
                                 <div class="form-group">
                                     <label for="beneficiary">Nombre del beneficiario</label>
                                     <input type="text" id="beneficiary" name="beneficiary"
+                                        value="{{ old('beneficiary', $donacion_bancario->beneficiario ?? '') }}"
                                         placeholder="Ej: Ajal Lol A.C.">
                                 </div>
                                 <div class="form-group">
                                     <label for="bank">Banco</label>
                                     <input type="text" id="bank" name="bank"
+                                        value="{{ old('bank', $donacion_bancario->banco ?? '') }}"
                                         placeholder="Ej: BBVA">
                                 </div>
                             </div>
@@ -99,6 +107,7 @@
                                 <label for="account">Cuenta / CLABE</label>
                                 <div class="input-copy-wrapper">
                                     <input type="text" id="account" name="account"
+                                        value="{{ old('account', $donacion_bancario->clabe ?? '') }}"
                                         placeholder="012345678901234567" class="input-copy">
                                     <button type="button" class="btn-copy" id="btnCopyAccount" title="Copiar">
                                         <i class="fa-solid fa-copy"></i>
@@ -106,6 +115,11 @@
                                 </div>
                                 <span class="field-hint">18 dígitos para CLABE interbancaria.</span>
                             </div>
+                        </div>
+                        <div class="form-actions-inline">
+                            <button type="button" class="btn-save" id="btnSaveBancario">
+                                <i class="fa-solid fa-floppy-disk"></i> Guardar
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -141,6 +155,7 @@
                                     paypal.me/
                                 </span>
                                 <input type="text" id="paypal_url" name="paypal_url"
+                                    value="{{ old('paypal_url', $donacion_paypal->paypal_usuario ?? '') }}"
                                     placeholder="AjalLolAC"
                                     class="input-paypal">
                             </div>
@@ -150,28 +165,25 @@
                             </span>
                         </div>
 
-                        <div class="paypal-preview" id="paypalPreview" style="display:none;">
+                        <div class="paypal-preview" id="paypalPreview"
+                            style="{{ !empty($donacion_paypal->paypal_usuario) ? 'display:flex' : 'display:none' }}">
                             <span class="paypal-preview__label">Vista previa del enlace:</span>
-                            <a class="paypal-preview__link" id="paypalPreviewLink" href="#" target="_blank" rel="noopener noreferrer">
+                            <a class="paypal-preview__link" id="paypalPreviewLink"
+                                href="{{ !empty($donacion_paypal->paypal_usuario) ? 'https://paypal.me/'.$donacion_paypal->paypal_usuario : '#' }}"
+                                target="_blank" rel="noopener noreferrer">
                                 <i class="fa-brands fa-paypal"></i>
-                                <span id="paypalPreviewText">paypal.me/</span>
+                                <span id="paypalPreviewText">paypal.me/{{ $donacion_paypal->paypal_usuario ?? '' }}</span>
                             </a>
                         </div>
 
+                        <div class="form-actions-inline">
+                            <button type="button" class="btn-save" id="btnSavePaypal">
+                                <i class="fa-solid fa-floppy-disk"></i> Guardar
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-            </div>
-
-            {{-- BOTONES --}}
-            <div class="form-actions">
-                <button type="button" class="btn-save" id="btnSaveDonations">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    Guardar cambios
-                </button>
-                <button type="button" class="btn-cancel" onclick="window.history.back()">
-                    Cancelar
-                </button>
             </div>
 
         </form>
@@ -183,6 +195,41 @@
 
 @push('scripts')
 <script>
+    window.DONATIONS_ROUTES = {
+        info     : '{{ route("admin.pages.donations.info") }}',
+        bancario : '{{ route("admin.pages.donations.bancario") }}',
+        paypal   : '{{ route("admin.pages.donations.paypal") }}',
+        csrfToken: '{{ csrf_token() }}',
+    };
+</script>
+<script>
+const CSRF = window.DONATIONS_ROUTES.csrfToken;
+
+async function apiFetch(url, body) {
+    const res = await fetch(url, {
+        method : 'POST',
+        headers: {
+            'X-CSRF-TOKEN' : CSRF,
+            'Accept'       : 'application/json',
+            'Content-Type' : 'application/json',
+        },
+        body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message ?? 'Error en la solicitud.');
+    return data;
+}
+
+function showToast(msg, type = 'success') {
+    document.querySelector('.edit-toast')?.remove();
+    const t = document.createElement('div');
+    t.className = `edit-toast edit-toast--${type}`;
+    t.innerHTML = `<i class="fa-solid fa-circle-${type === 'success' ? 'check' : 'exclamation'} edit-toast__icon"></i><span>${msg}</span>`;
+    document.body.appendChild(t);
+    requestAnimationFrame(() => t.classList.add('edit-toast--show'));
+    setTimeout(() => { t.classList.remove('edit-toast--show'); t.addEventListener('transitionend', () => t.remove(), { once: true }); }, 3200);
+}
+
 /* ── Acordeón ── */
 document.querySelectorAll('.accordion-header').forEach(header => {
     header.addEventListener('click', () => {
@@ -218,19 +265,43 @@ document.getElementById('btnCopyAccount')?.addEventListener('click', () => {
     });
 });
 
-/* ── Toast ── */
-function showToast(msg, type = 'success') {
-    const t = document.createElement('div');
-    t.className = `edit-toast edit-toast--${type}`;
-    t.innerHTML = `<i class="fa-solid fa-circle-${type === 'success' ? 'check' : 'exclamation'} edit-toast__icon"></i><span>${msg}</span>`;
-    document.body.appendChild(t);
-    requestAnimationFrame(() => t.classList.add('edit-toast--show'));
-    setTimeout(() => { t.classList.remove('edit-toast--show'); t.addEventListener('transitionend', () => t.remove(), { once: true }); }, 3200);
-}
+/* ── Guardar Info ── */
+document.getElementById('btnSaveInfo')?.addEventListener('click', async () => {
+    try {
+        const data = await apiFetch(window.DONATIONS_ROUTES.info, {
+            titulo      : document.getElementById('title')?.value.trim(),
+            descripcion : document.getElementById('description')?.value.trim(),
+        });
+        showToast(data.message ?? 'Información guardada.');
+    } catch (err) {
+        showToast(err.message ?? 'Error al guardar.', 'error');
+    }
+});
 
-/* ── Guardar ── */
-document.getElementById('btnSaveDonations')?.addEventListener('click', () => {
-    showToast('Cambios guardados correctamente.');
+/* ── Guardar Bancario ── */
+document.getElementById('btnSaveBancario')?.addEventListener('click', async () => {
+    try {
+        const data = await apiFetch(window.DONATIONS_ROUTES.bancario, {
+            beneficiario : document.getElementById('beneficiary')?.value.trim(),
+            banco        : document.getElementById('bank')?.value.trim(),
+            clabe        : document.getElementById('account')?.value.trim(),
+        });
+        showToast(data.message ?? 'Datos bancarios guardados.');
+    } catch (err) {
+        showToast(err.message ?? 'Error al guardar.', 'error');
+    }
+});
+
+/* ── Guardar PayPal ── */
+document.getElementById('btnSavePaypal')?.addEventListener('click', async () => {
+    try {
+        const data = await apiFetch(window.DONATIONS_ROUTES.paypal, {
+            paypal_usuario : document.getElementById('paypal_url')?.value.trim(),
+        });
+        showToast(data.message ?? 'PayPal guardado.');
+    } catch (err) {
+        showToast(err.message ?? 'Error al guardar.', 'error');
+    }
 });
 </script>
 @endpush

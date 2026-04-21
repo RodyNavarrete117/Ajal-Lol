@@ -4,22 +4,66 @@
   <div class="footer-donate">
     <div class="container">
       <h2 class="footer-donate-title">
-        ¡Tu apoyo transforma vidas!
+        {{ $donacion_info->titulo ?: '¡Tu apoyo transforma vidas!' }}
       </h2>
-      <p>Te invitamos a hacer una donación a través de PayPal para ayudarnos a continuar con nuestra labor. Cada aporte, por pequeño que sea, nos acerca más a lograr nuestros objetivos.</p>
+      <p>{{ $donacion_info->descripcion ?: 'Te invitamos a hacer una donación a través de PayPal para ayudarnos a continuar con nuestra labor. Cada aporte, por pequeño que sea, nos acerca más a lograr nuestros objetivos.' }}</p>
 
-      <a href="https://paypal.me/AjalLolAC"
-         class="btn-paypal" target="_blank" rel="noopener noreferrer"
-         aria-label="Donar a Ajal Lol a través de PayPal">
-        <span class="btn-paypal__icon">
-          <i class="bi bi-paypal" aria-hidden="true"></i>
-        </span>
-        <span class="btn-paypal__content">
-          <span class="btn-paypal__label">Donar con PayPal</span>
-          <span class="btn-paypal__sub">Seguro · Rápido · Fácil</span>
-        </span>
-        <i class="bi bi-arrow-right btn-paypal__arrow" aria-hidden="true"></i>
-      </a>
+      <div class="footer-donate-options">
+
+        {{-- PayPal --}}
+        @if(!empty($donacion_paypal->paypal_usuario))
+        <a href="https://paypal.me/{{ $donacion_paypal->paypal_usuario }}"
+           class="btn-paypal" target="_blank" rel="noopener noreferrer"
+           aria-label="Donar a Ajal Lol a través de PayPal">
+          <span class="btn-paypal__icon">
+            <i class="bi bi-paypal" aria-hidden="true"></i>
+          </span>
+          <span class="btn-paypal__content">
+            <span class="btn-paypal__label">Donar con PayPal</span>
+            <span class="btn-paypal__sub">Seguro · Rápido · Fácil</span>
+          </span>
+          <i class="bi bi-arrow-right btn-paypal__arrow" aria-hidden="true"></i>
+        </a>
+        @endif
+
+        {{-- Datos bancarios --}}
+        @if(!empty($donacion_bancario->clabe) || !empty($donacion_bancario->beneficiario))
+        <div class="footer-bank-card">
+          <div class="footer-bank-card__header">
+            <i class="bi bi-bank" aria-hidden="true"></i>
+            <span>Transferencia bancaria</span>
+          </div>
+          <div class="footer-bank-card__body">
+            @if(!empty($donacion_bancario->beneficiario))
+            <div class="footer-bank-card__row">
+              <span class="footer-bank-card__label">Beneficiario</span>
+              <span class="footer-bank-card__value">{{ $donacion_bancario->beneficiario }}</span>
+            </div>
+            @endif
+            @if(!empty($donacion_bancario->banco))
+            <div class="footer-bank-card__row">
+              <span class="footer-bank-card__label">Banco</span>
+              <span class="footer-bank-card__value">{{ $donacion_bancario->banco }}</span>
+            </div>
+            @endif
+            @if(!empty($donacion_bancario->clabe))
+            <div class="footer-bank-card__row">
+              <span class="footer-bank-card__label">CLABE</span>
+              <span class="footer-bank-card__value footer-bank-card__clabe">
+                {{ $donacion_bancario->clabe }}
+                <button class="footer-bank-card__copy"
+                    onclick="copyClabe('{{ $donacion_bancario->clabe }}', this)"
+                    title="Copiar CLABE">
+                  <i class="bi bi-copy" aria-hidden="true"></i>
+                </button>
+              </span>
+            </div>
+            @endif
+          </div>
+        </div>
+        @endif
+
+      </div>
 
       <p class="thanks">
         <i class="bi bi-heart-fill" aria-hidden="true"></i>
@@ -125,3 +169,12 @@
   </div>
 
 </footer>
+
+<script>
+function copyClabe(clabe, btn) {
+    navigator.clipboard.writeText(clabe).then(() => {
+        btn.innerHTML = '<i class="bi bi-check-lg"></i>';
+        setTimeout(() => { btn.innerHTML = '<i class="bi bi-copy"></i>'; }, 1800);
+    });
+}
+</script>

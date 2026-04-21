@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 20-04-2026 a las 21:59:32
+-- Tiempo de generación: 21-04-2026 a las 03:19:12
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -245,6 +245,78 @@ INSERT INTO `directiva` (`id_directiva`, `id_pagina`, `titulo_directiva`, `subti
 (6, 6, 'Directiva', 'Comité Directivo', 'Patricia Yolanda Ek Caamal', 'Vocal 2', NULL, 6),
 (7, 6, 'Directiva', 'Comité Directivo', 'Leticia Marisol Cauich Cocom', 'Vocal 3', NULL, 7),
 (8, 6, 'Directiva', 'Comité Directivo', 'Miriam Concepción Chi Poot', 'Vocal 4', NULL, 8);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `donaciones`
+--
+
+CREATE TABLE `donaciones` (
+  `id_donacion` int NOT NULL,
+  `id_pagina` int NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `donaciones`
+--
+
+INSERT INTO `donaciones` (`id_donacion`, `id_pagina`, `created_at`, `updated_at`) VALUES
+(1, 1, '2026-04-21 09:15:11', '2026-04-21 09:15:11');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `donaciones_bancario`
+--
+
+CREATE TABLE `donaciones_bancario` (
+  `id_bancario` int NOT NULL,
+  `id_donacion` int NOT NULL,
+  `beneficiario` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banco` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `clabe` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `donaciones_info`
+--
+
+CREATE TABLE `donaciones_info` (
+  `id_info` int NOT NULL,
+  `id_donacion` int NOT NULL,
+  `titulo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `descripcion` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `donaciones_paypal`
+--
+
+CREATE TABLE `donaciones_paypal` (
+  `id_paypal` int NOT NULL,
+  `id_donacion` int NOT NULL,
+  `paypal_usuario` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `donaciones_paypal`
+--
+
+INSERT INTO `donaciones_paypal` (`id_paypal`, `id_donacion`, `paypal_usuario`, `created_at`, `updated_at`) VALUES
+(1, 1, 'https://www.paypal.com/paypalme/tuusuario/100', '2026-04-21 09:15:11', '2026-04-21 09:15:12');
 
 -- --------------------------------------------------------
 
@@ -728,20 +800,6 @@ CREATE TABLE `proyecto_imagenes` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `redes_sociales`
---
-
-CREATE TABLE `redes_sociales` (
-  `id_redes_sociales` int NOT NULL,
-  `nombre_redsocial` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `url_redsocial` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `icono` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `activo` tinyint(1) NOT NULL DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `reportebeneficiarios`
 --
 
@@ -924,6 +982,34 @@ ALTER TABLE `directiva`
   ADD KEY `id_pagina` (`id_pagina`);
 
 --
+-- Indices de la tabla `donaciones`
+--
+ALTER TABLE `donaciones`
+  ADD PRIMARY KEY (`id_donacion`),
+  ADD KEY `id_pagina` (`id_pagina`);
+
+--
+-- Indices de la tabla `donaciones_bancario`
+--
+ALTER TABLE `donaciones_bancario`
+  ADD PRIMARY KEY (`id_bancario`),
+  ADD KEY `id_donacion` (`id_donacion`);
+
+--
+-- Indices de la tabla `donaciones_info`
+--
+ALTER TABLE `donaciones_info`
+  ADD PRIMARY KEY (`id_info`),
+  ADD KEY `id_donacion` (`id_donacion`);
+
+--
+-- Indices de la tabla `donaciones_paypal`
+--
+ALTER TABLE `donaciones_paypal`
+  ADD PRIMARY KEY (`id_paypal`),
+  ADD KEY `id_donacion` (`id_donacion`);
+
+--
 -- Indices de la tabla `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
@@ -1072,12 +1158,6 @@ ALTER TABLE `proyecto_imagenes`
   ADD KEY `id_categoria` (`id_categoria`);
 
 --
--- Indices de la tabla `redes_sociales`
---
-ALTER TABLE `redes_sociales`
-  ADD PRIMARY KEY (`id_redes_sociales`);
-
---
 -- Indices de la tabla `reportebeneficiarios`
 --
 ALTER TABLE `reportebeneficiarios`
@@ -1158,6 +1238,30 @@ ALTER TABLE `contacto`
 --
 ALTER TABLE `directiva`
   MODIFY `id_directiva` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT de la tabla `donaciones`
+--
+ALTER TABLE `donaciones`
+  MODIFY `id_donacion` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `donaciones_bancario`
+--
+ALTER TABLE `donaciones_bancario`
+  MODIFY `id_bancario` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `donaciones_info`
+--
+ALTER TABLE `donaciones_info`
+  MODIFY `id_info` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `donaciones_paypal`
+--
+ALTER TABLE `donaciones_paypal`
+  MODIFY `id_paypal` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `failed_jobs`
@@ -1274,12 +1378,6 @@ ALTER TABLE `proyecto_imagenes`
   MODIFY `id_imagen` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `redes_sociales`
---
-ALTER TABLE `redes_sociales`
-  MODIFY `id_redes_sociales` int NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `reportebeneficiarios`
 --
 ALTER TABLE `reportebeneficiarios`
@@ -1348,6 +1446,30 @@ ALTER TABLE `contacto`
 --
 ALTER TABLE `directiva`
   ADD CONSTRAINT `directiva_ibfk_1` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
+
+--
+-- Filtros para la tabla `donaciones`
+--
+ALTER TABLE `donaciones`
+  ADD CONSTRAINT `donaciones_fk_pagina` FOREIGN KEY (`id_pagina`) REFERENCES `paginas` (`id_pagina`);
+
+--
+-- Filtros para la tabla `donaciones_bancario`
+--
+ALTER TABLE `donaciones_bancario`
+  ADD CONSTRAINT `donaciones_bancario_fk` FOREIGN KEY (`id_donacion`) REFERENCES `donaciones` (`id_donacion`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `donaciones_info`
+--
+ALTER TABLE `donaciones_info`
+  ADD CONSTRAINT `donaciones_info_fk` FOREIGN KEY (`id_donacion`) REFERENCES `donaciones` (`id_donacion`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `donaciones_paypal`
+--
+ALTER TABLE `donaciones_paypal`
+  ADD CONSTRAINT `donaciones_paypal_fk` FOREIGN KEY (`id_donacion`) REFERENCES `donaciones` (`id_donacion`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `inicio`

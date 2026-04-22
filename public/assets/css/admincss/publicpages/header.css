@@ -211,209 +211,6 @@ html.scroll-bottom ::-webkit-scrollbar-thumb {
   border-radius: 4px 4px 0 0;
 }
 
-@media (max-width: 1100px) {
-  .nav-close-btn { display: flex; }
-}
-
-/* ─── Responsive ─── */
-@media (max-width: 1100px) {
-  .social-links a{
-    display: none;
-  }
-
-  .topbar .container {
-    justify-content: center;
-    gap: 1.2rem;
-  }
-
-  .contact-info {
-    gap: 1rem;
-  }
-
-  html {
-  overflow-x: hidden;
-  scrollbar-width: none; /* Firefox */
-}
-
-html::-webkit-scrollbar {
-  display: none; /* Chrome / Safari / móvil */
-}
-
-  .nav-close-btn { display: flex; }
-  .mobile-nav-toggle { display: block; }
-
-/* ─── Menú ocupa todo el alto ─── */
-  .navmenu {
-    position: fixed; top: 0; right: -110%;
-    width: min(240px, 78vw);
-    height: 200% !important;        /* ← en vez de 100vh */
-    min-height: 100dvh;             /* ← dynamic viewport height para móvil */
-    background: linear-gradient(160deg, #6b1a3e 0%, #9e3d62 50%, #c0547a 100%);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    box-shadow: -12px 0 80px rgba(107,26,62,.6);
-    transition: right .45s cubic-bezier(.25,.46,.45,.94);
-    z-index: 9999;
-    padding: 5rem 0 2rem;
-    overflow-y: auto;
-    border-left: 1px solid rgba(255,255,255,.18);
-  }
-
-  /* Línea dorada decorativa arriba */
-  .navmenu::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, #d4a843, transparent);
-  }
-
-  .navmenu ul[role="menubar"] {
-    flex-direction: column;
-    gap: 0;
-    width: 100%;
-  }
-
-  .navmenu > ul > li {
-    width: 100%;
-    border-bottom: 1px solid rgba(255,255,255,.1);
-    position: relative;
-  }
-
-  /* Indicador lateral al hacer hover */
-  .navmenu > ul > li::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: #d4a843;
-    transform: scaleY(0);
-    transition: transform .25s ease;
-    border-radius: 0 2px 2px 0;
-  }
-  .navmenu > ul > li:hover::before { transform: scaleY(1); }
-
-  .navmenu > ul > li > a {
-    display: flex !important;
-    align-items: center;
-    justify-content: flex-start !important; /* ← cambio clave */
-    gap: .75rem;
-    padding: .95rem 1.4rem !important;
-    font-size: .78rem !important;
-    color: rgba(255,255,255,.92) !important;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    font-weight: 700;
-    transition: background .2s ease, color .2s ease, padding-left .2s ease;
-  }
-
-  .navmenu > ul > li > a::before { display: none !important; }
-  .navmenu > ul > li > a::after  { display: none !important; }
-
-  .navmenu > ul > li:hover > a,
-  .navmenu > ul > li > a.active {
-    color: #f0d080 !important; /* dorado al hover */
-    background: rgba(0,0,0,.18) !important;
-    padding-left: 1.8rem !important;
-  }
-
-  /* ─── Flecha ─── */
-  .nav-dropdown-arrow {
-    margin-left: auto !important; /* ← empuja la flecha a la derecha */
-    color: rgba(255,255,255,.6) !important;
-    font-size: .8rem !important;
-    transition: transform .3s ease;
-    flex-shrink: 0;
-  }
-  .nav-dropdown.open .nav-dropdown-arrow { transform: rotate(180deg); }
-
-  /* ─── Submenú acordeón ─── */
-  .nav-dropdown-menu {
-    position: static !important;
-    transform: none !important;
-    left: auto !important;
-    top: auto !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: none;
-    max-height: 0;
-    overflow: hidden;
-    box-shadow: none !important;
-    border: none !important;
-    border-radius: 0 !important;
-    background: rgba(0,0,0,.3) !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    min-width: unset !important;
-    width: 100% !important;
-    transition: max-height .35s cubic-bezier(.25,.46,.45,.94);
-    border-left: 3px solid rgba(212,168,67,.4) !important;
-  }
-
-  .nav-dropdown-menu::before { display: none !important; }
-
-  .nav-dropdown.open .nav-dropdown-menu {
-    max-height: 400px;
-    pointer-events: auto;
-  }
-
-  .nav-dropdown-menu li { display: block !important; border: none !important; }
-  .nav-dropdown-menu li + li { border-top: 1px solid rgba(255,255,255,.07) !important; }
-
-  .nav-dropdown-menu a {
-    display: flex !important;
-    align-items: center;
-    gap: .5rem;
-    padding: .8rem 1.4rem .8rem 1.8rem !important;
-    font-size: .78rem !important;
-    color: rgba(255,255,255,.8) !important;
-    text-transform: none !important;
-    letter-spacing: .3px !important;
-    font-weight: 500 !important;
-    background: transparent !important;
-    transition: background .2s ease, padding-left .2s ease, color .2s ease;
-  }
-
-  .nav-dropdown-menu a::before { display: none !important; }
-  .nav-dropdown-menu a i { color: rgba(212,168,67,.7) !important; font-size: .78rem; width: 14px; flex-shrink: 0; }
-
-  .nav-dropdown-menu a:hover {
-    background: rgba(255,255,255,.08) !important;
-    padding-left: 2.2rem !important;
-    color: #f0d080 !important;
-  }
-  .nav-dropdown-menu a:hover i { color: #d4a843 !important; }
-
-  /* ─── Iconos por item ─── */
-  .navmenu > ul > li:nth-child(1) > a > .nav-icon::before { content: '\F3FA'; } /* house */
-  .navmenu > ul > li:nth-child(2) > a > .nav-icon::before { content: '\F4CC'; } /* people */
-  .navmenu > ul > li:nth-child(3) > a > .nav-icon::before { content: '\F1C2'; } /* activity */
-  .navmenu > ul > li:nth-child(4) > a > .nav-icon::before { content: '\F3B6'; } /* folder */
-  .navmenu > ul > li:nth-child(5) > a > .nav-icon::before { content: '\F431'; } /* question */
-  .navmenu > ul > li:nth-child(6) > a > .nav-icon::before { content: '\F32A'; } /* envelope */
-
-  .nav-icon {
-    font-family: 'bootstrap-icons';
-    font-size: .9rem;
-    color: #d4a843;
-    width: 18px;
-    flex-shrink: 0;
-    display: inline-block;
-  }
-
-  /* ─── Proyectos sin submenú ─── */
-  .nav-dropdown-proyectos .nav-dropdown-menu { display: block !important; }
-  .nav-dropdown-proyectos .nav-dropdown-arrow { display: inline-block !important; }
-  .nav-dropdown-proyectos > a { pointer-events: auto !important; }
-}
-
-@media (max-width: 768px) {
-  .navmenu {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-}
-
 /* ═══════════════════════════════════════════════
    ESTILOS DE ICONOS Y TEXTO (ESCRITORIO)
    Fondo claro: usamos color vino
@@ -440,31 +237,314 @@ html::-webkit-scrollbar {
   color: #8b2252 !important; /* Icono se vuelve vino junto con el texto */
 }
 
-/* ═══════════════════════════════════════════════
-   ESTILOS DE ICONOS Y TEXTO (MÓVIL)
-   Fondo oscuro: usamos blanco y dorado
-═══════════════════════════════════════════════ */
+/* ============================================================
+   AJAL LOL — header-mobile-fix.css
+   REEMPLAZA los bloques @media (max-width: 1100px) en header.css
+   Solo afecta móvil/tablet. Escritorio sin cambios.
+   ============================================================ */
+
 @media (max-width: 1100px) {
-  
-  /* 1. Estado inactivo: Texto e Icono BLANCOS para que resalten */
-  .navmenu > ul > li > a {
-    color: rgba(255,255,255,.92) !important;
-  }
-  .navmenu a i.nav-icon {
-    color: rgba(255,255,255,.92) !important;
+
+  /* ── Topbar centrado ── */
+  .social-links a { display: none; }
+  .topbar .container { justify-content: center; gap: 1.2rem; }
+  .contact-info { gap: 1rem; }
+
+  /* ── Ocultar scrollbar horizontal ── */
+  html { overflow-x: hidden; scrollbar-width: none; }
+  html::-webkit-scrollbar { display: none; }
+
+  /* ── Botones de toggle y cierre ── */
+  .mobile-nav-toggle { display: block; }
+  .nav-close-btn     { display: flex; }
+
+  /* ════════════════════════════════════════════════
+     PANEL LATERAL (drawer)
+     Estado cerrado  → right: -110%
+     Estado abierto  → right: 0  (puesto por JS)
+  ════════════════════════════════════════════════ */
+  .navmenu {
+    position: fixed;
+    top: 0;
+    right: -110%;
+    width: min(260px, 80vw);
+    height: 100dvh;
+    background: linear-gradient(160deg, #6b1a3e 0%, #9e3d62 50%, #c0547a 100%);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: -12px 0 80px rgba(107,26,62,.6);
+    transition: right .4s cubic-bezier(.25,.46,.45,.94);
+    z-index: 9999;
+    padding: 4.5rem 0 2rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-left: 1px solid rgba(255,255,255,.18);
   }
 
-  /* 2. Estado Activo/Hover: Texto e Icono DORADOS */
+  /* Línea dorada decorativa */
+  .navmenu::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #d4a843, transparent);
+  }
+
+  /* ── Lista raíz ── */
+  .navmenu ul[role="menubar"] {
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  /* ── Cada item de primer nivel ── */
+  .navmenu > ul > li {
+    width: 100%;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    position: relative;
+  }
+
+  /* Indicador lateral dorado */
+  .navmenu > ul > li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: #d4a843;
+    transform: scaleY(0);
+    transition: transform .2s ease;
+    border-radius: 0 2px 2px 0;
+  }
+  .navmenu > ul > li:hover::before { transform: scaleY(1); }
+
+  /* ── Enlace de primer nivel ── */
+  .navmenu > ul > li > a {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: .75rem;
+    padding: .95rem 1.4rem !important;
+    font-size: .78rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.92) !important;
+    text-decoration: none;
+    transition: background .2s ease, color .2s ease, padding-left .2s ease;
+  }
+
+  /* Quitar underline animado del desktop */
+  .navmenu > ul > li > a::before { display: none !important; }
+  .navmenu > ul > li > a::after  { display: none !important; }
+
+  /* Hover / activo */
   .navmenu > ul > li:hover > a,
   .navmenu > ul > li > a.active {
     color: #f0d080 !important;
     background: rgba(0,0,0,.18) !important;
+    padding-left: 1.8rem !important;
   }
-  
+
+  /* ── Iconos de nav ── */
+  .nav-icon {
+    font-family: 'bootstrap-icons';
+    font-size: .9rem;
+    color: rgba(255,255,255,.92);
+    width: 18px;
+    flex-shrink: 0;
+    display: inline-block;
+    transition: color .2s ease;
+  }
+  .navmenu > ul > li:hover > a .nav-icon,
+  .navmenu > ul > li > a.active .nav-icon { color: #f0d080; }
+
+  /* ── Flecha del dropdown ── */
+  .nav-dropdown-arrow {
+    margin-left: auto !important;
+    color: rgba(255,255,255,.6) !important;
+    font-size: .8rem !important;
+    flex-shrink: 0;
+    transition: transform .3s ease;
+    pointer-events: none;
+  }
+
+  /* ════════════════════════════════════════════════
+     SUBMENÚ ACORDEÓN
+     Usa max-height para animar apertura/cierre.
+     JS añade/quita la clase .mob-open al <li>.
+  ════════════════════════════════════════════════ */
+  .nav-dropdown-menu {
+    /* Resetear posicionamiento absoluto del desktop */
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+    top: auto !important;
+
+    /* Siempre visible en DOM pero colapsado */
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: none;
+
+    /* Acordeón */
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .35s cubic-bezier(.25,.46,.45,.94);
+
+    /* Quitar estilos de escritorio */
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: rgba(0,0,0,.3) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-width: unset !important;
+    width: 100% !important;
+    border-left: 3px solid rgba(212,168,67,.4) !important;
+
+    /* Quitar gap y flex del desktop */
+    display: block !important;
+    gap: 0 !important;
+    align-items: stretch !important;
+  }
+
+  /* Quitar la flechita triangular del desktop */
+  .nav-dropdown-menu::before { display: none !important; }
+
+  /* Abierto: clase .mob-open en el <li> padre */
+  .nav-dropdown.mob-open > .nav-dropdown-menu {
+    max-height: 600px;
+    pointer-events: auto;
+  }
+
+  /* Rotar flecha cuando está abierto */
+  .nav-dropdown.mob-open > a .nav-dropdown-arrow {
+    transform: rotate(180deg);
+  }
+
+  /* ── Items del submenú ── */
+  .nav-dropdown-menu li {
+    display: block !important;
+    border: none !important;
+  }
+  .nav-dropdown-menu li + li {
+    border-top: 1px solid rgba(255,255,255,.07) !important;
+  }
+
+  .nav-dropdown-menu a {
+    display: flex !important;
+    align-items: center;
+    gap: .5rem;
+    padding: .8rem 1.4rem .8rem 1.8rem !important;
+    font-size: .78rem !important;
+    font-weight: 500 !important;
+    letter-spacing: .3px !important;
+    text-transform: none !important;
+    color: rgba(255,255,255,.85) !important;
+    text-decoration: none;
+    background: transparent !important;
+    transition: background .2s ease, padding-left .2s ease, color .2s ease;
+  }
+  .nav-dropdown-menu a::before { display: none !important; }
+  .nav-dropdown-menu a i {
+    color: rgba(212,168,67,.7) !important;
+    font-size: .78rem;
+    width: 14px;
+    flex-shrink: 0;
+  }
+  .nav-dropdown-menu a:hover {
+    background: rgba(255,255,255,.08) !important;
+    padding-left: 2.2rem !important;
+    color: #f0d080 !important;
+  }
+  .nav-dropdown-menu a:hover i { color: #d4a843 !important; }
+
+  /* ── Iconos de Bootstrap Icons por posición ── */
+  .navmenu > ul > li:nth-child(1) > a > .nav-icon::before { content: '\F3FA'; }
+  .navmenu > ul > li:nth-child(2) > a > .nav-icon::before { content: '\F4CC'; }
+  .navmenu > ul > li:nth-child(3) > a > .nav-icon::before { content: '\F1C2'; }
+  .navmenu > ul > li:nth-child(4) > a > .nav-icon::before { content: '\F3B6'; }
+  .navmenu > ul > li:nth-child(5) > a > .nav-icon::before { content: '\F431'; }
+  .navmenu > ul > li:nth-child(6) > a > .nav-icon::before { content: '\F32A'; }
+
+  /* ── Colores de iconos en móvil ── */
+  .navmenu a i.nav-icon {
+    color: rgba(255,255,255,.92) !important;
+  }
   .navmenu > ul > li:hover > a i.nav-icon,
   .navmenu > ul > li > a.active i.nav-icon {
     color: #f0d080 !important;
   }
-  
-  /* Resto de tu código móvil... */
+
+  /* ════════════════════════════════════════════════
+     ANIMACIÓN SUBMENÚ — Slide suave hacia abajo
+     Agregar dentro del bloque @media (max-width: 1100px)
+     justo antes del último }
+  ════════════════════════════════════════════════ */
+
+  /* Contenedor del submenú: transición más suave */
+  .nav-dropdown-menu {
+    transition:
+      max-height .4s cubic-bezier(.4, 0, .2, 1),
+      opacity .3s ease;
+    opacity: 0 !important;
+  }
+
+  /* Cuando está abierto: aparece con fade */
+  .nav-dropdown.mob-open > .nav-dropdown-menu {
+    opacity: 1 !important;
+  }
+
+  /* Cada item del submenú entra con slide + fade individual */
+  .nav-dropdown-menu li {
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity .25s ease, transform .25s ease;
+  }
+
+  /* Cuando el menú está abierto, animar cada li con retraso escalonado */
+  .nav-dropdown.mob-open > .nav-dropdown-menu li:nth-child(1) {
+    opacity: 1; transform: translateY(0); transition-delay: .05s;
+  }
+  .nav-dropdown.mob-open > .nav-dropdown-menu li:nth-child(2) {
+    opacity: 1; transform: translateY(0); transition-delay: .1s;
+  }
+  .nav-dropdown.mob-open > .nav-dropdown-menu li:nth-child(3) {
+    opacity: 1; transform: translateY(0); transition-delay: .15s;
+  }
+  .nav-dropdown.mob-open > .nav-dropdown-menu li:nth-child(4) {
+    opacity: 1; transform: translateY(0); transition-delay: .2s;
+  }
+  .nav-dropdown.mob-open > .nav-dropdown-menu li:nth-child(5) {
+    opacity: 1; transform: translateY(0); transition-delay: .25s;
+  }
+  .nav-dropdown.mob-open > .nav-dropdown-menu li:nth-child(6) {
+    opacity: 1; transform: translateY(0); transition-delay: .3s;
+  }
+
+  /* Al cerrar: resetear sin delay para que sea instantáneo */
+  .nav-dropdown:not(.mob-open) > .nav-dropdown-menu li {
+    opacity: 0;
+    transform: translateY(-6px);
+    transition-delay: 0s;
+  }
+
+  /* Línea dorada animada que aparece al abrir */
+  .nav-dropdown.mob-open > .nav-dropdown-menu {
+    border-left-color: rgba(212,168,67,.8) !important;
+    transition:
+      max-height .4s cubic-bezier(.4, 0, .2, 1),
+      opacity .3s ease,
+      border-left-color .3s ease;
+  }
+
+}
+
+@media (max-width: 768px) {
+  .navmenu {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }

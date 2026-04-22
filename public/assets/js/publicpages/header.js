@@ -46,7 +46,7 @@
   }
 
   /* ═══════════════════════════════════════════════
-     SCROLL SPY — activa el link según la sección
+     SCROLL SPY
   ═══════════════════════════════════════════════ */
   function initScrollSpy() {
     const branding = document.querySelector('.branding');
@@ -64,13 +64,11 @@
 
       navLinks.forEach(a => {
         let match = false;
-
         if (currentId === 'hero') {
           match = a.hash === '' && a.pathname === window.location.pathname;
         } else {
           match = !!currentId && a.hash === `#${currentId}`;
         }
-
         a.classList.toggle('active', match);
       });
     }
@@ -81,7 +79,7 @@
   }
 
   /* ═══════════════════════════════════════════════
-     MOBILE NAV
+     MOBILE NAV — drawer lateral
   ═══════════════════════════════════════════════ */
   function initMobileNav() {
     const btn      = document.querySelector('.mobile-nav-toggle');
@@ -89,45 +87,67 @@
     const overlay  = document.querySelector('#nav-overlay');
     const closeBtn = document.querySelector('.nav-close-btn');
 
+    if (!nav) return;
+
     function closeMenu() {
       nav.style.right = '-110%';
-      if (overlay) { overlay.style.opacity = '0'; overlay.style.pointerEvents = 'none'; }
+      if (overlay) {
+        overlay.style.opacity      = '0';
+        overlay.style.pointerEvents = 'none';
+      }
       btn?.classList.remove('bi-x-lg');
       btn?.classList.add('bi-list');
       btn?.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
-      document.body.style.touchAction = '';
-      document.querySelectorAll('.nav-dropdown.open').forEach(el => el.classList.remove('open'));
+      document.body.style.overflow             = '';
+      document.documentElement.style.overflow  = '';
+      document.body.style.touchAction          = '';
+
+      /* Cerrar todos los submenús */
+      document.querySelectorAll('.nav-dropdown.mob-open')
+        .forEach(el => el.classList.remove('mob-open'));
     }
 
     function openMenu() {
       nav.style.right = '0px';
-      if (overlay) { overlay.style.opacity = '1'; overlay.style.pointerEvents = 'auto'; }
+      if (overlay) {
+        overlay.style.opacity      = '1';
+        overlay.style.pointerEvents = 'auto';
+      }
       btn?.classList.remove('bi-list');
       btn?.classList.add('bi-x-lg');
       btn?.setAttribute('aria-expanded', 'true');
-      document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.touchAction = 'none';
+      document.body.style.overflow             = 'hidden';
+      document.documentElement.style.overflow  = 'hidden';
+      document.body.style.touchAction          = 'none';
     }
 
-    btn?.addEventListener('click', () => nav.style.right === '0px' ? closeMenu() : openMenu());
+    btn?.addEventListener('click', () => {
+      const isOpen = nav.style.right === '0px';
+      isOpen ? closeMenu() : openMenu();
+    });
+
     closeBtn?.addEventListener('click', closeMenu);
     overlay?.addEventListener('click', closeMenu);
 
-    nav?.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
-    nav?.addEventListener('touchmove',  e => e.stopPropagation(), { passive: true });
+    /* Evitar que el scroll del drawer cierre el menú */
+    nav.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
+    nav.addEventListener('touchmove',  e => e.stopPropagation(), { passive: true });
 
-    document.querySelectorAll('#navmenu a:not(.nav-dropdown-toggle)').forEach(a => {
+    /* Cerrar al hacer clic en enlaces que no son toggles de dropdown */
+    nav.querySelectorAll('a:not(.nav-dropdown-toggle)').forEach(a => {
       a.addEventListener('click', closeMenu);
     });
 
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+    /* Cerrar con Escape */
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeMenu();
+    });
   }
 
   /* ═══════════════════════════════════════════════
-     NAV DROPDOWN — acordeón móvil
+     NAV DROPDOWN
+     Desktop: hover CSS puro (sin JS).
+     Móvil:   acordeón con clase .mob-open en el <li>.
   ═══════════════════════════════════════════════ */
   function initNavDropdown() {
     const dropdowns = document.querySelectorAll('.nav-dropdown');
@@ -135,56 +155,58 @@
 
     dropdowns.forEach(dd => {
       const toggle = dd.querySelector('.nav-dropdown-toggle');
+      if (!toggle) return;
 
-      toggle?.addEventListener('click', e => {
+      toggle.addEventListener('click', e => {
+        /* Solo actuar en móvil */
         if (!isMobile()) return;
+
         e.preventDefault();
-        const isOpen = dd.classList.contains('open');
-        dropdowns.forEach(d => d.classList.remove('open'));
-        if (!isOpen) dd.classList.add('open');
-        toggle.setAttribute('aria-expanded', String(!isOpen));
-      });
+        e.stopPropagation();
 
-      dd.querySelectorAll('.nav-dropdown-menu a[data-year]').forEach(link => {
-        link.addEventListener('click', e => {
-          e.preventDefault();
-          const year   = link.dataset.year;
-          const target = document.querySelector('#portfolio');
-          if (!target) return;
+        const isOpen = dd.classList.contains('mob-open');
 
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          setTimeout(() => {
-            document.querySelector(`.year-tab[data-year="${year}"]`)?.click();
-          }, 600);
-
-          document.querySelector('.navmenu')?.classList.remove('open');
-          document.querySelector('#nav-overlay')?.classList.remove('open');
-          document.body.style.overflow = '';
+        /* Cerrar todos los demás */
+        dropdowns.forEach(d => {
+          if (d !== dd) {
+            d.classList.remove('mob-open');
+            d.querySelector('.nav-dropdown-toggle')
+             ?.setAttribute('aria-expanded', 'false');
+          }
         });
+
+        /* Toggle el actual */
+        dd.classList.toggle('mob-open', !isOpen);
+        toggle.setAttribute('aria-expanded', String(!isOpen));
       });
     });
 
+    /* Cerrar dropdowns al hacer clic fuera (solo desktop) */
     document.addEventListener('click', e => {
+      if (isMobile()) return;
       if (!e.target.closest('.nav-dropdown')) {
         dropdowns.forEach(d => {
-          d.classList.remove('open');
-          d.querySelector('.nav-dropdown-toggle')?.setAttribute('aria-expanded', 'false');
+          d.classList.remove('mob-open');
+          d.querySelector('.nav-dropdown-toggle')
+           ?.setAttribute('aria-expanded', 'false');
         });
       }
     });
 
+    /* Cerrar con Escape */
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') {
         dropdowns.forEach(d => {
-          d.classList.remove('open');
-          d.querySelector('.nav-dropdown-toggle')?.setAttribute('aria-expanded', 'false');
+          d.classList.remove('mob-open');
+          d.querySelector('.nav-dropdown-toggle')
+           ?.setAttribute('aria-expanded', 'false');
         });
       }
     });
   }
 
-    /* ═══════════════════════════════════════════════
-     SCROLLBAR RADIUS — quita bordes en extremos
+  /* ═══════════════════════════════════════════════
+     SCROLLBAR RADIUS
   ═══════════════════════════════════════════════ */
   function initScrollbarRadius() {
     const html = document.documentElement;
@@ -192,7 +214,6 @@
     function update() {
       const scroll    = window.scrollY;
       const maxScroll = document.body.scrollHeight - window.innerHeight;
-
       html.classList.toggle('scroll-top',    scroll < 10);
       html.classList.toggle('scroll-bottom', scroll > maxScroll - 10);
     }

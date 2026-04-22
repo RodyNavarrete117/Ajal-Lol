@@ -1,0 +1,378 @@
+// Database: prueba16
+// Generated from phpMyAdmin SQL Dump
+// Paste this at https://dbdiagram.io
+
+Table usuario {
+  id_usuario int [pk, increment]
+  nombre_usuario varchar(150) [not null]
+  correo_usuario varchar(100) [not null, unique]
+  contrasena_usuario varchar(255) [not null]
+}
+
+Table rol_usuario {
+  id_rol_usuario int [pk, increment]
+  id_usuario int [not null, ref: > usuario.id_usuario]
+  cargo_usuario varchar(20) [not null, note: 'administrador | editor']
+}
+
+Table paginas {
+  id_pagina int [pk, increment]
+  id_usuario int [not null, ref: > usuario.id_usuario]
+  slug varchar(100) [not null, unique, note: 'URL amigable: /nosotros']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table notificaciones {
+  id_notificacion int [pk, increment]
+  id_usuario int [not null, ref: > usuario.id_usuario]
+  id_formulario int [ref: > formulario_contacto.id_formcontacto]
+  titulo varchar(150) [not null]
+  mensaje text [not null]
+  leido tinyint [not null, default: 0]
+  created_at timestamp
+}
+
+Table formulario_contacto {
+  id_formcontacto int [pk, increment]
+  nombre_completo varchar(150)
+  correo varchar(100)
+  numero_telefonico varchar(50)
+  asunto varchar(150)
+  mensaje text
+  fecha_envio datetime [not null, default: `CURRENT_TIMESTAMP`]
+  note: 'Trigger: notificar_nuevo_contacto → inserta en notificaciones para todos los administradores'
+}
+
+// ─── INICIO ───────────────────────────────────────────────
+
+Table inicio {
+  id_inicio int [pk, increment]
+  id_pagina int [not null, ref: > paginas.id_pagina]
+  eyebrow varchar(150)
+  titulo_principal varchar(150)
+  titulo_em varchar(150)
+  descripcion text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table inicio_videos {
+  id_video int [pk, increment]
+  id_inicio int [not null, ref: > inicio.id_inicio]
+  titulo varchar(150)
+  youtube_url varchar(255) [not null]
+  orden int [not null, default: 0]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table inicio_estadisticas {
+  id_estadistica int [pk, increment]
+  id_pagina int [not null, ref: > paginas.id_pagina]
+  ano int [not null]
+  beneficiarios int [not null, default: 0]
+  proyectos int [not null, default: 0]
+  horas_apoyo int [not null, default: 0]
+  voluntarios int [not null, default: 0]
+  bd_include tinyint [not null, default: 0, note: '1 = incluir datos BD en el total del sitio']
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (ano, id_pagina) [unique, name: 'unique_ano_pagina']
+  }
+}
+
+// ─── NOSOTROS ─────────────────────────────────────────────
+
+Table nosotros {
+  id_nosotros int [pk, increment]
+  id_pagina int [not null, ref: > paginas.id_pagina]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table nosotros_encabezado {
+  id_encabezado int [pk, increment]
+  id_nosotros int [not null, ref: > nosotros.id_nosotros]
+  titulo varchar(150)
+  subtitulo varchar(255)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table nosotros_historia {
+  id_historia int [pk, increment]
+  id_nosotros int [not null, ref: > nosotros.id_nosotros]
+  imagen varchar(255)
+  badge_texto varchar(150)
+  etiqueta_superior varchar(100)
+  titulo_bloque varchar(150)
+  texto_destacado text
+  texto_descriptivo text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table nosotros_identidad {
+  id_identidad int [pk, increment]
+  id_nosotros int [not null, ref: > nosotros.id_nosotros]
+  titulo varchar(150)
+  subtitulo varchar(255)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table nosotros_identidad_items {
+  id_item int [pk, increment]
+  id_identidad int [not null, ref: > nosotros_identidad.id_identidad]
+  tipo varchar(20) [not null, note: 'mision | vision | objetivo | valores']
+  titulo varchar(100)
+  contenido text
+  orden int [not null, default: 0]
+  created_at timestamp
+  updated_at timestamp
+}
+
+// ─── ALIADOS ──────────────────────────────────────────────
+
+Table aliados {
+  id_aliados int [pk, increment]
+  id_pagina int [not null, ref: > paginas.id_pagina]
+  titulo_seccion varchar(150) [default: 'Aliados']
+  descripcion text
+}
+
+Table aliados_imagenes {
+  id_imagen int [pk, increment]
+  id_aliados int [not null, ref: > aliados.id_aliados]
+  img_path varchar(255)
+}
+
+// ─── ACTIVIDADES ──────────────────────────────────────────
+
+Table actividad_anos {
+  id_ano int [pk, increment]
+  id_pagina int [not null, ref: > paginas.id_pagina]
+  ano int [not null]
+  visible tinyint [not null, default: 1, note: '1 = visible en selector público']
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (ano, id_pagina) [unique, name: 'unique_ano_pagina']
+  }
+}
+
+Table actividades {
+  id_actividad int [pk, increment]
+  id_ano int [not null, ref: > actividad_anos.id_ano]
+  titulo_actividad varchar(150) [not null]
+  icono_actividad varchar(100) [not null, default: 'fa-star']
+  texto_actividad text
+  orden_actividad int [not null, default: 0]
+  visible tinyint [not null, default: 1]
+  created_at timestamp
+  updated_at timestamp
+}
+
+// ─── PROYECTOS ────────────────────────────────────────────
+
+Table proyecto_anos {
+  id_ano int [pk, increment]
+  id_pagina int [not null, ref: > paginas.id_pagina]
+  ano int [not null]
+  subtitulo varchar(255)
+  visible tinyint [not null, default: 1]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (ano, id_pagina) [unique, name: 'unique_ano_pagina']
+  }
+}
+
+Table proyecto_categorias {
+  id_categoria int [pk, increment]
+  nombre varchar(100) [not null]
+  orden int [default: 0]
+  created_at timestamp
+}
+
+Table proyecto_imagenes {
+  id_imagen int [pk, increment]
+  id_ano int [not null, ref: > proyecto_anos.id_ano]
+  id_categoria int [not null, ref: > proyecto_categorias.id_categoria]
+  titulo varchar(150)
+  image_path varchar(255)
+  description text
+  event_date date
+  created_at timestamp
+  updated_at timestamp
+}
+
+// ─── DIRECTIVA ────────────────────────────────────────────
+
+Table directiva {
+  id_directiva int [pk, increment]
+  id_pagina int [not null, ref: > paginas.id_pagina]
+  titulo_directiva varchar(100) [default: 'Directiva']
+  subtitulo_directiva varchar(100) [default: 'Comité Directivo']
+  nombre_directiva varchar(150)
+  cargo_directiva varchar(100)
+  foto_directiva varchar(255)
+  orden_directiva int
+}
+
+// ─── PREGUNTAS FRECUENTES ─────────────────────────────────
+
+Table preguntas_frecuentes {
+  id_preguntasfrecuentes int [pk, increment]
+  id_pagina int [not null, ref: > paginas.id_pagina]
+  titulo_pregunta varchar(150)
+  texto_respuesta text
+}
+
+// ─── CONTACTO ─────────────────────────────────────────────
+
+Table contacto {
+  id_contacto int [pk, increment]
+  id_pagina int [not null, ref: > paginas.id_pagina]
+  direccion_contacto varchar(255)
+  telefono_contacto varchar(50)
+  email_contacto varchar(100)
+  horario_contacto varchar(100)
+  mapa_embed text
+  facebook_url varchar(255)
+  instagram_url varchar(255)
+  linkedin_url varchar(255)
+  activo tinyint [not null, default: 1]
+}
+
+// ─── DONACIONES ───────────────────────────────────────────
+
+Table donaciones {
+  id_donacion int [pk, increment]
+  id_pagina int [not null, ref: > paginas.id_pagina]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table donaciones_info {
+  id_info int [pk, increment]
+  id_donacion int [not null, ref: > donaciones.id_donacion]
+  titulo varchar(150)
+  descripcion text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table donaciones_bancario {
+  id_bancario int [pk, increment]
+  id_donacion int [not null, ref: > donaciones.id_donacion]
+  beneficiario varchar(150)
+  banco varchar(100)
+  clabe varchar(20)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table donaciones_paypal {
+  id_paypal int [pk, increment]
+  id_donacion int [not null, ref: > donaciones.id_donacion]
+  paypal_usuario varchar(100)
+  created_at timestamp
+  updated_at timestamp
+}
+
+// ─── INFORMES / BENEFICIARIOS ─────────────────────────────
+
+Table informe {
+  id_informe int [pk, increment]
+  nombre_organizacion varchar(150) [not null]
+  evento varchar(150) [not null]
+  lugar varchar(150) [not null]
+  fecha date [not null]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (evento, lugar, fecha) [unique, name: 'unique_informe_evento']
+  }
+}
+
+Table asistenciabeneficiarios {
+  id_asistenciabeneficiario int [pk, increment]
+  id_informe int [not null, ref: > informe.id_informe]
+  asistencianombrebeneficiario varchar(150) [not null]
+  asistenciaedadbeneficiario int
+  created_at timestamp
+}
+
+Table reportebeneficiarios {
+  id_reportebeneficiario int [pk, increment]
+  id_informe int [not null, ref: > informe.id_informe]
+  reportenombrebeneficiario varchar(150) [not null]
+  reportecurpbeneficiario char(18) [not null]
+  reporteedadbeneficiario int
+  created_at timestamp
+
+  indexes {
+    (id_informe, reportecurpbeneficiario) [unique, name: 'unique_reportebeneficiario_informe']
+  }
+}
+
+// ─── LARAVEL (tablas del framework) ───────────────────────
+
+Table users {
+  id bigint [pk, increment]
+  name varchar(255) [not null]
+  email varchar(255) [not null, unique]
+  email_verified_at timestamp
+  password varchar(255) [not null]
+  remember_token varchar(100)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table password_reset_tokens {
+  email varchar(255) [pk]
+  token varchar(255) [not null]
+  created_at timestamp
+}
+
+Table sessions {
+  id varchar(255) [pk]
+  user_id bigint
+  ip_address varchar(45)
+  user_agent text
+  payload longtext [not null]
+  last_activity int [not null]
+}
+
+Table cache {
+  key varchar(255) [pk]
+  value mediumtext [not null]
+  expiration int [not null]
+}
+
+Table jobs {
+  id bigint [pk, increment]
+  queue varchar(255) [not null]
+  payload longtext [not null]
+  attempts tinyint [not null]
+  reserved_at int
+  available_at int [not null]
+  created_at int [not null]
+}
+
+Table failed_jobs {
+  id bigint [pk, increment]
+  uuid varchar(255) [not null, unique]
+  connection text [not null]
+  queue text [not null]
+  payload longtext [not null]
+  exception longtext [not null]
+  failed_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+}

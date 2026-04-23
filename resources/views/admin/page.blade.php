@@ -16,10 +16,6 @@
             <h2>Editor de la página web</h2>
             <p>Aquí podrás editar todas las secciones de la página activa de la plataforma</p>
         </div>
-        <button class="btn-new-page">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-            Crear nueva sección
-        </button>
     </div>
 
     {{-- ── TABS ── --}}

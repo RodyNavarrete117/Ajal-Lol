@@ -58,7 +58,7 @@
                     <a href="{{ route('admin.pages.home.edit') }}" class="header-btn" title="Editar página">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3c.5-.5 1.2-.8 2-.8 1.6 0 2.8 1.2 2.8 2.8 0 .8-.3 1.5-.8 2L7.5 20.5 2 22l1.5-5.5L17 3Z"/></svg>
                     </a>
-                    <a href="{{ url('/') }}" class="header-btn" title="Ver vista previa" target="_blank">
+                    <a href="{{ url('/')}}" class="header-btn" title="Ver vista previa" target="_blank">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
                 </div>
@@ -97,7 +97,7 @@
                     <a href="{{ route('admin.pages.about.edit') }}" class="header-btn" title="Editar página">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3c.5-.5 1.2-.8 2-.8 1.6 0 2.8 1.2 2.8 2.8 0 .8-.3 1.5-.8 2L7.5 20.5 2 22l1.5-5.5L17 3Z"/></svg>
                     </a>
-                    <a href="{{ url('/nosotros') }}" class="header-btn" title="Ver vista previa" target="_blank">
+                    <a href="{{ url('/#about') }}" class="header-btn" title="Ver vista previa" target="_blank">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
                 </div>
@@ -136,7 +136,7 @@
                     <a href="{{ route('admin.pages.allies.edit') }}" class="header-btn" title="Editar página">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3c.5-.5 1.2-.8 2-.8 1.6 0 2.8 1.2 2.8 2.8 0 .8-.3 1.5-.8 2L7.5 20.5 2 22l1.5-5.5L17 3Z"/></svg>
                     </a>
-                    <a href="{{ url('/aliados') }}" class="header-btn" title="Ver vista previa" target="_blank">
+                    <a href="{{ url('/#clients')  }}" class="header-btn" title="Ver vista previa" target="_blank">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
                 </div>
@@ -175,7 +175,7 @@
                     <a href="{{ route('admin.pages.activities.edit') }}" class="header-btn" title="Editar página">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3c.5-.5 1.2-.8 2-.8 1.6 0 2.8 1.2 2.8 2.8 0 .8-.3 1.5-.8 2L7.5 20.5 2 22l1.5-5.5L17 3Z"/></svg>
                     </a>
-                    <a href="{{ url('/actividades') }}" class="header-btn" title="Ver vista previa" target="_blank">
+                    <a href="{{ url('/#services') }}" class="header-btn" title="Ver vista previa" target="_blank">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
                 </div>
@@ -214,7 +214,7 @@
                     <a href="{{ route('admin.pages.projects.edit') }}" class="header-btn" title="Editar página">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3c.5-.5 1.2-.8 2-.8 1.6 0 2.8 1.2 2.8 2.8 0 .8-.3 1.5-.8 2L7.5 20.5 2 22l1.5-5.5L17 3Z"/></svg>
                     </a>
-                    <a href="{{ url('/proyectos') }}" class="header-btn" title="Ver vista previa" target="_blank">
+                    <a href="{{ url('/#portfolio') }}" class="header-btn" title="Ver vista previa" target="_blank">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
                 </div>
@@ -253,7 +253,7 @@
                     <a href="{{ route('admin.pages.board.edit') }}" class="header-btn" title="Editar página">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3c.5-.5 1.2-.8 2-.8 1.6 0 2.8 1.2 2.8 2.8 0 .8-.3 1.5-.8 2L7.5 20.5 2 22l1.5-5.5L17 3Z"/></svg>
                     </a>
-                    <a href="{{ url('/directiva') }}" class="header-btn" title="Ver vista previa" target="_blank">
+                    <a href="{{ url('/#team') }}" class="header-btn" title="Ver vista previa" target="_blank">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
                 </div>
@@ -292,7 +292,7 @@
                     <a href="{{ route('admin.pages.faq.edit') }}" class="header-btn" title="Editar página">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3c.5-.5 1.2-.8 2-.8 1.6 0 2.8 1.2 2.8 2.8 0 .8-.3 1.5-.8 2L7.5 20.5 2 22l1.5-5.5L17 3Z"/></svg>
                     </a>
-                    <a href="{{ url('/preguntas-frecuentes') }}" class="header-btn" title="Ver vista previa" target="_blank">
+                    <a href="{{ url('/#faq') }}" class="header-btn" title="Ver vista previa" target="_blank">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
                 </div>
@@ -331,7 +331,7 @@
                     <a href="{{ route('admin.pages.contact.edit') }}" class="header-btn" title="Editar página">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3c.5-.5 1.2-.8 2-.8 1.6 0 2.8 1.2 2.8 2.8 0 .8-.3 1.5-.8 2L7.5 20.5 2 22l1.5-5.5L17 3Z"/></svg>
                     </a>
-                    <a href="{{ url('/contacto') }}" class="header-btn" title="Ver vista previa" target="_blank">
+                    <a href="{{ url('/#contact') }}" class="header-btn" title="Ver vista previa" target="_blank">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
                 </div>
@@ -370,7 +370,7 @@
                     <a href="{{ route('admin.pages.donations.edit') }}" class="header-btn" title="Editar página">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 3L2 22l5.5-1.5L22 5c1-1 1-3 0-4s-3-1-4 0Z"/></svg>
                     </a>
-                    <a href="{{ url('/donativos') }}" class="header-btn" title="Ver vista previa" target="_blank">
+                    <a href="{{ url('/#footer') }}" class="header-btn" title="Ver vista previa" target="_blank">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
                 </div>

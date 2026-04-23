@@ -548,3 +548,287 @@ html.scroll-bottom ::-webkit-scrollbar-thumb {
     -webkit-backdrop-filter: none !important;
   }
 }
+/* ==================== MODAL PRO ==================== */
+
+.videos-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: radial-gradient(circle at center, rgba(20,5,15,.85), rgba(0,0,0,.95));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  z-index: 9999;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+}
+
+.videos-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* CONTENEDOR */
+.videos-modal-content {
+  width: min(1100px, 95%);
+  border-radius: 22px;
+  padding: 26px;
+  position: relative;
+
+  background: linear-gradient(135deg, #6b1a3e 0%, #9e3d62 60%, #2a0e20 100%);
+  box-shadow: 0 40px 120px rgba(0,0,0,.6);
+
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+
+  animation: scaleIn .35s ease;
+}
+
+/* HEADER */
+.videos-modal-content h3 {
+  position: absolute;
+  top: 20px;
+  left: 26px;
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: .5px;
+  opacity: .9;
+}
+
+/* BOTÓN CERRAR */
+.videos-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all .25s ease;
+}
+
+.videos-close:hover {
+  background: #ff4d6d;
+  transform: scale(1.1) rotate(90deg);
+}
+
+/* ==================== LISTA IZQUIERDA ==================== */
+
+.videos-grid {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+/* SCROLL BONITO */
+.videos-grid::-webkit-scrollbar {
+  width: 6px;
+}
+.videos-grid::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.2);
+  border-radius: 10px;
+}
+
+/* ITEM */
+.video-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  padding: 8px;
+  border-radius: 12px;
+
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+
+  cursor: pointer;
+  transition: all .25s ease;
+}
+
+.video-item:hover {
+  background: rgba(255,255,255,.1);
+  transform: translateX(6px);
+}
+
+/* THUMB */
+.video-item img {
+  width: 90px;
+  height: 55px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* TEXTO */
+.video-item p {
+  color: #fff;
+  font-size: 13px;
+  margin: 0;
+  opacity: .9;
+}
+
+/* ==================== PLAYER ==================== */
+
+#videoPlayer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#videoPlayer iframe {
+  width: 100%;
+  height: 420px;
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+
+/* PLACEHOLDER */
+#videoPlayer:empty::before {
+  content: "Selecciona un video";
+  color: rgba(255,255,255,.5);
+  font-size: 14px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 900px) {
+  .videos-modal-content {
+    grid-template-columns: 1fr;
+  }
+
+  .videos-grid {
+    flex-direction: row;
+    overflow-x: auto;
+    max-height: unset;
+  }
+
+  .video-item {
+    min-width: 180px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .video-item img {
+    width: 100%;
+    height: 100px;
+  }
+
+  #videoPlayer iframe {
+    height: 250px;
+  }
+}
+
+/* ==================== HERO BUTTONS PRO ==================== */
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* BOTÓN PRINCIPAL */
+.btn-rose {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+
+  padding: .8rem 1.6rem;
+  border-radius: 999px;
+
+  font-size: .85rem;
+  font-weight: 600;
+  letter-spacing: .5px;
+
+  color: #fff;
+  text-decoration: none;
+
+  background: linear-gradient(135deg, #8b2252, #c0547a);
+  box-shadow: 0 8px 25px rgba(139,34,82,.35);
+
+  border: none;
+  cursor: pointer;
+
+  transition: all .25s ease;
+}
+
+/* EFECTO HOVER */
+.btn-rose:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 14px 40px rgba(139,34,82,.5);
+  background: linear-gradient(135deg, #a02b60, #d96a8d);
+}
+
+/* CLICK */
+.btn-rose:active {
+  transform: scale(.97);
+}
+
+/* ICONO */
+.btn-rose i {
+  font-size: 1rem;
+}
+
+
+/* BOTÓN OUTLINE (VIDEOS) */
+.btn-rose-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+
+  padding: .8rem 1.6rem;
+  border-radius: 999px;
+
+  font-size: .85rem;
+  font-weight: 600;
+  letter-spacing: .5px;
+
+  color: #8b2252;
+  text-decoration: none;
+
+  background: rgba(255,255,255,.7);
+  backdrop-filter: blur(10px);
+
+  border: 1.5px solid rgba(139,34,82,.3);
+
+  cursor: pointer;
+  transition: all .25s ease;
+}
+
+/* HOVER */
+.btn-rose-outline:hover {
+  background: #8b2252;
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(139,34,82,.4);
+}
+
+/* CLICK */
+.btn-rose-outline:active {
+  transform: scale(.96);
+}
+
+.btn-rose-outline i {
+  font-size: 1rem;
+}

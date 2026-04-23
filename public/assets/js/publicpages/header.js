@@ -238,3 +238,54 @@
   }
 
 })();
+
+function initHeroVideosModal() {
+  const btn   = document.getElementById('btnVideos');
+  const modal = document.getElementById('videosModal');
+  const close = document.getElementById('closeVideosModal');
+  const player = document.getElementById('videoPlayer');
+
+  if (!btn || !modal) return;
+
+  // abrir
+  btn.addEventListener('click', () => {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+
+  // cerrar
+  close?.addEventListener('click', () => {
+    modal.classList.remove('active');
+    player.innerHTML = '';
+    document.body.style.overflow = '';
+  });
+
+  // cerrar al fondo
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.remove('active');
+      player.innerHTML = '';
+      document.body.style.overflow = '';
+    }
+  });
+
+  // click en videos
+  document.querySelectorAll('.video-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const url = item.dataset.url;
+      const id  = getYoutubeId(url);
+
+      player.innerHTML = `
+        <iframe width="100%" height="420"
+          src="https://www.youtube.com/embed/${id}?autoplay=1"
+          frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+        </iframe>
+      `;
+    });
+  });
+
+  function getYoutubeId(url) {
+    const match = url.match(/(?:v=|youtu\.be\/)([^&]+)/);
+    return match ? match[1] : null;
+  }
+}

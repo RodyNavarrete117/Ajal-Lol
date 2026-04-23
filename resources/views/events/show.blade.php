@@ -18,7 +18,7 @@
       @endif
     </div>
 
-    <div class="year-nav" data-anim="fade-up" data-delay="100">
+    <div class="year-nav {{ $anosVisibles->count() <= 4 ? 'pocos-anos' : 'muchos-anos' }}" data-anim="fade-up" data-delay="100">
       @foreach($anosVisibles as $a)
         <a href="{{ route('events.year', ['year' => $a->ano]) }}"
            class="year-nav-btn {{ $a->ano == $ano->ano ? 'active' : '' }}">
@@ -26,8 +26,14 @@
         </a>
       @endforeach
     </div>
-  </div>
-</section>
+
+    @if($anosVisibles->count() > 4)
+      <div class="swipe-hint" data-anim="fade-up" data-delay="200">
+        <i class="bi bi-arrows-collapse" style="transform: rotate(90deg);"></i>
+        <span>Desliza para ver más</span>
+      </div>
+    @endif
+    </div> </section>
 
 <section class="eventos-grid-section section light-bg">
   <div class="container">

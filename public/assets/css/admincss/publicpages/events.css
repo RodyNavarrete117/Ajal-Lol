@@ -63,11 +63,31 @@
 /* ─── NAVEGACIÓN ENTRE AÑOS ─── */
 .year-nav {
   display: flex;
-  justify-content: center;
-  gap: .6rem;
-  margin-top: 2.5rem;
+  overflow-x: auto;            
+  padding: 1rem 1.5rem;        
+  gap: .8rem;
+  scrollbar-width: none;       
+  -ms-overflow-style: none;    
   position: relative;
-  z-index: 1;
+  z-index: 10;
+}
+
+.year-nav::-webkit-scrollbar {
+  display: none;               
+}
+
+.pocos-anos {
+  justify-content: center;
+}
+
+.muchos-anos {
+  justify-content: flex-start;
+}
+
+@media (min-width: 768px) {
+  .year-nav {
+    justify-content: center;
+  }
 }
 
 .year-nav-btn {
@@ -81,8 +101,10 @@
   font-weight: 600;
   letter-spacing: .5px;
   transition: var(--transition);
-  cursor: none;
+  cursor: pointer; /* Cambié cursor: none por pointer para que indique que es un link */
   text-decoration: none;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .year-nav-btn:hover {
@@ -96,6 +118,39 @@
   border-color: var(--white);
   color: var(--rose-deep);
   box-shadow: 0 4px 20px rgba(0,0,0,.2);
+}
+
+/* ─── INDICADOR DE DESLIZAMIENTO (SWIPE HINT) ─── */
+.swipe-hint {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--font-body);
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 10;
+  /* Animación de parpadeo suave para llamar la atención */
+  animation: pulse-swipe 2s infinite ease-in-out;
+}
+
+.swipe-hint i {
+  font-size: 0.85rem;
+}
+
+@keyframes pulse-swipe {
+  0%, 100% { opacity: 0.4; transform: translateX(0); }
+  50% { opacity: 1; transform: translateX(3px); }
+}
+
+/* Ocultar en pantallas grandes donde los botones están centrados y no hay scroll */
+@media (min-width: 768px) {
+  .swipe-hint {
+    display: none;
+  }
 }
 
 /* ─── GRID DE EVENTOS ─── */

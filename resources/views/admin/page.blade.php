@@ -349,29 +349,29 @@
         <div class="page-card" data-color="emerald" data-active="1" style="--c1:#059669;--c2:#065f46;--rgb:5,150,105;">
             <div class="page-card__header">
                 <div class="header-bg">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21c-4-4-8-6.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 4.5-4 7-8 11z"/></svg>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21c-4-4-8-6.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 4.5-4 7-8 11z"/></svg>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21c-4-4-8-6.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 4.5-4 7-8 11z"/></svg>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21c-4-4-8-6.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 4.5-4 7-8 11z"/></svg>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21c-4-4-8-6.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 4.5-4 7-8 11z"/></svg>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21c-4-4-8-6.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 4.5-4 7-8 11z"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4-4-8-6.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 4.5-4 7-8 11z"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4-4-8-6.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 4.5-4 7-8 11z"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4-4-8-6.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 4.5-4 7-8 11z"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4-4-8-6.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 4.5-4 7-8 11z"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4-4-8-6.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 4.5-4 7-8 11z"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4-4-8-6.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 4.5-4 7-8 11z"/></svg>
                 </div>
                 <div class="header-identity">
                     <div class="header-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21c-4-4-8-6.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 4.5-4 7-8 11z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4-4-8-6.5-8-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 4.5-4 7-8 11z"/></svg>
                     </div>
                     <h3 class="header-name">Donativos</h3>
                 </div>
                 <div class="header-controls">
                     <button class="header-btn header-btn--toggle" title="Deshabilitar página">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
                     <div class="header-divider"></div>
                     <a href="{{ route('admin.pages.donations.edit') }}" class="header-btn" title="Editar página">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 3L2 22l5.5-1.5L22 5c1-1 1-3 0-4s-3-1-4 0Z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3L2 22l5.5-1.5L22 5c1-1 1-3 0-4s-3-1-4 0Z"/></svg>
                     </a>
                     <a href="{{ url('/#footer') }}" class="header-btn" title="Ver vista previa" target="_blank">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
                 </div>
             </div>
@@ -379,7 +379,7 @@
                 <p class="page-card__desc">Apoya a la organización mediante donaciones. Contribuye a nuestros programas sociales y comunitarios.</p>
             </div>
             <div class="page-card__footer">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                 <p class="footer-text">Actualizada <strong>recientemente</strong></p>
             </div>
         </div>

@@ -28,6 +28,7 @@ class SettingsController extends Controller
                 'usuario.id_usuario',
                 'usuario.nombre_usuario',
                 'usuario.correo_usuario',
+                'usuario.notif_email', 
                 'rol_usuario.cargo_usuario'
             )
             ->where('usuario.id_usuario', $userId)
@@ -254,6 +255,23 @@ class SettingsController extends Controller
         return response()->json([
             'success' => true,
             'message' => $message
+        ]);
+    }
+    public function saveNotifications(Request $request)
+    {
+        if (!session()->has('user_id')) {
+            return response()->json(['success' => false, 'message' => 'Sesión expirada.'], 401);
+        }
+
+        DB::table('usuario')
+            ->where('id_usuario', session('user_id'))
+            ->update([
+                'notif_email' => $request->boolean('notif_email') ? 1 : 0,
+            ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Preferencias guardadas correctamente.'
         ]);
     }
 }

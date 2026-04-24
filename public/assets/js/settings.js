@@ -341,4 +341,30 @@ if (keepSessionToggle) {
         }
     });
 }
+// ── Guardar preferencias de notificaciones ────────────────────────
+    document.getElementById('saveNotifications')?.addEventListener('click', async function () {
+        const notifEmail = document.getElementById('notif_email')?.checked;
+
+        try {
+            const response = await fetch('/admin/settings/save-notifications', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ notif_email: notifEmail })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showToast('success', '¡Preferencias guardadas!', data.message);
+            } else {
+                showToast('error', 'Error', data.message);
+            }
+        } catch {
+            showToast('error', 'Error de conexión', 'No se pudo guardar la preferencia.');
+        }
+    });
 });

@@ -61,7 +61,7 @@ class ContactController extends Controller
 
             $admins = DB::table('rol_usuario')
                 ->join('usuario', 'rol_usuario.id_usuario', '=', 'usuario.id_usuario')
-                ->where('rol_usuario.cargo_usuario', 'administrador')
+                ->where('usuario.notif_email', 1)
                 ->select('usuario.correo_usuario')
                 ->get();
 

@@ -156,32 +156,10 @@
                 <div class="setting-item">
                     <div class="setting-info">
                         <div class="setting-label">Notificaciones por email</div>
-                        <div class="setting-desc">Recibe actualizaciones importantes por correo</div>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="notif_email" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-label">Alerta de posibles colaboradores</div>
                         <div class="setting-desc">Notifica cuando haya una solicitud o interés en contribuir</div>
                     </div>
                     <label class="toggle-switch">
-                        <input type="checkbox" id="notif_colaboradores" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-label">Cambios en la página</div>
-                        <div class="setting-desc">Recibe alertas cuando se realicen modificaciones en la plataforma</div>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="notif_cambios">
+                        <input type="checkbox" id="notif_email" {{ $usuario->notif_email ? 'checked' : '' }}>
                         <span class="toggle-slider"></span>
                     </label>
                 </div>

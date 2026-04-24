@@ -249,21 +249,9 @@ function initSelectionLogic() {
         deleteSelBtn.addEventListener('click', () => {
             const ids = getChecked().map(cb => cb.value);
             if (!ids.length) return;
-            
-            Swal.fire({
-                title: `¿Eliminar ${ids.length} registro(s)?`,
-                text: 'Esta acción no se puede deshacer.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then(r => { 
-                if (r.isConfirmed) {
-                    console.log('Falta implementar la ruta backend para eliminar múltiples. IDs:', ids);
-                } 
-            });
+            pendingDeleteId  = null;
+            pendingDeleteIds = ids;
+            openDeleteModal(`¿Eliminar ${ids.length} registro(s)?`);
         });
     }
 }
@@ -595,50 +583,86 @@ window.viewForm = async function(id) {
 // ============================================
 // 5. ELIMINAR FORMULARIO (Global)
 // ============================================
-window.deleteForm = async function(id) {
-    const result = await Swal.fire({
-        title: '¿Estás seguro?',
-        text: 'Esta acción no se puede deshacer',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#6b7280',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar',
-        reverseButtons: true
-    });
+// ── Modal eliminar ────────────────────────────────────────────
+const deleteModalOverlay = document.getElementById('deleteModalOverlay');
+const deleteModalCancel  = document.getElementById('deleteModalCancel');
+const deleteModalConfirm = document.getElementById('deleteModalConfirm');
+const deleteModalTitle   = document.getElementById('deleteModalTitle');
 
-    if (result.isConfirmed) {
+let pendingDeleteId   = null;
+let pendingDeleteIds  = null;
+
+function openDeleteModal(title) {
+    if (deleteModalTitle) deleteModalTitle.textContent = title;
+    deleteModalOverlay?.classList.add('active');
+}
+
+function closeDeleteModal() {
+    deleteModalOverlay?.classList.remove('active');
+    pendingDeleteId  = null;
+    pendingDeleteIds = null;
+}
+
+deleteModalCancel?.addEventListener('click', closeDeleteModal);
+deleteModalOverlay?.addEventListener('click', function(e) {
+    if (e.target === deleteModalOverlay) closeDeleteModal();
+});
+
+deleteModalConfirm?.addEventListener('click', async function() {
+    closeDeleteModal();
+
+    // ── Eliminar múltiples ──
+    if (pendingDeleteIds) {
         try {
-            const response = await fetch(`/admin/forms/${id}`, {
+            const response = await fetch('/admin/forms/destroy-multiple', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ ids: pendingDeleteIds })
+            });
+            const data = await response.json();
+            if (data.success) {
+                showExportToast('success', '', data.message);
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                showExportToast('error', data.message);
+            }
+        } catch {
+            showExportToast('error', 'No se pudo eliminar');
+        }
+        return;
+    }
+
+    // ── Eliminar uno ──
+    if (pendingDeleteId) {
+        try {
+            const response = await fetch(`/admin/forms/${pendingDeleteId}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
                     'Accept': 'application/json'
                 }
             });
-
             const data = await response.json();
-
             if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Eliminado!',
-                    text: data.message,
-                    confirmButtonColor: '#10b981',
-                    timer: 2000,
-                    timerProgressBar: true
-                }).then(() => {
-                    window.location.reload();
-                });
+                showExportToast('success', '', '¡Formulario eliminado!');
+                setTimeout(() => window.location.reload(), 1500);
             } else {
-                Swal.fire({ icon: 'error', title: 'Error', text: data.message, confirmButtonColor: '#7c3f69' });
+                showExportToast('error', data.message);
             }
-        } catch (error) {
-            console.error('Error:', error);
-            Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo eliminar el formulario', confirmButtonColor: '#7c3f69' });
+        } catch {
+            showExportToast('error', 'No se pudo eliminar el formulario');
         }
     }
+});
+
+window.deleteForm = function(id) {
+    pendingDeleteId  = id;
+    pendingDeleteIds = null;
+    openDeleteModal('¿Eliminar este registro?');
 };
 
 // ============================================

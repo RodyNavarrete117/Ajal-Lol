@@ -91,6 +91,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::get('/',           [FormController::class, 'index'])->name('admin.forms');
         Route::get('/export',     [FormController::class, 'export'])->name('admin.forms.export');
         Route::get('/export/pdf', [FormController::class, 'exportPdf'])->name('admin.forms.export.pdf');
+        Route::delete('/destroy-multiple', [FormController::class, 'destroyMultiple'])->name('admin.forms.destroy.multiple');
         Route::get('/{id}',       [FormController::class, 'show'])->name('admin.forms.show');
         Route::delete('/{id}',    [FormController::class, 'destroy'])->name('admin.forms.destroy');
     });
@@ -101,6 +102,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::post('/change-password', [SettingsController::class, 'changePassword'])->name('admin.settings.change-password');
         Route::post('/update-profile',  [SettingsController::class, 'updateProfile'])->name('admin.settings.update-profile');
         Route::post('/keep-session',    [SettingsController::class, 'keepSession']);
+        Route::post('/save-notifications', [SettingsController::class, 'saveNotifications']);
     });
 
     /* ===== USUARIOS ===== */

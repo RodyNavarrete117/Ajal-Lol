@@ -353,6 +353,21 @@
         </div>
     </div>
 
+    <!-- Modal confirmar eliminar -->
+    <div class="dash-modal-overlay" id="deleteModalOverlay">
+        <div class="dash-modal">
+            <div class="dash-modal-icon">
+                <i class="fa fa-trash"></i>
+            </div>
+            <h3 class="dash-modal-title" id="deleteModalTitle">¿Eliminar registro?</h3>
+            <p class="dash-modal-text">Esta acción no se puede deshacer.</p>
+            <div class="dash-modal-actions">
+                <button class="dash-modal-cancel" id="deleteModalCancel">Cancelar</button>
+                <button class="dash-modal-confirm" id="deleteModalConfirm">Sí, eliminar</button>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')

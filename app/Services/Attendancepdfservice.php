@@ -25,7 +25,7 @@ class AttendancePdfService
             <table width="100%" style="border-bottom: 3px solid #783d66; padding-bottom: 10px; font-family: Arial, sans-serif;">
                 <tr>
                     <td width="12%" style="vertical-align: middle;">
-                        <img src="' . public_path('assets/img/logo_ajal_lol.png') . '" style="height: 50px;">
+                        <img src="' . public_path('assets/img/logo_principal/ImagenPrincipal.jpg') . '" style="height: 50px;">
                     </td>
                     <td width="88%" style="vertical-align: middle; padding-left: 14px; text-align: center;">
                         <div style="font-size: 17px; font-weight: bold; color: #5a2d4d; letter-spacing: 2px; text-transform: uppercase;">

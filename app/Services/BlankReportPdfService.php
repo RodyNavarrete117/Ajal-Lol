@@ -39,7 +39,7 @@ class BlankReportPdfService
         <table width="100%" style="border-bottom:2.5px solid #783d66;padding-bottom:6px;font-family:Arial;">
             <tr>
                 <td width="12%">
-                    <img src="' . public_path('assets/img/logo_ajal_lol.png') . '" style="height:40px;">
+                    <img src="' . public_path('assets/img/logo_principal/ImagenPrincipal.jpg') . '" style="height:40px;">
                 </td>
                 <td width="88%" style="padding-left:12px; text-align:center;">
                     <div style="font-size:15px;font-weight:bold;color:#5a2d4d;letter-spacing:2px;text-transform:uppercase;">

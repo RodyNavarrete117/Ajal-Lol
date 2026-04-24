@@ -34,7 +34,7 @@ class FormPdfService
             <table width="100%" style="border-bottom: 2px solid #b71c50; padding-bottom: 8px; margin-bottom: 0;">
                 <tr>
                     <td width="15%" style="vertical-align:middle;">
-                        <img src="' . public_path('assets/img/logo_ajal_lol.png') . '"
+                        <img src="' . public_path('assets/img/logo_principal/ImagenPrincipal.jpg'). '"
                              style="height:48px;">
                     </td>
                     <td width="70%" style="text-align:center; vertical-align:middle;">

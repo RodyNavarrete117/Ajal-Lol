@@ -144,8 +144,8 @@
     <script>
         @if(auth()->check())
             const initialNotificationCount = {{ 
-                \App\Models\Notification::where('user_id', auth()->id())
-                    ->where('read', false)
+                \App\Models\Notification::where('id_usuario', session('user_id'))
+                    ->where('leido', false)
                     ->count() 
             }};
             document.addEventListener('DOMContentLoaded', function() {

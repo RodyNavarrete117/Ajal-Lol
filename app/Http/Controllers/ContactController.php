@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NuevaContactoMail;
 
 class ContactController extends Controller
 {
@@ -47,6 +49,27 @@ class ContactController extends Controller
                 'asunto'            => $validated['subject'],
                 'mensaje'           => $validated['message'],
             ]);
+
+            // ── AGREGAR DESDE AQUÍ ────────────────────────────────────
+            $formulario = (object) [
+                'nombre_completo'   => $validated['name'],
+                'correo'            => $validated['email'],
+                'numero_telefonico' => $validated['phone'] ?? null,
+                'asunto'            => $validated['subject'],
+                'mensaje'           => $validated['message'],
+            ];
+
+            $admins = DB::table('rol_usuario')
+                ->join('usuario', 'rol_usuario.id_usuario', '=', 'usuario.id_usuario')
+                ->where('rol_usuario.cargo_usuario', 'administrador')
+                ->select('usuario.correo_usuario')
+                ->get();
+
+            foreach ($admins as $admin) {
+                Mail::to($admin->correo_usuario)
+                    ->send(new NuevaContactoMail($formulario));
+            }
+            // ── HASTA AQUÍ ────────────────────────────────────────────
 
             Log::info('Formulario de contacto recibido', [
                 'correo' => $validated['email'],

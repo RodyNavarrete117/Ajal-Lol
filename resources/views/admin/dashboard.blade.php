@@ -155,6 +155,19 @@
             });
         @endif
     </script>
-
+<!-- Modal confirmar limpiar notificaciones -->
+<div class="dash-modal-overlay" id="clearModalOverlay">
+    <div class="dash-modal">
+        <div class="dash-modal-icon">
+            <i class="fa fa-trash"></i>
+        </div>
+        <h3 class="dash-modal-title">¿Limpiar todo?</h3>
+        <p class="dash-modal-text">Se eliminarán todas las notificaciones. Esta acción no se puede deshacer.</p>
+        <div class="dash-modal-actions">
+            <button class="dash-modal-cancel" id="clearModalCancel">Cancelar</button>
+            <button class="dash-modal-confirm" id="clearModalConfirm">Sí, limpiar</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>

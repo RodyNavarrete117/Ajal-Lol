@@ -319,9 +319,21 @@ document.addEventListener('DOMContentLoaded', function () {
         }).catch(() => {});
     });
 
-    document.getElementById('clearAll')?.addEventListener('click', function () {
-        if (!confirm('¿Estás seguro de que quieres eliminar todas las notificaciones?')) return;
+    const clearModalOverlay = document.getElementById('clearModalOverlay');
+    const clearModalCancel  = document.getElementById('clearModalCancel');
+    const clearModalConfirm = document.getElementById('clearModalConfirm');
 
+    function openClearModal()  { clearModalOverlay?.classList.add('active'); }
+    function closeClearModal() { clearModalOverlay?.classList.remove('active'); }
+
+    document.getElementById('clearAll')?.addEventListener('click', openClearModal);
+    clearModalCancel?.addEventListener('click', closeClearModal);
+    clearModalOverlay?.addEventListener('click', function (e) {
+        if (e.target === clearModalOverlay) closeClearModal();
+    });
+
+    clearModalConfirm?.addEventListener('click', function () {
+        closeClearModal();
         fetch('/admin/api/notifications/clear-all', {
             method: 'DELETE',
             headers: {
@@ -332,7 +344,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (d.success) { fetchNotificationsDetails(); fetchNotifications(); }
         }).catch(() => {});
     });
-
     // FIX: Se eliminó la restauración desde localStorage.
     // El badge ahora siempre viene del servidor.
     fetchNotifications();

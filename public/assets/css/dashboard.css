@@ -890,3 +890,131 @@ body.reduce-animations *::after {
     .menu a.active { background: rgba(255,255,255,0.3); }
     .notifications-panel { height: 85vh; }
 }
+
+/* ==================== MODAL CONFIRMACIÓN ==================== */
+.dash-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.dash-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.dash-modal {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px 28px 24px;
+    max-width: 320px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+    transform: translateY(12px) scale(0.97);
+    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+
+.dash-modal-overlay.active .dash-modal {
+    transform: translateY(0) scale(1);
+}
+
+.dash-modal-icon {
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(135deg, #8d3a6d, #4a1f3d);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+.dash-modal-icon i {
+    color: #fff;
+    font-size: 1.2rem;
+}
+
+.dash-modal-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2d1f28;
+    margin-bottom: 8px;
+}
+
+.dash-modal-text {
+    font-size: 0.85rem;
+    color: #7a6070;
+    line-height: 1.55;
+    margin-bottom: 24px;
+}
+
+.dash-modal-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.dash-modal-cancel {
+    flex: 1;
+    padding: 11px;
+    border: 1px solid #e0d0da;
+    border-radius: 8px;
+    background: #fff;
+    color: #7a6070;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dash-modal-cancel:hover {
+    background: #f5f0f4;
+    color: #2d1f28;
+}
+
+.dash-modal-confirm {
+    flex: 1;
+    padding: 11px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #8d3a6d, #4a1f3d);
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dash-modal-confirm:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+/* Dark mode */
+[data-theme="dark"] .dash-modal {
+    background: #1e1428;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+[data-theme="dark"] .dash-modal-title { color: #fff; }
+[data-theme="dark"] .dash-modal-text  { color: rgba(255,255,255,0.5); }
+
+[data-theme="dark"] .dash-modal-cancel {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.6);
+}
+
+[data-theme="dark"] .dash-modal-cancel:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}

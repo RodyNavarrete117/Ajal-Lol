@@ -13,10 +13,19 @@ document.addEventListener('DOMContentLoaded', function() {
     initSelectionLogic();
     initExportLogic();
     initModalEvents();
+    initDeleteModal();
     initCustomSelects();
     initMobileSearch(); 
     updateSelectionBarPosition();
     renderPage(); 
+
+    // ── Mostrar toast pendiente después de recarga ──
+    const toastPending = sessionStorage.getItem('toastPending');
+    if (toastPending) {
+        sessionStorage.removeItem('toastPending');
+        const { type, msg, title } = JSON.parse(toastPending);
+        setTimeout(() => showExportToast(type, '', msg, title || ''), 300);
+    }
 });
 
 function initMobileSearch() {
@@ -249,8 +258,8 @@ function initSelectionLogic() {
         deleteSelBtn.addEventListener('click', () => {
             const ids = getChecked().map(cb => cb.value);
             if (!ids.length) return;
-            pendingDeleteId  = null;
-            pendingDeleteIds = ids;
+            window.pendingDeleteId  = null;
+            window.pendingDeleteIds = ids;
             openDeleteModal(`¿Eliminar ${ids.length} registro(s)?`);
         });
     }
@@ -408,7 +417,7 @@ function getDateFilterLabel() {
 // ============================================
 // TOAST DE EXPORTACIÓN
 // ============================================
-function showExportToast(type, message = '', customMsg = '') {
+function showExportToast(type, message = '', customMsg = '', customTitle = '') {
     const existing = document.getElementById('exportToast');
     if (existing) {
         existing.classList.remove('show');
@@ -431,7 +440,7 @@ function showExportToast(type, message = '', customMsg = '') {
             icon: `<svg width="18" height="18" viewBox="0 0 20 20" fill="none">
                 <path d="M5 10l4 4 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>`,
-            title: '¡PDF listo!',
+            title: customTitle || '¡PDF listo!',
             msg: customMsg || 'Descarga completada',
             extraClass: '',
             progress: `<div class="toast-progress"></div>`,
@@ -470,7 +479,7 @@ function showExportToast(type, message = '', customMsg = '') {
         setTimeout(() => {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 350);
-        }, 2800);
+        }, 5000);
     }
 }
 
@@ -583,36 +592,39 @@ window.viewForm = async function(id) {
 // ============================================
 // 5. ELIMINAR FORMULARIO (Global)
 // ============================================
-// ── Modal eliminar ────────────────────────────────────────────
-const deleteModalOverlay = document.getElementById('deleteModalOverlay');
-const deleteModalCancel  = document.getElementById('deleteModalCancel');
-const deleteModalConfirm = document.getElementById('deleteModalConfirm');
-const deleteModalTitle   = document.getElementById('deleteModalTitle');
-
-let pendingDeleteId   = null;
-let pendingDeleteIds  = null;
+window.pendingDeleteId  = null;
+window.pendingDeleteIds = null;
 
 function openDeleteModal(title) {
-    if (deleteModalTitle) deleteModalTitle.textContent = title;
-    deleteModalOverlay?.classList.add('active');
+    const t = document.getElementById('deleteModalTitle');
+    if (t) t.textContent = title;
+    document.getElementById('deleteModalOverlay')?.classList.add('active');
 }
 
 function closeDeleteModal() {
-    deleteModalOverlay?.classList.remove('active');
-    pendingDeleteId  = null;
-    pendingDeleteIds = null;
+    document.getElementById('deleteModalOverlay')?.classList.remove('active');
+    window.pendingDeleteId  = null;
+    window.pendingDeleteIds = null;
 }
 
-deleteModalCancel?.addEventListener('click', closeDeleteModal);
-deleteModalOverlay?.addEventListener('click', function(e) {
-    if (e.target === deleteModalOverlay) closeDeleteModal();
-});
+function initDeleteModal() {
+    const overlay = document.getElementById('deleteModalOverlay');
+    const cancel  = document.getElementById('deleteModalCancel');
+    const confirm = document.getElementById('deleteModalConfirm');
 
-deleteModalConfirm?.addEventListener('click', async function() {
-    closeDeleteModal();
+    cancel?.addEventListener('click', closeDeleteModal);
+    overlay?.addEventListener('click', e => {
+        if (e.target === overlay) closeDeleteModal();
+    });
 
-    // ── Eliminar múltiples ──
-    if (pendingDeleteIds) {
+confirm?.addEventListener('click', async function() {
+    // Guardar valores ANTES de limpiar
+    const deleteId  = window.pendingDeleteId;
+    const deleteIds = window.pendingDeleteIds;
+    
+    closeDeleteModal(); // ahora sí se puede limpiar
+
+    if (deleteIds) {
         try {
             const response = await fetch('/admin/forms/destroy-multiple', {
                 method: 'DELETE',
@@ -621,12 +633,12 @@ deleteModalConfirm?.addEventListener('click', async function() {
                     'X-CSRF-TOKEN': csrfToken,
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({ ids: pendingDeleteIds })
+                body: JSON.stringify({ ids: deleteIds })
             });
             const data = await response.json();
             if (data.success) {
-                showExportToast('success', '', data.message);
-                setTimeout(() => window.location.reload(), 1500);
+                sessionStorage.setItem('toastPending', JSON.stringify({ type: 'success', title: '¡Eliminado!', msg: data.message }));
+                window.location.reload();
             } else {
                 showExportToast('error', data.message);
             }
@@ -636,10 +648,9 @@ deleteModalConfirm?.addEventListener('click', async function() {
         return;
     }
 
-    // ── Eliminar uno ──
-    if (pendingDeleteId) {
+    if (deleteId) {
         try {
-            const response = await fetch(`/admin/forms/${pendingDeleteId}`, {
+            const response = await fetch(`/admin/forms/${deleteId}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
@@ -648,8 +659,8 @@ deleteModalConfirm?.addEventListener('click', async function() {
             });
             const data = await response.json();
             if (data.success) {
-                showExportToast('success', '', '¡Formulario eliminado!');
-                setTimeout(() => window.location.reload(), 1500);
+                sessionStorage.setItem('toastPending', JSON.stringify({ type: 'success', title: '¡Eliminado!', msg: '¡Formulario eliminado correctamente!' }));
+                window.location.reload();
             } else {
                 showExportToast('error', data.message);
             }
@@ -658,10 +669,11 @@ deleteModalConfirm?.addEventListener('click', async function() {
         }
     }
 });
+}
 
 window.deleteForm = function(id) {
-    pendingDeleteId  = id;
-    pendingDeleteIds = null;
+    window.pendingDeleteId  = id;
+    window.pendingDeleteIds = null;
     openDeleteModal('¿Eliminar este registro?');
 };
 

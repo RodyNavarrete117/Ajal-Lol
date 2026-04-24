@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 21-04-2026 a las 16:14:31
+-- Tiempo de generación: 24-04-2026 a las 19:50:15
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.5.1
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `prueba16`
+-- Base de datos: `prueba1`
 --
 
 -- --------------------------------------------------------
@@ -104,6 +104,14 @@ CREATE TABLE `cache` (
   `value` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `expiration` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `cache`
+--
+
+INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
+('laravel-cache-c5d45e590efb5ee912f68f9060c3acef', 'i:3;', 1777059901),
+('laravel-cache-c5d45e590efb5ee912f68f9060c3acef:timer', 'i:1777059901;', 1777059901);
 
 -- --------------------------------------------------------
 
@@ -612,7 +620,8 @@ INSERT INTO `rol_usuario` (`id_rol_usuario`, `id_usuario`, `cargo_usuario`) VALU
 (5, 5, 'administrador'),
 (6, 6, 'editor'),
 (7, 7, 'editor'),
-(8, 8, 'administrador');
+(8, 8, 'administrador'),
+(9, 9, 'administrador');
 
 -- --------------------------------------------------------
 
@@ -628,6 +637,13 @@ CREATE TABLE `sessions` (
   `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `last_activity` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `sessions`
+--
+
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+('nJSLmkeg9xIZuG5ut1FtvqBD9H1up7DXzE0bRFLs', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiYUxGSzh3d0FqNnVGVGV6SW1Nekw2bUpuS2lnNTdrZjRoc3dqZGpIcCI7czo3OiJ1c2VyX2lkIjtpOjk7czo2OiJub21icmUiO3M6MTk6IlJhZmFlbCBOaWMgU2FuZG92YWwiO3M6NToiZW1haWwiO3M6MzE6InJhZmFlbG5pY3NhbmRvdmFsMjAwMkBnbWFpbC5jb20iO3M6Mzoicm9sIjtzOjEzOiJhZG1pbmlzdHJhZG9yIjtzOjk6Il9wcmV2aW91cyI7YToyOntzOjM6InVybCI7czo1MToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2FkbWluL2FwaS9ub3RpZmljYXRpb25zL2NvdW50IjtzOjU6InJvdXRlIjtOO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1777060205);
 
 -- --------------------------------------------------------
 
@@ -656,20 +672,22 @@ CREATE TABLE `usuario` (
   `id_usuario` int NOT NULL,
   `nombre_usuario` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `correo_usuario` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `contraseña_usuario` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
+  `contraseña_usuario` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `notif_email` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`id_usuario`, `nombre_usuario`, `correo_usuario`, `contraseña_usuario`) VALUES
-(1, 'Rodolfo Navarrete Ek', 'admin@ajallol.com', '$2y$12$BxrxEDu56qd3K16hbAT5TO7I9h9cdgNTY2FdzAhmEU9HoaPz/h9nu'),
-(2, 'Editor General', 'editor@ajallol.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
-(5, 'Nintendo Xbox Sanchéz', 'Nintendo2@gmail.com', '$2y$12$iLo8g7nF5zhGdVshUv3mYuKdmAQP5QWAyND84bOv58788ZGE8UOJi'),
-(6, 'Lorenzo Sánchez Martín', 'lorenzo@gmail.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
-(7, 'Jefe de Area', 'Nintendo@gmail.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'),
-(8, 'Oscar Alejandro Sanchéz', 'Martin@gmail.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92');
+INSERT INTO `usuario` (`id_usuario`, `nombre_usuario`, `correo_usuario`, `contraseña_usuario`, `notif_email`) VALUES
+(1, 'Rodolfo Navarrete Ek', 'rodolfonavarreteek@gmail.com', '$2y$12$BxrxEDu56qd3K16hbAT5TO7I9h9cdgNTY2FdzAhmEU9HoaPz/h9nu', 1),
+(2, 'Editor General', 'editor@ajallol.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f', 1),
+(5, 'Nintendo Xbox Sanchéz', 'Nintendo2@gmail.com', '$2y$12$iLo8g7nF5zhGdVshUv3mYuKdmAQP5QWAyND84bOv58788ZGE8UOJi', 1),
+(6, 'Lorenzo Sánchez Martín', 'lorenzo@gmail.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f', 1),
+(7, 'Jefe de Area', 'Nintendo@gmail.com', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f', 1),
+(8, 'Oscar Alejandro Sanchéz', 'Martin@gmail.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 1),
+(9, 'Rafael Nic Sandoval', 'rafaelnicsandoval2002@gmail.com', '$2y$12$PGS8ZHIYrxV/aBmwvI66bOm33q1J4sxT.G5kxJD5cv/1ZecakSVm.', 0);
 
 --
 -- Índices para tablas volcadas
@@ -1032,7 +1050,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT de la tabla `formulario_contacto`
 --
 ALTER TABLE `formulario_contacto`
-  MODIFY `id_formcontacto` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_formcontacto` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `informe`
@@ -1104,7 +1122,7 @@ ALTER TABLE `nosotros_identidad_items`
 -- AUTO_INCREMENT de la tabla `notificaciones`
 --
 ALTER TABLE `notificaciones`
-  MODIFY `id_notificacion` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_notificacion` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT de la tabla `paginas`
@@ -1146,7 +1164,7 @@ ALTER TABLE `reportebeneficiarios`
 -- AUTO_INCREMENT de la tabla `rol_usuario`
 --
 ALTER TABLE `rol_usuario`
-  MODIFY `id_rol_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_rol_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
@@ -1158,7 +1176,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Restricciones para tablas volcadas

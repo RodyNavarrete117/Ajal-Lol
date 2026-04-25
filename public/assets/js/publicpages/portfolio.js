@@ -300,40 +300,114 @@
   /* ═══════════════════════════════════════════════
      LIGHTBOX
   ═══════════════════════════════════════════════ */
-  function initLightbox() {
-    const lb      = $('#lightbox');
-    const lbImg   = $('#lightbox-img');
-    const lbClose = $('#lightbox-close');
-    if (!lb || !lbImg) return;
+function initLightbox() {
+  const lb      = document.getElementById('lightbox');
+  const lbImg   = document.getElementById('lightbox-img');
+  const lbClose = document.getElementById('lightbox-close');
+  if (!lb || !lbImg) return;
 
-    on(document, 'click', e => {
-      const btn = e.target.closest('.zoom-btn');
-      if (!btn) return;
-      const src = btn.closest('.portfolio-item')?.querySelector('img')?.src;
-      if (!src) return;
-      lbImg.src = src;
-      lb.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      lbClose?.focus();
+  function openLightbox(src) {
+    lbImg.src = src;
+    lb.style.display = 'flex';
+    lb.getBoundingClientRect();
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    if (lbClose) lbClose.focus();
+  }
+
+  function closeLightbox() {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(function() {
+      lb.style.display = 'none';
+      lbImg.src = '';
+    }, 400);
+  }
+
+  // Desktop: click en lupa
+  document.querySelectorAll('.zoom-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var img = btn.closest('.portfolio-item').querySelector('img');
+      if (img) openLightbox(img.src);
     });
+  });
 
-    const close = () => {
-      lb.classList.remove('open');
-      document.body.style.overflow = '';
-      setTimeout(() => { lbImg.src = ''; }, 400);
-    };
+  // Móvil: tap directo en la imagen
+  document.querySelectorAll('.portfolio-item img').forEach(function(img) {
+    img.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      openLightbox(img.src);
+    });
+  });
 
-    on(lbClose, 'click', close);
-    on(lb, 'click', e => { if (e.target === lb) close(); });
-    on(document, 'keydown', e => { if (e.key === 'Escape' && lb.classList.contains('open')) close(); });
-
-    // Swipe para cerrar en móvil
-    let touchStartY = 0;
-    on(lb, 'touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
-    on(lb, 'touchend', e => {
-      if (Math.abs(e.changedTouches[0].clientY - touchStartY) > 80) close();
+  // Cerrar con X
+  if (lbClose) {
+    lbClose.addEventListener('click', function(e) {
+      e.stopPropagation();
+      closeLightbox();
     });
   }
+
+  // Cerrar al hacer click en el fondo oscuro
+  lb.addEventListener('click', function(e) {
+    if (e.target === lb) closeLightbox();
+  });
+
+  // Cerrar con Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) closeLightbox();
+  });
+
+  // Swipe hacia abajo para cerrar en móvil
+  var touchStartY = 0;
+  lb.addEventListener('touchstart', function(e) {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  lb.addEventListener('touchend', function(e) {
+    if (e.changedTouches[0].clientY - touchStartY > 80) closeLightbox();
+  });
+}
+
+ /* ═══════════════════════════════════════════════
+     MOBILE PORTFOLIO
+  ═══════════════════════════════════════════════ */
+  function initMobilePortfolio() {
+  if (window.innerWidth > 768) return;
+  
+  document.body.classList.add('is-touch');
+
+  document.querySelectorAll('.portfolio-item').forEach(function(item) {
+    var touchStartX = 0;
+    var touchStartY = 0;
+
+    item.addEventListener('touchstart', function(e) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    item.addEventListener('touchend', function(e) {
+      var deltaX = Math.abs(e.changedTouches[0].clientX - touchStartX);
+      var deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY);
+
+      // Si el dedo se movió más de 10px fue scroll, no tap
+      if (deltaX > 10 || deltaY > 10) return;
+
+      e.preventDefault();
+      var img = item.querySelector('img');
+      if (img) {
+        var lb    = document.getElementById('lightbox');
+        var lbImg = document.getElementById('lightbox-img');
+        if (!lb || !lbImg) return;
+        lbImg.src = img.src;
+        lb.style.display = 'flex';
+        lb.getBoundingClientRect();
+        lb.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+  });
+}
 
   /* ═══════════════════════════════════════════════
      FAQ ACCORDION
@@ -490,6 +564,7 @@
     initYearTabs();
     initPortfolio();
     initLightbox();
+    initMobilePortfolio();
     initFaq();
     initContactForm();
     initRipple();

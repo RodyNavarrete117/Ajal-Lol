@@ -213,7 +213,7 @@
   align-items: center;
   justify-content: center;
   gap: .6rem;
-  white-space: nowrap;
+  white-space: normal;
   line-height: 1;
   position: relative;
   overflow: hidden;
@@ -356,6 +356,12 @@
   .form-submit {
     font-size: .82rem;
     height: 48px;
+  }
+
+  .form-submit svg {
+    width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0;
   }
 }
 

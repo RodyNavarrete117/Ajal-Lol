@@ -372,43 +372,86 @@ function initLightbox() {
  /* ═══════════════════════════════════════════════
      MOBILE PORTFOLIO
   ═══════════════════════════════════════════════ */
-  function initMobilePortfolio() {
+function initMobilePortfolio() {
   if (window.innerWidth > 768) return;
-  
+
   document.body.classList.add('is-touch');
 
-  document.querySelectorAll('.portfolio-item').forEach(function(item) {
-    var touchStartX = 0;
-    var touchStartY = 0;
+  document.querySelectorAll('.portfolio-grid').forEach(function(grid) {
+    var items = Array.from(grid.querySelectorAll('.portfolio-item'));
+    if (!items.length) return;
 
-    item.addEventListener('touchstart', function(e) {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-    }, { passive: true });
+    // Vaciar el grid
+    grid.innerHTML = '';
 
-    item.addEventListener('touchend', function(e) {
-      var deltaX = Math.abs(e.changedTouches[0].clientX - touchStartX);
-      var deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY);
+    // Dividir en grupos de 3
+    var groups = [];
+    for (var i = 0; i < items.length; i += 3) {
+      groups.push(items.slice(i, i + 3));
+    }
 
-      // Si el dedo se movió más de 10px fue scroll, no tap
-      if (deltaX > 10 || deltaY > 10) return;
+    groups.forEach(function(group) {
+      // Contenedor del carrusel
+      var carousel = document.createElement('div');
+      carousel.className = 'carousel-group';
+      group.forEach(function(item) {
+        carousel.appendChild(item);
+      });
+      grid.appendChild(carousel);
 
-      e.preventDefault();
-      var img = item.querySelector('img');
-      if (img) {
-        var lb    = document.getElementById('lightbox');
-        var lbImg = document.getElementById('lightbox-img');
-        if (!lb || !lbImg) return;
-        lbImg.src = img.src;
-        lb.style.display = 'flex';
-        lb.getBoundingClientRect();
-        lb.classList.add('open');
-        document.body.style.overflow = 'hidden';
+      // Puntos indicadores solo si hay más de 1 imagen en el grupo
+      if (group.length > 1) {
+        var dots = document.createElement('div');
+        dots.className = 'carousel-dots';
+        group.forEach(function(_, idx) {
+          var dot = document.createElement('div');
+          dot.className = 'carousel-dot' + (idx === 0 ? ' active' : '');
+          dots.appendChild(dot);
+        });
+        grid.appendChild(dots);
+
+        // Actualizar punto activo al hacer scroll
+        carousel.addEventListener('scroll', function() {
+          var itemWidth = carousel.offsetWidth;
+          var index = Math.round(carousel.scrollLeft / (itemWidth * 0.75));
+          dots.querySelectorAll('.carousel-dot').forEach(function(d, i) {
+            d.classList.toggle('active', i === index);
+          });
+        }, { passive: true });
       }
+    });
+
+    // Tap en imagen abre lightbox
+    grid.querySelectorAll('.portfolio-item').forEach(function(item) {
+      var touchStartX = 0;
+      var touchStartY = 0;
+
+      item.addEventListener('touchstart', function(e) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      item.addEventListener('touchend', function(e) {
+        var deltaX = Math.abs(e.changedTouches[0].clientX - touchStartX);
+        var deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY);
+        if (deltaX > 10 || deltaY > 10) return;
+
+        e.preventDefault();
+        var img = item.querySelector('img');
+        if (img) {
+          var lb    = document.getElementById('lightbox');
+          var lbImg = document.getElementById('lightbox-img');
+          if (!lb || !lbImg) return;
+          lbImg.src = img.src;
+          lb.style.display = 'flex';
+          lb.getBoundingClientRect();
+          lb.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        }
+      });
     });
   });
 }
-
   /* ═══════════════════════════════════════════════
      FAQ ACCORDION
   ═══════════════════════════════════════════════ */

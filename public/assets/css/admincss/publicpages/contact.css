@@ -251,6 +251,7 @@
   z-index: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: .6rem;
 }
 
@@ -262,8 +263,16 @@
   box-shadow: none !important;
 }
 
-.form-submit--sending::before {
+.form-submit--sending::before,
+.form-submit--success::before,
+.form-submit--error::before {
   opacity: 0 !important;
+}
+
+.form-submit--sending,
+.form-submit--success,
+.form-submit--error {
+  pointer-events: none;
 }
 
 /* Spinner SVG */
@@ -343,4 +352,25 @@
   .contact-layout    { grid-template-columns: 1fr; }
   .form-row          { grid-template-columns: 1fr; }
   #contact .form-row { grid-template-columns: 1fr !important; }
+
+  .form-submit {
+    font-size: .82rem;
+    height: 48px;
+  }
+}
+
+.form-submit--error {
+  background: linear-gradient(135deg, #9b2226, #c0392b);
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.form-submit--error::before {
+  opacity: 0 !important;
+}
+
+.form-submit .ripple {
+  display: none !important;
+  animation: none !important;
 }

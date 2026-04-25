@@ -114,20 +114,20 @@ function initAnimations() {
    RIPPLE EN BOTONES
 ═══════════════════════════════════════════════ */
 function initRipple() {
-  const btns = $$('.btn-rose, .btn-ghost, .form-submit, .btn-paypal');
+  const btns = $$('.btn-rose, .btn-ghost, .btn-paypal');
   btns.forEach(btn => {
     btn.classList.add('ripple-container');
-    on(btn, 'click', e => {
-      const rect   = btn.getBoundingClientRect();
-      const size   = Math.max(rect.width, rect.height);
-      const x      = e.clientX - rect.left - size / 2;
-      const y      = e.clientY - rect.top  - size / 2;
-      const ripple = document.createElement('span');
-      ripple.className = 'ripple';
-      Object.assign(ripple.style, { width: size + 'px', height: size + 'px', left: x + 'px', top: y + 'px' });
-      btn.appendChild(ripple);
-      setTimeout(() => ripple.remove(), 650);
-    });
+on(btn, 'click', e => {
+  const rect   = btn.getBoundingClientRect();
+  const size   = Math.max(rect.width, rect.height);
+  const x      = e.clientX - rect.left - size / 2;
+  const y      = e.clientY - rect.top  - size / 2;
+  const ripple = document.createElement('span');
+  ripple.className = 'ripple';
+  Object.assign(ripple.style, { width: size + 'px', height: size + 'px', left: x + 'px', top: y + 'px' });
+  btn.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 650);
+});
   });
 }
 

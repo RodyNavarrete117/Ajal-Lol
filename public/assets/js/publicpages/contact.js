@@ -20,12 +20,17 @@
 
     const btn          = form.querySelector('.form-submit');
     const originalHTML = btn.innerHTML.trim();
+    btn.classList.remove('ripple-container');
+    btn.querySelectorAll('.ripple').forEach(el => el.remove());
+    btn.classList.remove('ripple-container');
+    btn._rippleDisabled = true;
+    let errorTimeout = null;
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]')
                         ?.getAttribute('content');
 
     /* ── Submit ── */
-    on(form, 'submit', async e => {
+    on(btn, 'click', async e => {
       e.preventDefault();
 
       clearFieldErrors(form);
@@ -38,10 +43,6 @@
         if (digits.length < 10 || digits.length > 13) {
           phoneInput.style.borderColor = 'var(--rose-soft)';
           showPhoneError(phoneInput, 'Ingresa un número válido (10–13 dígitos).');
-          if (status) {
-            status.textContent = '✗ Por favor revisa los campos marcados.';
-            status.className   = 'form-status error';
-          }
           return;
         }
       }
@@ -93,57 +94,26 @@
             </span>
           `;
 
-          if (status) {
-            status.textContent = '✓ ¡Mensaje recibido! Nos pondremos en contacto pronto.';
-            status.className   = 'form-status success';
-          }
-
           form.reset();
 
           /* Volver al estado original después de 4 s */
-          setTimeout(() => {
-            restoreBtn(btn, originalHTML);
-            clearStatus(status);
-          }, 4000);
+          errorTimeout = setTimeout(() => restoreBtn(btn, originalHTML), 3000);
 
         } else if (response.status === 429) {
-          /* ── Demasiados intentos ── */
-          restoreBtn(btn, originalHTML);
-
-          if (status) {
-            status.textContent = '✗ Demasiados intentos. Espera unos minutos e intenta de nuevo.';
-            status.className   = 'form-status error';
-          }
-
+            /* ── Demasiados intentos ── */
+            showBtnError(btn, originalHTML, 'Demasiados intentos. Espera unos minutos.');
         } else if (response.status === 422) {
           /* ── Errores de validación de Laravel ── */
-          restoreBtn(btn, originalHTML);
           showFieldErrors(form, data.errors ?? {});
-
-          if (status) {
-            status.textContent = '✗ Por favor revisa los campos marcados.';
-            status.className   = 'form-status error';
-          }
-
+          showBtnError(btn, originalHTML, 'Revisa los campos marcados.');
         } else {
-          /* ── Error general del servidor ── */
-          restoreBtn(btn, originalHTML);
-
-          if (status) {
-            status.textContent = `✗ ${data.message || 'Ocurrió un error. Intenta de nuevo.'}`;
-            status.className   = 'form-status error';
-          }
+          showBtnError(btn, originalHTML, data.message || 'Ocurrió un error. Intenta de nuevo.');
         }
 
       } catch (err) {
         /* ── Error de red / conexión ── */
         console.error('Contact form error:', err);
-        restoreBtn(btn, originalHTML);
-
-        if (status) {
-          status.textContent = '✗ Error de conexión. Revisa tu internet e intenta de nuevo.';
-          status.className   = 'form-status error';
-        }
+        showBtnError(btn, originalHTML, 'Error de conexión. Revisa tu internet.');
       }
     });
 
@@ -190,18 +160,38 @@
         if (!phoneInput.value) phoneInput.placeholder = '+52 999 000 0000';
       });
     }
+    function showBtnError(btn, originalHTML, msg) {
+      clearTimeout(errorTimeout);
+      btn.disabled = true;
+      btn.classList.remove('form-submit--sending');
+      btn.classList.add('form-submit--error');
+      btn.innerHTML = `
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" width="18" height="18" aria-hidden="true">
+            <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          ${msg}
+        </span>
+      `;
+      errorTimeout = setTimeout(() => restoreBtn(btn, originalHTML), 3000);
+    }
+
+    function restoreBtn(btn, originalHTML) {
+  btn.disabled = false;
+  btn.style.transition = 'none';
+  btn.classList.remove('form-submit--sending', 'form-submit--success', 'form-submit--error');
+  btn.innerHTML = originalHTML;
+  requestAnimationFrame(() => {
+    btn.style.transition = '';
+  });
+}
   }
 
   /* ═══════════════════════════════════════════════
      HELPERS
   ═══════════════════════════════════════════════ */
-
-  function restoreBtn(btn, originalHTML) {
-    btn.disabled = false;
-    btn.classList.remove('form-submit--sending', 'form-submit--success');
-    btn.innerHTML = originalHTML;
-  }
-
   function clearStatus(status) {
     if (!status) return;
     status.textContent = '';

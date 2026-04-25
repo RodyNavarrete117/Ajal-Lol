@@ -131,11 +131,11 @@
                       placeholder="Escribe tu mensaje aquí…" required></textarea>
           </div>
 
-          <button type="submit" class="form-submit">
-            <i class="bi bi-send" aria-hidden="true"></i> Enviar mensaje
+          <button type="button" class="form-submit">
+            <span>
+              <i class="bi bi-send" aria-hidden="true"></i> Enviar mensaje
+            </span>
           </button>
-
-          <p class="form-status" id="js-form-status" role="alert" aria-live="polite"></p>
         </form>
       </div>
 

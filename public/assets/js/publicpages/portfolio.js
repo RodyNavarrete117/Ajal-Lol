@@ -399,21 +399,35 @@ function initMobilePortfolio() {
       });
       grid.appendChild(carousel);
 
+      // ── Padding lateral SIEMPRE (grupos de 1, 2 o 3) ──
+      carousel.style.paddingLeft  = 'calc((100% - 75vw) / 2)';
+      carousel.style.paddingRight = 'calc((100% - 75vw) / 2)';
+      carousel.style.boxSizing    = 'border-box';
+
       // Puntos indicadores solo si hay más de 1 imagen en el grupo
       if (group.length > 1) {
         var dots = document.createElement('div');
         dots.className = 'carousel-dots';
         group.forEach(function(_, idx) {
           var dot = document.createElement('div');
-          dot.className = 'carousel-dot' + (idx === 0 ? ' active' : '');
+          var dotInicial = (group.length === 3) ? 1 : 0;
+          dot.className = 'carousel-dot' + (idx === dotInicial ? ' active' : '');
           dots.appendChild(dot);
         });
         grid.appendChild(dots);
 
+        // Centrar en la 2ª imagen al arrancar (solo si hay 3)
+        if (group.length === 3) {
+          requestAnimationFrame(function() {
+            var itemW = carousel.offsetWidth * 0.75;
+            carousel.scrollLeft = itemW;
+          });
+        }
+
         // Actualizar punto activo al hacer scroll
         carousel.addEventListener('scroll', function() {
-          var itemWidth = carousel.offsetWidth;
-          var index = Math.round(carousel.scrollLeft / (itemWidth * 0.75));
+          var itemWidth = carousel.offsetWidth * 0.75;
+          var index = Math.round(carousel.scrollLeft / itemWidth);
           dots.querySelectorAll('.carousel-dot').forEach(function(d, i) {
             d.classList.toggle('active', i === index);
           });

@@ -266,36 +266,71 @@
   /* ═══════════════════════════════════════════════
      PORTFOLIO — filtros de categoría (por panel)
   ═══════════════════════════════════════════════ */
-  function initPortfolio() {
-    // Cada .portfolio-filters opera de forma independiente dentro de su panel
-    $$('.portfolio-filters').forEach(filterGroup => {
-      const btns  = $$('button', filterGroup);
-      const panel = filterGroup.closest('.year-panel');
-      const items = panel ? $$('.portfolio-item', panel) : $$('.portfolio-item');
+function initPortfolio() {
+  $$('.portfolio-filters').forEach(filterGroup => {
+    const btns  = $$('button', filterGroup);
+    const panel = filterGroup.closest('.year-panel');
+    const items = panel ? $$('.portfolio-item', panel) : $$('.portfolio-item');
 
-      items.forEach(item => { item.style.transition = 'opacity .3s ease'; });
+    items.forEach(item => { item.style.transition = 'opacity .3s ease'; });
 
-      btns.forEach(btn => {
-        on(btn, 'click', () => {
-          btns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
-          btn.classList.add('active');
-          btn.setAttribute('aria-selected', 'true');
+    btns.forEach(btn => {
+      on(btn, 'click', () => {
+        btns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
 
-          const filter = btn.dataset.filter;
-          items.forEach(item => {
-            const show = filter === '*' || item.classList.contains(filter.replace('.', ''));
-            if (show) {
-              item.style.display = '';
-              requestAnimationFrame(() => { item.style.opacity = '1'; });
-            } else {
-              item.style.opacity = '0';
-              setTimeout(() => { item.style.display = 'none'; }, 300);
-            }
-          });
+        // Centrar el botón activo en el scroll de filtros
+        const filterContainer = btn.closest('.portfolio-filters');
+        if (filterContainer) {
+            const btnCenter = btn.offsetLeft + btn.offsetWidth / 2;
+            const containerCenter = filterContainer.offsetWidth / 2;
+            filterContainer.scrollTo({
+                left: btnCenter - containerCenter,
+                behavior: 'smooth'
+            });
+        }
+
+        const filter = btn.dataset.filter;
+
+        items.forEach(item => {
+          const show = filter === '*' || item.classList.contains(filter.replace('.', ''));
+          item.style.display = show ? '' : 'none';
+          item.style.opacity = show ? '1' : '0';
         });
+
+        // Reconstruir carrusel en móvil
+        if (window.innerWidth <= 768) {
+          const carousel = panel?.querySelector('.carousel-group');
+          const dotsContainer = panel?.querySelector('.carousel-dots');
+          if (!carousel || !dotsContainer) return;
+
+          carousel.scrollLeft = 0;
+
+          const visibles = Array.from(items).filter(item => item.style.display !== 'none');
+
+          dotsContainer.innerHTML = '';
+          visibles.forEach(function(_, idx) {
+            var dot = document.createElement('div');
+            dot.className = 'carousel-dot' + (idx === 0 ? ' active' : '');
+            dotsContainer.appendChild(dot);
+          });
+
+          // Reasignar scroll listener
+          carousel.onscroll = function() {
+            if (!visibles.length) return;
+            var itemWidth = visibles[0].offsetWidth + 8;
+            var index = Math.round(carousel.scrollLeft / itemWidth);
+            index = Math.max(0, Math.min(index, visibles.length - 1));
+            dotsContainer.querySelectorAll('.carousel-dot').forEach(function(d, i) {
+              d.classList.toggle('active', i === index);
+            });
+          };
+        }
       });
     });
-  }
+  });
+}
 
   /* ═══════════════════════════════════════════════
      LIGHTBOX
@@ -381,87 +416,66 @@ function initMobilePortfolio() {
     var items = Array.from(grid.querySelectorAll('.portfolio-item'));
     if (!items.length) return;
 
-    // Vaciar el grid
     grid.innerHTML = '';
 
-    // Dividir en grupos de 3
-    var groups = [];
-    for (var i = 0; i < items.length; i += 3) {
-      groups.push(items.slice(i, i + 3));
-    }
+    var carousel = document.createElement('div');
+    carousel.className = 'carousel-group';
 
-    groups.forEach(function(group) {
-      // Contenedor del carrusel
-      var carousel = document.createElement('div');
-      carousel.className = 'carousel-group';
-      group.forEach(function(item) {
-        carousel.appendChild(item);
-      });
-      grid.appendChild(carousel);
-
-      // ── Padding lateral SIEMPRE (grupos de 1, 2 o 3) ──
-      carousel.style.paddingLeft  = 'calc((100% - 75vw) / 2)';
-      carousel.style.paddingRight = 'calc((100% - 75vw) / 2)';
-      carousel.style.boxSizing    = 'border-box';
-
-      // Puntos indicadores solo si hay más de 1 imagen en el grupo
-      if (group.length > 1) {
-        var dots = document.createElement('div');
-        dots.className = 'carousel-dots';
-        group.forEach(function(_, idx) {
-          var dot = document.createElement('div');
-          var dotInicial = (group.length === 3) ? 1 : 0;
-          dot.className = 'carousel-dot' + (idx === dotInicial ? ' active' : '');
-          dots.appendChild(dot);
-        });
-        grid.appendChild(dots);
-
-        // Centrar en la 2ª imagen al arrancar (solo si hay 3)
-        if (group.length === 3) {
-          requestAnimationFrame(function() {
-            var itemW = carousel.offsetWidth * 0.75;
-            carousel.scrollLeft = itemW;
-          });
-        }
-
-        // Actualizar punto activo al hacer scroll
-        carousel.addEventListener('scroll', function() {
-          var itemWidth = carousel.offsetWidth * 0.75;
-          var index = Math.round(carousel.scrollLeft / itemWidth);
-          dots.querySelectorAll('.carousel-dot').forEach(function(d, i) {
-            d.classList.toggle('active', i === index);
-          });
-        }, { passive: true });
-      }
+    items.forEach(function(item) {
+      carousel.appendChild(item);
     });
 
-    // Tap en imagen abre lightbox
-    grid.querySelectorAll('.portfolio-item').forEach(function(item) {
-      var touchStartX = 0;
-      var touchStartY = 0;
+    var spacer = document.createElement('div');
+    spacer.className = 'carousel-spacer';
+    carousel.appendChild(spacer);
 
+    grid.appendChild(carousel);
+
+    // Dots
+    var dotsEl = document.createElement('div');
+    dotsEl.className = 'carousel-dots';
+    items.forEach(function(_, idx) {
+      var dot = document.createElement('div');
+      dot.className = 'carousel-dot' + (idx === 0 ? ' active' : '');
+      dotsEl.appendChild(dot);
+    });
+    grid.appendChild(dotsEl);
+
+    // Scroll → actualizar dot activo
+    carousel.addEventListener('scroll', function() {
+      var visibles = Array.from(carousel.querySelectorAll('.portfolio-item'))
+        .filter(function(it) { return it.style.display !== 'none'; });
+      if (!visibles.length) return;
+      var itemWidth = visibles[0].offsetWidth + 8;
+      var index = Math.round(carousel.scrollLeft / itemWidth);
+      index = Math.max(0, Math.min(index, visibles.length - 1));
+      dotsEl.querySelectorAll('.carousel-dot').forEach(function(d, i) {
+        d.classList.toggle('active', i === index);
+      });
+    }, { passive: true });
+
+    // Tap → lightbox
+    items.forEach(function(item) {
+      var touchStartX = 0, touchStartY = 0;
       item.addEventListener('touchstart', function(e) {
         touchStartX = e.touches[0].clientX;
         touchStartY = e.touches[0].clientY;
       }, { passive: true });
-
       item.addEventListener('touchend', function(e) {
         var deltaX = Math.abs(e.changedTouches[0].clientX - touchStartX);
         var deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY);
         if (deltaX > 10 || deltaY > 10) return;
-
         e.preventDefault();
         var img = item.querySelector('img');
-        if (img) {
-          var lb    = document.getElementById('lightbox');
-          var lbImg = document.getElementById('lightbox-img');
-          if (!lb || !lbImg) return;
-          lbImg.src = img.src;
-          lb.style.display = 'flex';
-          lb.getBoundingClientRect();
-          lb.classList.add('open');
-          document.body.style.overflow = 'hidden';
-        }
+        if (!img) return;
+        var lb    = document.getElementById('lightbox');
+        var lbImg = document.getElementById('lightbox-img');
+        if (!lb || !lbImg) return;
+        lbImg.src = img.src;
+        lb.style.display = 'flex';
+        lb.getBoundingClientRect();
+        lb.classList.add('open');
+        document.body.style.overflow = 'hidden';
       });
     });
   });

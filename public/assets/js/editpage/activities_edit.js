@@ -148,7 +148,7 @@
     /* ════ FILTRO DE AÑO — Pestaña Actividades ════ */
     const filterYearDisplay = document.getElementById('filterYearDisplay');
     const filterYearInput   = document.getElementById('filter_anio');
-    const MIN_YEAR = 2000, MAX_YEAR = 2099;
+    const MIN_YEAR = 2023, MAX_YEAR = new Date().getFullYear();
 
     function animateEl(el, dir) {
         el.style.cssText = 'transition:none;transform:' + (dir === 'up' ? 'translateY(10px)' : 'translateY(-10px)') + ';opacity:0';
@@ -163,7 +163,15 @@
         filterYearInput.value = val;
         filterYearDisplay.textContent = val;
         animateEl(filterYearDisplay, delta > 0 ? 'up' : 'down');
+        updateYearButtons(val);
         loadActivitiesForYear(val);
+    }
+
+    function updateYearButtons(val) {
+        const btnDown = document.getElementById('filterYearDown');
+        const btnUp   = document.getElementById('filterYearUp');
+        if (btnDown) btnDown.disabled = val <= MIN_YEAR;
+        if (btnUp)   btnUp.disabled   = val >= MAX_YEAR;
     }
 
     document.getElementById('filterYearDown')?.addEventListener('click', () => updateFilterYear(-1));
@@ -682,5 +690,6 @@
     /* ════ INIT ════ */
     document.querySelectorAll('.activity-card').forEach(card => initCard(card));
     renderCategories();
+    updateYearButtons(parseInt(filterYearInput?.value));
 
 })();

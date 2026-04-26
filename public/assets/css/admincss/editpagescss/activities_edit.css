@@ -695,3 +695,9 @@ form { padding: 22px 28px 30px; }
     .yt-btn span { display: none; }
     .yt-btn { padding: 6px 9px; }
 }
+
+.year-filter-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+}

@@ -176,5 +176,8 @@
 @endsection
 
 @push('scripts')
+<script>
+    window.__faqSaved = {{ session('success') ? 'true' : 'false' }};
+</script>
 <script src="{{ asset('assets/js/editpage/faq_edit.js') }}"></script>
 @endpush

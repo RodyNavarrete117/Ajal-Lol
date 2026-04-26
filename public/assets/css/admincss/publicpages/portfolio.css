@@ -87,6 +87,29 @@
   margin-bottom: 2.5rem;
 }
 
+@media (max-width: 768px) {
+  .portfolio-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: .4rem 1.2rem 1rem;
+    margin-left: 0;
+    margin-right: 0;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+
+  .portfolio-filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .portfolio-filters button {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+}
+
 .portfolio-filters button {
   padding: .5rem 1.4rem;
   border-radius: 99px;
@@ -305,39 +328,36 @@
 
 /* ─── MÓVIL ─── */
 @media (max-width: 768px) {
-  .zoom-btn {
-    display: none !important;
-  }
+  .zoom-btn { display: none !important; }
 
-  .portfolio-grid {
-    display: block;
-  }
+  .portfolio-grid { display: block; }
 
-  /* Grupos de 3 imágenes */
   .carousel-group {
-    display: flex;
-    gap: .8rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: .5rem;
-    margin-bottom: 1rem;
-    scrollbar-width: none;
+      display: flex;
+      gap: .8rem;
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 12.5vw .5rem;
+      margin-bottom: 1rem;
+      scrollbar-width: none;
   }
 
-  .carousel-group::-webkit-scrollbar {
-    display: none;
-  }
+  .carousel-group::-webkit-scrollbar { display: none; }
 
   .carousel-group .portfolio-item {
     flex: 0 0 75vw;
-    max-width: 75vw;
-    scroll-snap-align: center; 
     width: 75vw;
+    scroll-snap-align: center;
     aspect-ratio: 4/3;
   }
 
-  /* Puntos indicadores */
+  /* Espaciador que permite centrar el último item */
+  .carousel-spacer {
+    flex: 0 0 12.5vw;
+    width: 12.5vw;
+  }
+
   .carousel-dots {
     display: flex;
     justify-content: center;
@@ -346,8 +366,7 @@
   }
 
   .carousel-dot {
-    width: 7px;
-    height: 7px;
+    width: 7px; height: 7px;
     border-radius: 50%;
     background: var(--rose-pale);
     transition: background .2s ease, transform .2s ease;
@@ -358,7 +377,5 @@
     transform: scale(1.3);
   }
 
-  .portfolio-item .portfolio-info {
-    opacity: 1;
-  }
+  .portfolio-item .portfolio-info { opacity: 1; }
 }

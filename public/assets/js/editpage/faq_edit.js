@@ -287,4 +287,9 @@
     document.querySelectorAll('.faq-card').forEach(card => initCard(card));
     updateTotal();
 
+    /* ════ TOAST GUARDADO ════ */
+    if (window.__faqSaved) {
+        showToast('Cambios guardados correctamente.', 'success');
+    }
+
 })();

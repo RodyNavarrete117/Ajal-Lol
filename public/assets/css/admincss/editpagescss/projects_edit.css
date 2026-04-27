@@ -254,6 +254,44 @@
 
 .img-toolbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
 .filter-wrap { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; flex: 1; }
+
+@media (max-width: 680px) {
+  .filter-wrap {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .filter-wrap::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-wrap .pill {
+    flex-shrink: 0;
+  }
+
+    .img-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .btn-add-img {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 4px;
+  }
+
+  .img-toolbar {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 8px;
+    }
+}
 .pill { padding: 6px 13px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border); background: var(--bg-input); color: var(--text-label); font-family: inherit; transition: border-color var(--tr), background var(--tr), color var(--tr); }
 .pill:hover { border-color: var(--accent); color: var(--accent); }
 .pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }

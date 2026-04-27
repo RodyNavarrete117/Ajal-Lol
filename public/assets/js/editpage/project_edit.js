@@ -830,6 +830,19 @@
         document.querySelectorAll('#catFilter .pill').forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
         filterImagesByCat(pill.dataset.cat);
+
+        // Centrar el filtro activo en móvil
+        if (window.innerWidth <= 680) {
+            const filterContainer = document.getElementById('catFilter');
+            if (filterContainer) {
+                const btnCenter = pill.offsetLeft + pill.offsetWidth / 2;
+                const containerCenter = filterContainer.offsetWidth / 2;
+                filterContainer.scrollTo({
+                    left: btnCenter - containerCenter,
+                    behavior: 'smooth'
+                });
+            }
+        }
     });
 
     document.getElementById('catPillsManager')?.addEventListener('click', e => {

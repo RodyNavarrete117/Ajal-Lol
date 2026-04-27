@@ -139,7 +139,15 @@
 
     function buildDots() {
       dotsEl.innerHTML = '';
-      for (let i = 0; i < totalPages(); i++) {
+      const total = totalPages();
+
+      // Oculta o muestra los controles según si hay más de una página
+      const controls = document.querySelector('.team-carousel-controls');
+      if (controls) {
+        controls.style.display = total <= 1 ? 'none' : '';
+      }
+
+      for (let i = 0; i < total; i++) {
         const d = document.createElement('button');
         d.className = 'carousel-dot' + (i === current ? ' active' : '');
         d.setAttribute('aria-label', 'Página ' + (i + 1));

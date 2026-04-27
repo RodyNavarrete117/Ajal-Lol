@@ -45,11 +45,13 @@
       </div>
     </div>
 
+    @if($directiva->count() > 0)
     <div class="team-carousel-controls">
       <button class="carousel-btn" id="teamPrev" aria-label="Anterior"><i class="fa fa-chevron-left"></i></button>
       <div class="carousel-dots" id="teamDots"></div>
       <button class="carousel-btn" id="teamNext" aria-label="Siguiente"><i class="fa fa-chevron-right"></i></button>
     </div>
+    @endif
   </div>
 
 </section>

@@ -25,7 +25,6 @@ class HomeController extends Controller
         // Retorna la vista con las estadísticas
         return view('admin.home', compact(
             'totalUsers',
-            'totalPages',
             'totalForms'
         ));
     }

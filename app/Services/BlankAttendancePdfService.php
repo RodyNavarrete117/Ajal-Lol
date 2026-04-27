@@ -6,46 +6,44 @@ use Mpdf\Mpdf;
 
 class BlankAttendancePdfService
 {
-    // ── Formato completamente en blanco ───────────────────────────────────────
     public function generate()
     {
         return $this->buildPdf(null);
     }
 
-    // ── Con metadatos del formulario ──────────────────────────────────────────
     public function generateWithMeta(\App\Models\Report $report)
     {
         return $this->buildPdf($report);
     }
 
-    // ── Lógica compartida ─────────────────────────────────────────────────────
     private function buildPdf(?\App\Models\Report $report)
     {
         $withMeta = $report !== null;
 
-
         $mpdf = new Mpdf([
             'mode'          => 'utf-8',
             'format'        => 'A4',
-            'margin_top'    => 24,
-            'margin_bottom' => 18,
+            'margin_top'    => 35,
+            'margin_bottom' => 12,
             'margin_left'   => 18,
             'margin_right'  => 18,
         ]);
 
         $mpdf->SetTitle('Formato de Asistencia - Ajal-Lol A.C.');
 
+        $logoPath = public_path('assets/img/logo_principal/ImagenPrincipal.jpg');
+
         $mpdf->SetHTMLHeader('
-        <table width="100%" style="border-bottom:2.5px solid #783d66;padding-bottom:6px;font-family:Arial;">
+        <table width="100%" style="border-bottom:2.5px solid #783d66; padding-bottom:4px; font-family:Arial; margin:0;">
             <tr>
-                <td width="12%">
-                    <img src="' . public_path('assets/img/logo_principal/ImagenPrincipal.jpg') . '" style="height:40px;">
+                <td width="18%" style="vertical-align:middle; padding:0;">
+                    <img src="' . $logoPath . '" style="height:80px; width:auto; display:block;">
                 </td>
-                <td width="88%" style="padding-left:12px; text-align:center;">
-                    <div style="font-size:15px;font-weight:bold;color:#5a2d4d;letter-spacing:2px;text-transform:uppercase;">
+                <td width="82%" style="vertical-align:middle; padding-left:10px; text-align:center;">
+                    <div style="font-size:15px; font-weight:bold; color:#5a2d4d; letter-spacing:2px; text-transform:uppercase;">
                         Ajal-Lol A.C.
                     </div>
-                    <div style="font-size:8px;color:#777;margin-top:2px;text-transform:uppercase;">
+                    <div style="font-size:8px; color:#777; margin-top:2px; text-transform:uppercase;">
                         Sistema Administrativo · Registro de Asistencia
                     </div>
                 </td>
@@ -54,7 +52,7 @@ class BlankAttendancePdfService
         ');
 
         $mpdf->SetHTMLFooter('
-        <table width="100%" style="border-top:1px solid #e0c8d8;font-size:7px;color:#aaa;">
+        <table width="100%" style="border-top:1px solid #e0c8d8; font-size:7px; color:#aaa;">
             <tr>
                 <td style="width:25%;">Documento interno · Formato para llenar a mano</td>
                 <td style="text-align:center; color:#5a2d4d; font-weight:bold;">
@@ -67,22 +65,21 @@ class BlankAttendancePdfService
 
         $style = '
         <style>
-            body { font-family: Arial; font-size: 12px; }
-            .section-title { background: #783d66; color: #fff; font-size: 12px; font-weight: bold; padding: 6px 10px; text-transform: uppercase; }
-            .meta-box { width: 100%; border-collapse: collapse; margin-bottom: 8px; border: 1px solid #e0c8d8; }
-            .meta-box td { padding: 6px 8px; border-bottom: 1px solid #f0e0ea; }
+            body { font-family: Arial; font-size: 10.5px; }
+            .section-title { background: #783d66; color: #fff; font-size: 10.5px; font-weight: bold; padding: 3px 10px; text-transform: uppercase; }
+            .meta-box { width: 100%; border-collapse: collapse; margin-bottom: 3px; border: 1px solid #e0c8d8; }
+            .meta-box td { padding: 3px 8px; border-bottom: 1px solid #f0e0ea; }
             .meta-box tr:last-child td { border-bottom: none; }
-            .meta-label { font-weight: bold; color: #783d66; width: 130px; background: #fdf5fa; font-size: 12px; }
-            .meta-value { font-size: 12px; color: #222; }
-            .section-header { background: #783d66; color: #fff; font-size: 12px; font-weight: bold; padding: 5px 10px; text-transform: uppercase; }
+            .meta-label { font-weight: bold; color: #783d66; width: 130px; background: #fdf5fa; font-size: 10.5px; }
+            .meta-value { font-size: 10.5px; color: #222; }
+            .section-header { background: #783d66; color: #fff; font-size: 10.5px; font-weight: bold; padding: 3px 10px; text-transform: uppercase; }
             table.ben-table { width: 100%; border-collapse: collapse; }
-            table.ben-table th { background: #f7edf4; color: #5a2d4d; font-size: 12px; padding: 4px; border: 1px solid #e0c8d8; }
-            table.ben-table td { border: 1px solid #eedde8; height: 10mm; }
+            table.ben-table th { background: #f7edf4; color: #5a2d4d; font-size: 10px; padding: 3px 4px; border: 1px solid #e0c8d8; }
+            table.ben-table td { border: 1px solid #eedde8; height: 10.5mm; }
             td.num-cell { text-align: center; font-weight: bold; color: #783d66; background: #fdf0f7; width: 26px; }
         </style>
         ';
 
-        // Metadatos: usar valores del reporte o celdas vacías
         if ($withMeta) {
             $fecha        = $report->fecha
                 ? \Carbon\Carbon::parse($report->fecha)->locale('es')->isoFormat('D [de] MMMM [de] YYYY')

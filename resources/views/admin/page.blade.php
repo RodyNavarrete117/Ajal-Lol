@@ -42,8 +42,8 @@
                 <div class="header-controls">
                     <button class="header-btn header-btn--preview"
                         title="Vista previa"
-                        data-preview-desktop="{{ asset('assets/img/previews/home-desktop.jpg') }}"
-                        data-preview-mobile="{{ asset('assets/img/previews/home-mobile.jpg') }}"
+                        data-preview-desktop="{{ asset('assets/img/previews/home-desktop.png') }}"
+                        data-preview-mobile="{{ asset('assets/img/previews/home-mobile.png') }}"
                         data-page-name="Inicio">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
@@ -78,8 +78,8 @@
                 <div class="header-controls">
                     <button class="header-btn header-btn--preview"
                         title="Vista previa"
-                        data-preview-desktop="{{ asset('assets/img/previews/about-desktop.jpg') }}"
-                        data-preview-mobile="{{ asset('assets/img/previews/about-mobile.jpg') }}"
+                        data-preview-desktop="{{ asset('assets/img/previews/about-desktop.png') }}"
+                        data-preview-mobile="{{ asset('assets/img/previews/about-mobile.png') }}"
                         data-page-name="Nosotros">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
@@ -114,8 +114,8 @@
                 <div class="header-controls">
                     <button class="header-btn header-btn--preview"
                         title="Vista previa"
-                        data-preview-desktop="{{ asset('assets/img/previews/allies-desktop.jpg') }}"
-                        data-preview-mobile="{{ asset('assets/img/previews/allies-mobile.jpg') }}"
+                        data-preview-desktop="{{ asset('assets/img/previews/allies-desktop.png') }}"
+                        data-preview-mobile="{{ asset('assets/img/previews/allies-mobile.png') }}"
                         data-page-name="Aliados">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
@@ -150,8 +150,8 @@
                 <div class="header-controls">
                     <button class="header-btn header-btn--preview"
                         title="Vista previa"
-                        data-preview-desktop="{{ asset('assets/img/previews/activities-desktop.jpg') }}"
-                        data-preview-mobile="{{ asset('assets/img/previews/activities-mobile.jpg') }}"
+                        data-preview-desktop="{{ asset('assets/img/previews/activities-desktop.png') }}"
+                        data-preview-mobile="{{ asset('assets/img/previews/activities-mobile.png') }}"
                         data-page-name="Actividades">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>

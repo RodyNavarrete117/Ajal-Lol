@@ -28,10 +28,7 @@
                     <span class="stat-number">{{ $totalUsers }}</span>
                     <span class="stat-label">Usuarios</span>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-number">{{ $totalPages }}</span>
-                    <span class="stat-label">Páginas</span>
-                </div>
+                
                 <div class="stat-item">
                     <span class="stat-number">{{ $totalForms }}</span>
                     <span class="stat-label">Formularios</span>

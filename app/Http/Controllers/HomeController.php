@@ -19,9 +19,6 @@ class HomeController extends Controller
         // Cuenta el total de usuarios registrados
         $totalUsers = DB::table('usuario')->count();
 
-        // Total de páginas (pendiente de implementación)
-        $totalPages = 0;
-
         // Cuenta el total de mensajes del formulario de contacto
         $totalForms = DB::table('formulario_contacto')->count();
 

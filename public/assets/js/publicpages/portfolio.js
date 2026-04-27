@@ -293,10 +293,19 @@ function initPortfolio() {
 
         const filter = btn.dataset.filter;
 
-        items.forEach(item => {
+        items.forEach((item, i) => {
           const show = filter === '*' || item.classList.contains(filter.replace('.', ''));
-          item.style.display = show ? '' : 'none';
-          item.style.opacity = show ? '1' : '0';
+          if (show) {
+            item.style.display = '';
+            setTimeout(() => {
+              item.style.opacity = '1';
+              item.style.transform = 'scale(1)';
+            }, i * 40); // entrada escalonada
+          } else {
+            item.style.opacity = '0';
+            item.style.transform = 'scale(0.92)';
+            setTimeout(() => { item.style.display = 'none'; }, 300);
+          }
         });
 
         // Reconstruir carrusel en móvil

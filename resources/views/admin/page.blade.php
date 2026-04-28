@@ -186,8 +186,8 @@
                 <div class="header-controls">
                     <button class="header-btn header-btn--preview"
                         title="Vista previa"
-                        data-preview-desktop="{{ asset('assets/img/previews/projects-desktop.jpg') }}"
-                        data-preview-mobile="{{ asset('assets/img/previews/projects-mobile.jpg') }}"
+                        data-preview-desktop="{{ asset('assets/img/previews/projects-desktop.png') }}"
+                        data-preview-mobile="{{ asset('assets/img/previews/projects-mobile.png') }}"
                         data-page-name="Proyectos">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
@@ -222,8 +222,8 @@
                 <div class="header-controls">
                     <button class="header-btn header-btn--preview"
                         title="Vista previa"
-                        data-preview-desktop="{{ asset('assets/img/previews/board-desktop.jpg') }}"
-                        data-preview-mobile="{{ asset('assets/img/previews/board-mobile.jpg') }}"
+                        data-preview-desktop="{{ asset('assets/img/previews/board-desktop.png') }}"
+                        data-preview-mobile="{{ asset('assets/img/previews/board-mobile.png') }}"
                         data-page-name="Directiva">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
@@ -258,8 +258,8 @@
                 <div class="header-controls">
                     <button class="header-btn header-btn--preview"
                         title="Vista previa"
-                        data-preview-desktop="{{ asset('assets/img/previews/faq-desktop.jpg') }}"
-                        data-preview-mobile="{{ asset('assets/img/previews/faq-mobile.jpg') }}"
+                        data-preview-desktop="{{ asset('assets/img/previews/faq-desktop.png') }}"
+                        data-preview-mobile="{{ asset('assets/img/previews/faq-mobile.png') }}"
                         data-page-name="Preguntas frecuentes">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
@@ -294,8 +294,8 @@
                 <div class="header-controls">
                     <button class="header-btn header-btn--preview"
                         title="Vista previa"
-                        data-preview-desktop="{{ asset('assets/img/previews/contact-desktop.jpg') }}"
-                        data-preview-mobile="{{ asset('assets/img/previews/contact-mobile.jpg') }}"
+                        data-preview-desktop="{{ asset('assets/img/previews/contact-desktop.png') }}"
+                        data-preview-mobile="{{ asset('assets/img/previews/contact-mobile.png') }}"
                         data-page-name="Contacto">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
@@ -330,8 +330,8 @@
                 <div class="header-controls">
                     <button class="header-btn header-btn--preview"
                         title="Vista previa"
-                        data-preview-desktop="{{ asset('assets/img/previews/donations-desktop.jpg') }}"
-                        data-preview-mobile="{{ asset('assets/img/previews/donations-mobile.jpg') }}"
+                        data-preview-desktop="{{ asset('assets/img/previews/donations-desktop.png') }}"
+                        data-preview-mobile="{{ asset('assets/img/previews/donations-mobile.png') }}"
                         data-page-name="Donativos">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>

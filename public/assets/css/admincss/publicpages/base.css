@@ -299,4 +299,44 @@ body.cursor-hover #cursor-ring {
   .mvov-card.open .mvov-body {
     padding-bottom: .75rem;
   }
+
+  .activities-carousel-wrapper {
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+
+  #activitiesGrid.is-carousel {
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    transition: transform 0.35s cubic-bezier(.25,.46,.45,.94);
+  }
+
+  #activitiesGrid.is-carousel .activity-card {
+    flex: 0 0 100%;
+    min-width: 100%;
+  }
+
+  .act-carousel-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1.2rem;
+  }
+
+  .act-carousel-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--rose-pale);
+    border: none; padding: 0;
+    cursor: pointer;
+    transition: .3s ease;
+  }
+
+  .act-carousel-dot.active {
+    background: var(--rose-deep);
+    width: 20px;
+    border-radius: 99px;
+  }
 }

@@ -221,6 +221,7 @@
     initFaq();
     initTeamCarousel();
     initMvovAccordion();
+    initActivitiesCarousel();
   }
 
   if (document.readyState === 'loading') {
@@ -262,6 +263,146 @@
         });
       }
     });
+  }
+
+  function initActivitiesCarousel() {
+    const isMobile = () => window.innerWidth <= 768;
+    const grid = document.getElementById('activitiesGrid');
+    if (!grid) return;
+
+    let cur = 0;
+    let startX = 0, diffX = 0, isDragging = false;
+    let wrapper = null;
+    let dotsNav = null;
+    let built = false;
+
+    function getCards() {
+      return [...grid.querySelectorAll('.activity-card')];
+    }
+
+    function goTo(n) {
+      const cards = getCards();
+      cur = Math.max(0, Math.min(n, cards.length - 1));
+
+      const card = cards[0];
+      if (!card) return;
+      // ancho real de la tarjeta + su margin-right
+      const cardW = card.offsetWidth;
+      const marginR = parseFloat(getComputedStyle(card).marginRight) || 0;
+      const step = cardW + marginR;
+
+      grid.style.transform = `translateX(-${cur * step}px)`;
+      grid.style.transition = 'transform 0.35s cubic-bezier(.25,.46,.45,.94)';
+
+      document.querySelectorAll('.act-carousel-dot').forEach((d, i) =>
+        d.classList.toggle('active', i === cur)
+      );
+    }
+
+    function buildDots(total) {
+      dotsNav = document.createElement('div');
+      dotsNav.className = 'act-carousel-dots';
+      for (let i = 0; i < total; i++) {
+        const d = document.createElement('button');
+        d.className = 'act-carousel-dot' + (i === 0 ? ' active' : '');
+        d.setAttribute('aria-label', 'Actividad ' + (i + 1));
+        d.addEventListener('click', () => goTo(i));
+        dotsNav.appendChild(d);
+      }
+      wrapper.insertAdjacentElement('afterend', dotsNav);
+    }
+
+function buildCarousel() {
+      if (!isMobile()) return;
+      const cards = getCards();
+      if (cards.length <= 1) return;
+
+      // Crear wrapper
+      wrapper = document.createElement('div');
+      wrapper.className = 'activities-carousel-wrapper';
+      grid.parentNode.insertBefore(wrapper, grid);
+      wrapper.appendChild(grid);
+
+      grid.classList.add('is-carousel');
+      cur = 0;
+
+      buildDots(cards.length);
+
+      let step = 0;
+      let startY = 0;
+      let isScrolling = null;
+
+      grid.addEventListener('touchstart', e => {
+        const card = getCards()[0];
+        const marginR = parseFloat(getComputedStyle(card).marginRight) || 0;
+        step = card.offsetWidth + marginR;
+
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY; // Guardamos la posición Y inicial
+        isDragging = true;
+        isScrolling = null; // Reiniciamos la detección en cada toque
+        diffX = 0;
+      }, { passive: true });
+
+      grid.addEventListener('touchmove', e => {
+        if (!isDragging) return;
+
+        const currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
+        
+        diffX = currentX - startX;
+        const diffY = currentY - startY;
+
+        // Si es el primer movimiento, determinamos si es vertical u horizontal
+        if (isScrolling === null) {
+          isScrolling = Math.abs(diffY) > Math.abs(diffX);
+        }
+
+        // Si es scroll vertical, soltamos el control del carrusel
+        if (isScrolling) {
+          isDragging = false;
+          return;
+        }
+
+        // Si es movimiento horizontal, movemos el carrusel
+        grid.style.transition = 'none';
+        grid.style.transform = `translateX(calc(-${cur * step}px + ${diffX}px))`;
+      }, { passive: true });
+
+      grid.addEventListener('touchend', () => {
+        // Si el usuario estaba haciendo scroll vertical, ignoramos la acción de cambio de slide
+        if (isScrolling) return;
+
+        isDragging = false;
+        grid.style.transition = 'transform 0.35s cubic-bezier(.25,.46,.45,.94)';
+        
+        if (diffX < -50) goTo(cur + 1);
+        else if (diffX > 50) goTo(cur - 1);
+        else goTo(cur);
+      });
+    }
+
+    function destroyCarousel() {
+      grid.classList.remove('is-carousel');
+      grid.style.transform = '';
+      grid.style.transition = '';
+
+      if (wrapper) {
+        wrapper.parentNode.insertBefore(grid, wrapper);
+        wrapper.remove();
+        wrapper = null;
+      }
+      if (dotsNav) { dotsNav.remove(); dotsNav = null; }
+      cur = 0;
+    }
+
+    function onResize() {
+      if (isMobile() && !built) { buildCarousel(); built = true; }
+      else if (!isMobile() && built) { destroyCarousel(); built = false; }
+    }
+
+    window.addEventListener('resize', onResize);
+    if (isMobile()) { buildCarousel(); built = true; }
   }
 
 })();

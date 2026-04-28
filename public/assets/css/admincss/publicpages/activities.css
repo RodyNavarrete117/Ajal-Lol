@@ -283,3 +283,35 @@
     }
     .year-btn--dots { min-width: 44px; }
 }
+
+/* ─── CARRUSEL MÓVIL: sin hover, con espaciado ─── */
+@media (max-width: 768px) {
+  #activitiesGrid.is-carousel .activity-card {
+    flex: 0 0 calc(100% - 2rem);
+    min-width: calc(100% - 2rem);
+    margin-right: 1rem;
+  }
+
+  /* SIN padding-inline — lo quitamos completamente */
+
+  /* Quitar todo el hover */
+  #activitiesGrid.is-carousel .activity-card:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--rose-pale);
+  }
+
+  #activitiesGrid.is-carousel .activity-card:hover::before {
+    opacity: 0;
+  }
+
+  #activitiesGrid.is-carousel .activity-card:hover::after {
+    transform: scaleX(0);
+  }
+
+  #activitiesGrid.is-carousel .activity-card:hover .icon {
+    background: var(--rose-blush);
+    color: var(--rose-mid);
+    transform: none;
+  }
+}

@@ -220,12 +220,48 @@
     initStatCards();
     initFaq();
     initTeamCarousel();
+    initMvovAccordion();
   }
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
+  }
+
+  function initMvovAccordion() {
+    const isMobile = () => window.innerWidth <= 768;
+
+    document.addEventListener('click', function (e) {
+      if (!isMobile()) return;
+      const h3 = e.target.closest('.mvov-card h3');
+      if (!h3) return;
+
+      const card = h3.closest('.mvov-card');
+      const body = card.querySelector('.mvov-body');
+      const isOpen = card.classList.contains('open');
+
+      // Cierra todos
+      document.querySelectorAll('.mvov-card').forEach(c => {
+        c.classList.remove('open');
+        c.querySelector('.mvov-body').style.maxHeight = '0';
+      });
+
+      // Abre el clickeado si estaba cerrado
+      if (!isOpen) {
+        card.classList.add('open');
+        body.style.maxHeight = body.scrollHeight + 'px';
+      }
+    });
+
+    // En resize, si sale de móvil quita los max-height inline
+    window.addEventListener('resize', () => {
+      if (!isMobile()) {
+        document.querySelectorAll('.mvov-body').forEach(b => {
+          b.style.maxHeight = '';
+        });
+      }
+    });
   }
 
 })();

@@ -36,8 +36,7 @@
 
         {{-- FORM --}}
         <div class="edit-form-body">
-        <form method="POST" action="#">
-            @csrf
+        <div class="edit-form">
 
             <div class="accordion">
 
@@ -108,7 +107,11 @@
                                 <div class="input-copy-wrapper">
                                     <input type="text" id="account" name="account"
                                         value="{{ old('account', $donacion_bancario->clabe ?? '') }}"
-                                        placeholder="012345678901234567" class="input-copy">
+                                        placeholder="012345678901234567"
+                                        class="input-copy"
+                                        maxlength="18"
+                                        inputmode="numeric"
+                                        pattern="\d{18}">
                                     <button type="button" class="btn-copy" id="btnCopyAccount" title="Copiar">
                                         <i class="fa-solid fa-copy"></i>
                                     </button>
@@ -157,7 +160,9 @@
                                 <input type="text" id="paypal_url" name="paypal_url"
                                     value="{{ old('paypal_url', $donacion_paypal->paypal_usuario ?? '') }}"
                                     placeholder="AjalLolAC"
-                                    class="input-paypal">
+                                    class="input-paypal"
+                                    maxlength="20"
+                                    pattern="[a-zA-Z0-9\-\.]{1,20}">
                             </div>
                             <span class="field-hint">
                                 Solo escribe el nombre de usuario. Ej: si tu link es
@@ -186,7 +191,7 @@
 
             </div>
 
-        </form>
+        </div>
         </div>
 
     </div>
@@ -205,18 +210,41 @@
 <script>
 const CSRF = window.DONATIONS_ROUTES.csrfToken;
 
+function setButtonLoading(btn, loading) {
+    if (loading) {
+        btn.disabled = true;
+        btn.dataset.originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+    } else {
+        btn.disabled = false;
+        btn.innerHTML = btn.dataset.originalHtml ?? '<i class="fa-solid fa-floppy-disk"></i> Guardar';
+    }
+}
+
 async function apiFetch(url, body) {
-    const res = await fetch(url, {
-        method : 'POST',
-        headers: {
-            'X-CSRF-TOKEN' : CSRF,
-            'Accept'       : 'application/json',
-            'Content-Type' : 'application/json',
-        },
-        body: JSON.stringify(body),
-    });
+    let res;
+    try {
+        res = await fetch(url, {
+            method : 'POST',
+            headers: {
+                'X-CSRF-TOKEN' : CSRF,
+                'Accept'       : 'application/json',
+                'Content-Type' : 'application/json',
+            },
+            body: JSON.stringify(body),
+        });
+    } catch {
+        // Error de red: sin conexión, servidor caído, CORS, timeout, etc.
+        throw new Error('Sin conexión. Verifica tu red e intenta de nuevo.');
+    }
+
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message ?? 'Error en la solicitud.');
+
+    if (!res.ok) {
+        // Error HTTP: el servidor respondió con 4xx / 5xx
+        throw new Error(data.message ?? `Error del servidor (${res.status}). Intenta de nuevo.`);
+    }
+
     return data;
 }
 
@@ -227,7 +255,10 @@ function showToast(msg, type = 'success') {
     t.innerHTML = `<i class="fa-solid fa-circle-${type === 'success' ? 'check' : 'exclamation'} edit-toast__icon"></i><span>${msg}</span>`;
     document.body.appendChild(t);
     requestAnimationFrame(() => t.classList.add('edit-toast--show'));
-    setTimeout(() => { t.classList.remove('edit-toast--show'); t.addEventListener('transitionend', () => t.remove(), { once: true }); }, 3200);
+    setTimeout(() => {
+        t.classList.remove('edit-toast--show');
+        t.addEventListener('transitionend', () => t.remove(), { once: true });
+    }, 3200);
 }
 
 /* ── Acordeón ── */
@@ -254,6 +285,26 @@ paypalInput?.addEventListener('input', function () {
     }
 });
 
+/* ── Contador / validación CLABE en tiempo real ── */
+document.getElementById('account')?.addEventListener('input', function () {
+    this.value = this.value.replace(/\D/g, '').slice(0, 18);
+    const len = this.value.length;
+    const hint = this.closest('.form-group')?.querySelector('.field-hint');
+    if (hint) {
+        // Si ya tiene 18 dígitos, el hint desaparece — no hace falta confirmarlo,
+        // el usuario ya ve que el campo está completo.
+        if (len === 18) {
+            hint.textContent = '';
+        } else if (len > 0) {
+            hint.textContent = `${len}/18 dígitos`;
+            hint.style.color = '';
+        } else {
+            hint.textContent = '18 dígitos para CLABE interbancaria.';
+            hint.style.color = '';
+        }
+    }
+});
+
 /* ── Copiar CLABE ── */
 document.getElementById('btnCopyAccount')?.addEventListener('click', () => {
     const val = document.getElementById('account')?.value.trim();
@@ -266,7 +317,8 @@ document.getElementById('btnCopyAccount')?.addEventListener('click', () => {
 });
 
 /* ── Guardar Info ── */
-document.getElementById('btnSaveInfo')?.addEventListener('click', async () => {
+document.getElementById('btnSaveInfo')?.addEventListener('click', async function () {
+    setButtonLoading(this, true);
     try {
         const data = await apiFetch(window.DONATIONS_ROUTES.info, {
             titulo      : document.getElementById('title')?.value.trim(),
@@ -274,33 +326,55 @@ document.getElementById('btnSaveInfo')?.addEventListener('click', async () => {
         });
         showToast(data.message ?? 'Información guardada.');
     } catch (err) {
-        showToast(err.message ?? 'Error al guardar.', 'error');
+        showToast(err.message, 'error');
+    } finally {
+        setButtonLoading(this, false);
     }
 });
 
 /* ── Guardar Bancario ── */
-document.getElementById('btnSaveBancario')?.addEventListener('click', async () => {
+document.getElementById('btnSaveBancario')?.addEventListener('click', async function () {
+    const clabe = document.getElementById('account')?.value.trim();
+
+    if (!/^\d{18}$/.test(clabe)) {
+        showToast('La CLABE debe tener exactamente 18 dígitos numéricos.', 'error');
+        return;
+    }
+
+    setButtonLoading(this, true);
     try {
         const data = await apiFetch(window.DONATIONS_ROUTES.bancario, {
             beneficiario : document.getElementById('beneficiary')?.value.trim(),
             banco        : document.getElementById('bank')?.value.trim(),
-            clabe        : document.getElementById('account')?.value.trim(),
+            clabe,
         });
         showToast(data.message ?? 'Datos bancarios guardados.');
     } catch (err) {
-        showToast(err.message ?? 'Error al guardar.', 'error');
+        showToast(err.message, 'error');
+    } finally {
+        setButtonLoading(this, false);
     }
 });
 
 /* ── Guardar PayPal ── */
-document.getElementById('btnSavePaypal')?.addEventListener('click', async () => {
+document.getElementById('btnSavePaypal')?.addEventListener('click', async function () {
+    const usuario = document.getElementById('paypal_url')?.value.trim();
+
+    if (usuario && !/^[a-zA-Z0-9\-\.]{1,20}$/.test(usuario)) {
+        showToast('Usuario de PayPal inválido. Solo letras, números, guiones y puntos (máx. 20).', 'error');
+        return;
+    }
+
+    setButtonLoading(this, true);
     try {
         const data = await apiFetch(window.DONATIONS_ROUTES.paypal, {
-            paypal_usuario : document.getElementById('paypal_url')?.value.trim(),
+            paypal_usuario: usuario,
         });
         showToast(data.message ?? 'PayPal guardado.');
     } catch (err) {
-        showToast(err.message ?? 'Error al guardar.', 'error');
+        showToast(err.message, 'error');
+    } finally {
+        setButtonLoading(this, false);
     }
 });
 </script>

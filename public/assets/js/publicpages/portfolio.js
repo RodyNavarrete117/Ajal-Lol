@@ -309,7 +309,7 @@ function initPortfolio() {
         });
 
         // Reconstruir carrusel en móvil
-        if (window.innerWidth <= 768) {
+        if (window.innerWidth <= 900) {
           const carousel = panel?.querySelector('.carousel-group');
           const dotsContainer = panel?.querySelector('.carousel-dots');
           if (!carousel || !dotsContainer) return;
@@ -416,12 +416,10 @@ function initLightbox() {
  /* ═══════════════════════════════════════════════
      MOBILE PORTFOLIO
   ═══════════════════════════════════════════════ */
-function initMobilePortfolio() {
-  if (window.innerWidth > 768) return;
-
-  document.body.classList.add('is-touch');
-
+function buildCarousel() {
   document.querySelectorAll('.portfolio-grid').forEach(function(grid) {
+    if (grid.querySelector('.carousel-group')) return;
+
     var items = Array.from(grid.querySelectorAll('.portfolio-item'));
     if (!items.length) return;
 
@@ -440,7 +438,6 @@ function initMobilePortfolio() {
 
     grid.appendChild(carousel);
 
-    // Dots
     var dotsEl = document.createElement('div');
     dotsEl.className = 'carousel-dots';
     items.forEach(function(_, idx) {
@@ -450,7 +447,6 @@ function initMobilePortfolio() {
     });
     grid.appendChild(dotsEl);
 
-    // Scroll → actualizar dot activo
     carousel.addEventListener('scroll', function() {
       var visibles = Array.from(carousel.querySelectorAll('.portfolio-item'))
         .filter(function(it) { return it.style.display !== 'none'; });
@@ -463,7 +459,6 @@ function initMobilePortfolio() {
       });
     }, { passive: true });
 
-    // Tap → lightbox
     items.forEach(function(item) {
       var touchStartX = 0, touchStartY = 0;
       item.addEventListener('touchstart', function(e) {
@@ -488,6 +483,29 @@ function initMobilePortfolio() {
       });
     });
   });
+}
+
+function destroyCarousel() {
+  document.querySelectorAll('.portfolio-grid').forEach(function(grid) {
+    var carousel = grid.querySelector('.carousel-group');
+    if (!carousel) return;
+
+    var items = Array.from(carousel.querySelectorAll('.portfolio-item'));
+    grid.innerHTML = '';
+    items.forEach(function(item) {
+      grid.appendChild(item);
+    });
+  });
+}
+
+function initMobilePortfolio() {
+  if (window.innerWidth <= 900) {
+    buildCarousel();
+    document.body.classList.add('is-touch');
+  } else {
+    destroyCarousel();
+    document.body.classList.remove('is-touch');
+  }
 }
   /* ═══════════════════════════════════════════════
      FAQ ACCORDION
@@ -650,6 +668,8 @@ function initMobilePortfolio() {
     initRipple();
     initParallax();
     initStatCards();
+
+    window.addEventListener('resize', initMobilePortfolio);
   }
 
   if (document.readyState === 'loading') {

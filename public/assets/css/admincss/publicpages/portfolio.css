@@ -87,7 +87,7 @@
   margin-bottom: 2.5rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .portfolio-filters {
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -328,7 +328,7 @@
 }
 
 /* ─── MÓVIL ─── */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .zoom-btn { display: none !important; }
 
   .portfolio-grid { display: block; }

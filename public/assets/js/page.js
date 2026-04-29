@@ -168,6 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         _errorHandled = false;
         previewModal.classList.add('open');
+        document.documentElement.style.overflow = 'hidden';
         document.body.style.overflow = 'hidden';
         requestAnimationFrame(() => previewClose.focus());
     }
@@ -175,6 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Cerrar modal ──
     function closePreviewModal() {
         previewModal.classList.remove('open');
+        document.documentElement.style.overflow = '';
         document.body.style.overflow = '';
     }
 

@@ -758,9 +758,10 @@ body.reduce-animations .modal {
     max-width: 500px; 
     box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); 
     animation: slideUp 0.3s ease; 
-    max-height: 90vh; 
-    overflow-y: auto;
-    overflow-x: visible;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     border: 1px solid var(--border-color); 
     transition: background 0.3s ease, border-color 0.3s ease;
 }
@@ -771,7 +772,8 @@ body.reduce-animations .modal {
     align-items: center; 
     padding: 24px 24px 16px; 
     border-bottom: 1px solid var(--border-color); 
-    transition: border-color 0.3s ease; 
+    transition: border-color 0.3s ease;
+    flex-shrink: 0;
 }
 
 .modal-header h2 { 
@@ -803,7 +805,30 @@ body.reduce-animations .modal {
 
 /* FORMULARIO */
 #userForm { 
-    padding: 24px; 
+    padding: 24px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    min-height: 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+}
+
+#userForm::-webkit-scrollbar {
+    width: 4px;
+}
+
+#userForm::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#userForm::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+#userForm::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
 }
 
 .form-group { 
@@ -902,10 +927,11 @@ select.form-control {
     display: flex; 
     justify-content: flex-end; 
     gap: 12px; 
-    margin-top: 24px; 
-    padding-top: 20px; 
+    padding: 16px 24px 20px;
     border-top: 1px solid var(--border-color); 
-    transition: border-color 0.3s ease; 
+    transition: border-color 0.3s ease;
+    flex-shrink: 0;
+    background: var(--bg-white);
 }
 
 .btn-primary, .btn-secondary { 
@@ -955,11 +981,20 @@ select.form-control {
 .btn-secondary { 
     background: transparent; 
     color: var(--text-secondary); 
-    border: 1px solid var(--border-color); 
+    border: 1px solid var(--border-color);
 }
 
 .btn-secondary::before { 
-    background: var(--bg-gray);
+    content: ''; 
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    width: 0; 
+    height: 0; 
+    border-radius: 50%; 
+    background: rgba(0, 0, 0, 0.06); /* oscuro semitransparente en vez de bg-gray */
+    transform: translate(-50%, -50%); 
+    transition: width 0.6s, height 0.6s;
     z-index: 0;
 }
 
@@ -976,7 +1011,8 @@ select.form-control {
 
 .btn-secondary:hover { 
     background: var(--bg-gray); 
-    color: var(--text-primary); 
+    color: var(--text-primary);
+    border-color: var(--border-color);
 }
 
 [data-theme="dark"] .btn-secondary {
@@ -995,20 +1031,17 @@ select.form-control {
 }
 
 /* SCROLLBAR */
-.table-wrapper::-webkit-scrollbar, 
-.modal-content::-webkit-scrollbar { 
+.table-wrapper::-webkit-scrollbar { 
     height: 8px; 
     width: 8px; 
 }
 
-.table-wrapper::-webkit-scrollbar-track, 
-.modal-content::-webkit-scrollbar-track { 
+.table-wrapper::-webkit-scrollbar-track { 
     background: var(--bg-gray); 
     border-radius: 4px; 
 }
 
-.table-wrapper::-webkit-scrollbar-thumb, 
-.modal-content::-webkit-scrollbar-thumb { 
+.table-wrapper::-webkit-scrollbar-thumb { 
     background: var(--text-secondary); 
     border-radius: 4px; 
 }
@@ -1202,6 +1235,15 @@ select.form-control {
 }
 
 @media (max-width: 768px) {
+    #userForm {
+        padding: 16px;
+        max-height: calc(85vh - 140px); /* 85vh del modal menos header y footer */
+        overflow-y: auto;
+    }
+    .modal-content { 
+        max-height: 85vh;  /* nunca ocupa más del 85% de la pantalla */
+        border-radius: 20px 20px 12px 12px; /* esquinas arriba más redondeadas */
+    }
     .page-header { padding: 20px; }
     .page-header { flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px; }
     .page-header-content { display: none; }
@@ -1276,12 +1318,19 @@ select.form-control {
     
     .action-buttons { width: 100%; flex-direction: column; gap: 10px; }
     .btn-action { width: 100%; justify-content: center; padding: 10px 16px; }
-    .modal.active { padding: 10px; }
-    .modal-content { max-height: 95vh; }
-    .modal-header { padding: 20px 16px 16px; }
+    .modal.active { 
+        padding: 16px;
+    }
+    .modal-header { 
+        padding: 20px 16px 14px; 
+    }
     #userForm { padding: 16px; }
-    .modal-footer { flex-direction: column-reverse; }
-    .btn-primary, .btn-secondary { width: 100%; }
+    .modal-footer { 
+        flex-direction: column-reverse; 
+        gap: 8px; 
+        padding: 12px 16px 16px;
+    }
+    .btn-primary, .btn-secondary { width: 100%; padding: 14px 24px;}
 
     .toast-container { bottom: 12px; right: 12px; left: 12px; }
     .toast { min-width: unset; max-width: 100%; }
@@ -1550,3 +1599,93 @@ body.reduce-animations .swal2-container {
 .no-action-notice svg {
     flex-shrink: 0;
 }
+
+/* ========================================
+   PASSWORD STRENGTH
+   ======================================== */
+.password-strength {
+    margin-top: 8px;
+    display: none;
+}
+
+.strength-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 6px;
+    overflow: hidden;
+    border-radius: 2px;
+}
+
+.strength-segment {
+    height: 3px;
+    flex: 1;
+    border-radius: 2px;
+    background: var(--border-color);
+    transition: background 0.3s ease;
+}
+
+.strength-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+}
+
+.strength-rules {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.rule-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+}
+
+.rule-icon {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.rule-icon svg {
+    display: none;
+    width: 8px;
+    height: 8px;
+}
+
+.rule-item.passed .rule-icon {
+    background: #10b981;
+    border-color: #10b981;
+}
+
+.rule-item.passed .rule-icon svg {
+    display: block;
+}
+
+.rule-item.passed {
+    color: #10b981;
+}
+
+/* niveles de fortaleza */
+.str-1 .strength-segment:nth-child(1) { background: #ef4444; }
+.str-2 .strength-segment:nth-child(1),
+.str-2 .strength-segment:nth-child(2) { background: #f97316; }
+.str-3 .strength-segment:nth-child(1),
+.str-3 .strength-segment:nth-child(2),
+.str-3 .strength-segment:nth-child(3) { background: #eab308; }
+.str-4 .strength-segment:nth-child(1),
+.str-4 .strength-segment:nth-child(2),
+.str-4 .strength-segment:nth-child(3),
+.str-4 .strength-segment:nth-child(4) { background: #10b981; }

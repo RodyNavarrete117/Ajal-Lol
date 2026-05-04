@@ -207,7 +207,9 @@
                 <div class="form-group">
                     <label for="userPassword">Contraseña <span id="passwordRequired">*</span></label>
                     <div class="password-input-wrapper">
-                        <input type="password" id="userPassword" class="form-control" placeholder="Ingrese la contraseña">
+                        <input type="password" id="userPassword" class="form-control"
+                            placeholder="Ingrese la contraseña"
+                            oninput="checkPasswordStrength(this.value)">
                         <button type="button" class="btn-toggle-password" onclick="togglePassword()">
                             <svg id="eyeIcon" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                 <path d="M2.5 10C2.5 10 5 4.16667 10 4.16667C15 4.16667 17.5 10 17.5 10C17.5 10 15 15.8333 10 15.8333C5 15.8333 2.5 10 2.5 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -215,14 +217,50 @@
                             </svg>
                         </button>
                     </div>
-                    <small class="form-hint" id="passwordHint">Mínimo 6 caracteres</small>
-                </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
-                    <button type="submit" class="btn-primary" id="submitBtn">Guardar cambios</button>
+                    <div class="password-strength" id="passwordStrength">
+                        <div class="strength-bar" id="strengthBar">
+                            <div class="strength-segment"></div>
+                            <div class="strength-segment"></div>
+                            <div class="strength-segment"></div>
+                            <div class="strength-segment"></div>
+                        </div>
+                        <span class="strength-text" id="strengthText"></span>
+                        <div class="strength-rules">
+                            <div class="rule-item" id="rule-length">
+                                <div class="rule-icon">
+                                    <svg viewBox="0 0 8 8" fill="none"><path d="M1 4L3 6L7 2" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </div>
+                                Mínimo 8 caracteres
+                            </div>
+                            <div class="rule-item" id="rule-upper">
+                                <div class="rule-icon">
+                                    <svg viewBox="0 0 8 8" fill="none"><path d="M1 4L3 6L7 2" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </div>
+                                Al menos una mayúscula
+                            </div>
+                            <div class="rule-item" id="rule-number">
+                                <div class="rule-icon">
+                                    <svg viewBox="0 0 8 8" fill="none"><path d="M1 4L3 6L7 2" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </div>
+                                Al menos un número
+                            </div>
+                            <div class="rule-item" id="rule-special">
+                                <div class="rule-icon">
+                                    <svg viewBox="0 0 8 8" fill="none"><path d="M1 4L3 6L7 2" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </div>
+                                Al menos un carácter especial (!@#$...)
+                            </div>
+                        </div>
+                    </div>
+
+                    <small class="form-hint" id="passwordHint">Mínimo 8 caracteres</small>
                 </div>
             </form>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button type="submit" form="userForm" class="btn-primary" id="submitBtn">Guardar cambios</button>
+            </div>
         </div>
     </div>
 @endsection

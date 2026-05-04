@@ -324,11 +324,12 @@ function openAddUserModal() {
     document.getElementById('userName').value = '';
     document.getElementById('userEmail').value = '';
     resetCustomSelect();
+    checkPasswordStrength('');
     document.getElementById('userPassword').value = '';
     document.getElementById('userPassword').required = true;
     document.getElementById('userPassword').placeholder = 'Ingrese la contraseña';
     document.getElementById('passwordRequired').style.display = 'inline';
-    document.getElementById('passwordHint').textContent = 'Mínimo 6 caracteres';
+    document.getElementById('passwordHint').textContent = 'Mínimo 8 caracteres';
     document.getElementById('submitBtn').textContent = 'Crear usuario';
     document.getElementById('userModal').classList.add('active');
     document.documentElement.classList.add('modal-open');
@@ -403,6 +404,50 @@ function closeModal() {
 }
 
 // ========================================
+// PASSWORD STRENGTH CHECKER
+// ========================================
+function checkPasswordStrength(value) {
+    const strengthEl  = document.getElementById('passwordStrength');
+    const strengthBar = document.getElementById('strengthBar');
+    const strengthText = document.getElementById('strengthText');
+
+    const rules = {
+        length:  { el: document.getElementById('rule-length'),  pass: value.length >= 8 },
+        upper:   { el: document.getElementById('rule-upper'),   pass: /[A-Z]/.test(value) },
+        number:  { el: document.getElementById('rule-number'),  pass: /[0-9]/.test(value) },
+        special: { el: document.getElementById('rule-special'), pass: /[^A-Za-z0-9]/.test(value) },
+    };
+
+    if (!value) {
+        strengthEl.style.display = 'none';
+        return;
+    }
+
+    strengthEl.style.display = 'block';
+
+    // Actualizar reglas
+    Object.values(rules).forEach(r => {
+        r.el.classList.toggle('passed', r.pass);
+    });
+
+    // Calcular nivel
+    const passed = Object.values(rules).filter(r => r.pass).length;
+
+    strengthBar.className = 'strength-bar str-' + passed;
+
+    const levels = {
+        1: { text: 'Muy débil',  color: '#ef4444' },
+        2: { text: 'Débil',      color: '#f97316' },
+        3: { text: 'Regular',    color: '#eab308' },
+        4: { text: 'Fuerte',     color: '#10b981' },
+    };
+
+    const level = levels[passed] || { text: '', color: 'var(--text-secondary)' };
+    strengthText.textContent = level.text;
+    strengthText.style.color = level.color;
+}
+
+// ========================================
 // FUNCIÓN PARA TOGGLE PASSWORD
 // ========================================
 function togglePassword() {
@@ -443,14 +488,23 @@ async function saveUser(event) {
         return;
     }
 
+    // Reemplaza los dos if de contraseña existentes por:
     if (!isEditing && !userPassword) {
         showErrorAlert('Contraseña requerida', 'Debe ingresar una contraseña para el nuevo usuario');
         return;
     }
 
-    if (userPassword && userPassword.length < 6) {
-        showErrorAlert('Contraseña muy corta', 'La contraseña debe tener al menos 6 caracteres');
-        return;
+    if (userPassword) {
+        const missing = [];
+        if (userPassword.length < 8)           missing.push('mínimo 8 caracteres');
+        if (!/[A-Z]/.test(userPassword))       missing.push('una mayúscula');
+        if (!/[0-9]/.test(userPassword))       missing.push('un número');
+        if (!/[^A-Za-z0-9]/.test(userPassword)) missing.push('un carácter especial');
+
+        if (missing.length) {
+            showErrorAlert('Contraseña insegura', 'La contraseña debe tener: ' + missing.join(', '));
+            return;
+        }
     }
 
     const formData = {

@@ -163,21 +163,31 @@ function initCustomSelect() {
 function setCustomSelectValue(value) {
     const wrapper = document.getElementById('customRoleSelect');
     if (!wrapper) return;
+
+    const normalizedValue = (value || '').toLowerCase().trim();
     const trigger = wrapper.querySelector('.custom-select-trigger');
-    const options = wrapper.querySelectorAll('.custom-select-option');
+
+    // También actualiza el select nativo con el valor normalizado
+    const realSelect = document.getElementById('userRole');
+    if (realSelect) realSelect.value = normalizedValue;
+
+    const options = document.querySelectorAll('.custom-select-option');
+    let matched = false;
+
     options.forEach(opt => {
         opt.classList.remove('selected');
-        if (opt.dataset.value === value) {
+        if (opt.dataset.value && opt.dataset.value.toLowerCase() === normalizedValue) {
             opt.classList.add('selected');
-            trigger.querySelector('.trigger-text').textContent = opt.textContent;
+            trigger.querySelector('.trigger-text').textContent = opt.textContent.trim();
             trigger.classList.remove('placeholder');
+            matched = true;
         }
     });
-    if (!value) {
+
+    if (!matched || !normalizedValue) {
         trigger.querySelector('.trigger-text').textContent = 'Seleccione un rol';
         trigger.classList.add('placeholder');
     }
-    document.getElementById('userRole').value = value;
 }
 
 function resetCustomSelect() {
@@ -355,7 +365,7 @@ async function editUser(id) {
             document.getElementById('isEditing').value = 'true';
             document.getElementById('userName').value = usuario.nombre_usuario;
             document.getElementById('userEmail').value = usuario.correo_usuario;
-            setCustomSelectValue(usuario.cargo_usuario);
+            setCustomSelectValue((usuario.cargo_usuario || '').toLowerCase().trim());
             document.getElementById('userPassword').value = '';
             document.getElementById('userPassword').required = false;
             document.getElementById('userPassword').placeholder = 'Dejar en blanco para mantener actual';

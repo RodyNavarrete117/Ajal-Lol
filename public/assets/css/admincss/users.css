@@ -1500,12 +1500,23 @@ body.reduce-animations .swal2-container {
 }
 
 /* ── USUARIO LOGUEADO ── */
-.is-current-user {
-    background: rgba(125, 63, 106, 0.04) !important;
+.is-current-user td {
+    opacity: 0.45;
+    color: var(--text-secondary);
+    background: transparent !important;
+    border-top: 1.5px dashed var(--border-color) !important;
+    border-bottom: 1.5px dashed var(--border-color) !important;
 }
-
-[data-theme="dark"] .is-current-user {
-    background: rgba(125, 63, 106, 0.12) !important;
+.is-current-user td:first-child {
+    border-left: 1.5px dashed var(--border-color) !important;
+}
+.is-current-user td:last-child {
+    border-right: 1.5px dashed var(--border-color) !important;
+}
+.is-current-user:hover td {
+    background: transparent !important;
+    cursor: default;
+    box-shadow: none;
 }
 
 .badge-me {
@@ -1526,8 +1537,16 @@ body.reduce-animations .swal2-container {
     color: #d4a0c4;
 }
 
-.btn-disabled {
-    opacity: 0.35 !important;
-    cursor: not-allowed !important;
-    pointer-events: none;
+.no-action-notice {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.no-action-notice svg {
+    flex-shrink: 0;
 }

@@ -34,11 +34,14 @@ class UserController extends Controller
             return $user->cargo_usuario && strtolower(trim($user->cargo_usuario)) === 'editor';
         })->count();
 
+        $loggedUserId = session('user_id');
+
         return view('admin.users', compact(
             'usuarios',
             'totalUsuarios',
             'totalAdmins',
-            'totalEditores'
+            'totalEditores',
+            'loggedUserId'
         ));
     }
 
@@ -133,6 +136,12 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            if ($id == session('user_id') && $request->filled('contraseña_usuario')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No puedes cambiar tu propia contraseña desde este panel.'
+                ], 403);
+            }
             // Validar datos
             $request->validate([
                 'nombre_usuario' => 'required|string|max:150',
@@ -205,6 +214,13 @@ class UserController extends Controller
     public function destroy($id)
     {
         try {
+            // ── PROTECCIÓN: no puede eliminarse a sí mismo ──
+            if ($id == session('user_id')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No puedes eliminarte a ti mismo.'
+                ], 403);
+            }
             // Verificar que el usuario existe
             $usuarioExiste = DB::table('usuario')->where('id_usuario', $id)->exists();
             if (!$usuarioExiste) {

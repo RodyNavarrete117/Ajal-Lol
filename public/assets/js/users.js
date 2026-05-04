@@ -332,6 +332,10 @@ function openAddUserModal() {
 // FUNCIÓN PARA EDITAR USUARIO
 // ========================================
 async function editUser(id) {
+    if (id == LOGGED_USER_ID) {
+        showToast('error', 'Acción no permitida', 'No puedes editar tu propia cuenta desde aquí.');
+        return;
+    }
     try {
         const response = await fetch(`/admin/users/${id}`, {
             method: 'GET',
@@ -516,6 +520,11 @@ async function saveUser(event) {
 // FUNCIÓN PARA ELIMINAR USUARIO
 // ========================================
 async function deleteUser(id) {
+    if (id == LOGGED_USER_ID) {
+        showToast('error', 'Acción no permitida', 'No puedes eliminarte a ti mismo.');
+        return;
+    }
+
     const row = document.querySelector(`tr[data-user-id="${id}"]`);
     
     if (!row) {
